@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoCompaniesTodayRow={
  id:string;leadId:string;leadName:string;companyName:string|null;
  dueAt:string;note:string|null;phoneNorm:string|null;canContact:boolean;overdue:boolean;
@@ -15,7 +16,7 @@ export function rankTpoCompaniesToday(
 }
 export function istDateKey(value:Date){
  return new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  }).format(value);
 }
 export function nextTpoFollowupTomorrow(now:Date):string{
@@ -38,7 +39,7 @@ export function nextTpoTodayFollowupAt(
  const value=new Date(iso);
  if(!Number.isFinite(value.getTime()))return null;
  const roundTrip=new Intl.DateTimeFormat("sv-SE",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(value);
  if(roundTrip.replace(" ","T")!==customLocal)return null;

@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const displayIst=(instant:string)=>{
   const date=new Date(instant);
   return Number.isFinite(date.getTime())?
@@ -68,7 +69,7 @@ export function MentorMeetingRequestActions({meeting}:{
           expectedUpdatedAt:meeting.updatedAt,
           title:meeting.title,
           agenda:meeting.agenda??null,
-          startsAt:from,endsAt:until,timeZone:"Asia/Kolkata",
+          startsAt:from,endsAt:until,timeZone:DEFAULT_TIME_ZONE,
           meetingType:meeting.meetingType??"GENERAL",
           status:"SCHEDULED",
           meetingUrl:url?.toString()??null,

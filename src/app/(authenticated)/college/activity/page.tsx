@@ -27,6 +27,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RawSearch = Record<string, string | string[] | undefined>;
 
 function when(value: Date) {
@@ -37,7 +38,7 @@ function timeOnly(value: Date) {
 }
 function istDateKey(value: Date) {
   const parts = createDateFormatter("en-GB", {
-    year:"numeric", month:"2-digit", day:"2-digit", timeZone:"Asia/Kolkata",
+    year:"numeric", month:"2-digit", day:"2-digit", timeZone:DEFAULT_TIME_ZONE,
   }).formatToParts(value);
   const part=(kind:string)=>parts.find(v=>v.type===kind)?.value??"";
   return part("year")+"-"+part("month")+"-"+part("day");
@@ -49,7 +50,7 @@ function dateHeading(value: Date, now: Date) {
   if(target===today)return "Today";
   if(target===yesterday)return "Yesterday";
   return createDateFormatter("en-GB", {
-    weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+    weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
   }).format(value);
 }
 

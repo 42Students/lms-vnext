@@ -22,6 +22,7 @@ import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const uuid = z.string().uuid();
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine(value => {
@@ -74,7 +75,7 @@ type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 
 /** Legacy college timezone. INDIA-local date semantics are used consistently for existing dated restrictions. */
-export const DB08_LEGACY_COLLEGE_TIMEZONE = "Asia/Kolkata";
+export const DB08_LEGACY_COLLEGE_TIMEZONE = DEFAULT_TIME_ZONE;
 function collegeLocalDate(now = new Date()): string {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: DB08_LEGACY_COLLEGE_TIMEZONE,

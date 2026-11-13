@@ -6,6 +6,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RetentionRow = {
   id: string;
   jobTitle: string;
@@ -25,7 +26,7 @@ function formatActivity(value: string) {
   return Number.isNaN(date.getTime())
     ? "—"
     : createDateFormatter("en-GB", {
-        day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata",
+        day: "2-digit", month: "short", year: "numeric", timeZone: DEFAULT_TIME_ZONE,
       }).format(date);
 }
 

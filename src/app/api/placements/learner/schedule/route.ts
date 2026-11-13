@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {partitionLearnerPlacementSchedule} from "@/modules/placements/learner-placement-schedule-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Legacy learner /schedule adapter. Caller identity is session-owned; never
@@ -31,7 +32,7 @@ export const GET = route(
     scheduledAt:(row.exception?.scheduledAt??row.scheduledAt)?.toISOString()??null,
     endsAt:row.scheduledAt&&row.durationMinutes?
       new Date((row.exception?.scheduledAt??row.scheduledAt).getTime()+row.durationMinutes*60_000).toISOString():null,
-    timezone:row.exception?.timezone??row.timezone??"Asia/Kolkata",
+    timezone:row.exception?.timezone??row.timezone??DEFAULT_TIME_ZONE,
     venue:row.exception?.venue??row.venue,
     meetingUrl:row.exception?.meetingUrl??row.meetingUrl,
     // Legacy TpoScheduleService field names: startsAt mirrors scheduledAt,

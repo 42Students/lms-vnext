@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 const query=z.strictObject({
  q:z.string().trim().min(2).max(100).optional(),
@@ -55,7 +56,7 @@ export const GET = route(
     membershipId:student.membershipId,displayName:student.displayName,
     rollNumber:student.rollNumber,
     placementParticipation:{...student.placementParticipation,
-     decidedAtDisplay:student.placementParticipation.decidedAt?.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})??null},
+     decidedAtDisplay:student.placementParticipation.decidedAt?.toLocaleString("en-IN",{timeZone:DEFAULT_TIME_ZONE})??null},
     modules:student.modules.map(item=>({
      module:item.module,label:item.label,enabled:item.enabled,
      winnerLevel:item.winnerLevel,winnerLocked:item.winnerLocked,

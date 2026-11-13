@@ -8,6 +8,7 @@ import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
 import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
 import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 import { route } from "@/security/route";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Page through the actual college-scoped union, never export unfiltered raw history. */
@@ -58,7 +59,7 @@ async function handleGET(request:Request){
        case "Detail":return [row.title,row.detail].filter(Boolean).join(" · ");
        case "Actor":return row.actorName;
        case "When":return new Intl.DateTimeFormat("en-IN",{
-        timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+        timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
        }).format(new Date(row.occurredAt))+" IST";
       }
      }).map(safeCell).join(","))].join("\r\n")+"\r\n";

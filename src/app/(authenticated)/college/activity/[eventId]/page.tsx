@@ -24,6 +24,7 @@ import { Heading } from "@/components/ui/heading";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export default async function CollegeActivityDetailPage({
   params,
 }: { params: Promise<{ eventId: string }> }) {
@@ -34,7 +35,7 @@ export default async function CollegeActivityDetailPage({
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(eventId))notFound();
   const { event, actor } = await getCollegeActivityDetail(context, eventId);
   const date = createDateFormatter("en-IN", {
-    dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
+    dateStyle: "full", timeStyle: "medium", timeZone: DEFAULT_TIME_ZONE,
   }).format(event.occurredAt);
   const compact=activityDetails(event.metadata);
   return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">

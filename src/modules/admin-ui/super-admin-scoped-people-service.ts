@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY"|"LEARNER",raw:unknown):Promise<SuperAdminReadResult>{
  // Accept legacy faculty query aliases only after checking their type and
  // keeping all results confined to the signed-in Super Admin's college.
@@ -179,7 +180,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  const rows=await db.select().from(source)
   .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
- const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+ const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE});
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.name||"-",subtitle:row.collegeName+" · "+role,
   // Legacy suspendedAt means this membership cannot act in the college;

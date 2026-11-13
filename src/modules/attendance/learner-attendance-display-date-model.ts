@@ -1,8 +1,9 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const istTime=new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+ timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",
 });
 const istDate=new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"short",
+ timeZone:DEFAULT_TIME_ZONE,weekday:"long",day:"numeric",month:"short",
 });
 export function learnerAttendanceDateLabel(value:string):string{
  const date=new Date(value);

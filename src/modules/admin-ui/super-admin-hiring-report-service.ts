@@ -14,6 +14,7 @@ import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdmi
 import {istStartOfDay,istStartOfNextDay} from "./super-admin-hiring-ist-boundary";
 import {hiringStagesAtOrAfter,type HiringPersistedStage} from "./super-admin-hiring-funnel-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * A separate cumulative funnel is required: snapshots are mutually exclusive,
  * while each stage an application EVER reached is counted in the funnel.
@@ -225,7 +226,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   })),
   truncated:result.length>SUPER_ADMIN_HIRING_EXPORT_CAP,
   reportSemantics:{
-   timezone:"Asia/Kolkata" as const,
+   timezone:DEFAULT_TIME_ZONE,
    appliedToExclusive:query.appliedTo?istStartOfNextDay(query.appliedTo):null,
    snapshot:"CURRENT_STAGE" as const,
    funnel:"EVER_REACHED" as const,

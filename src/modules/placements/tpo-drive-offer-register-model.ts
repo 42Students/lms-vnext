@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const offerRegisterQueryObject=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  // Direct GET/CSV requests may include blank HTML or nullable JSON
  // numeric fields; absent means unbounded, not a zero-package filter.
@@ -154,7 +155,7 @@ export function tpoDriveOfferRegisterCsv(
  const asOf=new Date();
  const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry,asOf,filters.minCtcLpa,filters.maxCtcLpa);
  const csvDate=(date:Date|null|undefined)=>date&&Number.isFinite(date.getTime())?
-  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
+  new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
   f.offer.kind,f.offer.annualCtcInr,f.offer.fixedLpa??null,f.offer.variableLpa??null,f.offer.joiningBonusLpa??null,f.offer.bondMonths??null,f.offer.bondAmount??null,f.candidate.email??null,f.candidate.phone??null,

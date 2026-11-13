@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoPrototypeRequestRow={
  id:string;studentName:string;rollNumber:string|null;branchName:string|null;
  requestType:string;reason:string;status:string;companyName:string;
@@ -21,7 +22,7 @@ function label(kind:string){
  } as Record<string,string>)[kind]??kind.replaceAll("_"," ").toLowerCase();
 }
 function when(date:Date){
- return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
+ return createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date)+" IST";
 }

@@ -12,6 +12,7 @@ import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 // A short-lived, bounded, per-college fallback for the three independently
 // loaded badge totals. Never share a count across colleges or filtered seasons.
 // The dashboard always prefers freshly queried DB totals when they are ready.
@@ -231,7 +232,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
   const projection=await db.transaction(async tx=>{
    const end=new Date(now.getTime()+7*86400000);
-   const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+   const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
     year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
    const number=(kind:string)=>parts.find(part=>part.type===kind)?.value??"01";
    const day=number("year")+"-"+number("month")+"-"+number("day");

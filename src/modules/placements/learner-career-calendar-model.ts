@@ -1,5 +1,6 @@
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type CareerCalendarSourceRound = {
   applicationId: string;
   roundId: string;
@@ -95,7 +96,7 @@ export type CareerCalendarView = "agenda" | "month" | "week" | "day";
 
 export function careerDayKey(value: Date): string {
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(value);
   const get = (part: string) => parts.find((row) => row.type === part)?.value ?? "";
   return `${get("year")}-${get("month")}-${get("day")}`;

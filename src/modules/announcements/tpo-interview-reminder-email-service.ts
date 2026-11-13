@@ -9,6 +9,7 @@ import {tomorrowInIndiaUtcWindow,type ScheduledJobFence}
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ReminderRow={
  slot_id:string;slot_version:number;user_id:string;
  application_id:string;college_id:string;organization_id:string;
@@ -18,10 +19,10 @@ type ReminderRow={
 };
 const MAX_SENDS=200;
 const dateInIndia=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+ timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
 }).format(date);
 const timeInIndia=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
+ timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",hour12:true,
 }).format(date);
 
 function addressOf(row:ReminderRow){

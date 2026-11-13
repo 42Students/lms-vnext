@@ -52,6 +52,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Lead = {
   id: string;
   name: string;
@@ -85,7 +86,7 @@ const recruiterDate=(value:string|null|undefined,withYear=false):string=>{
  const parsed=new Date(value);
  if(Number.isNaN(parsed.getTime()))return "-";
  return createDateFormatter("en-GB", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",...(withYear?{year:"numeric" as const}:{})
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",...(withYear?{year:"numeric" as const}:{})
  }).format(parsed);
 };
 function sourceLabel(code:string|null|undefined):string{

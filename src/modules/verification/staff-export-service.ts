@@ -22,7 +22,8 @@ import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import {VerificationQueueLimitError} from "./staff-queue-service";
 
-const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
+const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"});
 export async function exportCollegeVerificationCsv(context:RequestContext,raw:unknown,superAdminCollegeId?:string){
  const filter=verificationQueueFilters.parse(raw);
  if(!verificationSubmissionWindowValid({ ...(filter.submittedFrom!==undefined?{submittedFrom:filter.submittedFrom}:{}), ...(filter.waitingSince!==undefined?{waitingSince:filter.waitingSince}:{}) }))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");

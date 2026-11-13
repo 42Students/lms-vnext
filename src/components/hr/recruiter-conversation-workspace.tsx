@@ -11,6 +11,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
 type History=Awaited<ReturnType<typeof readRecruiterThreadMessages>>;
@@ -20,7 +21,7 @@ type Props={collegeId:string;choices:readonly {collegeId:string;collegeName:stri
  decisionNoticesUnavailable:boolean;decisionNotices:readonly DecisionNotice[];
  q:string;total:number;pages:number;unreadTotal:number};
 const formatted=(value:Date)=>createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
+ timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
  hour12:true,
 }).format(value);
 export function RecruiterConversationWorkspace({

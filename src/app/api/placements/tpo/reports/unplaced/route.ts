@@ -13,6 +13,7 @@ import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-serv
 import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
  from "@/modules/placements/tpo-unplaced-filtered-export-model";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -55,7 +56,7 @@ const rows=visible.map(student=>{
     applications:activity.get(student.membershipId)?.applications??0,
     stillInDrive:activity.get(student.membershipId)?.stillInDrive??false,
     lastApplied:activity.get(student.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{
-     timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+     timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
     })??null};
   });
 return new Response("\uFEFF"+tpoUnplacedFilteredCsv(rows),{headers:{

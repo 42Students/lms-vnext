@@ -7,6 +7,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
   jobId: string;
@@ -86,12 +87,12 @@ function statusTone(
 function formatWhen(value: Date | null) {
   if (!value) return null;
   return createDateFormatter("en-GB", {
-    day: "numeric", month: "short", timeZone: "Asia/Kolkata",
+    day: "numeric", month: "short", timeZone: DEFAULT_TIME_ZONE,
   }).format(value);
 }
 
 function formatOptOutDeadline(value: Date) {
-  const timeZone = "Asia/Kolkata";
+  const timeZone = DEFAULT_TIME_ZONE;
   const weekday = createDateFormatter("en-GB", { timeZone, weekday: "short" }).format(value);
   const date = formatWhen(value);
   const parts = createDateFormatter("en-US", {

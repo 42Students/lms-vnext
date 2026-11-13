@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type FacultyAttendanceSessionLike = {
   id: string;
   startsAt: string;
@@ -21,7 +22,7 @@ export type FacultyAttendanceDayCell = {
   ratio: string | null;
 };
 
-const INDIA_TIME_ZONE = "Asia/Kolkata";
+const INDIA_TIME_ZONE = DEFAULT_TIME_ZONE;
 
 export function indiaAttendanceDayKey(value: string | Date) {
   const date = value instanceof Date ? value : new Date(value);

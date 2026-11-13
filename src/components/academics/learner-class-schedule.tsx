@@ -50,6 +50,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type CourseChoice = {
   deliveryId: string;
   sectionId: string;
@@ -118,7 +119,7 @@ function timeRange(event: LearnerScheduleEvent) {
   const formatter = createDateFormatter("en-IN", {
       hour: "numeric",
       minute: "2-digit",
-      timeZone: "Asia/Kolkata",
+      timeZone: DEFAULT_TIME_ZONE,
     });
 
   return `${formatter.format(
@@ -165,7 +166,7 @@ function scheduleEventTooltip(event:LearnerScheduleEvent){
 
 function learnerEventStartHour(event:LearnerScheduleEvent){
   const value=createDateFormatter("en-IN", {
-    timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
+    timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",hourCycle:"h23",
   }).format(new Date(event.startsAt));
   return Number(value);
 }
@@ -299,12 +300,12 @@ function nextMetricTime(event: LearnerScheduleEvent, now: Date) {
   const today = istCalendarDay(now);
   const tomorrow = istCalendarDay(new Date(now.getTime() + 86_400_000));
   const time = createDateFormatter("en-US", {
-    hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata",
+    hour: "numeric", minute: "2-digit", hour12: true, timeZone: DEFAULT_TIME_ZONE,
   }).format(new Date(event.startsAt));
   if (day === today) return "Today " + time;
   if (day === tomorrow) return "Tomorrow " + time;
   return createDateFormatter("en-US", {
-    weekday: "short", timeZone: "Asia/Kolkata",
+    weekday: "short", timeZone: DEFAULT_TIME_ZONE,
   }).format(new Date(event.startsAt)) + " " + time;
 }
 
@@ -505,7 +506,7 @@ export function LearnerClassSchedule({
                 {event.courseName || event.title || "Scheduled Class"}
               </span>
               <span className="shrink-0 text-sm text-body">
-                {createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})
+                {createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE})
                   .format(new Date(event.startsAt))}
               </span>
             </div>) : <p className="text-sm text-muted-foreground">No classes today.</p>}
@@ -513,7 +514,7 @@ export function LearnerClassSchedule({
           <div><dt className="font-semibold">Course</dt><dd>{activeNextEvent.courseName || "Scheduled Class"}</dd></div>
           <div><dt className="font-semibold">Time</dt><dd>{timeRange(activeNextEvent)}</dd></div>
           <div><dt className="font-semibold">Date</dt><dd>{createDateFormatter("en-IN", {
-            weekday:"short",month:"short",day:"numeric",year:"numeric",timeZone:"Asia/Kolkata"
+            weekday:"short",month:"short",day:"numeric",year:"numeric",timeZone:DEFAULT_TIME_ZONE
           }).format(new Date(activeNextEvent.startsAt))}</dd></div>
           {activeNextEvent.facultyName ? <div><dt className="font-semibold">Faculty</dt>
             <dd>{activeNextEvent.facultyName}</dd></div> : null}
@@ -574,14 +575,14 @@ export function LearnerClassSchedule({
                 onClick={() => { setSelectedEvent(event); setMetricDialog("NEXT"); }}>
                 <span className="grid w-full min-w-0 grid-cols-[minmax(6rem,auto)_minmax(0,1fr)_minmax(6rem,auto)] items-center gap-3">
                   <span className="text-xs font-semibold text-primary-text">
-                    {createDateFormatter("en-US", {weekday:"short",month:"short",day:"numeric",timeZone:"Asia/Kolkata"})
+                    {createDateFormatter("en-US", {weekday:"short",month:"short",day:"numeric",timeZone:DEFAULT_TIME_ZONE})
                       .format(new Date(event.startsAt))}
                   </span>
                   <span className="min-w-0 truncate text-sm font-semibold text-foreground">
                     {event.courseName || event.title || "Scheduled Class"}
                   </span>
                   <span className="text-right text-xs text-body">
-                    {createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})
+                    {createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE})
                       .format(new Date(event.startsAt))}
                     {event.facultyName ? <span className="block max-w-[152px] truncate">{event.facultyName}</span> : null}
                   </span>

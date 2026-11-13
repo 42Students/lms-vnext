@@ -12,6 +12,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateWith } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function MentorPersonalRead({id}:{id:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
@@ -156,7 +157,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
         <div className="flex flex-wrap items-center justify-between gap-2">
           <time dateTime={item.occurredAt} className="text-xs text-muted-foreground">
             {formatDateWith(new Date(item.occurredAt), "en-IN", {
-              timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+              timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",
             })} IST
           </time>
           <div className="flex flex-wrap items-center gap-2">

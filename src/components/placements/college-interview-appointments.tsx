@@ -22,6 +22,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string;departmentName?:string|null;rollNumber?:string|null};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
@@ -32,7 +33,7 @@ const display=(iso:string)=>istDateTimeFormatter.format(new Date(iso))+" IST";
 const INTERVIEW_DURATIONS=[15,30,45,60,90,120,180] as const;
 const toLocal=(iso:string)=>createDateFormatter("sv-SE", {
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
- hourCycle:"h23",timeZone:"Asia/Kolkata",
+ hourCycle:"h23",timeZone:DEFAULT_TIME_ZONE,
 }).format(new Date(iso)).replace(" ","T");
 export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId,onCommitted,jobTitle,companyName}:{
  jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];preferredApplicationId?:string;

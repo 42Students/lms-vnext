@@ -31,6 +31,7 @@ import { formatDateTimeIst } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function formatWhen(
   value: Date | null,
   timezone: string | null,
@@ -38,7 +39,7 @@ function formatWhen(
   if (!value || !Number.isFinite(value.getTime())) return null;
   return createDateFormatter("en-IN", {
     hour:"numeric",minute:"2-digit",hour12:true,
-    timeZone:timezone??"Asia/Kolkata",
+    timeZone:timezone??DEFAULT_TIME_ZONE,
   }).format(value).toUpperCase();
 }
 

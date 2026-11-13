@@ -27,6 +27,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export default async function FacultyAssignmentReportPage({
   params,
   searchParams,
@@ -127,7 +128,7 @@ export default async function FacultyAssignmentReportPage({
           ["Submitted", report.rosterUnavailable ? String(metrics.submitted) : `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
-          ["Due date", assignment.dueAt ? createDateFormatter("en-US", { month:"short", day:"numeric", year:"numeric", timeZone:"Asia/Kolkata" }).format(assignment.dueAt) : "—"],
+          ["Due date", assignment.dueAt ? createDateFormatter("en-US", { month:"short", day:"numeric", year:"numeric", timeZone:DEFAULT_TIME_ZONE }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="min-w-0 py-4">
             <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>

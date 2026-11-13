@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** TPO-home-03: legacy dev-branch seven quiet rows, in their original order.
  * Counts are only displayed when a corresponding persisted source has been read. */
 export type TpoHomeSummary={
@@ -66,13 +67,13 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const inboxStatus=inboxParts.length?inboxParts.join(" · "):"No requests or messages waiting";
  const next=d.upcoming[0];
  const showWhen=(date:Date)=>{
-  const day=new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Asia/Kolkata"}).format(date);
-  const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
-  const inDay=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+  const day=new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:DEFAULT_TIME_ZONE}).format(date);
+  const today=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
+  const inDay=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
   const tomorrow=new Intl.DateTimeFormat("en-CA",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).format(new Date(now.getTime()+86400000));
-  const time=new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date);
+  const time=new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE}).format(date);
   return (today===inDay?"Today":tomorrow===inDay?"Tomorrow":day)+" "+time.replace(/:00(?=\s)/,"");
  };
  return [

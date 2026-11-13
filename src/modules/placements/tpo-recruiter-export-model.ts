@@ -1,5 +1,6 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {ENGAGE_COLUMNS,type EngageColumn} from "./tpo-recruiter-table-view-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Formula-neutralized CSV for TPO Engage exports. Never include invite tokens. */
 export type RecruiterExportRow={
  name:string;companyName:string|null;stage:string;ownerName:string|null;
@@ -40,7 +41,7 @@ function exportDate(date:string|null){
  const parsed=new Date(date);
  if(Number.isNaN(parsed.getTime()))return "";
  return new Intl.DateTimeFormat("en-GB",{
-  day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
  }).format(parsed);
 }
 const stageLabels:Record<string,string>={

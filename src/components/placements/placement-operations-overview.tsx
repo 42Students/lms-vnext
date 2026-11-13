@@ -15,6 +15,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 import { createNumberFormatter } from "@/lib/safe-format";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
@@ -24,7 +25,7 @@ function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";
 }
 function formatWhen(value: Date, timezone: string | null) {
-  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
+  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? DEFAULT_TIME_ZONE }).format(value);
 }
 function conversion(value: number, previous: number) {
   if (previous <= 0) return "—";

@@ -22,6 +22,7 @@ import { formatDateTimeIst } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
 
@@ -39,7 +40,7 @@ function resourceActionLabel(eventType:string):string {
 const eventIstDay=(value:string|Date)=>{
  const stamp=new Date(value);
  return Number.isFinite(stamp.getTime())
-   ?createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
+   ?createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,
      weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(stamp)
    :"Date unavailable";
 };

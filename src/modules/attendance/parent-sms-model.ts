@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const verifiedParentPhoneSchema=z.string().regex(/^\+[1-9][0-9]{7,14}$/);
 export const attendanceParentContactInputSchema=z.object({
  collegeId:z.string().uuid(),membershipId:z.string().uuid(),
@@ -16,7 +17,7 @@ export function canNotifyVerifiedParent(contact:{
 }
 export type AttendanceParentSmsKind="ABSENT"|"CORRECTED";
 function timeIst(date:Date):string{
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
+ return new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",minute:"2-digit",
   hour12:true}).format(date);
 }
 export function attendanceParentSmsBody(kind:AttendanceParentSmsKind,courseName:string,

@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type MentorUnifiedNotification={
  id:string;source:"PERSONAL"|"ATTENTION"|"ANNOUNCEMENT";
  title:string;description:string;occurredAt:string;
@@ -17,7 +18,7 @@ export function mentorUnifiedDateLabel(stamp:string):string{
  const date=new Date(stamp);
  if(!Number.isFinite(date.getTime()))return "Date unavailable";
  return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,weekday:"long",day:"numeric",month:"long",year:"numeric",
  }).format(date);
 }
 export function mentorUnifiedNotificationGroups(rows:readonly MentorUnifiedNotification[]){

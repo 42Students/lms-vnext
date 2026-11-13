@@ -22,13 +22,14 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { formatDateWith } from "@/lib/format-date";
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
 type Page={configured:boolean;items:Entry[];nextPageToken:string|null};
 function displayTime(raw:string){
  const value=new Date(raw);
  return Number.isFinite(value.getTime())?formatDateWith(value, "en-IN", {
-  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
   hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})+" IST":"Unknown time";
 }
 function mergeEntries(existing:Entry[],incoming:Entry[]):Entry[]{
@@ -397,7 +398,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
         Auto-refresh every 30 seconds
       </Label>
       {lastSuccessfulAt?<span className="text-xs text-muted-foreground">
-        Last loaded {formatDateWith(lastSuccessfulAt, "en-IN", { timeStyle: "medium", timeZone:"Asia/Kolkata"})} IST
+        Last loaded {formatDateWith(lastSuccessfulAt, "en-IN", { timeStyle: "medium", timeZone:DEFAULT_TIME_ZONE})} IST
       </span>:null}
     </div>
     <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-2 text-xs text-muted-foreground" role="status">

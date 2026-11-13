@@ -14,13 +14,14 @@ import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation
 import { ProjectsServiceError } from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const meetingSchema = z.strictObject({
   meetingKey: z.string().trim().min(1).max(120),
   title: z.string().trim().min(1).max(500),
   agenda: z.string().trim().max(4000).nullable().optional(),
   startsAt: z.iso.datetime({ offset: true }),
   endsAt: z.iso.datetime({ offset: true }),
-  timeZone: z.string().trim().min(1).max(80).default("Asia/Kolkata"),
+  timeZone: z.string().trim().min(1).max(80).default(DEFAULT_TIME_ZONE),
   meetingUrl: z.string().trim().url().max(500).nullable().optional(),
   meetingType: z.enum(["GENERAL", "PLANNING", "STANDUP", "REVIEW", "RETRO"]).default("GENERAL"),
   status: z.enum(["DRAFT", "REQUESTED", "SCHEDULED", "RESCHEDULED", "COMPLETED", "CANCELLED"]).default("DRAFT"),

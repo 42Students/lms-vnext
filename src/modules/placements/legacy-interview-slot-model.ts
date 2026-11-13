@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Existing round/job/application relationships still enforce same-college scope. */
 export function historicalSlotDurationMinutes(raw:number|null){
  return raw===null||!Number.isSafeInteger(raw)||raw<=0?60:raw;
@@ -22,5 +23,5 @@ export function legacySlotChanged(previous:Date|null,current:Date){
  return previous!==null&&previous.getTime()!==current.getTime();
 }
 export function legacySlotDateIst(date:Date){
- return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(date);
+ return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE}).format(date);
 }

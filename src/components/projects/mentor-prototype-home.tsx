@@ -16,6 +16,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type FocusItem = MentorProjectAttention;
 
 function attentionLabel(kind:FocusItem["kind"]):string {
@@ -160,7 +161,7 @@ export function MentorPrototypeHome({
               href={"/mentor/calendar?projectId="+encodeURIComponent(item.projectId)}
               className="prototype-mentor-small-row" key={item.id}>
               <span>{createDateFormatter("en-IN", {day:"numeric",month:"short",
-                weekday:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"})
+                weekday:"short",hour:"numeric",minute:"2-digit",timeZone:DEFAULT_TIME_ZONE})
                 .format(new Date(item.startsAt))}</span>
               <strong>{mentorHomeMeetingDisplayTitle(item)}</strong>
             </TextLink>)}

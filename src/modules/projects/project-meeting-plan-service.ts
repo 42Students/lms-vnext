@@ -15,6 +15,7 @@ import { projectMeetingPlanFieldsChanged, projectMeetingPlanSchema,
 import { projectMeetingPlanToken } from "./project-meeting-plan-token";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Single atomic save of changed DRAFT meetings only. Scheduling, invitations,
  * meeting outcomes and cancellation remain in the existing lifecycle service.
  */
@@ -186,7 +187,7 @@ export async function replaceLegacyProjectMeetingDraftSection(
    }else{
     const [created]=await tx.insert(projectMeetings).values({
       projectId:scope.project.id,...fields,status:"DRAFT",
-      timeZone:"Asia/Kolkata",createdByUserId:context.user.id,
+      timeZone:DEFAULT_TIME_ZONE,createdByUserId:context.user.id,
     }).returning({id:projectMeetings.id});
     if(!created)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     savedIds.push(created.id);changedIds.push(created.id);

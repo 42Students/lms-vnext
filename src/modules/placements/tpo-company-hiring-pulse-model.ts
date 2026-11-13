@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoCompanyPulseDrive={status:string;archivedAt:Date|null};
 export type TpoCompanyPulseOffer={status:string;membershipId:string;joiningStatus:string|null;joiningRecordedAt:Date|null};
 export type TpoCompanyPulseEvent={at:Date};
@@ -19,7 +20,7 @@ export function projectTpoCompanyHiringPulse(input:{
     yearless.add(offer.membershipId);
     continue;
   }
-  const year=Number(new Intl.DateTimeFormat("en",{timeZone:"Asia/Kolkata",year:"numeric"}).format(when));
+  const year=Number(new Intl.DateTimeFormat("en",{timeZone:DEFAULT_TIME_ZONE,year:"numeric"}).format(when));
   if(!Number.isSafeInteger(year))continue;
   if(!joinedByYear.has(year))joinedByYear.set(year,new Set());
   joinedByYear.get(year)!.add(offer.membershipId);
@@ -53,7 +54,7 @@ export function projectTpoLegacyPlacedByJobYear(
       !(row.jobCreatedAt instanceof Date) ||
       !Number.isFinite(row.jobCreatedAt.getTime())) continue;
   const year = Number(new Intl.DateTimeFormat("en", {
-   timeZone: "Asia/Kolkata", year: "numeric",
+   timeZone: DEFAULT_TIME_ZONE, year: "numeric",
   }).format(row.jobCreatedAt));
   if (!Number.isSafeInteger(year)) continue;
   if (!years.has(year)) years.set(year, new Set());

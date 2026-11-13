@@ -52,6 +52,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Workspace = Awaited<
   ReturnType<
     typeof getLearnerCourseWorkspace
@@ -180,7 +181,7 @@ function legacyAddedDate(value:Date|string|null|undefined){
  if(!value)return null;
  const d=value instanceof Date?value:new Date(value);
  return Number.isFinite(d.getTime())?createDateFormatter("en-GB", {
-  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
  }).format(d):null;
 }
 function legacyLiveMoment(value:Date|string|null|undefined){
@@ -188,7 +189,7 @@ function legacyLiveMoment(value:Date|string|null|undefined){
  const d=value instanceof Date?value:new Date(value);
  return Number.isFinite(d.getTime())?createDateFormatter("en-GB", {
   weekday:"long",day:"2-digit",month:"short",year:"numeric",
-  hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
+  hour:"numeric",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE,
  }).format(d):null;
 }
 function contentKindLabel(type:string){
@@ -344,13 +345,13 @@ function ContentCard({
         {liveStart&&Number.isFinite(liveStart.getTime())?
           <div className="flex w-[72px] shrink-0 flex-col items-center justify-center rounded-lg border border-border bg-surface p-2 text-primary-text">
             <span className="text-xs font-semibold uppercase">
-              {createDateFormatter("en-GB", {month:"short",timeZone:"Asia/Kolkata"}).format(liveStart)}
+              {createDateFormatter("en-GB", {month:"short",timeZone:DEFAULT_TIME_ZONE}).format(liveStart)}
             </span>
             <span className="text-2xl font-bold">
-              {createDateFormatter("en-GB", {day:"2-digit",timeZone:"Asia/Kolkata"}).format(liveStart)}
+              {createDateFormatter("en-GB", {day:"2-digit",timeZone:DEFAULT_TIME_ZONE}).format(liveStart)}
             </span>
             <span className="text-xs">
-              {createDateFormatter("en-GB", {weekday:"short",timeZone:"Asia/Kolkata"}).format(liveStart)}
+              {createDateFormatter("en-GB", {weekday:"short",timeZone:DEFAULT_TIME_ZONE}).format(liveStart)}
             </span>
           </div>:null}
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
@@ -364,7 +365,7 @@ function ContentCard({
             {legacyLiveMoment(content.startsAt)}
             {liveEnd&&Number.isFinite(liveEnd.getTime())?" – "+
               createDateFormatter("en-GB", {hour:"numeric",minute:"2-digit",
-               hour12:true,timeZone:"Asia/Kolkata"}).format(liveEnd):""}
+               hour12:true,timeZone:DEFAULT_TIME_ZONE}).format(liveEnd):""}
             {durationMinutes>0?" · "+durationMinutes+" min":""}
           </p>:null}
         </div>

@@ -4,6 +4,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type ProjectListItem = {
   id: string;
   title: string;
@@ -122,7 +123,7 @@ export function ProjectList({
             const updated=activityAt&&Number.isFinite(activityAt.getTime())?
               createDateFormatter("en-IN", {
                 day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
-                timeZone:"Asia/Kolkata",
+                timeZone:DEFAULT_TIME_ZONE,
               }).format(activityAt):"No recorded activity";
             return (
               <TextLink variant="bare" key={item.id}

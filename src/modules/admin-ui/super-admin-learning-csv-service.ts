@@ -7,6 +7,7 @@ import {listCollegeLessons,listCollegeCourseProgress} from "@/modules/courses/co
 import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessment-aggregate-service";
 import {adminLearningQuerySchema} from "@/modules/courses/admin-learning-read-model";
 import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-directory-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
 export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind,
  reader:typeof listCollegeAssessmentAggregate=listCollegeAssessmentAggregate):Promise<Response>{
@@ -58,7 +59,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
     collegeId=data.collegeId;
     if(pageOnly){
       const localDate=(date:Date|null)=>date?new Intl.DateTimeFormat("sv-SE",{
-        timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+        timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
         hour:"2-digit",minute:"2-digit",hourCycle:"h23",
       }).format(date):"";
       rows.push(...data.items.map(item=>kind==="QUIZ"?

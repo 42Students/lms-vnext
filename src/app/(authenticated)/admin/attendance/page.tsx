@@ -19,9 +19,10 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function currentMonth() {
   return createDateFormatter("en-CA", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
   }).format(new Date());

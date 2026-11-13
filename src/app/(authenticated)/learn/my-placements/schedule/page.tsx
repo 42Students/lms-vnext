@@ -20,6 +20,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istIsoDateFormatter, istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
 export default async function LearnerPlacementSchedulePage({searchParams}:{
   searchParams:Promise<{view?:string|string[]}>;
@@ -110,24 +111,24 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const dayLabel=(date:Date|null)=>{
     if(!date)return "Date to be told";
     const key=dateKey(date);
-    const weekday=createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date);
-    const day=createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
+    const weekday=createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short"}).format(date);
+    const day=createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short"}).format(date);
     if(key===todayKey)return "Today · "+weekday+" "+day;
     if(key===tomorrowKey)return "Tomorrow · "+weekday+" "+day;
     if(key===yesterdayKey)return "Yesterday · "+weekday+" "+day;
-    return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long"}).format(date);
+    return createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"long",day:"numeric",month:"long"}).format(date);
   };
   const fmt = (date: Date | null) => date
-    ? createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium",
+    ? createDateFormatter("en-IN", { timeZone: DEFAULT_TIME_ZONE, dateStyle: "medium",
         ...(learnerRoundIsDayOnly(date)?{}:{timeStyle:"short" as const}) }).format(date)+
       (learnerRoundIsDayOnly(date)?" · Time to be told":"")
     : "Date to be told";
   const dateTile=(date:Date|null)=>{
    if(!date)return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 items-center justify-center rounded border border-border bg-muted text-xs">TBC</span>;
    return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 flex-col items-center justify-center rounded border border-border bg-primary-subtle text-center">
-    <span className="text-xs font-semibold uppercase">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
-    <strong className="text-2xl tabular-nums">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
-    <span className="text-xs">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date)}</span>
+    <span className="text-xs font-semibold uppercase">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,month:"short"}).format(date)}</span>
+    <strong className="text-2xl tabular-nums">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric"}).format(date)}</strong>
+    <span className="text-xs">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short"}).format(date)}</span>
    </span>;
   };
   const aheadByDay=new Map<string,WorkspaceRound[]>();

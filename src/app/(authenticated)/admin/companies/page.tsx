@@ -31,6 +31,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export default async function SuperAdminCompaniesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -113,7 +114,7 @@ export default async function SuperAdminCompaniesPage({
     sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
    {key:"active",header:"Last active",sortable:true,
     sortDirection:data.query.sort==="LAST_ACTIVE"?"descending":data.query.sort==="LAST_ACTIVE_ASC"?"ascending":"none",cell:row=><span>{row.lastActiveAt?
-    createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
+    createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
     "Never posted"}</span>},
 
    {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">

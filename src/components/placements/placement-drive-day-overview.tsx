@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type DriveDay = Awaited<ReturnType<typeof getPlacementDriveDay>>;
 function tone(status: string): "neutral" | "info" | "success" | "warning" | "error" {
   if (status === "COMPLETED" || status === "APPLIED") return "success";
@@ -14,7 +15,7 @@ function tone(status: string): "neutral" | "info" | "success" | "warning" | "err
 }
 function formatWhen(value: Date | null, timezone: string | null) {
   if (!value) return "Not scheduled";
-  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
+  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? DEFAULT_TIME_ZONE }).format(value);
 }
 export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driveDay: DriveDay; embedded?: boolean }) {
   return <div className="min-w-0 space-y-4">

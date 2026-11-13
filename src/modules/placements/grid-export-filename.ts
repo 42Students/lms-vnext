@@ -1,10 +1,11 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Legacy spreadsheet/download filename suffix: "name - D MMM YYYY".
  * Dates are shown in the LMS's Asia/Kolkata timezone, independent of the server.
  * The caller owns the resource label and exported column schema.
  */
 const exportedDay = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Asia/Kolkata",
+  timeZone: DEFAULT_TIME_ZONE,
   day: "numeric",
   month: "short",
   year: "numeric",

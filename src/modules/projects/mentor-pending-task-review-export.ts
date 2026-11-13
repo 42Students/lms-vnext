@@ -1,10 +1,11 @@
 import {csvSafeCell} from "./mentor-board-review-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type MentorTaskReviewExportRow={
  id:string;projectTitle:string;taskTitle:string;priority:string;version:number;submittedAt:Date;
 };
 export function mentorPendingTaskReviewCsv(rows:readonly MentorTaskReviewExportRow[],omitted:number){
  const format=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Review ID,Project,Task,Priority,Version,Submitted (IST)"];

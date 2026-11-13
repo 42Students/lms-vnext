@@ -27,6 +27,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -519,7 +520,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <Label className="block text-[length:var(--lms-font-sm)]">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
-      defaultValue={job.applicationDeadline?createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
+      defaultValue={job.applicationDeadline?createDateFormatter("sv-SE", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
    </Label>
    <Label className="block text-[length:var(--lms-font-sm)]">Minimum CGPA for eligibility

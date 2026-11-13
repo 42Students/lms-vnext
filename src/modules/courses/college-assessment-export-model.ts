@@ -2,6 +2,7 @@ import {z} from "zod";
 import {collegeAssessmentListQuerySchema,collegeAssessmentHref,type CollegeAssessmentKind,type CollegeAssessmentAggregateItem,type CollegeAssessmentListQuery} from "./college-assessment-aggregate-model";
 import {buildCollegeDirectoryCsv} from "@/modules/academics/college-directory-export-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const COLLEGE_ASSESSMENT_EXPORT_CAP=1000;
 export const LEGACY_ASSESSMENT_PAGE_EXPORT_CAP=20;
 
@@ -11,7 +12,7 @@ export function assessmentDeadlineWallClock(date:Date|null):string{
  if(!date)return "";
  if(!Number.isFinite(date.getTime()))return "";
  return new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(date);
 }

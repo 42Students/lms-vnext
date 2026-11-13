@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type OfferRow={
  id:string;name:string;membershipId:string;rollNumber:string|null;branch:string|null;
  role:string;status:string;statusLabel:string;kind:string;issued:string;
@@ -17,7 +18,7 @@ type Selection={
  id:string;name:string;roleTitle:string;status:string;offerReady:boolean;
 };
 const date=(iso:string|null)=>iso?createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
+ timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",
  hour:"numeric",minute:"2-digit",
 }).format(new Date(iso))+" IST":"Not recorded";
 /** Selected offer receipt summary from the authenticated register plus a

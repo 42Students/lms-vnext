@@ -10,10 +10,11 @@ import {getDb} from "@/db/client";
 import {isDebarmentActive} from "./batch-registration-policy";
 import {evaluatePlacementEligibility} from "./eligibility-service";
 import {findUnchosenEligibleBatchStudents} from "./batch-participation-service";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 export function collegeDate(now:Date){
   const values=new Intl.DateTimeFormat("en-US",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).formatToParts(now);
   const get=(key:string)=>values.find(row=>row.type===key)?.value??"";
   return get("year")+"-"+get("month")+"-"+get("day");

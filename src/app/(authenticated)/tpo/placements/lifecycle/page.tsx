@@ -31,6 +31,7 @@ import { istDayMonthYearFormatter, istDateFormatter, formatDateTimeIst } from "@
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -385,7 +386,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              "border-l-2 border-primary bg-primary-subtle":"")}>
             <strong className="block break-words text-sm text-foreground">{item.company} · {item.title}</strong>
             <span className="mt-1 block text-xs text-body">{driveRequestStatusLabel(item.status)} ·
-             {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
+             {" "}{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
            </TextLink>
           </li>)}</ul>
          </aside>
@@ -515,9 +516,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             const href="/tpo/placements/jobs/"+encodeURIComponent(job.id);
             const next=job.nextRoundAt?new Date(job.nextRoundAt):null;
             const nextEvent=next&&Number.isFinite(next.getTime())?
-             "Next round "+formatDateWith(next, "en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
+             "Next round "+formatDateWith(next, "en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
              job.applicationDeadline&&new Date(job.applicationDeadline).getTime()>new Date(data.asOf).getTime()?
-              "Applications close "+formatDateWith(new Date(job.applicationDeadline), "en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}):
+              "Applications close "+formatDateWith(new Date(job.applicationDeadline), "en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short"}):
              job.offersMade>0?"Review recorded offers":"No next event recorded";
             const task=job.status==="PUBLISHED"&&!job.applicationDeadline?
              {label:"Set a deadline",href:href+"/extend-deadline"}:

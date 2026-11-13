@@ -20,6 +20,7 @@ import { istIsoDateFormatter, istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
  ["decisions","Decisions"],["drives","Drives"],["companies","Companies"],
@@ -37,10 +38,10 @@ function threadTime(value:Date, now:Date) {
  const yesterday=new Date(now.getTime()-86400000);
  if(day(value)===day(yesterday))return "Yesterday";
  if(now.getTime()-value.getTime()<6*86400000)return createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",weekday:"short",
+  timeZone:DEFAULT_TIME_ZONE,weekday:"short",
  }).format(value);
  return createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
  }).format(value);
 }
 

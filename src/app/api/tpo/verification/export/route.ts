@@ -6,6 +6,7 @@ import {tpoVerificationQuerySchema} from "@/modules/verification/tpo-queue-serve
 import {verificationCsv} from "@/modules/verification/queue-export";
 import { route } from "@/security/route";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -13,7 +14,7 @@ async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const stamp=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+    dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
   }).format(value)+" IST";
   const params=new URL(request.url).searchParams;
   const allowedTabs=["WAITING","SENT_BACK","VERIFIED"] as const;

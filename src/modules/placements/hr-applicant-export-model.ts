@@ -1,6 +1,7 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type { SharedApplicant } from "./hr-job-applicants-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_APPLICANT_EXPORT_CAP = 200;
 const HEADER = [
   "Application ID", "Applicant", "Role", "Application status",
@@ -15,7 +16,7 @@ export function buildHrApplicantCsv(rows: readonly SharedApplicant[], total: num
   const safeRows = rows.slice(0, HR_APPLICANT_EXPORT_CAP);
   const csv = [HEADER.map(csvCell).join(",")];
   const dateFormat = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, day: "2-digit", month: "2-digit", year: "numeric",
     hour: "2-digit", minute: "2-digit", hour12: false,
   });
   for (const row of safeRows) {

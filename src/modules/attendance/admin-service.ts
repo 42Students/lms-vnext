@@ -48,6 +48,7 @@ import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches,adminA
 import {appendAttendanceHistoryEvent} from "./history-event";
 
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Options are independent reads. A failed class-offering query must never
  * be rendered as a verified empty course list. */
 export class AdminAttendanceOptionsLookupError extends Error {
@@ -495,7 +496,7 @@ export async function getAdminAttendanceDateRangeReport(context:RequestContext,r
   }),
  }))));
  const indiaDay=(date:Date):string=>{
-  const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+  const parts=new Intl.DateTimeFormat("en-US",{timeZone:DEFAULT_TIME_ZONE,
    year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);
   const part=(type:string)=>parts.find(x=>x.type===type)?.value??"";
   return part("year")+"-"+part("month")+"-"+part("day");

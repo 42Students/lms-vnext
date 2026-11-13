@@ -1,7 +1,8 @@
 import type {PlacementCalendarEvent} from "./placement-calendar-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Due={id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date};
 const istDayKey=(value:Date)=>new Intl.DateTimeFormat("sv-SE",{
- timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
 }).format(value);
 function relativeIstDay(event:Date,now:Date){
  const current=istDayKey(now),target=istDayKey(event);

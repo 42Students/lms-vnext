@@ -10,6 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { formatDateWith } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function TpoInterviewRescheduleForm({round}:{
  round:{id:string;updatedAt:string;scheduledAt:string|null;mode:string|null;venue:string|null;meetingUrl:string|null}
 }){
@@ -19,7 +20,7 @@ export function TpoInterviewRescheduleForm({round}:{
  const [mode,setMode]=useState(round.mode??"ON_CAMPUS");
  const [venue,setVenue]=useState(round.venue??"");
  const [meetingUrl,setMeetingUrl]=useState(round.meetingUrl??"");
- const initial=round.scheduledAt?formatDateWith(new Date(round.scheduledAt), "sv-SE", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone:"Asia/Kolkata" }).replace(" ","T").slice(0,16):"";
+ const initial=round.scheduledAt?formatDateWith(new Date(round.scheduledAt), "sv-SE", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone:DEFAULT_TIME_ZONE }).replace(" ","T").slice(0,16):"";
  async function submitConfirmed(){
   if(pending||!formRef.current)return;
   const form=new FormData(formRef.current);

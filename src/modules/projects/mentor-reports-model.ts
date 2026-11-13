@@ -2,6 +2,7 @@ import {z} from "zod";
 import {csvSafeCell} from "./mentor-board-review-model";
 import type {MentorProjectAttention} from "./mentor-attention";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const mentorReportsQuerySchema=z.object({
   status:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   taskCoverage:z.enum(["ALL","NO_TASKS","OPEN_TASKS","ALL_DONE"]).default("ALL"),
@@ -95,7 +96,7 @@ export function mentorReportsCsv(rows:readonly {
   updatedAt:Date;attention:readonly string[];
 }[],omitted:number){
   const format=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
     hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   });
   const lines=["Project ID,Project,Status,Primary Mentor,Recorded attention,Updated (IST)"];

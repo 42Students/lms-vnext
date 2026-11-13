@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const driveInterviewsQuerySchema = z.object({
   kind: z.enum(["ALL","INTERVIEW","GD"]).default("ALL"),
   status: z.enum(["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
@@ -109,5 +110,5 @@ export function appointmentConflictLabel(changed:boolean,conflict:boolean){
  return conflict?"Schedule conflict":changed?"Time changed":"On schedule";
 }
 export function driveInterviewDateIst(date:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST";
+ return new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"}).format(date)+" IST";
 }

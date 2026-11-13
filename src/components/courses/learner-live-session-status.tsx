@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function liveSessionCountdown(startsAt:string,endsAt:string,now:Date):string{
  const start=Date.parse(startsAt),end=Date.parse(endsAt),time=now.getTime();
  // Old LMS keeps a session scheduled when no authored time is available;
@@ -33,8 +34,8 @@ export function LearnerLiveSessionStatus({startsAt,endsAt}:{
  const date=Date.parse(startsAt);
  return <section role="status" aria-live="polite" className="mt-2 flex min-w-0 flex-wrap items-center gap-3 rounded border-l-2 border-[var(--lms-primary)] bg-primary-subtle px-3 py-3">
   {Number.isFinite(date)?<div aria-hidden="true" className="flex h-14 w-12 shrink-0 flex-col items-center justify-center rounded bg-surface text-center">
-   <span className="text-xs font-semibold uppercase">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
-   <strong className="text-xl tabular-nums">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
+   <span className="text-xs font-semibold uppercase">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,month:"short"}).format(date)}</span>
+   <strong className="text-xl tabular-nums">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric"}).format(date)}</strong>
   </div>:null}
   <span aria-hidden="true" className={"inline-block size-2 shrink-0 rounded-full "+(label==="Live now"?"animate-pulse bg-success":"bg-primary")}/>
   <div className="min-w-0"><StatusBadge tone={label==="Live now"?"success":label==="Ended"||label==="Scheduled"?"neutral":"info"}>{label}</StatusBadge>

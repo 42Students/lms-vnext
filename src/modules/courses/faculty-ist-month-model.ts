@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const facultyMonthQuerySchema=z.object({
   month:z.string().regex(/^(19|20)\d{2}-(0[1-9]|1[0-2])$/),
   deliveryId:z.string().uuid().optional(),
@@ -14,7 +15,7 @@ export type FacultyMonthQuery=z.infer<typeof facultyMonthQuerySchema>;
  */
 export function istDateKey(date:Date) {
   const parts=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).formatToParts(date);
   const get=(kind:string)=>parts.find(part=>part.type===kind)?.value??"";
   return get("year")+"-"+get("month")+"-"+get("day");

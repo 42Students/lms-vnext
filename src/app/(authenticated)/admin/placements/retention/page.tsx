@@ -14,6 +14,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateWith } from "@/lib/format-date";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RetentionParams={searchParams:Promise<{details?:string}>};
 function RetentionLoading(){
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading retention review">
@@ -60,7 +61,7 @@ async function RetentionReportContent({searchParams}:RetentionParams){
     action={<ButtonLink variant="secondary" href="/admin/placements/retention?details=1&retry=1">Retry</ButtonLink>}/>
   </div>;
  }
- const fmt=(d:Date)=>formatDateWith(d, "en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"});
+ const fmt=(d:Date)=>formatDateWith(d, "en-IN", {dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE});
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
   {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=><strong className="block min-w-0 break-words font-semibold text-[var(--lms-heading)]">{row.applicantName}</strong>},
   {key:"drive",header:"Drive",mobilePriority:"secondary",cell:row=><span className="block min-w-0 break-words">{row.jobTitle}</span>},

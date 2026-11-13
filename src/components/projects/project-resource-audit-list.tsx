@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { formatDateWith } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ResourceEvent = {
   id: string;
   eventType: string;
@@ -92,7 +93,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
     { key: "when", header: "When", mobilePriority: "secondary",
       cell: row => <time dateTime={row.event.occurredAt}
         title={formatDateWith(new Date(row.event.occurredAt), "en-IN", {
-          dateStyle:"full",timeStyle:"long",timeZone:"Asia/Kolkata",
+          dateStyle:"full",timeStyle:"long",timeZone:DEFAULT_TIME_ZONE,
         })}>{formatWhen(row.event.occurredAt)}</time> },
   ];
   return <section aria-label="Resource activity" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">

@@ -10,6 +10,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Params={deliveryId?:string;student?:string;filter?:string};
 export default async function FacultyAssignmentGradePage({params,searchParams}:{
  params:Promise<{contentId:string}>;searchParams:Promise<Params>;
@@ -35,7 +36,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
  const href=(f:string,student?:string)=>root+"?deliveryId="+encodeURIComponent(assignment.deliveryId)+
    (f==="all"?"":"&filter="+encodeURIComponent(f))+(student?"&student="+encodeURIComponent(student):"");
  const stamp=(value:Date)=>createDateFormatter("en-IN", {
-   timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
+   timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
   }).format(value);
  const percent=report.rosterUnavailable?null:metrics.eligibleLearners;
  return <section className="space-y-5" aria-label="Faculty assignment grading prototype">

@@ -12,10 +12,11 @@ import { TextLink } from "@/components/ui/text-link";
 import { istWeekdayDayMonthFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 const istDate=(date:Date)=>istWeekdayDayMonthFormatter.format(date);
 const istClassTime=(date:Date)=>createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
+ timeZone:DEFAULT_TIME_ZONE,weekday:"short",day:"numeric",month:"short",
  hour:"numeric",minute:"2-digit",hour12:true,
 }).format(date);
 

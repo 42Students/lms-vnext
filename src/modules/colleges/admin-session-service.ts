@@ -12,6 +12,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {adminSessionHistoryPageSchema} from "./admin-session-query-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
  const collegeId=z.uuid().parse(collegeIdInput),userId=z.uuid().parse(userIdInput);
@@ -47,7 +48,7 @@ export function collegeAdminSessionDisplay(row:{
   agent:row.user_agent?.trim()||"Unknown browser",
   ip:row.ip_address?.trim()||"—",
   lastUsed:Number.isFinite(rawTime.getTime())
-   ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(rawTime)+" IST"
+   ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE}).format(rawTime)+" IST"
    :"—",
  };
 }

@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Candidate generation for the two legacy 08:00 IST TPO reminders.
  * This module does NOT dispatch messages or claim a scheduler lease:
@@ -7,7 +8,7 @@
 const dayInIndia = (value: Date): string => {
   if (!Number.isFinite(value.getTime())) throw new Error("INVALID_REMINDER_DATE");
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(value);
   const field = (name: string) => parts.find(part => part.type === name)?.value ?? "";
   return field("year") + "-" + field("month") + "-" + field("day");

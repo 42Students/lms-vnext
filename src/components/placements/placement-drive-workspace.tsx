@@ -59,9 +59,10 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function formatDriveIst(date:Date|null){
  return date?createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",
-  minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
+  minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE}).format(date)+" IST":"Date to be decided";
 }
 export async function PlacementDriveWorkspace({
   context,

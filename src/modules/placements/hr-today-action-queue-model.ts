@@ -1,10 +1,11 @@
 import { recruiterTodayHref } from "./hr-today-deeplink-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Display calendar instants in the application's IST convention, never
  * expose UTC ISO wire timestamps as the employer-facing reply deadline. */
 function recruiterDueAtIst(value:Date):string{
  return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+  timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
  }).format(value)+" IST";
 }
 type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null;applicationDeadline?:Date|null}};

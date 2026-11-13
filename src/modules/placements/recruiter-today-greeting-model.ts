@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** REC-home-drives-04: exact legacy time-of-day headline and actionable task copy. */
 /** All vNext workspace clocks are IST, irrespective of browser time zone.
  * Preserve the old firstName -> account displayName fallback without making
@@ -8,7 +9,7 @@ export function recruiterTodayGreeting(
  firstName?:string|null,
 ){
  const hour=Number(new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",hour:"numeric",hourCycle:"h23",
+  timeZone:DEFAULT_TIME_ZONE,hour:"numeric",hourCycle:"h23",
  }).format(now));
  const timeOfDay=hour<12?"morning":hour<17?"afternoon":"evening";
  const name=(firstName?.trim()||displayName?.trim().split(/\s+/)[0]||"")

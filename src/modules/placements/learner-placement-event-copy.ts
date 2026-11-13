@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** LEARNER-placements-R04: bounded, internal, learner-facing placement notices.
  * Event kinds are persisted by their producing transaction, never synthesized on GET. */
 export const learnerPlacementEventKinds=[
@@ -87,11 +88,11 @@ function eventDate(value:string|Date|null|undefined,withTime=false):string{
  const date=value instanceof Date?value:new Date(value);
  if(!Number.isFinite(date.getTime()))return "";
  const day=new Intl.DateTimeFormat("en-GB",{
-  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
  }).format(date);
  if(!withTime)return day;
  return day+" at "+new Intl.DateTimeFormat("en-US",{
-  hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
+  hour:"2-digit",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE,
  }).format(date);
 }
 const statusesThatNotify=new Set(["INTERVIEW","OFFERED","HIRED","ASSESSMENT",

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -21,7 +22,7 @@ function statusLabel(status:string){
 function calendarLabel(date:Date|string){
  const when=new Date(date);
  return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
  }).format(when):"Date unavailable";
 }
 /** The campaign sidebar is one authorized college's persisted campaign list.

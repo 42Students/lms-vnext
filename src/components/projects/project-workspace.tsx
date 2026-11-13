@@ -93,6 +93,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
 >;
@@ -1286,7 +1287,7 @@ export function ProjectWorkspace({
         </div>
         {mode===ROLE.LEARNER?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
-            const today=createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",
+            const today=createDateFormatter("sv-SE", {timeZone:DEFAULT_TIME_ZONE,
               year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
             const rollup=learnerSprintRollup(workspace.sprints,workspace.tasks,today);
             return <>Sprints completed {rollup.completed} of {rollup.total}

@@ -19,6 +19,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
 
@@ -88,7 +89,7 @@ function legacyActivityTime(value:string){
  if(!Number.isFinite(date.getTime()))return "Unknown time";
  return createDateFormatter("en-IN", {
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
-  timeZone:"Asia/Kolkata",
+  timeZone:DEFAULT_TIME_ZONE,
  }).format(date).replace(/\b(am|pm)\b/g,s=>s.toUpperCase());
 }
 function legacyAgoText(value:string,now:number){
@@ -102,7 +103,7 @@ function legacyAgoText(value:string,now:number){
 function legacyActivityDay(value:string){
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "Unknown day";
- return createDateFormatter("en-IN", {day:"numeric",month:"short",timeZone:"Asia/Kolkata"}).format(date);
+ return createDateFormatter("en-IN", {day:"numeric",month:"short",timeZone:DEFAULT_TIME_ZONE}).format(date);
 }
 
 export function TpoCompanyMemoryWorkspace({

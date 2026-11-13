@@ -2,6 +2,7 @@ import { z } from "zod";
 import { parseActivityDateBoundary } from "./date-boundary";
 import { ACTIVITY_MODULES, ACTIVITY_IMPORTANCE } from "./taxonomy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   try { parseActivityDateBoundary(value, "from"); return true; }
   catch { return false; }
@@ -74,7 +75,7 @@ export function collegeActivityRecentHref(
 ) {
   if (Number.isNaN(asOf.getTime())) throw new RangeError("INVALID_DATE");
   const pieces = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year:"numeric", month:"2-digit", day:"2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year:"numeric", month:"2-digit", day:"2-digit",
   }).formatToParts(asOf);
   const value=(part: "year"|"month"|"day")=>pieces.find(entry=>entry.type===part)?.value ?? "";
   const year=Number(value("year")),month=Number(value("month")),day=Number(value("day"));
@@ -101,7 +102,7 @@ export function activitySearchParams(
 /** COL-verification-misc-12: today follows the user's IST calendar, not UTC midnight. */
 export function collegeActivityTodayHref(filter:CollegeActivityQuery,asOf:Date){
  if(!Number.isFinite(asOf.getTime()))throw new RangeError("INVALID_DATE");
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
    year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(asOf);
  const component=(type:"year"|"month"|"day")=>parts.find(part=>part.type===type)?.value??"";
  const day=`${component("year")}-${component("month")}-${component("day")}`;

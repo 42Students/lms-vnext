@@ -5,6 +5,7 @@ import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoRecruiterPrototypeColumn="recruiter"|"company"|"stage"|"next"|"last"|"owner";
 export const TPO_RECRUITER_PROTOTYPE_COLUMNS:readonly {key:TpoRecruiterPrototypeColumn;label:string}[]=[
  {key:"recruiter",label:"Recruiter"},{key:"company",label:"Company"},
@@ -21,7 +22,7 @@ function shortDate(raw:string|null){
  if(!raw)return "Not recorded";
  const date=new Date(raw);
  if(!Number.isFinite(date.getTime()))return "Unavailable";
- return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
+ return createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short"}).format(date);
 }
 
 const prototypeStage:Record<TpoRecruiterLeadStage,string>={

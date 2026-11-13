@@ -13,6 +13,7 @@
  */
 import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Canonical name/cadence metadata is shared with the actual worker registry.
  * Fixed-delay source jobs execute after the prior completion, not at an
  * arbitrary cron boundary. Worker metrics must distinguish HELD from failed.
@@ -158,6 +159,6 @@ export function isCurrentJobLease(
 export const TPO_DEADLINE_TODAY_SCHEDULE = {
   jobName: "tpo.deadlineToday",
   cron: "0 0 8 * * *",
-  timeZone: "Asia/Kolkata",
+  timeZone: DEFAULT_TIME_ZONE,
   ttlMs: 30 * 60 * 1000,
 } as const;

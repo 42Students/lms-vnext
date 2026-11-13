@@ -12,10 +12,11 @@ import {useRouter} from "next/navigation";
 import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Quiz={id:string;title:string;status:string;dueAt:Date|null};
 function istInput(date:Date|null){
  if(!date)return "";
- return createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
+ return createDateFormatter("sv-SE", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",
   day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(date)).replace(" ","T");
 }
 export function CollegeQuizActions({quiz}:{quiz:Quiz}){

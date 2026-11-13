@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type NotificationListItem = {
   id: string;
   title: string;
@@ -76,7 +77,7 @@ function formatWhen(value: string) {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
   }).format(date);
 }
 

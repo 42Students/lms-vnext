@@ -17,6 +17,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -24,16 +25,16 @@ type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
 type MeetingZone=string;
 const MEETING_ZONES = Array.from(new Set([
- "Asia/Kolkata", "UTC",
+ DEFAULT_TIME_ZONE, "UTC",
  ...Intl.supportedValuesOf("timeZone"),
 ])).sort((left, right) => left.localeCompare(right));
-const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?createDateFormatter("sv-SE", {
+const dateInput=(iso:string|null,zone:MeetingZone=DEFAULT_TIME_ZONE)=>iso?createDateFormatter("sv-SE", {
  timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(iso)).replace(" ","T"):"";
 /** Convert an IANA wall time without silently accepting nonexistent or duplicated
  * local clock instants across daylight-saving transitions. No fixed offsets. */
-function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){
+function isoIst(local:string,zone:MeetingZone=DEFAULT_TIME_ZONE){
  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))
   throw Error("Enter date and time");
  try{createDateFormatter("en-US", {timeZone:zone}).format(new Date());}
@@ -71,7 +72,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [initialDraft,setInitialDraft]=useState(()=>{
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   return JSON.stringify({lessonId:lessons[0]?.id??"",title:"",url:"",notes:"",duration:"",
-   start:times.start,end:times.end,deliveryId:"",timeZone:"Asia/Kolkata",
+   start:times.start,end:times.end,deliveryId:"",timeZone:DEFAULT_TIME_ZONE,
    removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]});
  });
  const [pendingArchive,setPendingArchive]=useState<Existing|null>(null);
@@ -134,7 +135,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [removeLink,setRemoveLink]=useState(false);
  const [openMaterialsId,setOpenMaterialsId]=useState<string|null>(null);
  const [deliveryId,setDeliveryId]=useState("");
- const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
+ const [timeZone,setTimeZone]=useState<MeetingZone>(DEFAULT_TIME_ZONE);
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const courseOptions=[...new Map(lessons.map(row=>[row.offeringId,
   {id:row.offeringId,name:row.course,code:row.courseCode}])).values()];
@@ -173,21 +174,21 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  function select(item:Existing){
   setEditing(item.id);setOpen(true);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setLessonId(item.lessonId);setTitle(item.title);
   setUrl("");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-  setTimeZone("Asia/Kolkata");setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);
+  setTimeZone(DEFAULT_TIME_ZONE);setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);
   setVisibleToStudents(item.visibleToStudents);setResourceFiles([]);setResourceUploadStatus("");setResourceProgress(0);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});setDiscardOpen(false);setError("");setMessage("");
   setInitialDraft(JSON.stringify({lessonId:item.lessonId,title:item.title,url:"",notes:item.notes??"",
    duration:item.durationSeconds===null?"":String(item.durationSeconds),
    start:dateInput(item.startsAt),end:dateInput(item.endsAt),deliveryId:item.deliveryId??"",
-   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
+   timeZone:DEFAULT_TIME_ZONE,removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
  }
  function fresh(){
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   setEditing(null);setOpen(true);setNewResourceId(null);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setTitle("");setUrl("");setNotes("");setDuration("");
-  setStart(times.start);setEnd(times.end);setTimeZone("Asia/Kolkata");setDeliveryId("");
+  setStart(times.start);setEnd(times.end);setTimeZone(DEFAULT_TIME_ZONE);setDeliveryId("");
   setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);setResourceFiles([]);setResourceUploadStatus("");setResourceProgress(0);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});
   setDiscardOpen(false);
   setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
-   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
+   deliveryId:"",timeZone:DEFAULT_TIME_ZONE,removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
  }
  async function uploadResourceFiles(id:string,audience:string|null){
   const root="/api/courses/lesson-contents/"+encodeURIComponent(id)+"/materials/files";

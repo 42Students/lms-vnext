@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type MentorWeekActivityItem={
   id:string;eventType:string;summary:string;occurredAt:string|Date;
 };
@@ -7,7 +8,7 @@ export type MentorWeekActivityItem={
 export function mentorLoadedWeekActivitySummary(
   events:readonly MentorWeekActivityItem[],now:Date,
 ):{taskMoves:number;comments:number;resourcesShared:number;count:number;partial:true}{
-  const dates=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+  const dates=new Intl.DateTimeFormat("en-US",{timeZone:DEFAULT_TIME_ZONE,
     day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(now);
   const field=(name:string)=>Number(dates.find(item=>item.type===name)?.value);
   const midnight=Date.UTC(field("year"),field("month")-1,field("day"))-330*60000;

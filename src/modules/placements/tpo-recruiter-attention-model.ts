@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type RecruiterAttentionChip =
   | "OVERDUE" | "NO_NEXT_STEP" | "QUIET" | "BOUNCED" | "UNVERIFIED";
 
@@ -26,7 +27,7 @@ export function recruiterAttentionFromPersistedFacts(input: {
   const days = (at: Date) => {
     const localDay = (d: Date) => {
       const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+        timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
       }).formatToParts(d);
       const p = (kind: string) => parts.find(x => x.type === kind)?.value ?? "00";
       return Date.parse(`${p("year")}-${p("month")}-${p("day")}T00:00:00Z`);
@@ -55,7 +56,7 @@ export function tpoRecruiterFollowupSignal(
  if(!Number.isFinite(due.getTime())||!Number.isFinite(now.getTime()))
   return {label:"Follow-up date unavailable",lateDays:0};
  const day=(value:Date)=>new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  }).format(value);
  const days=Math.round((Date.parse(day(now)+"T00:00:00Z")-
                         Date.parse(day(due)+"T00:00:00Z"))/86400000);

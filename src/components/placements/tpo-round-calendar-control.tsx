@@ -13,6 +13,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 import { Disclosure } from "@/components/ui/disclosure";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Choice = {
   id: string; jobId: string; jobTitle: string; companyName: string; name: string;
   kind: string; status: string; updatedAt: string; scheduledAt: string | null;
@@ -21,7 +22,7 @@ type Choice = {
 };
 const localIst = (value: string | null) => value
   ? createDateFormatter("sv-SE", {
-      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
+      timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit",
       day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }).format(new Date(value)).replace(", ", "T").replace(" ", "T")
   : "";

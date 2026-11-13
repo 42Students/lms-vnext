@@ -3,13 +3,14 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { readCollegeActivityExportParams } from "@/modules/activity/college-activity-export-model";
 import { exportSuperAdminActivity } from "@/modules/activity/super-admin-audit-export-service";
 import { route } from "@/security/route";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 async function handleGET(request:Request) {
  try {
   const params=readCollegeActivityExportParams(new URL(request.url).searchParams);
   const result=await exportSuperAdminActivity(await getCurrentRequestContext(),params);
   const istDate = new Intl.DateTimeFormat("en-GB", {
-   timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+   timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).format(new Date()).split("/").reverse().join("-");
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",

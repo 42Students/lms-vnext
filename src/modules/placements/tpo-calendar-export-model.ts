@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
   const date = new Date(value + "T00:00:00.000Z");
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
@@ -33,7 +34,7 @@ export type CalendarExportRow = {
 };
 
 const istFormat = new Intl.DateTimeFormat("en-GB", {
-  dateStyle: "short", timeStyle: "short", timeZone: "Asia/Kolkata",
+  dateStyle: "short", timeStyle: "short", timeZone: DEFAULT_TIME_ZONE,
 });
 export function tpoCalendarRoundsCsv(
   rows: readonly CalendarExportRow[], truncated: boolean,
@@ -57,7 +58,7 @@ export function tpoCalendarRoundsCsv(
 export function todayIstDate(now: Date): string {
   const parts = new Intl.DateTimeFormat("en-GB", {
     year: "numeric", month: "2-digit", day: "2-digit",
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
   }).formatToParts(now);
   const part = (type: string) => parts.find((value) => value.type === type)?.value ?? "";
   return part("year") + "-" + part("month") + "-" + part("day");

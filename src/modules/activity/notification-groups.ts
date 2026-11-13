@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Client-safe date grouping. Uses the calendar date in the LMS's India timezone,
  * not UTC midnight, so a notification at 00:30 IST is grouped correctly.
@@ -11,7 +12,7 @@ export type NotificationDateGroup<T> = {
 function dateInIndia(instant: Date): string | null {
   if (!Number.isFinite(instant.getTime())) return null;
   const tokens = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

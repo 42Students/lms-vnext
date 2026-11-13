@@ -1,6 +1,7 @@
 import {createHash} from "node:crypto";
 import type {MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Canonical, deterministic key for importing old project meeting documents.
  * Scope the old meetingKey to its project to avoid collisions between colleges. */
 export function legacyMeetingUuid(projectId:string,meetingKey:string):string{
@@ -72,7 +73,7 @@ export function crosswalkLegacyProjectMeeting(input:{
   projectId:input.projectId,projectTitle:input.projectTitle,projectStatus:input.projectStatus,
   title:(r.title??r.meetingTitle??"Meeting").trim()||"Meeting",
   status,startsAt,endsAt,
-  timeZone:r.timeZone??r.timezone??"Asia/Kolkata",
+  timeZone:r.timeZone??r.timezone??DEFAULT_TIME_ZONE,
   meetingUrl:meetingHref,linkedSprintTitle:r.sprintLabel??null,
   legacySprintLabel:r.sprintLabel??null,legacyStartTime:r.startTime??null,
   legacyEndTime:r.endTime??null,

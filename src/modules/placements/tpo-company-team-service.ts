@@ -13,6 +13,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {prioritizedCompanyTeamRecipients} from "./tpo-company-team-recipient-priority";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const companyTeamCompanyIdSchema=z.string().uuid();
 const uuid=z.string().uuid();
 const messageText=z.string().trim().min(1).max(4000);
@@ -81,11 +82,11 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
    .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
    .orderBy(asc(users.displayName)).limit(100),
  ]);
- const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+ const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,
   dateStyle:"medium",timeStyle:"short"});
- const dayFormatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+ const dayFormatter=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,
   weekday:"long",day:"numeric",month:"short"});
- const dayKeyFormatter=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
+ const dayKeyFormatter=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,
   year:"numeric",month:"2-digit",day:"2-digit"});
  return {status:"READY" as const,companyName:company.name,messages:latest.slice(0,100).reverse()
    .map(row=>({...row,createdLabel:formatter.format(row.createdAt)+" IST",

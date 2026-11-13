@@ -16,6 +16,7 @@ import {
 
 
 import { rawEnv } from "@/config/env";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy assignment/quiz and interview reminder merge fields, converted to
  * IST with the original old-LMS keys. This is a pure producer-side mapper,
  * not a send action: it must enter a registered, permission-checked template
@@ -29,7 +30,7 @@ function reminderInstant(value: Date | string): Date {
 function indiaReminderParts(instant: Date | string) {
   const date=reminderInstant(instant);
   const format=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"short",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"short",day:"2-digit",
     hour:"2-digit",minute:"2-digit",hour12:true,
   });
   const entries=Object.fromEntries(format.formatToParts(date).map(part=>[part.type,part.value]));

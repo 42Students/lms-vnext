@@ -14,6 +14,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Inbox list data is a preview, never a full-message permission grant.
  * The full plain-text body is fetched only after opening the global-SA drawer. */
 export type InboundMailRow={
@@ -27,7 +28,7 @@ function receivedLabel(raw:string){
  const date=new Date(raw);
  if(!Number.isFinite(date.getTime()))return "Date unavailable";
  const parts=createDateFormatter("en-GB", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
   hour:"numeric",minute:"2-digit",hour12:true,
  }).formatToParts(date);
  const val=(name:string)=>parts.find(part=>part.type===name)?.value??"";

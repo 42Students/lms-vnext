@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const mentorTimelineQuerySchema=z.object({
   projectId:z.string().uuid(),
   releaseStatus:z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
@@ -17,7 +18,7 @@ export function derivedSprintProgressStatus(input:{
  state:string;completedTasks:number;totalTasks:number;
  startDate?:string|null;dueDate?:string|null;
 },today=new Date()):LegacySprintProgressStatus{
- const pieces=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(today);
+ const pieces=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(today);
  const part=(key:Intl.DateTimeFormatPartTypes)=>pieces.find(item=>item.type===key)?.value??"";
  const midnight=part("year")+"-"+part("month")+"-"+part("day");
  if(input.state==="COMPLETED"||

@@ -39,6 +39,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const dynamic = "force-dynamic";
 type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
  registration?:string|string[];afterCollege?:string|string[];urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
@@ -250,7 +251,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
                 request.requestType==="ROUND_RESCHEDULE"?"Reschedule interview":
                 request.requestType==="OFFER_EXTENSION"?"Extend offer deadline":request.requestType.replaceAll("_"," ");
               const timestamp=createDateFormatter("en-IN", {
-                timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true,
+                timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true,
               }).format(request.requestedAt);
               return <tr key={request.id} className="align-top hover:bg-primary-subtle">
                 <td className="max-w-[180px] px-3 py-3">
@@ -276,7 +277,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
                 {data.query.status!=="PENDING"?<>
                   <td className="px-3 py-3">{request.decidedBy||"—"}</td>
                   <td className="whitespace-nowrap px-3 py-3">{request.decidedAt?createDateFormatter("en-IN", {
-                    timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
+                    timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
                   }).format(request.decidedAt):"—"}</td>
                   <td className="max-w-[180px] break-words px-3 py-3">{request.decisionNote||"—"}</td>
                 </>:null}

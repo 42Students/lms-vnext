@@ -1,9 +1,10 @@
 import {csvSafeCell} from "./mentor-board-review-model";
 import type {MentorMeetingCalendarItem} from "./mentor-calendar-view";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Read-only export over already authorized meeting records, excluding join URLs. */
 export function mentorCalendarCsv(rows:readonly MentorMeetingCalendarItem[],omitted:number){
  const formatter=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Meeting ID,Project,Meeting,Status,Start (IST),End (IST)"];

@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RoundKind =
   | "TALK"
   | "TEST"
@@ -621,7 +622,7 @@ export function PlacementDriveControls({
           ).toISOString(),
           timezone:
             Intl.DateTimeFormat().resolvedOptions()
-              .timeZone || "Asia/Kolkata",
+              .timeZone || DEFAULT_TIME_ZONE,
           mode: draft.mode,
           venue:
             draft.mode === "ON_CAMPUS"

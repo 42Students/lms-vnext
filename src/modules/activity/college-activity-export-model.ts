@@ -3,6 +3,7 @@ import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import {collegeActivityItem} from "./college-activity-presentation";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const COLLEGE_ACTIVITY_EXPORT_CAP = 1000;
 /** College-admin activity exports deliberately do not expose IP addresses. */
 export const COLLEGE_ACTIVITY_IP_POLICY="REDACTED" as const;
@@ -40,7 +41,7 @@ export function buildCollegeActivityCsv(
   // Legacy read-only feed columns. Never synthesize or disclose client IP data.
   const columns=["Time","Who","What","Item","Action key","IP"];
   const timestamp=new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+    dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
   });
   const lines=[columns.map(escapeActivityCsvCell).join(",")];
   for(const row of rows.slice(0, COLLEGE_ACTIVITY_EXPORT_CAP)){

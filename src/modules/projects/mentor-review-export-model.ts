@@ -1,6 +1,7 @@
 import {csvSafeCell} from "./mentor-board-review-model";
 import {mentorPortfolioHref,mentorReviewQuerySchema} from "./mentor-portfolio-model";
 import type {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type MentorReviewQuery=z.infer<typeof mentorReviewQuerySchema>;
 
 /** Strip pagination before export so the server applies the same authorized filters. */
@@ -14,7 +15,7 @@ export type MentorReviewExportRow={projectId:string;projectTitle:string;occurred
 /** Only assigned project labels and submission times, no learner identities or review notes. */
 export function mentorReviewExportCsv(rows:readonly MentorReviewExportRow[],omitted:number){
  const fmt=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Project ID,Assigned project,Review needed,Submitted (IST)"];

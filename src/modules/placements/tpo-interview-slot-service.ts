@@ -13,6 +13,7 @@ import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
 import {candidateInterviewBufferedBounds,overlapsInterviewRoom,planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
 import {actOnPlacementRequest} from "./request-service";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy /api/v1/interviews endpoint operations mapped to canonical vNext
  * job/round/slot facts. Not all legacy actions belong to the same writer. */
 export const LEGACY_INTERVIEW_SLOT_ACTIONS = {
@@ -36,7 +37,7 @@ export function learnerInterviewLegacyEntry(applicationId:string,roundId:string)
 }
 function interviewTimeIst(at:Date){
  return new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
  }).format(at)+" IST";
 }
 function readLegacyReschedulePreferences(value:unknown){
@@ -425,13 +426,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    if(!booked)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
    await tx.insert(placementApplicationRoundExceptions).values({
     applicationId:request.applicationId,roundId:info.round.id,requestId:request.id,
-    scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    scheduledAt:target.startsAt,timezone:DEFAULT_TIME_ZONE,
     mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
     venue:info.round.mode==="VIRTUAL"?null:target.room,
     meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
    }).onConflictDoUpdate({
     target:[placementApplicationRoundExceptions.applicationId,placementApplicationRoundExceptions.roundId],
-    set:{requestId:request.id,scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    set:{requestId:request.id,scheduledAt:target.startsAt,timezone:DEFAULT_TIME_ZONE,
      mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
      venue:info.round.mode==="VIRTUAL"?null:target.room,
      meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,updatedAt:new Date()},
@@ -584,13 +585,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.insert(placementApplicationRoundExceptions).values({
     applicationId:slot.applicationId,roundId:info.round.id,
     requestId:sourceRequest.id,
-    scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    scheduledAt:target.startsAt,timezone:DEFAULT_TIME_ZONE,
     mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
     venue:info.round.mode==="VIRTUAL"?null:target.room,
     meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
    }).onConflictDoUpdate({
     target:[placementApplicationRoundExceptions.applicationId,placementApplicationRoundExceptions.roundId],
-    set:{scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    set:{scheduledAt:target.startsAt,timezone:DEFAULT_TIME_ZONE,
      mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
      venue:info.round.mode==="VIRTUAL"?null:target.room,
      meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,

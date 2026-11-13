@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoRoundFactInput={
  id:string;name:string;status:string;sequence:number;mode:string|null;
  scheduledAt:string|null;resultsDueAt:string|null;venue:string|null;meetingUrl:string|null;
@@ -8,7 +9,7 @@ function istDate(iso:string|null):string{
  if(!iso)return "Date to be decided";
  const date=new Date(iso);
  if(!Number.isFinite(date.getTime()))return "Date to be decided";
- return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(date)+" IST";
+ return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE}).format(date)+" IST";
 }
 export function projectTpoRoundFacts(round:TpoRoundFactInput){
  const staged=round.participants.filter(p=>p.result?.status==="STAGED").length;

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { LearnerAttendanceStatus } from "@/modules/attendance/model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const monthSchema = z.string().regex(/^(?:19|20|21)\d\d-(?:0[1-9]|1[0-2])$/);
 export const learnerAttendanceCalendarQuerySchema = z.object({
   month: monthSchema.optional(),
@@ -27,7 +28,7 @@ export type LearnerAttendanceCalendarRecord = {
 };
 
 const dayFormatter = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+  timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
 });
 
 export function attendanceCalendarDayKey(at: Date) {

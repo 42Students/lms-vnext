@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** India-local timestamp display for persisted and legacy placement settings.
  * Invalid historical date payloads must render a recovery value, not crash
  * the entire private drive workspace. */
@@ -6,6 +7,6 @@ export function driveSettingsIstDate(value:unknown):string {
  const instant=value instanceof Date?value:new Date(value);
  if(!Number.isFinite(instant.getTime()))return "Not configured";
  return new Intl.DateTimeFormat("en-IN",{
-   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+   dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
  }).format(instant);
 }

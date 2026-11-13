@@ -14,6 +14,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
  STALE_APPLIED:"Applications with no action in a week",
@@ -38,7 +39,7 @@ function AttentionGlyph(){
 function deadlineShort(value:Date|null){
  if(!value||!Number.isFinite(value.getTime()))return "—";
  return createDateFormatter("en-IN", {day:"2-digit",month:"short",
-  timeZone:"Asia/Kolkata"}).format(value);
+  timeZone:DEFAULT_TIME_ZONE}).format(value);
 }
 
 export function CollegeDriveAttentionCards({data}:{data:Attention}){

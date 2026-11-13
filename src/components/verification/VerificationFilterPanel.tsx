@@ -10,6 +10,7 @@ import {verificationFilterDraftError} from "@/modules/verification/filter-draft-
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -23,7 +24,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
  };
  function istDay(daysBeforeToday=0){
   const date=new Date(Date.now()-daysBeforeToday*24*60*60*1000);
-  return createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+  return createDateFormatter("sv-SE", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
  }
  function chooseWaitingPreset(preset:"TODAY"|"WEEK"|"OLDER"){
   const next={...fields,ageBand:"ANY",attention:"ALL",waitingState:"ALL",

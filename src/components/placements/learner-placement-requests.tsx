@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
  * shapes separate: Withdrawal needs an application, Extension an offer; the
  * remaining five are the authorized general-request kinds. Round reschedule
@@ -290,7 +291,7 @@ export function LearnerPlacementRequests({
         scheduledAt: new Date(
           roundAt,
         ).toISOString(),
-        timezone: "Asia/Kolkata",
+        timezone: DEFAULT_TIME_ZONE,
         mode: roundMode,
         ...(roundMode === "ON_CAMPUS"
           ? { venue: roundPlace.trim() }

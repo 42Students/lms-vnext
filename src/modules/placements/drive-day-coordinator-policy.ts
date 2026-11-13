@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * A Drive Day student coordinator receives only same-duty-day rounds,
  * not every round of a job to which they were temporarily assigned.
@@ -27,7 +28,7 @@ export function coordinatorRoundOnDutyDate(input: {
   if (!input.scheduledAt ||
       !Number.isFinite(input.scheduledAt.getTime())) return false;
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

@@ -14,6 +14,7 @@ import {createHmac,randomUUID} from "node:crypto";
 import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
 
 import { env } from "@/config/env";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export interface ScheduledJobLeaseStore {
   acquire(input: {
     jobName: string;
@@ -157,16 +158,16 @@ export const LEGACY_NOTIFICATION_JOB_SCHEDULES = {
   // Legacy Sunday 02:00 was JVM-local. Choose Asia/Kolkata explicitly.
   // A deployment-owned Cloud Scheduler executes it; this object starts no cron.
   cleanup: { jobName: "notification.cleanup", cron: "0 2 * * 0",
-    timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000, retentionDays: 90, batchSize: 200 },
-  interviewReminder: { jobName: "notification.interviewReminders", cron: "0 0 19 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
-  assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
-  deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000 },
+    timeZone: DEFAULT_TIME_ZONE, ttlMs: 60 * 60_000, retentionDays: 90, batchSize: 200 },
+  interviewReminder: { jobName: "notification.interviewReminders", cron: "0 0 19 * * *", timeZone: DEFAULT_TIME_ZONE, ttlMs: 60 * 60_000 },
+  assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: DEFAULT_TIME_ZONE, ttlMs: 60 * 60_000 },
+  deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: DEFAULT_TIME_ZONE, ttlMs: 30 * 60_000 },
   offersExpiringSoon: { jobName: "tpo.offersExpiringSoon", fixedDelayMs: 60 * 60_000, ttlMs: 50 * 60_000 },
   // Legacy 08:00 IST daily, 30-minute lease; consume only the next local-day
   // half-open window from tomorrowInIndiaUtcWindow(now), never the current day.
   // This declares the schedule; a deployment worker must still bind delivery.
   shortlistDueTomorrow: { jobName: "tpo.shortlistDueTomorrow", cron: "0 0 8 * * *",
-    timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000, wired: false },
+    timeZone: DEFAULT_TIME_ZONE, ttlMs: 30 * 60_000, wired: false },
 } as const;
 
 /** India has a fixed UTC+05:30 offset; return next local day as a half-open

@@ -6,13 +6,14 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireLearnerPlacementAccess} from "./learner-participation-guard";
 import {isDebarmentActive} from "./batch-registration-policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Learner-only scoped read: show the saved restriction reason, expiry
  * and remaining drive count exactly as legacy did. Never expose other
  * learners' staff notes, history or membership identifiers. */
 export async function getOwnLearnerDebarmentNotice(context:RequestContext,now=new Date()){
  const membership=await requireLearnerPlacementAccess(context);
  const parts=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  }).formatToParts(now);
  const part=(type:string)=>parts.find(item=>item.type===type)?.value??"";
  const today=part("year")+"-"+part("month")+"-"+part("day");

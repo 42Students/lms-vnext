@@ -1,8 +1,9 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Calendar queries use the same Sunday-first, 42-day IST month grid
  * as istMonthGridKeys and the visible learner CalendarGrid. The to instant
  * excludes midnight after the final Saturday. */
 export function learnerCalendarVisibleWindow(month:string|undefined,now:Date):{from:Date;to:Date}{
- const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"}).formatToParts(now);
+ const parts=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit"}).formatToParts(now);
  const year=month?Number(month.slice(0,4)):Number(parts.find(p=>p.type==="year")?.value);
  const monthNumber=month?Number(month.slice(5,7)):Number(parts.find(p=>p.type==="month")?.value);
  if(month && !/^\d{4}-(0[1-9]|1[0-2])$/.test(month))

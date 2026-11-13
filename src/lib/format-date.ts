@@ -1,10 +1,11 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Deterministic date formatting for components rendered on both server and
  * client. Runtime-default locale/timezone differ between Node and the browser
  * and cause hydration mismatches, so locale, hour cycle and timezone are fixed.
  */
 const LOCALE = "en-IN";
-const TIME_ZONE = "Asia/Kolkata";
+const TIME_ZONE = DEFAULT_TIME_ZONE;
 
 const dateTimeFormat = new Intl.DateTimeFormat(LOCALE, {
   dateStyle: "medium",

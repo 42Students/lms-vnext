@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const hrefBase="/admin/placements/organization-jobs";
 type Row=Awaited<ReturnType<typeof searchOrganizationPlacementJobs>>["rows"][number];
 function first(value:string|string[]|undefined){
@@ -19,7 +20,7 @@ function first(value:string|string[]|undefined){
 }
 function localDate(value:Date|null){
  return value?createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
  }).format(value):"Not set";
 }
 const actionClass="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface-subtle focus-ring";

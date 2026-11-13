@@ -8,6 +8,7 @@ import {assignmentSubmissions,attendanceSessions,courseAssignments,courseDiscuss
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 /** Live workload counts from current Faculty grants, never shared with
  * the College, Mentor, Recruiter, or TPO navigation. */
@@ -40,7 +41,7 @@ export const GET = route(
    endAt:new Date(now.getTime()+86400000),
   }).catch(()=>null);
     const key=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).format(date);
     const todayKey=key(now);
     const todayEvents=[...new Map((schedule?.events??[])

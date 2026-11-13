@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const tpoOfferExpiryQuerySchema = z.object({
   days: z.coerce.number().int().min(1).max(90).default(7),
 }).strict();
@@ -17,7 +18,7 @@ export type TpoOfferExpiryFact = {
 };
 export function isoDateInIndia(now: Date) {
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, day: "2-digit", month: "2-digit", year: "numeric",
   }).formatToParts(now);
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return `${values["year"]}-${values["month"]}-${values["day"]}`;

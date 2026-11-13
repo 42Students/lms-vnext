@@ -9,6 +9,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const avatarTints=[
  {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
  {bg:"var(--lms-gold-subtle)",fg:"var(--lms-warning-strong)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
@@ -30,7 +31,7 @@ function submittedText(value:string|null){
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "—";
  return createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",month:"short",day:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,month:"short",day:"numeric",
   hour:"numeric",minute:"2-digit",hour12:true,
  }).format(date);
 }

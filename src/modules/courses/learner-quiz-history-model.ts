@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const learnerQuizHistoryQuerySchema = z.object({
   quizId: z.string().uuid(),
   deliveryId: z.string().uuid(),
@@ -31,7 +32,7 @@ export function learnerAttemptResultLabel(attempt:{
 export function learnerQuizAttemptDateLabel(value:Date):string {
  if(!Number.isFinite(value.getTime()))return "Date unavailable";
  return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+  timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
  }).format(value);
 }
 

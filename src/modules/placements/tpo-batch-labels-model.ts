@@ -1,4 +1,5 @@
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** UI-only wording for persisted eligibility and registration events. */
 export function batchDecisionLabel(value:string|null|undefined):string{
  if(!value||value==="NOT_DECIDED")return "Not decided";
@@ -22,7 +23,7 @@ export function batchRegistrationLabel(value:string|null|undefined):string{
 }
 export function batchHistoryDate(value:Date):string{
  return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",
   hour:"numeric",minute:"2-digit",hour12:true,
  }).format(value)+" IST";
 }

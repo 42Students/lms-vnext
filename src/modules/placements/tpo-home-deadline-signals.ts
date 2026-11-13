@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** TPO-home-14: facts derived from persisted, college-scoped published drives.
  * Uses IST calendar days, as the legacy TPO service does. Other signals must
  * not be manufactured from unrelated queue counts. */
@@ -11,7 +12,7 @@ export type TpoHomeDeadlineNeed={
 };
 function istDayOrdinal(date:Date){
  const parts=new Intl.DateTimeFormat("en-US",{year:"numeric",month:"2-digit",day:"2-digit",
-  timeZone:"Asia/Kolkata"}).formatToParts(date);
+  timeZone:DEFAULT_TIME_ZONE}).formatToParts(date);
  const v=(kind:string)=>Number(parts.find(p=>p.type===kind)?.value??0);
  return Math.floor(Date.UTC(v("year"),v("month")-1,v("day"))/86400000);
 }

@@ -1,4 +1,5 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** RFC4180 CSV escaping with spreadsheet-formula protection for untrusted labels. */
 export function safeCollegeCsvCell(value:string|number|Date|null|undefined):string {
  const raw=value instanceof Date?value.toISOString():String(value??"");
@@ -25,6 +26,6 @@ export function collegeInterviewCsv(rows:readonly {
 }[]):string {
  return collegeDirectoryCsv(["id","job","candidate","type","status","scheduled date (IST)","interviewer","location","mode"],
   rows.map(row=>[row.id,row.job,row.student??"Unnamed learner",row.kind,row.status,
-   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.start)+" IST",
+   new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"}).format(row.start)+" IST",
    "",row.venue,row.mode]));
 }

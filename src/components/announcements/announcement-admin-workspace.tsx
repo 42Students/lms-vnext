@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
   id: string;
@@ -80,7 +81,7 @@ function announcementWhen(value: string | null | undefined): string {
   if (Number.isNaN(date.getTime())) return "";
   const nowYear = new Date().getFullYear();
   const parts = createDateFormatter("en-IN", {
-    timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, day: "numeric", month: "short", year: "numeric",
     hour: "numeric", minute: "2-digit", hour12: true,
   }).formatToParts(date);
   const part = (type: string) => parts.find(item => item.type === type)?.value ?? "";

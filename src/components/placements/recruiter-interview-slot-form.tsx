@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type InterviewRound={id:string;name:string;sequence:number};
 type DraftInterviewSlot={
  roundId:string;mode:string;startAt:string;endAt:string;capacity:string;
@@ -18,7 +19,7 @@ type DraftInterviewSlot={
 /** Times are the form's declared India Standard Time, not browser-local time. */
 function nowInIst(){
  return createDateFormatter("sv-SE", {
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date()).replace(" ","T");
 }

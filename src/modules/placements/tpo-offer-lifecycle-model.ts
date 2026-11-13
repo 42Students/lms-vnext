@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Explicit administrative recording, not learner-impersonation.
  * EXTEND changes expiry only; JOINED is a joining-outcome transition.
@@ -82,7 +83,7 @@ export function canRecordTpoActualJoiningDate(date: string, now: Date): boolean 
   const parsed = new Date(date + "T00:00:00Z");
   if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) return false;
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(now);
   const local = Object.fromEntries(parts.map(part=>[part.type, part.value]));
   return date <= local["year"] + "-" + local["month"] + "-" + local["day"];

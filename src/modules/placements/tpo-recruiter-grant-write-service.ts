@@ -16,6 +16,7 @@ import { tpoRecruiterGrantChangeSchema, isRecruiterGrantStale } from "./tpo-recr
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export class TpoRecruiterGrantConflict extends Error {
   constructor(readonly detail:"STALE_OR_INVALID"|"REVOKED"="STALE_OR_INVALID") {
     super(detail==="REVOKED"?"This recruiter's access was revoked; invite them again instead":
@@ -170,10 +171,10 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         metadata:{companyRelationshipId:extended.companyRelationshipId,
           recruiterUserId:extended.recruiterUserId,months:input.months,
           validUntil:validUntil.toISOString(),
-          expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(validUntil)},
+          expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(validUntil)},
       });
       return {outcome:"extended" as const,grantId:extended.id,validUntil:validUntil.toISOString(),
-        expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(validUntil)};
+        expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(validUntil)};
     }
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({

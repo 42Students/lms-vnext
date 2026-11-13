@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type LearnerDriveUrgency="closed"|"no-deadline"|"today"|"soon"|"future";
 /** Old LMS job-card deadline labels use calendar days, not 24-hour periods.
  * The vNext global display timezone is Asia/Kolkata (UTC+05:30).
@@ -9,7 +10,7 @@ export function learnerDriveDeadlineUrgency(
  const deadline=Date.parse(deadlineIso);
  if(!snapshotNowIso){
   if(deadlinePassed)return {kind:"closed",label:"Closed "+new Intl.DateTimeFormat("en-IN",{
-   day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+   day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
   }).format(new Date(deadline)),tone:"error"};
   return {kind:"future",label:"Deadline listed",tone:"neutral"};
  }
@@ -17,7 +18,7 @@ export function learnerDriveDeadlineUrgency(
  if(!Number.isFinite(deadline)||!Number.isFinite(now))
   return {kind:"no-deadline",label:"No deadline set",tone:"neutral"};
  const formatted=new Intl.DateTimeFormat("en-IN",{
-  day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
  }).format(new Date(deadline));
  if(deadlinePassed||deadline<now)
   return {kind:"closed",label:"Closed "+formatted,tone:"error"};

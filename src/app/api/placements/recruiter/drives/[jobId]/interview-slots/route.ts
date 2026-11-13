@@ -7,6 +7,7 @@ import {writeHrInterviewSlot,writeHrInterviewSlotsBatch} from "@/modules/placeme
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { route } from "@/security/route";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -33,7 +34,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string
    action,roundId:field("roundId"),
    startAt:json?field("startAt"):parseIstLocalSlot(field("startAt")),
    endAt:json?field("endAt"):parseIstLocalSlot(field("endAt")),
-   timezone:"Asia/Kolkata" as const,mode:field("mode"),
+   timezone:DEFAULT_TIME_ZONE,mode:field("mode"),
    panelLabel:field("panelLabel")||undefined,
    meetingLocation:field("meetingLocation")||undefined,
    capacity:field("capacity"),

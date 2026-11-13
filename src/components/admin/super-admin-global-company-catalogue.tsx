@@ -21,10 +21,11 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Filters=z.infer<typeof adminCompaniesQuerySchema>;
 
 const formatLast=(date:Date|null)=>date?createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+ timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
 }).format(date):"Never posted";
 export function safeCompanyWebsite(raw:string|null){
  if(!raw)return null;

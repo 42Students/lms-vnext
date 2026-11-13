@@ -1,5 +1,6 @@
 import { ACTIVITY_EVENT_TYPES, ACTIVITY_IMPORTANCE } from "@/modules/activity/taxonomy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type ProjectAdminAuditSearchParams = Record<
   string,
   string | string[] | undefined
@@ -70,7 +71,7 @@ export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:
   // Date-only project audit filters are interpreted in the college's IST
   // calendar, not the UTC date (which is still yesterday before 05:30 IST).
   const indiaParts=new Intl.DateTimeFormat("en-US",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).formatToParts(now);
   const indiaDate=(part:string)=>indiaParts.find(item=>item.type===part)?.value??"";
   const start=new Date(Date.UTC(

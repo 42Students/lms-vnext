@@ -5,6 +5,7 @@ import {collegeHiringAnalyticsQuery} from "@/modules/placements/college-hiring-a
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {collegeHiringFunnelCsv} from "@/modules/placements/college-hiring-funnel-export";
 import { route } from "@/security/route";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -13,7 +14,7 @@ async function handleGET(request:Request){
   const context=await getCurrentRequestContext();
   const report=await getCollegeHiringFunnel(context,parsed.data);
   const parts=new Intl.DateTimeFormat("en-GB",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).formatToParts(new Date());
   const datePart=(kind:"year"|"month"|"day")=>
    parts.find(part=>part.type===kind)?.value??"00";

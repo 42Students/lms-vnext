@@ -10,6 +10,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {capStudentLookupRows,relevantStudentApplicationOffers,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy first/last name is represented by one persisted displayName
  * in vNext. Never fabricate a name component or client supplied learner ID. */
 export function collegeStudentLookupLabel(row:{
@@ -28,7 +29,7 @@ export function formatCollegePlacementAppliedDate(at:Date|string|null|undefined)
  const d=at instanceof Date?at:new Date(at);
  if(!Number.isFinite(d.getTime()))return "-";
  return new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
  }).format(d);
 }
 

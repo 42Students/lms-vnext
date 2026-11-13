@@ -31,6 +31,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
@@ -84,7 +85,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   const unfiltered = query.status === "ALL" && !query.q && !query.seasonId &&
     !query.relationshipId && !query.deadlineAfter && !query.deadlineBefore &&
     query.minimumApplicants === undefined;
-  const formatter = createDateFormatter("en-IN", {day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
+  const formatter = createDateFormatter("en-IN", {day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE});
   const expired=(job:(typeof data.items)[number])=>Boolean(job.applicationDeadline&&job.applicationDeadline.getTime()<Date.now());
   const jobStatus=(job:(typeof data.items)[number])=>{
     const ended=job.status==="PUBLISHED"&&expired(job);

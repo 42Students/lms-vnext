@@ -22,6 +22,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { collegePromotionExecuteSchema, promotionPreviewMatches, promotionReady, promotionSuccessLabel, formatPromotionAcademicYear } from "./college-batch-promotion-model";
 import { previewCollegeBatchPromotionInTransaction } from "./college-batch-promotion-service";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export class CollegePromotionExecuteError extends Error {
   constructor(public readonly code:
     "BATCH_NOT_FOUND" | "PROMOTION_STALE" | "PROMOTION_BLOCKED" | "PROMOTION_PREVIEW_CHANGED") {
@@ -182,7 +183,7 @@ export async function executeCollegeBatchPromotion(
         action:"PROMOTE_BATCH",
         previousAcademicYearStart:previous.currentAcademicYearStart,
         academicYear:formatPromotionAcademicYear(updated.currentAcademicYearStart!),
-        calendarTimeZone:"Asia/Kolkata",
+        calendarTimeZone:DEFAULT_TIME_ZONE,
         targetMappedCourses,targetCourseCount:targetCourseSet.size,
         oldOnlyCourseCount:oldOnly.length,
         version: updated.version,

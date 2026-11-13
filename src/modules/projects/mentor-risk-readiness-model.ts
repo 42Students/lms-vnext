@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const mentorRiskReadinessQuerySchema=z.object({
   projectId:z.string().uuid(),
   focus:z.enum(["ALL","RISK","READINESS"]).default("ALL"),
@@ -24,7 +25,7 @@ export type MentorDrillItem={
 };
 
 function istCalendarKey(date:Date){
-  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
     year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);
   const value=(name:string)=>parts.find(part=>part.type===name)?.value??"";
   return value("year")+value("month")+value("day");

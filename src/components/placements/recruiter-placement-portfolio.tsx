@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 import { createNumberFormatter } from "@/lib/safe-format";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RecruiterJobs = Awaited<
   ReturnType<typeof listOwnRecruiterPlacementJobs>
 >;
@@ -14,7 +15,7 @@ type RecruiterJobs = Awaited<
 function deadlineRelative(deadline:Date|null,now:Date):string{
  if(!deadline)return "Application deadline not recorded";
  const day=(value:Date)=>{
-  const parts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",
+  const parts=createDateFormatter("en-GB", {timeZone:DEFAULT_TIME_ZONE,
     year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(value);
   const get=(name:string)=>Number(parts.find(item=>item.type===name)?.value??0);
   return Date.UTC(get("year"),get("month")-1,get("day"))/86400000;

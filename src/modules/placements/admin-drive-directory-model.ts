@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 // These controls can arrive as untrusted URL query values. Coercion of arrays,
 // booleans, hexadecimal and exponents silently changes the operator's filters.
 const decimalSelection = z.union([
@@ -135,6 +136,6 @@ export function adminDriveStatus(job:Drive["job"],now=new Date()){
 export function adminDriveIstDate(value:Date|null|undefined):string {
  if(!value||!Number.isFinite(value.getTime()))return "—";
  return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
  }).format(value);
 }

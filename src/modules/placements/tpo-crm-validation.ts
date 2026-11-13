@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const id = z.string().uuid();
 const email = z.string().trim().toLowerCase().pipe(z.email().max(150));
 /**
@@ -176,7 +177,7 @@ export const legacyTpoLeadFollowupImportSchema=z.strictObject({
  collegeId:id,
  sourceLeadId:z.number().int().positive(),
  sourceDueAtLocal:z.string().trim().min(10).max(40),
- sourceTimezone:z.literal("Asia/Kolkata"),
+ sourceTimezone:z.literal(DEFAULT_TIME_ZONE),
  note:z.string().trim().max(500).optional(),
 });
 export function legacyTpoLeadFollowupInstant(raw:unknown):Date{

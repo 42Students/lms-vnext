@@ -1,4 +1,5 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_OFFER_EXPORT_CAP=200;
 export type HrOfferCsvRow={
  id:string;name:string|null;role:string;status:string;
@@ -10,7 +11,7 @@ function cell(value:string){
 }
 function ist(value:Date|null){
  return value && Number.isFinite(value.getTime())?new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"2-digit",year:"numeric",
   hour:"2-digit",minute:"2-digit",hour12:false,
  }).format(value):"";
 }

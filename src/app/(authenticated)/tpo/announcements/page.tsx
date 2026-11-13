@@ -45,6 +45,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -215,7 +216,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </div>
     <p className="mt-1 text-xs text-muted-foreground leading-5">
       By {row.senderName?.trim()||"Placement team"} ·
-      {" "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
+      {" "+createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
       {" · For "+({COLLEGE:"whole college",PLACEMENTS:"students in placements",BATCHES:"selected batches",BRANCHES:"selected branches",DRIVE:"selected drive"} as Record<string,string>)[row.audienceKind??"COLLEGE"]}
       {row.expiresAt&&new Date(row.expiresAt)>new Date()?" · shows until "+istDateFormatter.format(row.expiresAt):""}
     </p>

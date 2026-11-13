@@ -19,6 +19,7 @@ import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,fa
 
 import { env } from "@/config/env";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Configurable near-now booking grace (legacy default: five minutes). */
 function bookingGraceMs() {
   const minutes=Number(env.FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES ?? "5");
@@ -30,7 +31,7 @@ function bookingGraceMs() {
 /** Match the legacy "EEE, d MMM at h:mm a" in the college's IST clock. */
 function scheduledNoticeWhen(startsAt:Date):string {
   const pieces=new Intl.DateTimeFormat("en-US",{
-    timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
+    timeZone:DEFAULT_TIME_ZONE,weekday:"short",day:"numeric",month:"short",
     hour:"numeric",minute:"2-digit",hour12:true,
   }).formatToParts(startsAt);
   const part=(type:Intl.DateTimeFormatPartTypes)=>

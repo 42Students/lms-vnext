@@ -39,6 +39,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Both coordinator assignment and check-in compare the same IST civil day. */
 export function dateInIndia(
   now: Date = new Date(),
@@ -46,7 +47,7 @@ export function dateInIndia(
   const parts = new Intl.DateTimeFormat(
     "en-US",
     {
-      timeZone: "Asia/Kolkata",
+      timeZone: DEFAULT_TIME_ZONE,
       year: "numeric",
       month: "2-digit",
       day: "2-digit",

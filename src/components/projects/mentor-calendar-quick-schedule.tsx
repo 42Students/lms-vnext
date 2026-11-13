@@ -16,6 +16,7 @@ import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Choice={id:string;title:string;updatedAt:string;
   sprints:readonly {id:string;title:string;sequence:number;status:string}[]};
 type MeetingType="GENERAL"|"PLANNING"|"STANDUP"|"REVIEW"|"RETRO";
@@ -71,7 +72,7 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
         expectedProjectUpdatedAt:project.updatedAt,
         title:title.trim(),
         ...(agenda.trim()?{agenda:agenda.trim()}:{}),
-        startsAt:from,endsAt:until,timeZone:"Asia/Kolkata",
+        startsAt:from,endsAt:until,timeZone:DEFAULT_TIME_ZONE,
         meetingType,linkedSprintId:linkedSprintId||null,
         status:link||location?"SCHEDULED":"DRAFT",
         meetingUrl:link||null,

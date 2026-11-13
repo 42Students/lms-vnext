@@ -1,6 +1,7 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Explicit previous calendar-year IST boundaries, not a sliding 365 days. */
 export function recruiterPreviousIstCalendarYear(now:Date){
- const fields=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric"})
+ const fields=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric"})
   .formatToParts(now);
  const current=Number(fields.find(part=>part.type==="year")?.value);
  if(!Number.isInteger(current)||current<2002||current>2101)

@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const uuid=z.string().uuid();
 export const tpoInterviewSlotActionSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("GENERATE_DAY"),confirmed:z.literal(true),startsAt:z.iso.datetime({offset:true}),
@@ -63,7 +64,7 @@ export function planInterviewDay(input:{startsAt:string;durationMinutes:number;g
   const begins=new Date(start+index*(plan.durationMinutes+plan.gapMinutes)*60_000);
   const ends=new Date(begins.getTime()+plan.durationMinutes*60_000);
   const localDay=(value:Date)=>new Intl.DateTimeFormat("en-CA",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).format(value);
   if(localDay(new Date(start))!==localDay(new Date(ends.getTime()-1)))
    throw Error("An interview day must end before midnight in college time. Shorten the slots or start earlier.");

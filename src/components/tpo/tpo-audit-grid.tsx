@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Quartz receives only scoped audit rows already supplied to this view. */
 const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<TpoAuditRow>),
@@ -30,8 +31,8 @@ function when(value:string){
  const instant=Date.parse(value);
  if(!Number.isFinite(instant))return "Not recorded";
  const date=new Date(instant);
- const day=createDateFormatter("en-GB", {day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(date);
- const hour=createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date);
+ const day=createDateFormatter("en-GB", {day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(date);
+ const hour=createDateFormatter("en-US", {hour:"numeric",minute:"2-digit",hour12:true,timeZone:DEFAULT_TIME_ZONE}).format(date);
  return day+" · "+hour+" IST";
 }
 function eventText(row:TpoAuditRow){
@@ -188,7 +189,7 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
   <div className="flex flex-wrap items-center justify-between gap-2">
    <span className="text-xs text-muted-foreground">
     {lastRefreshAt?"Grid checked at "+createDateFormatter("en-IN", {
-     timeZone:"Asia/Kolkata",timeStyle:"short"
+     timeZone:DEFAULT_TIME_ZONE,timeStyle:"short"
     }).format(new Date(lastRefreshAt))+" IST":"Loaded scoped audit snapshot"}
    </span>
    {refreshHref?<Button type="button" size="sm" variant="secondary"

@@ -1,4 +1,5 @@
 import type { PlacementCalendarEvent } from "./placement-calendar-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type RecruiterTodayJob = {
   collegeId: string;
   job: { id: string; title: string; status: string; archivedAt: Date | null; applicationDeadline: Date | null };
@@ -8,7 +9,7 @@ const DAY = 86400000;
 /** A seven-calendar-day outlook anchored to the date in India, not UTC midnight. */
 export function recruiterTodayWeek(now: Date) {
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(now);
   const value = (type: string) => Number(parts.find(part => part.type === type)?.value ?? "0");
   const utc = Date.UTC(value("year"), value("month") - 1, value("day"));

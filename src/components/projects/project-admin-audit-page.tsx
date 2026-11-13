@@ -32,6 +32,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
 const destructiveProjectEventTypes=new Set<string>([
@@ -80,7 +81,7 @@ type SearchParams = Record<
 
 function istDate(date:Date){
  const parts=Intl.DateTimeFormat("en-US",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  }).formatToParts(date);
  const part=(type:string)=>parts.find(p=>p.type===type)?.value??"";
  return part("year")+"-"+part("month")+"-"+part("day");

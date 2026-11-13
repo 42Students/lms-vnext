@@ -1,10 +1,11 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** SA-tenants-modules-17: formula-safe, bounded, currently visible admin history. */
 export type AdminHistoryExportRow={occurredAt:Date;eventType:string;summary:string};
 const cell=spreadsheetCsvCell;
 const indiaTimestamp = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+  dateStyle: "medium", timeStyle: "short", timeZone: DEFAULT_TIME_ZONE,
 });
 export const MAX_ADMIN_HISTORY_EXPORT_ROWS=100;
 export function collegeAdminHistoryCsv(rows:readonly AdminHistoryExportRow[]){

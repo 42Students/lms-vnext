@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** A quiz deadline is an absolute persisted instant, not a browser-local date.
  * Invalid stored values never masquerade as actual submission times. */
 export function learnerQuizDeadlineDisplay(value: string | null): string {
@@ -5,6 +6,6 @@ export function learnerQuizDeadlineDisplay(value: string | null): string {
   const instant = new Date(value);
   if (!Number.isFinite(instant.getTime())) return "Deadline unavailable";
   return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+    dateStyle: "medium", timeStyle: "short", timeZone: DEFAULT_TIME_ZONE,
   }).format(instant);
 }

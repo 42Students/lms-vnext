@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const learnerAttendanceMonthSchema = z.string()
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Use YYYY-MM");
 
@@ -58,7 +59,7 @@ export type LearnerCourseAttendanceRecord = {
 
 function indiaMonth(date: Date): string {
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
   }).formatToParts(date);

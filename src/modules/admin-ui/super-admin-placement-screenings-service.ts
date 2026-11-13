@@ -6,6 +6,7 @@ import {colleges,collegeMemberships,placementApplications,placementApplicationSc
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const REVIEW_STATUSES=["PENDING","HOLD","REJECTED"] as const;
 export async function listSuperAdminScreeningQueue(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),scope=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
@@ -33,7 +34,7 @@ export async function listSuperAdminScreeningQueue(context:RequestContext,raw:un
   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
- const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+ const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE});
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.applicant||"Unnamed applicant",subtitle:r.jobTitle,
   status:r.status,details:["Application: "+r.appStatus,

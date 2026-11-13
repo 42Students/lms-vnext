@@ -14,6 +14,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateWith } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
  * learner/recruiter drawer nor a copy of unverified legacy sample notices.
@@ -135,7 +136,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
       <div className="flex items-center justify-between gap-2 text-xs">
        <time dateTime={item.occurredAt}>
         {formatDateWith(new Date(item.occurredAt), "en-IN", {
-         day:"numeric",month:"short",timeZone:"Asia/Kolkata"})}
+         day:"numeric",month:"short",timeZone:DEFAULT_TIME_ZONE})}
        </time>
        {href?<TextLink href={href}
          onClick={event=>void markOne(event,item,href)}

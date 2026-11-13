@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
  scheduledAt:string|null;expiresAt:string|null;
@@ -15,7 +16,7 @@ export type TpoNoticePrototypeListRow={
 function formatDate(value:string){
  const date=new Date(value);
  return Number.isFinite(date.getTime())?createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date):"Date unavailable";
 }
 function state(row:TpoNoticePrototypeListRow,now:number){

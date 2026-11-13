@@ -1,14 +1,15 @@
 import {parseCollegeIstLocal} from "./college-ist-datetime-model";
 
-export type AdminContentTimeZone="Asia/Kolkata"|"UTC"|"America/New_York"|"America/Los_Angeles"|"Europe/London";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
+export type AdminContentTimeZone=typeof DEFAULT_TIME_ZONE|"UTC"|"America/New_York"|"America/Los_Angeles"|"Europe/London";
 
 /** datetime-local values have no zone. Verify the wall clock explicitly in the
  * selected IANA zone; reject nonexistent or ambiguous DST times rather than
  * silently changing the scheduled class to a different instant. */
 export function parseAdminContentLocalMoment(value:string,zone:AdminContentTimeZone):string|null{
- if(zone!=="Asia/Kolkata"&&zone!=="UTC"&&zone!=="America/New_York"&&
+ if(zone!==DEFAULT_TIME_ZONE&&zone!=="UTC"&&zone!=="America/New_York"&&
     zone!=="America/Los_Angeles"&&zone!=="Europe/London")return null;
- if(zone==="Asia/Kolkata")return parseCollegeIstLocal(value);
+ if(zone===DEFAULT_TIME_ZONE)return parseCollegeIstLocal(value);
  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))return null;
  const year=Number(value.slice(0,4));
  if(year<2000||year>9999)return null;

@@ -3,6 +3,7 @@ import {z} from "zod";
 import {collegeRoleDirectoryHref,collegeRoleDirectoryQuerySchema,assertCompatibleCollegeRoleDirectoryFilters,roleDirectoryDateWindowValid,type CollegeDirectoryKind,type CollegeRoleDirectoryQuery,type CollegeRoleDirectoryRow} from "./college-role-directory-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const ROLE_DIRECTORY_EXPORT_LIMIT=1000;
 const exportFilterSchema=collegeRoleDirectoryQuerySchema.omit({page:true,pageSize:true});
 const exportSchema=exportFilterSchema.extend({kind:z.enum(["FACULTY","LEARNER"])});
@@ -40,7 +41,7 @@ export function escapeRoleDirectoryCsvCell(value:string):string {
 }
 export function renderCollegeRoleDirectoryCsv(kind:CollegeDirectoryKind,rows:readonly CollegeRoleDirectoryRow[],truncated:boolean):string {
  const header=["Name","Email","Membership","Platform account","Joined (IST)","Program","Batch","Classes","Active teaching assignments"];
- const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"});
+ const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium"});
  const lines=[header.map(escapeRoleDirectoryCsvCell).join(",")];
  for(const row of rows.slice(0,ROLE_DIRECTORY_EXPORT_LIMIT)){
   lines.push([

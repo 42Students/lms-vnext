@@ -29,6 +29,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istIsoDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
 const dateLabel=mentorViewerDateLabel;
@@ -293,7 +294,7 @@ export function MentorMeetingsCalendar({
     const key=dayKey(new Date(display.getTime()-330*60_000));
     return {
       key,label:createDateFormatter("en-IN", {
-        weekday:"short",day:"numeric",timeZone:"Asia/Kolkata",
+        weekday:"short",day:"numeric",timeZone:DEFAULT_TIME_ZONE,
       }).format(new Date(display.getTime()-330*60_000)),
       count:meetings.filter(item=>validTime(item.startsAt)&&
         dayKey(new Date(item.startsAt))===key).length,

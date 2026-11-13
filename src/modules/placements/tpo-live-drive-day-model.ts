@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoLiveRoundFact = {
   status: string;
   scheduledAt: string | null;
@@ -33,7 +34,7 @@ export function tpoIstDayWindow(nowIso: string) {
   const now = new Date(nowIso);
   if (!Number.isFinite(now.getTime())) throw new RangeError("Invalid drive day");
   const dateParts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(now);
   const part = (key: "year" | "month" | "day") =>
     Number(dateParts.find(entry => entry.type === key)?.value ?? "");

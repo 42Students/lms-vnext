@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoBatchNextStepFacts={
  finished:boolean;activeLearners:number;eligible:number|null;undecided:number|null;
  invited:boolean;deadline:Date|null;invitable:number;registered:number|null;
@@ -9,7 +10,7 @@ export function projectTpoBatchNextStep(f:TpoBatchNextStepFacts,now:Date){
  if(f.eligible===0||f.undecided>0)return {title:"Decide who is in placements",detail:"Below: the whole batch at once, class by class, or student by student in the sheet.",href:"/students?decision=NOT_DECIDED",button:"Decide learners"};
  if(!f.invited)return {title:"Invite "+f.invitable+" eligible "+(f.invitable===1?"student":"students")+" to register",detail:"Pick the registration deadline first, then invite eligible learners who have not chosen already.",href:"#batch-invite",button:"Set deadline and invite"};
  if(f.invitable>0&&(!f.deadline||f.deadline.getTime()<=now.getTime())){
-  const date=f.deadline?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(f.deadline):"the recorded deadline";
+  const date=f.deadline?new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium"}).format(f.deadline):"the recorded deadline";
   return {title:"Registration closed on "+date,detail:"Move the deadline to reopen it and tell eligible learners in the app.",href:"#batch-invite",button:"Reopen and tell them"};
  }
  if(f.invitable>0)return {title:"Registration is open · "+f.invitable+" "+(f.invitable===1?"student hasn't":"students haven't")+" registered",

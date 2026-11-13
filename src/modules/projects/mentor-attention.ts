@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Mentor attention rules are pure, so stale/reopen/archival edge cases are
  * regression-tested without pretending browser or DB execution is complete.
@@ -165,7 +166,7 @@ export function deriveMentorProjectAttention(
         key:"soon:"+meeting.id,kind:"MEETING_SOON",
           title:meeting.title+" — "+project.projectTitle,
           description:"Scheduled "+new Intl.DateTimeFormat("en-US",{
-            timeZone:"Asia/Kolkata",weekday:"short",month:"short",day:"numeric",
+            timeZone:DEFAULT_TIME_ZONE,weekday:"short",month:"short",day:"numeric",
             hour:"numeric",minute:"2-digit",hour12:true,
           }).format(meeting.startsAt)+" IST",
           href:href+"?tab=team#meeting-"+encodeURIComponent(meeting.id),

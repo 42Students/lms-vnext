@@ -15,10 +15,11 @@ import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null;deliveryId?:string|null};
 type MeetingZone=AdminContentTimeZone;
-function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
+function localDate(value:Date|null,zone:MeetingZone=DEFAULT_TIME_ZONE){
  if(!value)return "";
  return createDateFormatter("sv-SE", {
   timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
@@ -36,7 +37,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
  const [notes,setNotes]=useState(item.notes??"");
  const [replacementUrl,setReplacementUrl]=useState("");
- const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
+ const [timeZone,setTimeZone]=useState<MeetingZone>(DEFAULT_TIME_ZONE);
  const [startsAt,setStartsAt]=useState(localDate(item.startsAt)),[endsAt,setEndsAt]=useState(localDate(item.endsAt));
  async function save(){
   if(busy||submissionLock.current)return;
@@ -117,7 +118,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  function resetEditor(){
   setTitle(item.title);setOrder(String(item.sequence+1));
   setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-  setNotes(item.notes??"");setReplacementUrl("");setTimeZone("Asia/Kolkata");
+  setNotes(item.notes??"");setReplacementUrl("");setTimeZone(DEFAULT_TIME_ZONE);
   setStartsAt(localDate(item.startsAt));setEndsAt(localDate(item.endsAt));
  }
  function toggleEditor(){
@@ -191,7 +192,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
        }
        setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
       }}>
-       <option value="Asia/Kolkata">India Standard Time (IST)</option>
+       <option value={DEFAULT_TIME_ZONE}>India Standard Time (IST)</option>
        <option value="UTC">UTC</option>
        <option value="America/New_York">America/New_York</option>
        <option value="America/Los_Angeles">America/Los_Angeles</option>

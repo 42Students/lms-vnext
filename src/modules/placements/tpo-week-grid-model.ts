@@ -1,11 +1,12 @@
 import type {PlacementCalendarEvent} from "./placement-calendar-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type WeekGridEvent=Pick<PlacementCalendarEvent,"id"|"title"|"companyName"|"kind"|"roundKind"|"status"|"jobId"|"roundId"|"followupId"> & {
  startsAt:string;endsAt:string|null;href:string|null;
 };
 export type PositionedWeekEvent=WeekGridEvent & {
  startMinute:number;endMinute:number;column:number;columns:number;outsideHours:boolean;
 };
-const fmt=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+const fmt=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
 export function istMinute(value:string){
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return null;

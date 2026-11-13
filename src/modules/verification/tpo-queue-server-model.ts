@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {verificationTabStatuses} from "./queue-tabs";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Filter facts before the database result cap; never present local-only counts as global. */
 export const tpoVerificationQuerySchema=z.object({
  tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
@@ -44,7 +45,7 @@ export function tpoVerificationWaitingDateRange(
 ):{after?:Date;before?:Date}{
  if(waitingSince==="ALL")return {};
  const parts=new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  }).format(now);
  const start=new Date(parts+"T00:00:00+05:30");
  if(waitingSince==="TODAY")return {after:start};

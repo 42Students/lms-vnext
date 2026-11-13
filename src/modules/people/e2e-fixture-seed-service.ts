@@ -32,6 +32,7 @@ import {
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Every auxiliary UUID uses the same deterministic v4/variant shape as
  * the public manifest, but a distinct domain label and schema-version salt.
  */
@@ -537,7 +538,7 @@ export async function seedIsolatedE2EAcademicGraph(
   await tx.insert(placementJobRounds).values({
    id:roundId,jobId:d.jobA,sequence:1,kind:"INTERVIEW",
    name:"E2E Interview Round",mode:"ON_CAMPUS",
-   scheduledAt:interviewAt,timezone:"Asia/Kolkata",
+   scheduledAt:interviewAt,timezone:DEFAULT_TIME_ZONE,
    venue:"E2E Hall "+namespace,status:"SCHEDULED",
    createdByUserId:manifestUsers.adminA,
   }).onConflictDoNothing();

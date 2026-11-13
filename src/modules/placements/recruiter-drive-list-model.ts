@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Explicit vNext owner decision: ALL means all visible, recruiter-owned
  * published and closed drives, not an unrestricted college-wide global list.
  * Pending approvals live in WAITING; drafts remain in the authoring workspace.
@@ -55,7 +56,7 @@ export function summarizeRecruiterDrives<T extends RecruiterDriveListItem>(rows:
 
 export function isHrDriveDeadlineToday(date:Date,now:Date):boolean{
  if(!Number.isFinite(date.getTime())||!Number.isFinite(now.getTime()))return false;
- const format=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
+ const format=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,
   year:"numeric",month:"2-digit",day:"2-digit"});
  return format.format(date)===format.format(now);
 }

@@ -20,6 +20,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -46,7 +47,7 @@ function readableValue(field:string,value:string|null|undefined):string{
  if(field==="DEADLINE"){
   const date=new Date(value);
   return Number.isFinite(date.getTime())?formatDateWith(date, "en-IN", {
-   timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
+   timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
   })+" IST":value;
  }
  if(field==="WORK_MODE"||field==="MODE")return ({"ONSITE":"On campus","HYBRID":"Hybrid","REMOTE":"Remote"} as Record<string,string>)[cleaned]??cleaned;
@@ -58,7 +59,7 @@ function readableValue(field:string,value:string|null|undefined):string{
 function formatCreatedAt(value:string):string{
  const date=new Date(value);
  return Number.isFinite(date.getTime())?formatDateWith(date, "en-IN", {
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
+  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
  })+" IST":"";
 }
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],

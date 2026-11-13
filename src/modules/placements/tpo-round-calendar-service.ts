@@ -15,6 +15,7 @@ import {canScheduleOnCollegeBlockedDay} from "./tpo-blocked-day-decision";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "./tpo-round-calendar-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 async function requireTpo(context: RequestContext) {
   const member = context.membership;
   if (!member || !hasMembershipRole(context, ROLE.TPO))
@@ -157,7 +158,7 @@ export async function decideTpoCalendarRound(context: RequestContext, raw: unkno
     if (ambiguous) throw new Error("Same venue contains a round with unknown duration");
   }
   return actOnPlacementRound(context, round.id, {
-    action: "SCHEDULE", scheduledAt: start, timezone: "Asia/Kolkata",
+    action: "SCHEDULE", scheduledAt: start, timezone: DEFAULT_TIME_ZONE,
     mode: input.mode,
     ...(input.mode === "ON_CAMPUS" ? { venue: input.venue } : { meetingUrl: input.meetingUrl }),
   }, input.expectedUpdatedAt);

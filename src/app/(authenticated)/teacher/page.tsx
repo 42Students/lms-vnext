@@ -12,6 +12,7 @@ import {FacultyTodayPanel,type FacultyTodayTask,
 import { istIsoDateFormatter, istTimeFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const dateKey=(date:Date)=>istIsoDateFormatter.format(date);
 const clock=(date:Date)=>istTimeFormatter.format(date);
 const shortClock=(date:Date)=>clock(date).replace(/\s*(am|pm)$/i,"");
@@ -36,10 +37,10 @@ export default async function TeacherIndex(){
    .where(eq(colleges.id,context.membership.collegeId)).limit(1)
    .then(rows=>rows[0]?.code?.trim()??""): "";
  const dateLabel=createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
+  timeZone:DEFAULT_TIME_ZONE,weekday:"long",day:"numeric",month:"long",
  }).format(now)+(collegeCode?" · "+collegeCode:"");
  const hour=Number(createDateFormatter("en-GB", {
-  timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
+  timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",hourCycle:"h23",
  }).format(now));
  const greeting=hour<12?"morning":hour<17?"afternoon":"evening";
  const upcoming=schedule?.nextUpcoming??null;
@@ -48,7 +49,7 @@ export default async function TeacherIndex(){
   "in "+(minutesToClass>=60?Math.floor(minutesToClass/60)+" "+(Math.floor(minutesToClass/60)===1?"hour":"hours"):"")+
    (minutesToClass>=60&&minutesToClass%60>0?" ":"")+
    (minutesToClass%60>0||minutesToClass===0?minutesToClass%60+" "+(minutesToClass%60===1?"minute":"minutes"):""):
-  "on "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(upcoming!.startsAt);
+  "on "+createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(upcoming!.startsAt);
  const nextClass=upcoming?
   "Next class "+when+": "+(upcoming.courseName??upcoming.title??"Scheduled class")+
   ", "+upcoming.sectionName+(upcoming.location?", "+upcoming.location:"")+".":null;

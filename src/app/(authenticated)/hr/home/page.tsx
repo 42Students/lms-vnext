@@ -42,6 +42,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 
 export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
@@ -208,7 +209,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const collegeName=grants.find(item=>item.collegeId===selectedId)?.collegeName??"this college";
   const dateLabel=createDateFormatter("en-GB", {
-    timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
+    timeZone:DEFAULT_TIME_ZONE,weekday:"long",day:"numeric",month:"long",
   }).format(now)+" · "+collegeName;
   const tasks=actionQueue.map(task=>({
     key:task.key,tone:task.tone,title:task.label,description:task.description,
@@ -256,7 +257,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       weekEvents={weekEvents.map(item=>({
         id:item.id,kind:item.kind,title:item.title,jobTitle:item.jobTitle,
         href:item.href,when:createDateFormatter("en-IN", {
-          timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
+          timeZone:DEFAULT_TIME_ZONE,weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
         }).format(item.startsAt),
       }))}
       waiting={waiting} signalsUnavailable={summaryPartiallyUnavailable||otherSignalsUnavailable}

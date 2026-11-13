@@ -20,6 +20,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istIsoDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
 
@@ -61,7 +62,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    .format(new Date(e.startsAt))===day))])),[days,events]);
  const matches=leads.filter(lead=>[lead.name,lead.companyName??"",lead.email??""].some(x=>
   x.toLocaleLowerCase("en-IN").includes(leadQuery.trim().toLocaleLowerCase("en-IN")))).slice(0,50);
- const current=new Date(nowIso),hourParts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
+ const current=new Date(nowIso),hourParts=createDateFormatter("en-GB", {timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
  const nowMinutes=Number(hourParts.find(p=>p.type==="hour")?.value??0)*60+Number(hourParts.find(p=>p.type==="minute")?.value??0);
  const today=istIsoDateFormatter.format(current);
  async function open(day:string,hour:number,trigger?:HTMLButtonElement){

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const csvRowSchema = z.object({
   name: z.string().max(500),
   status: z.enum(["SUBMITTED", "NOT_SUBMITTED", "ATTEMPTED", "NOT_ATTEMPTED"]),
@@ -58,7 +59,7 @@ export function facultyCsvIstTimestamp(iso:string){
  const value=new Date(iso);
  if(!Number.isFinite(value.getTime()))throw new Error("INVALID_CSV_TIMESTAMP");
  const parts=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
  }).formatToParts(value);
  const field=(part:string)=>parts.find(row=>row.type===part)?.value??"";

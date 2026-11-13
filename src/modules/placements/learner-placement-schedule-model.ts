@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type PlacementScheduleRow = {
   applicationId: string;
   roundId: string;
@@ -12,7 +13,7 @@ export type PlacementScheduleRow = {
 /** Legacy day-only schedule: midnight in the college timezone has no chosen start time. */
 export function learnerRoundIsDayOnly(date:Date):boolean{
  if(!Number.isFinite(date.getTime()))return false;
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",minute:"2-digit",
   hourCycle:"h23"}).formatToParts(date);
  const part=(name:string)=>parts.find(item=>item.type===name)?.value??"";
  return part("hour")==="00"&&part("minute")==="00";

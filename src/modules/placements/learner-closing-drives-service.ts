@@ -7,6 +7,7 @@ import { listLearnerPlacementJobs } from "./learner-job-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { closingSoonIstDayEndMs } from "./learner-jobs-browse-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** A single server clock snapshot keeps deadline policy and browse labels in sync. */
 export async function getOwnLearnerDriveBrowse(
   context: RequestContext,
@@ -18,6 +19,6 @@ export async function getOwnLearnerDriveBrowse(
   const rows = await listLearnerPlacementJobs(context, snapshot);
   return { rows, snapshotNowIso: snapshot.toISOString(),
     closingSoonUntilIso: new Date(closingSoonIstDayEndMs(snapshot.getTime())).toISOString(),
-    closingSoonTimezone: "Asia/Kolkata" as const,
+    closingSoonTimezone: DEFAULT_TIME_ZONE,
   };
 }

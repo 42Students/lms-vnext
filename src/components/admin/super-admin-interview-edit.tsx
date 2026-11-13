@@ -13,6 +13,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Appointment={
  id:string;roundId:string;applicationId:string;status:string;
  scheduledAt:string;durationMinutes:number;mode:string;
@@ -24,7 +25,7 @@ type Type="SCREENING"|"TECHNICAL"|"HR"|"MANAGERIAL"|"FINAL";
 const TYPES:Type[]=["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"];
 const toIstLocal=(value:string)=>createDateFormatter("sv-SE", {
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
- hourCycle:"h23",timeZone:"Asia/Kolkata",
+ hourCycle:"h23",timeZone:DEFAULT_TIME_ZONE,
 }).format(new Date(value)).replace(" ","T");
 
 /** This client uses the existing College Admin mutation service, whose

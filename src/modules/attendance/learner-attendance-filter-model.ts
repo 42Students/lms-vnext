@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const learnerAttendanceMonthSchema = z.string().regex(/^(20\d{2}|21\d{2})-(0[1-9]|1[0-2])$/);
 const deliverySchema = z.string().uuid();
 
@@ -8,7 +9,7 @@ export function learnerAttendanceIstMonth(value: string | Date): string {
   const date=new Date(value);
   if(!Number.isFinite(date.getTime()))return "";
   const parts = new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit",
   }).formatToParts(date);
   return parts.find(part => part.type === "year")!.value + "-" +
     parts.find(part => part.type === "month")!.value;

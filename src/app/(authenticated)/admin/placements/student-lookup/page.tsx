@@ -14,6 +14,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
   const status = joining === "JOINED" ? "HIRED" :
     offer === "ACCEPTED" ? "OFFERED" : raw === "SUBMITTED" ? "APPLIED" : (raw ?? "");
@@ -47,7 +48,7 @@ function appliedDate(value: Date | string | null) {
   const date = value instanceof Date ? value : new Date(value);
   if (!Number.isFinite(date.getTime())) return "-";
   return createDateFormatter("en-GB", {
-    timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, day: "2-digit", month: "short", year: "numeric",
   }).format(date);
 }
 

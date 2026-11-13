@@ -11,6 +11,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
  * tenant-safe event store; keep their columns and state "Not retained". */
@@ -129,7 +130,7 @@ function activityDay(value:string){
  return istIsoDateFormatter.format(new Date(value));
 }
 function activityDayHeading(value:string){
- return createDateFormatter("en-IN", {weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
+ return createDateFormatter("en-IN", {weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(new Date(value));
 }
 function formatWhen(value: string) {
   return istDateTimeFormatter.format(new Date(value));

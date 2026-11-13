@@ -27,6 +27,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Params=Record<string,string|string[]|undefined>;
 
 export default async function FacultyCalendarPage({
@@ -179,7 +180,7 @@ export default async function FacultyCalendarPage({
                 <p className="text-xs font-semibold text-foreground leading-5">{event.title?.trim()||"Scheduled Class"}{event.courseName&&event.courseName!==event.title?" · "+event.courseName:""} ({event.sectionName||"Class"})</p>
                 <p className="text-xs text-body leading-5">
                   {createDateFormatter("en-IN", {
-                    timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+                    timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",
                   }).format(event.startsAt)} IST
                 </p>
                 {event.deliveryId?<TextLink

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Public job DTO field: user-authored label and date only. This projection
  * must be called AFTER a published, opt-in job and college are authorized.
  * Never expose legacy posting JSON, eligibility rules or private URLs. */
@@ -37,7 +38,7 @@ export function publicJobImportantDatesFromLegacy(details: unknown): PublicJobIm
       const at = new Date(raw);
       if (!Number.isFinite(at.getTime())) continue;
       const parts = new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+        timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
       }).formatToParts(at);
       const get = (kind: string) => parts.find(part => part.type === kind)?.value ?? "";
       date = get("year") + "-" + get("month") + "-" + get("day");

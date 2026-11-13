@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type AttendanceWorkspace = Awaited<
   ReturnType<typeof getLearnerAttendanceWorkspace>
 >;
@@ -52,13 +53,13 @@ function dateLabel(value: Date) {
 }
 
 function weekdayLabel(value:Date){
- return createDateFormatter("en-IN", {weekday:"long",timeZone:"Asia/Kolkata"}).format(value);
+ return createDateFormatter("en-IN", {weekday:"long",timeZone:DEFAULT_TIME_ZONE}).format(value);
 }
 function timeLabel(value: Date) {
   return createDateFormatter("en-IN", {
     hour: "numeric",
     minute: "2-digit",
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
   }).format(value);
 }
 
@@ -175,7 +176,7 @@ export function LearnerCourseAttendance({
   }
 
   const monthName=createDateFormatter("en-IN", {
-    month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+    month:"long",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
   }).format(new Date(Date.UTC(month.getFullYear(),month.getMonth(),15,12)));
   const course = workspace.courses.find(
     (item) =>

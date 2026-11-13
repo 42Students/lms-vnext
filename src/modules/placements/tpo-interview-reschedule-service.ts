@@ -9,6 +9,7 @@ import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {tpoInterviewRescheduleSchema,parseIstRoundLocalTime,
   validInterviewWindow} from "./tpo-interview-reschedule-model";
 import {requireAvailableRoundVenue} from "./round-venue-booking-service";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export async function rescheduleTpoInterview(context:RequestContext,rawRoundId:unknown,raw:unknown){
  const collegeId=await requireTpoJobCollege(context),roundId=placementRoundIdSchema.parse(rawRoundId);
  const input=tpoInterviewRescheduleSchema.parse(raw);
@@ -32,7 +33,7 @@ export async function rescheduleTpoInterview(context:RequestContext,rawRoundId:u
     start:at,durationMinutes:round.durationMinutes});
   }
   const [updated]=await tx.update(placementJobRounds).set({
-   scheduledAt:at,timezone:"Asia/Kolkata",mode:input.mode,
+   scheduledAt:at,timezone:DEFAULT_TIME_ZONE,mode:input.mode,
    venue:input.mode==="ON_CAMPUS"?input.venue??null:null,
    meetingUrl:input.mode==="VIRTUAL"?input.meetingUrl??null:null,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobRounds.updatedAt}) + interval '1 millisecond')`,

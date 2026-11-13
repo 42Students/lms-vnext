@@ -1,5 +1,6 @@
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** A scheduled round is not evidence of test submission or interview completion. */
 export type LearnerRoundBrowseSource = {
   applicationId: string;
@@ -31,7 +32,7 @@ export function learnerRoundScheduledInstant(
 
 function localIndiaDate(time: number) {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

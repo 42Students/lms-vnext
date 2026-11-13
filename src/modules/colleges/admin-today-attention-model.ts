@@ -1,6 +1,7 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** IST calendar days have fixed 24-hour UTC bounds, including midnight crossover. */
 export function istDayBounds(date:Date){
- const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+ const parts=new Intl.DateTimeFormat("en-US",{timeZone:DEFAULT_TIME_ZONE,
   year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);
  const get=(type:string)=>parts.find(p=>p.type===type)?.value??"";
  const start=new Date(get("year")+"-"+get("month")+"-"+get("day")+"T00:00:00+05:30");
@@ -13,7 +14,7 @@ export function pendingAttendanceWindowStart(now:Date):Date{
 }
 /** AttentionBoard "when": ddd D MMM, h:mm A rendered in IST. */
 export function formatSuperAdminAttentionWhen(value:Date):string{
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
   weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
  }).formatToParts(value);
  const get=(type:string)=>parts.find(part=>part.type===type)?.value??"";

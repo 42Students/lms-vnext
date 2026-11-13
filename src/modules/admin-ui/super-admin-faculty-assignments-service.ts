@@ -11,6 +11,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const sectionDepartment=alias(departments,"admin_faculty_section_department");
 
 /** Legacy faculty-teaching DTO projection:
@@ -142,7 +143,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  const format=(value:Date|string|null|undefined)=>{
   const instant=value instanceof Date?value:new Date(value??"");
   if(!Number.isFinite(instant.getTime()))return "Date unavailable";
-  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(instant)+" IST";
+  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE}).format(instant)+" IST";
  };
  return {query:{...query,page},total,totalPages,
   rangeStart:total===0?0:(page-1)*query.pageSize+1,

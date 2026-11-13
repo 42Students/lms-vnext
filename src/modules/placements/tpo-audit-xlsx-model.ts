@@ -2,6 +2,7 @@ import {Buffer} from "node:buffer";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "./tpo-audit-model";
 import type {TpoAuditRow} from "./tpo-audit-service";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Minimal ZIP STORE OpenXML workbook writer. No third-party packages,
  * macros, external links, style injection or unsafe formula cells. */
 const xml=(value:string)=>value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"")
@@ -14,7 +15,7 @@ const auditValue=(row:TpoAuditRow,column:string)=>{
   case "Detail":return [row.title,row.detail].filter(Boolean).join(" · ");
   case "Actor":return row.actorName;
   case "When":return new Intl.DateTimeFormat("en-IN",{
-   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+   timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
   }).format(new Date(row.occurredAt))+" IST";
   default:return "";
  }

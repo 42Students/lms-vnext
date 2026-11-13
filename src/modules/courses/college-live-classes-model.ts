@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { collegeContentQuerySchema } from "./college-content-aggregate-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const collegeIstDateSchema=z.string()
  .regex(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)
  .refine(day=>{const date=new Date(day+"T00:00:00Z");
@@ -40,7 +41,7 @@ export function liveClassSearchParams(values:Record<string,string|string[]|undef
 }
 export function liveClassIstSchedule(start:Date|null,end:Date|null){
  if(!start||!end)return "Schedule not recorded";
- const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+ const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,
   day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:true});
  return fmt.format(start)+" – "+fmt.format(end)+" IST";
 }

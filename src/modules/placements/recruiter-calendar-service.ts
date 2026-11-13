@@ -38,6 +38,7 @@ import {
   listOwnRecruiterPlacementJobs,
 } from "./recruiter-service";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Legacy recruiter Today/calendar default: thirty IST calendar days.
  * Date-only input is interpreted in IST; offset instants remain exact.
@@ -45,7 +46,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  */
 export function defaultRecruiterCalendarRange(now=new Date()){
  const formatter=new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  });
  const day=(date:Date)=>{
   const parts=formatter.formatToParts(date);

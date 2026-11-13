@@ -1,4 +1,5 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_ACTIVITY_CSV_CAP=200;
 export type HrActivityCsvRow={id:string;jobId:string;title:string;status:string;occurredAt:Date};
 function cell(text:string){
@@ -7,7 +8,7 @@ function cell(text:string){
 export function buildHrActivityCsv(rows:readonly HrActivityCsvRow[],additionalRows:boolean){
  const exportRows=rows.slice(0,HR_ACTIVITY_CSV_CAP);
  const out=[["Drive ID","Drive","Event","Occurred (IST)"].map(cell).join(",")];
- const dateFormat=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",day:"2-digit",
+ const dateFormat=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,day:"2-digit",
   month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false});
  for(const row of exportRows) {
   const date=Number.isFinite(row.occurredAt.getTime())

@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 type Priority={id:string;title:string;detail:string;href:string;action:string;urgent?:boolean};
@@ -30,7 +31,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
  });
  if(quiz?.dueAt)priorities.push({
   id:"quiz",title:quiz.title+" due "+
-   createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"long"}).format(quiz.dueAt),
+   createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"long"}).format(quiz.dueAt),
   detail:(()=>{
    const attempted=signals?.courseCompletion?.quizAttemptsById.find(item=>item.quizId===quiz.id)?.attempted;
    const roster=signals?.studentRosterMetrics.byLearner.length;
@@ -52,7 +53,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   priorities.push({
    id:"attendance",title:"Attendance for today not taken",
    detail:"Class at "+createDateFormatter("en-IN", {
-    timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",
    }).format(new Date(event.startsAt))+" · "+(event.location??course.sectionName),
    href:base+"/attendanceDetail?sessionId="+encodeURIComponent(event.id),action:"Take it",
   });

@@ -19,6 +19,7 @@ import {
   DRIVE_APPLICATION_EXPORT_CAP, DRIVE_APPLICATION_BULK_CAP,
 } from "./college-drive-applications-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const LEGACY_CSV_EXPORT_CAP=20_000;
 function pattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
@@ -179,7 +180,7 @@ export async function listCollegeDriveApplications(
   ]);
   const total = totalRows[0]?.total ?? 0;
   const shortAppliedDate=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+    timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
   });
   return { drive, query, items:items.map(item=>({
     ...item,name:item.name??"",
@@ -304,7 +305,7 @@ export async function exportLegacyCollegeDriveApplicationsCsv(
   "screeningScore","isPartialScore","appliedAt","source",
   "internalNotes","rejectionReason"];
  const dateTime=new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
  });
  const rows:(string|number|null)[][]=data.items.map(row=>[

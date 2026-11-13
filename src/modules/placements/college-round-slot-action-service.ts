@@ -14,10 +14,11 @@ import {collegeInterviewActionSchema} from "./college-interview-action-model";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** A persisted interview instant is displayed in the college's IST zone. */
 function roundInterviewInstantIst(value: Date): string {
  return new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
  }).format(value);
 }
 

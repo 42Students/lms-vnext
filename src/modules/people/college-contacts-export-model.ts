@@ -2,6 +2,7 @@ import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible} from "./college-contacts-model";
 import type {CollegeContactRow} from "./college-contacts-service";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const CONTACT_EXPORT_LIMIT=1000;
 export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
 export function assertCollegeContactExportFilters(filter:z.infer<typeof collegeContactsExportSchema>):void {
@@ -34,7 +35,7 @@ export function neutralizeContactCell(value:string){
 }
 export function renderCollegeContactCsv(rows:readonly CollegeContactRow[],truncated:boolean){
  const header=["Name","Roles","Email (learner masked)","Phone (masked)","Status","Joined (IST)"];
- const format=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"});
+ const format=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium"});
  const lines=[header.map(neutralizeContactCell).join(",")];
  for(const row of rows.slice(0,CONTACT_EXPORT_LIMIT)){
   lines.push([row.name,row.roles.join("; "),row.email,row.phone,row.status,format.format(row.joinedAt)]

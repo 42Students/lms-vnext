@@ -43,6 +43,7 @@ import {
   type PlacementCalendarEvent,
 } from "./placement-calendar-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const calendarDateSchema = z.iso
@@ -644,7 +645,7 @@ export async function listPlacementCalendarEvents(
           eventType:item.eventType,startsAt:item.at,title:item.label,
           companyId:row.companyId,companyName:row.companyName,
           jobId:row.jobId,jobTitle:row.jobTitle,roundId:null,roundKind:null,
-          leadId:null,followupId:null,status:row.status,timezone:"Asia/Kolkata",
+          leadId:null,followupId:null,status:row.status,timezone:DEFAULT_TIME_ZONE,
           venue:null,note:item.originalType,completedAt:null,
         }));
       return [...standard,...additional];

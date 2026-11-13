@@ -52,6 +52,7 @@ import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type AssignmentResource = {
   id: string;
   kind: "INSTRUCTIONS" | "PDF" | "FILE" | "LINK";
@@ -284,7 +285,7 @@ export function LearnerAssessmentOverview({
             const due=item.dueAt?new Date(item.dueAt):new Date(item.createdAt);
             const today=new Date(currentNowMs);
             if(!Number.isFinite(due.getTime()))return false;
-            const month=createDateFormatter("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+            const month=createDateFormatter("en-CA", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit"});
             return month.format(due)===month.format(today);
           }).length} This month</Badge>
           <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">

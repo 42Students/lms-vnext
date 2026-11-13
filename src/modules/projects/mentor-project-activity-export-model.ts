@@ -1,4 +1,5 @@
 import {csvSafeCell} from "./mentor-board-review-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type MentorSafeActivityExportRow={
   id:string;label:string;importance:string;occurredAt:Date;
 };
@@ -6,7 +7,7 @@ export type MentorSafeActivityExportRow={
 export function mentorActivityCsv(rows:readonly MentorSafeActivityExportRow[],
   omitted:number){
   const lines=["Event ID,Recorded event,Importance,Occurred (IST)"];
-  const format=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+  const format=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
     year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
     hourCycle:"h23"});
   // Bound this formatter as well as its authorized API caller. Never silently

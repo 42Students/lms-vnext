@@ -1,10 +1,11 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Named TPO scheduling contracts from the legacy TpoScheduledJobs service.
  * Cron expressions below have minute precision and are evaluated in
  * Asia/Kolkata by an external scheduler. They are NOT implicit timers.
  * Only bindings with an active, authenticated route are marked wired.
  */
-export const TPO_JOB_TIME_ZONE = "Asia/Kolkata";
+export const TPO_JOB_TIME_ZONE = DEFAULT_TIME_ZONE;
 
 export const TPO_SCHEDULED_JOBS = {
   "tpo.deadlineToday": {

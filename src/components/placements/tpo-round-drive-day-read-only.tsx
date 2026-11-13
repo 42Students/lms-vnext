@@ -32,6 +32,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
 >;
@@ -432,7 +433,7 @@ export function TpoRoundDriveDayReadOnly({
                <p className="break-words text-lg font-semibold text-foreground">{student.displayName}</p>
                <p className="mt-1 text-xs text-body">
                 {student.rollNumber??"Roll unavailable"} · Slot {student.slotStartsAt?
-                 createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":
+                 createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":
                  "time unavailable"}
                </p>
                <TpoRoundResultRecorder roundId={data.round.id}
@@ -481,7 +482,7 @@ export function TpoRoundDriveDayReadOnly({
            <p className="break-words text-sm font-semibold text-foreground">{student.displayName}</p>
            <p className="mt-1 text-xs text-muted-foreground">
             {student.rollNumber??"Roll not recorded"} · Booked slot:
-            {" "}{student.slotStartsAt?createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":"Not assigned"}
+            {" "}{student.slotStartsAt?createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":"Not assigned"}
            </p>
           </div>
           <TpoRoundCheckIn roundId={data.round.id} applicationId={student.applicationId}

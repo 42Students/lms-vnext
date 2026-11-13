@@ -1,5 +1,6 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type {RecruiterDriveListItem} from "./recruiter-drive-list-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_DRIVE_CSV_CAP=200;
 function cell(value:string){
  return spreadsheetCsvCell(value);
@@ -8,7 +9,7 @@ export function buildHrDrivesCsv(rows:readonly RecruiterDriveListItem[],hasMore:
  const output=[["Drive ID","Job title","Lifecycle","Employment","Work mode","Deadline (IST)"].map(cell).join(",")];
  const shown=rows.slice(0,HR_DRIVE_CSV_CAP);
  const dateFormat=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hour12:false,
  });
  for(const row of shown){

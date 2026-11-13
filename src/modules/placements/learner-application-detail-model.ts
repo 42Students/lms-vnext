@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type ApplicationStatusEvent = {
   id: string;
   fromStatus: string | null;
@@ -107,7 +108,7 @@ export function learnerApplicationRoundDueCopy(
  const date=input.dueAt instanceof Date?input.dueAt:new Date(input.dueAt);
  if(!Number.isFinite(date.getTime()))return {roundName:name,dueDate:null};
  return {roundName:name,dueDate:new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+  timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
  }).format(date)};
 }
 

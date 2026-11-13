@@ -65,6 +65,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createNumberFormatter } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 function currentTimeMs(){return Date.now();}
 
 function safeDriveReturnTo(raw:string|undefined){
@@ -357,7 +358,7 @@ export default async function HrPlacementJobPage({
               applicants.counts.all+" applicants shared with you",
               workspace.job.applicationDeadline&&workspace.job.status==="PUBLISHED"?
                 "Applications close "+createDateFormatter("en-IN", {
-                  timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+                  timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
                   hour:"numeric",minute:"2-digit",hour12:true,
                 }).format(workspace.job.applicationDeadline):null,
             ].filter(Boolean).join(" · ")}
@@ -591,7 +592,7 @@ export default async function HrPlacementJobPage({
               className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
                 {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
-                {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
+                {" "}{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
               </p>
               {message.changeRequestId?<p className="mt-1 text-xs font-semibold text-primary-text">Regarding change request {message.changeRequestId}</p>:null}
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
@@ -913,7 +914,7 @@ export default async function HrPlacementJobPage({
                 formatNumberIN((offer.annualCtcInr/100000), {maximumFractionDigits:2})+" LPA",
               ctcSort:offer.annualCtcInr,status:recruiterOfferStatusLabel(offer.status),
               deadline:offer.expiresAt?createDateFormatter("en-IN", {
-                timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+                timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
                 hour:"numeric",minute:"2-digit",hour12:true,
               }).format(offer.expiresAt):"-",
               joining:offer.joiningStatus==="JOINED"?"Joined":

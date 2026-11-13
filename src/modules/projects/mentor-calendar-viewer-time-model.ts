@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Mentor meeting clock labels for the VIEWER, not the server/organizer zone.
  *
@@ -10,7 +11,7 @@
  * server/client hydration, then reads the viewer zone in a browser effect.
  * API timestamps and canonical UTC instants are never mutated.
  */
-export const MENTOR_INITIAL_VIEWER_ZONE="Asia/Kolkata";
+export const MENTOR_INITIAL_VIEWER_ZONE=DEFAULT_TIME_ZONE;
 
 export function safeMentorViewerZone(value:string|null|undefined):string{
   if(!value?.trim())return MENTOR_INITIAL_VIEWER_ZONE;

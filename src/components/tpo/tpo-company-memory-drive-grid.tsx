@@ -10,6 +10,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type CompanyMemoryDriveRow={
  id:string;jobTitle:string;status:string;createdAt:string;applied:number|null;offers:number|null;
 };
@@ -20,7 +21,7 @@ const statusLabel=(status:string)=>({
 const year=(value:string)=>{
  const instant=Date.parse(value);
  return Number.isFinite(instant)?createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",
  }).format(new Date(instant)):"Not recorded";
 };
 const date=(value:string)=>{

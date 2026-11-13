@@ -16,6 +16,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
  relationshipId:string;companyId:string;companyName:string;
@@ -96,8 +97,8 @@ export function TpoCompaniesToday({
   const date=new Date(now.getTime()+offset*86400000);
   const key=istDateKey(date);
   return {offset,label:dayLabel(date),
-    weekday:createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date),
-    dayNumber:createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(date),
+    weekday:createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short"}).format(date),
+    dayNumber:createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric"}).format(date),
     count:active.filter(row=>offset===0
       ?istDateKey(new Date(row.dueAt))<=todayKey
       :istDateKey(new Date(row.dueAt))===key).length+

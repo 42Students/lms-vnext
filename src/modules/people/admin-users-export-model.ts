@@ -1,5 +1,6 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { adminUsersQuerySchema } from "./admin-user-directory-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const SUPER_ADMIN_PEOPLE_CSV_CAP = 500;
 export const adminUsersExportQuerySchema = adminUsersQuerySchema.omit({ page: true });
 export type SuperAdminPeopleCsvRow = {
@@ -10,7 +11,7 @@ const cell = spreadsheetCsvCell;
 /** Never export phone/email/identity UID, even in a selected college. */
 export function buildSuperAdminPeopleCsv(rows: readonly SuperAdminPeopleCsvRow[], truncated: boolean) {
  const header = ["Membership ID","Name","College","Roles","Platform Status","Membership Status","Updated (IST)"];
- const date = new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+ const date = new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
  const lines = [header.map(cell).join(",")];
  for(const row of rows.slice(0,SUPER_ADMIN_PEOPLE_CSV_CAP))
   lines.push([row.membershipId,row.displayName??"",row.collegeName,row.roles.join("; "),row.platformStatus,row.membershipStatus,date.format(row.updatedAt)+" IST"].map(cell).join(","));

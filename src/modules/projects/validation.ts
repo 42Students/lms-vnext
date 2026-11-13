@@ -10,6 +10,7 @@ import {
 } from "./constants";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const projectKeySchema = z
   .string()
   .trim()
@@ -831,7 +832,7 @@ const projectMeetingWindowShape = {
     .max(80)
     // Meeting instants are offset-aware; never trust a caller's free-text
     // display zone to contradict the IST calendar used across the LMS.
-    .transform(() => "Asia/Kolkata" as const),
+    .transform(() => DEFAULT_TIME_ZONE),
 };
 
 function withValidMeetingWindow<

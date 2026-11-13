@@ -11,6 +11,7 @@ import {useToast} from "@/components/ui/toast";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -42,7 +43,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    setError("Choose a valid future date and time in IST.");return;
   }
   const parts=createDateFormatter("en-US", {
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   }).formatToParts(when);
   const part=(key:string)=>parts.find(entry=>entry.type===key)?.value??"";
@@ -57,7 +58,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({requestType:"ROUND_RESCHEDULE",applicationId,roundId,
      reason:requestReason,preferredTimes:preferredTimes.trim()||null,
-     scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
+     scheduledAt:when.toISOString(),timezone:DEFAULT_TIME_ZONE,mode:nextMode,
      venue:nextMode==="ON_CAMPUS"?nextVenue.trim()||null:null,
      meetingUrl:nextMode==="VIRTUAL"?nextUrl.trim()||null:null}),
    });

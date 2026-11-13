@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istIsoDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type RoundPreview={
  id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
  scheduledAt:Date|null;venue:string|null;durationMinutes:number|null;
@@ -21,10 +22,10 @@ type SelectedSlots={
  pendingProposals:number;
 };
 const when=(date:Date|string|null)=>date?createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
+ timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
  }).format(new Date(date))+" IST":"Not scheduled";
 const clock=(at:string)=>createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+ timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",
  }).format(new Date(at));
 function dateKey(date:Date){
  return istIsoDateFormatter.format(date);

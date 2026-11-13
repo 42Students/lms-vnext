@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type LearnerProjectTaskFacts = {
   assigneeMembershipId: string | null;
   dueDate: string | null;
@@ -10,7 +11,7 @@ export function projectTaskDueLabel(date: string | null): string {
   const parsed = new Date(date + "T12:00:00.000Z");
   if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) return "No due date";
   return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, day: "numeric", month: "short", year: "numeric",
   }).format(parsed);
 }
 export function projectTaskVisibleFacts(
@@ -29,7 +30,7 @@ export function projectTaskVisibleFacts(
 /** MEN-projects-meetings-41: due state uses the project viewer's IST day. */
 export function projectTaskDueState(dueDate: string | null,status:string,now:Date):string|null {
   if(!dueDate||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(dueDate)||status==="DONE")return null;
-  const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
+  const today=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
   const difference=Math.round((new Date(dueDate+"T00:00:00Z").getTime()-
     new Date(today+"T00:00:00Z").getTime())/86400000);
   return difference<0?"Overdue":difference<=3?"Due soon":null;

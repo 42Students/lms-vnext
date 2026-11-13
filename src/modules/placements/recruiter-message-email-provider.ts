@@ -11,6 +11,7 @@ import {placementEmailChannelEnabled} from "./placement-mail-event-matrix";
 import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReplyAddress,safeRecruiterEmailAddressName} from "./recruiter-message-email-model";
 
 import { rawEnv } from "@/config/env";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type RecruiterMailDigest={
  recipient:string;recipientName:string;companyName:string;collegeName:string;
  replyTo:string;messages:readonly {body:string;createdAt?:Date|string;
@@ -38,7 +39,7 @@ export function safeRecruiterHeaderName(raw:string):string{
  return /[\\uD800-\\uDBFF]$/.test(cleaned)?cleaned.slice(0,-1):cleaned;
 }
 const recruiterMessageDate=new Intl.DateTimeFormat("en-GB",{
- timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+ timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
  hour:"numeric",minute:"2-digit",hour12:true,
 });
 function safeRecruiterMessageDate(date:Date|string|undefined):string{

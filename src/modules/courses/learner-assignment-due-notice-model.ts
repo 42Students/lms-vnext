@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type LearnerDueSource={
  id:string;title:string;deliveryId:string;dueAt:Date|null;submissionId:string|null;
 };
@@ -14,7 +15,7 @@ export function learnerDueSoonNotices(rows:readonly LearnerDueSource[],now:Date,
    key:row.id+":"+row.deliveryId,
    title:"Assignment due soon",
    body:row.title+" · Due "+new Intl.DateTimeFormat("en-IN",{
-    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"
+    timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"
    }).format(row.dueAt!),
    href:"/learn/allAssignments/"+encodeURIComponent(row.id)+"?deliveryId="+encodeURIComponent(row.deliveryId),
    dueAt:row.dueAt!.toISOString(),
@@ -34,7 +35,7 @@ export type LearnerInterviewReminderSource = {
 };
 function istClock(now:Date){
  const parts=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).formatToParts(now);
  const get=(type:string)=>parts.find(part=>part.type===type)?.value??"";
@@ -58,7 +59,7 @@ export function interviewTomorrowReminders(
   istClock(row.startsAt).day===tomorrow).map(row=>({
    key:"interview:"+row.id+":"+tomorrow,
    title:"Interview reminder",body:row.title+" · Tomorrow at "+
-    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(row.startsAt!),
+    new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,timeStyle:"short"}).format(row.startsAt!),
    href:row.href,dueAt:row.startsAt!.toISOString(),
  })).sort((a,b)=>a.dueAt.localeCompare(b.dueAt)||a.key.localeCompare(b.key))
   .filter(notice=>{if(seen.has(notice.key))return false;seen.add(notice.key);return true});
@@ -80,7 +81,7 @@ export function quizDueSoonReminders(
    key:"quiz:"+row.id+":"+row.deliveryId,
    title:"Quiz due soon",
    body:row.title+" · Due "+new Intl.DateTimeFormat("en-IN",{
-    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+    timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
    }).format(row.dueAt!),
    href:"/learn/allQuizzes?deliveryId="+encodeURIComponent(row.deliveryId),
    dueAt:row.dueAt!.toISOString(),

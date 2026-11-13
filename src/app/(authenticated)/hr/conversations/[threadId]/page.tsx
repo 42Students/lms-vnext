@@ -23,12 +23,13 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 // Always display IST (the product time zone), including across UTC-midnight
 // and year boundaries. Read receipts are explicit, never a GET side-effect.
-const dateTime=(value:Date)=>createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",year:"numeric",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
+const dateTime=(value:Date)=>createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
 export default async function RecruiterConversationDetail({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");

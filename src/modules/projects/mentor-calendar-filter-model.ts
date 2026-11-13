@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {mentorMeetingDisplayStatus,safeMentorMeetingJoinUrl,type MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
   join:z.enum(["ALL","HAS_SAFE_LINK","NO_SAFE_LINK"]).default("ALL"),
@@ -24,7 +25,7 @@ export function filterMentorCalendar(
 ){
   const term=query.search.toLocaleLowerCase("en-IN");
   const day=(instant:Date)=>{
-    const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+    const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,
       year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(instant);
     const value=(key:string)=>Number(parts.find(p=>p.type===key)?.value??0);
     return Date.UTC(value("year"),value("month")-1,value("day"));

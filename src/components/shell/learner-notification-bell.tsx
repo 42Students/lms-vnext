@@ -13,6 +13,7 @@ import {learnerNotificationTarget} from "@/modules/activity/learner-notification
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
 type Row={notification:{id:string;title:string;body:string;actionHref:string|null;
  readAt:string|null;createdAt:string};event:{module:string}};
@@ -129,7 +130,7 @@ export function LearnerNotificationBell(){
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block min-w-0 line-clamp-2 break-words leading-[1.5] text-muted-foreground">{row.notification.body}</span>
-       <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground leading-[20px]">{createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(row.notification.createdAt))}</time>
+       <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground leading-[20px]">{createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:DEFAULT_TIME_ZONE}).format(new Date(row.notification.createdAt))}</time>
       </TextLink>
      </li>;
     })}

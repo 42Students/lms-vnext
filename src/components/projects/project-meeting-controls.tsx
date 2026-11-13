@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Meeting = {
   id: string;
   status: string;
@@ -162,7 +163,7 @@ export function RequestProjectMeetingControl({
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [timeZone, setTimeZone] =
-    useState("Asia/Kolkata");
+    useState(DEFAULT_TIME_ZONE);
   const [minStart,setMinStart]=useState("");
   const [pending, setPending] =
     useState(false);
@@ -174,7 +175,7 @@ export function RequestProjectMeetingControl({
   const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
   function openDialog() {
     setMinStart(toLocalInput(new Date()));
-    setTimeZone("Asia/Kolkata");
+    setTimeZone(DEFAULT_TIME_ZONE);
     setError(null);
     setOpen(true);
   }
@@ -345,7 +346,7 @@ export function ScheduleProjectMeetingControl({
       : "",
   );
   const [timeZone, setTimeZone] =
-    useState("Asia/Kolkata");
+    useState(DEFAULT_TIME_ZONE);
   const [meetingUrl, setMeetingUrl] =
     useState(meeting?.meetingUrl ?? "");
   const [scheduleMinStart, setScheduleMinStart] = useState("");
@@ -398,7 +399,7 @@ export function ScheduleProjectMeetingControl({
         ? toLocalInput(meeting.endsAt)
         : "",
     );
-    setTimeZone("Asia/Kolkata");
+    setTimeZone(DEFAULT_TIME_ZONE);
     setMeetingUrl(meeting?.meetingUrl ?? "");
     setMeetingStatus(
       meeting?.status==="DRAFT"?"DRAFT":meeting?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");

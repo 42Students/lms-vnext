@@ -6,6 +6,7 @@ import {
 import { exportCollegeActivity } from "@/modules/activity/college-activity-export-service";
 import { route } from "@/security/route";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const runtime = "nodejs";
 async function handleGET(request: Request) {
   try {
@@ -17,7 +18,7 @@ async function handleGET(request: Request) {
     // arbitrary header/path content in a download filename.
     const category=(params?.["category"]??"all").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,32)||"all";
     const today=new Intl.DateTimeFormat("en-CA",{
-      timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+      timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
     }).format(new Date());
     const filename=`activity-${category}-${today}.csv`;
     return new Response(result.csv, {

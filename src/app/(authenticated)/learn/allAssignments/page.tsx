@@ -17,6 +17,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type AssignmentSearchParams = { course?: string | string[]; page?:string|string[] };
 
 function AssignmentsLoading() {
@@ -144,7 +145,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
   // A stale link must not show a fabricated "empty" page 9 of 2.
   if(recoveredPage!==null)
     redirect(learnerAssignmentListHref(recoveredPage,overview.selectedCourseId));
-  const thisMonth = createDateFormatter("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+  const thisMonth = createDateFormatter("en-CA", {timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit"});
   const snapshotMonth = thisMonth.format(new Date(overview.snapshotNowMs));
   const createdThisMonth = items.filter(item => thisMonth.format(new Date(item.createdAt)) === snapshotMonth).length;
 

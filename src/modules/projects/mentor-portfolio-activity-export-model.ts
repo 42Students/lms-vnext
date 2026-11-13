@@ -1,6 +1,7 @@
 import {csvSafeCell} from "./mentor-board-review-model";
 import {mentorPortfolioHref,type MentorActivityQuery} from "./mentor-portfolio-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function mentorPortfolioActivityExportHref(query:MentorActivityQuery) {
  const {projectId,...filters}=query;
  const pageHref=mentorPortfolioHref("activity",{...filters,...(projectId !== undefined ? {projectId} : {}),page:1,pageSize:20});
@@ -15,7 +16,7 @@ export function mentorPortfolioActivityCsv(
  rows:readonly MentorPortfolioActivityExportRow[],omitted:number
 ){
  const date=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Event ID,Project,Recorded event,Importance,Occurred (IST)"];

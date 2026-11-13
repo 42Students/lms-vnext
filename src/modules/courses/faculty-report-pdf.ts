@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Dependency-free A4 PDF report. All rows must be authorized by the caller.
  * Keep output byte-for-byte ASCII: the browser's UTF-8 Blob serialization must
  * not invalidate the PDF cross-reference offsets. */
@@ -109,10 +110,10 @@ function wrap(value:string,maxLength:number):string[]{
 function generatedDate(value:Date):string{
  const date=Number.isFinite(value.getTime())?value:new Date();
  const day=new Intl.DateTimeFormat("en-US",{
-  timeZone:"Asia/Kolkata",month:"short",day:"numeric",year:"numeric",
+  timeZone:DEFAULT_TIME_ZONE,month:"short",day:"numeric",year:"numeric",
  }).format(date);
  const clock=new Intl.DateTimeFormat("en-US",{
-  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
+  timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",hour12:true,
  }).format(date);
  return day+" at "+clock;
 }

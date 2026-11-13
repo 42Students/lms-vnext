@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
- const parts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date(instant));
+ const parts=createDateFormatter("en-GB", {timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date(instant));
  const part=(name:string)=>parts.find(p=>p.type===name)?.value??"";
  return part("year")+"-"+part("month")+"-"+part("day");
 }

@@ -13,6 +13,7 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export class TpoCommunicationSettingsError extends Error {
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
 }
@@ -139,7 +140,7 @@ const DIGEST_NOTICE:ReadonlySet<TpoDispatchEvent>=new Set([
 export function nextTpoEmailDigestAt(now:Date):Date{
  if(!Number.isFinite(now.getTime()))throw new Error("Invalid delivery clock");
  const parts=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).formatToParts(now);
  const value=(key:string)=>Number(parts.find(part=>part.type===key)?.value);

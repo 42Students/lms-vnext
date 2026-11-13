@@ -1,8 +1,9 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** IIT Dharwad Projects: calendar dates are always in the product's IST zone. */
 export function formatProjectAdminUpdatedDateIst(value:Date):string {
   if (!Number.isFinite(value.getTime())) return "Date unavailable";
   return new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeZone:"Asia/Kolkata",
+    dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE,
   }).format(value);
 }
 
@@ -11,7 +12,7 @@ export function formatProjectAdminActivityDateIst(value:Date|null):string {
   if (!value) return "Not submitted";
   if (!Number.isFinite(value.getTime())) return "Date unavailable";
   return new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+    dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
   }).format(value);
 }
 

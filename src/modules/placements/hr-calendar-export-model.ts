@@ -1,5 +1,6 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type {HrCalendarCategory} from "./hr-calendar-category-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_CALENDAR_EXPORT_CAP=200;
 export type HrCalendarCsvEvent={
  kind:string;title:string;jobTitle:string|null;startsAt:Date;status:string;jobId:string|null;
@@ -26,7 +27,7 @@ export function buildHrCalendarCsv(events:readonly HrCalendarCsvEvent[],
  ].sort((a,b)=>a.timestamp.getTime()-b.timestamp.getTime()||
    a.job.localeCompare(b.job)||a.item.localeCompare(b.item));
  const out=[["Job","Event","Type","Date/time (IST)","Recorded status"].map(escapeCell).join(",")];
- const fmt=new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const fmt=new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE});
  for(const row of rows.slice(0,HR_CALENDAR_EXPORT_CAP))
   out.push([row.job,row.item,row.type,fmt.format(row.timestamp),row.status].map(escapeCell).join(","));
  const omitted=Math.max(0,rows.length-HR_CALENDAR_EXPORT_CAP);

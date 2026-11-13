@@ -3,6 +3,7 @@ import { adminAuditTextFilterSchema } from "./admin-audit-search-model";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import { escapeActivityCsvCell } from "./college-activity-export-model";
 import {collegeActivityAction,collegeActivityItem} from "./college-activity-presentation";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const SUPER_ADMIN_AUDIT_CSV_CAP = 1000;
 export const superAdminAuditExportSchema=z.object({
  ...adminAuditTextFilterSchema.shape,
@@ -28,7 +29,7 @@ export function buildSuperAdminAuditCsv(rows:readonly SuperAdminAuditRow[],trunc
  const header=["Time","Who","What","Item","Action key","IP",
   "Module","Importance","Subject ID","Summary"];
  const fmt=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
  });
  const lines=[header.map(escapeActivityCsvCell).join(",")];

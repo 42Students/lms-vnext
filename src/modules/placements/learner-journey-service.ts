@@ -31,6 +31,7 @@ import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-
 import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Display labels are legacy learner phrasing; raw codes remain available for
  * staff workflows and exact API state transitions. */
 function learnerScreeningLabel(status:string):string{
@@ -328,7 +329,7 @@ export async function getLearnerPlacementJourney(
         status:booking.importedAppointmentState??booking.interviewOutcome??
           (booking.appointmentStatus==="CANCELLED"?"CANCELLED":"SCHEDULED"),
         isPast:booking.startsAt.getTime()<snapshotNow.getTime(),
-        startsAtIst:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+        startsAtIst:new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,
           year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(booking.startsAt),
         roundId:booking.roundId,roundName:booking.roundName,
         sequence:booking.roundSequence,

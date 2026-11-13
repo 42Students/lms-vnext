@@ -31,6 +31,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatDateWith } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -179,7 +180,7 @@ export default async function TpoUnplacedReportPage({
            row?.profileFacts?.resume===false?"Missing":"Not confirmed",
           lastApplications.get(learner.membershipId)?.applications??0,
           lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
-          formatDateWith(lastApplications.get(learner.membershipId)?.lastSubmittedAt, "en-IN", {timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Never"];
+          formatDateWith(lastApplications.get(learner.membershipId)?.lastSubmittedAt, "en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric"})??"Never"];
         })}
         emptyDescription="No unplaced learners match this reporting scope. This does not prove that all learners have been placed across all seasons."
         compactControls

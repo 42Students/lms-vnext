@@ -6,11 +6,12 @@ import { istIsoDateFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-d
 import { createDateFormatter } from "@/lib/format-date";
 import { Table } from "@/components/ui/table";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Report=Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
 const istDay=(date:Date)=>istIsoDateFormatter.format(date);
 const dayLabel=(date:Date)=>istWeekdayDayMonthFormatter.format(date);
 const shortDay=(date:Date)=>createDateFormatter("en-IN", {
- timeZone:"Asia/Kolkata",day:"numeric",month:"short",
+ timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short",
 }).format(date);
 
 /** Faculty prototype #11: Section-scoped, persisted assessment statistics.

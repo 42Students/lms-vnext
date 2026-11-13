@@ -1,4 +1,5 @@
 import type {LearnerVerificationState} from "./learner-verification-status-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function learnerVerificationNoticeCopy(input:{
  status:LearnerVerificationState;reason:string|null;decidedByName:string|null;
  verifiedAt:string|null;heading:string;
@@ -6,7 +7,7 @@ export function learnerVerificationNoticeCopy(input:{
  if(input.status==="VERIFIED"||input.status==="UPDATE_PENDING"){
   const name=input.decidedByName?.trim();
   const date=input.verifiedAt&&Number.isFinite(Date.parse(input.verifiedAt))
-   ?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(input.verifiedAt)):null;
+   ?new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium"}).format(new Date(input.verifiedAt)):null;
   if(name&&date)return "Verified by "+name+" on "+date;
   return input.status==="VERIFIED"?"Verified":"Verified details are in use while your update waits for review.";
  }

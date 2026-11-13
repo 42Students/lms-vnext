@@ -17,6 +17,7 @@ import {
   buildFacultyCourseHomeSignals,
 } from "./faculty-course-home-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Workspace = Awaited<
   ReturnType<typeof getFacultyCourseWorkspace>
 >;
@@ -127,11 +128,11 @@ export async function getFacultyCourseHomeSignals(
   )).then(rows=>rows[0]?.count??0).catch(()=>null);
   const now=new Date();
   const nowIst=new Intl.DateTimeFormat("en-GB",{
-   timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+   timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"2-digit",year:"numeric",
   }).format(now);
   const istMonth=(date:Date)=>{
    const parts=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",
    }).formatToParts(date);
    return (parts.find(part=>part.type==="year")?.value??"")+"-"+
     (parts.find(part=>part.type==="month")?.value??"");
@@ -146,7 +147,7 @@ export async function getFacultyCourseHomeSignals(
   const todayUnmarked=attendance?.sessions.find(session=>
    session.attendanceStatus!=="MARKED"&&
    new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+    timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"2-digit",year:"numeric",
    }).format(session.startsAt)===nowIst)??null;
   const signals = buildFacultyCourseHomeSignals({
     roster: attendance?.roster ?? [],

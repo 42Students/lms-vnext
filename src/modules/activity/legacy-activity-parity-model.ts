@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy audit and bell copy adapters. Legacy numeric IDs are never URLs or
  * permission grants; callers must resolve current tenant-scoped UUIDs first. */
 export type LegacyBellCategory="COURSE"|"GENERAL"|"JOB"|"SYSTEM";
@@ -49,7 +50,7 @@ export function legacyNotificationReadAt(
 /** Caller passes the source date wall clock as ISO w/o zone. Explicitly
  * require source-zone provenance rather than inferring from server timezone. */
 export function legacyIndiaLocalToUtc(local:string,zone:string){
- if(zone!=="Asia/Kolkata"||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(local))
+ if(zone!==DEFAULT_TIME_ZONE||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(local))
   return null;
  const instant=new Date(local+"+05:30");
  return Number.isFinite(instant.getTime())?instant:null;

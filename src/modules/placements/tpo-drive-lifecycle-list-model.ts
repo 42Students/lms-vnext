@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** TPO-drives-03: "Closed" is a view of both normal closures and cancellations.
  * Do not include rejected recruiter requests: those are not placement jobs. */
 export const TPO_CLOSED_JOB_STATUSES = ["CLOSED", "CANCELLED"] as const;
@@ -146,7 +147,7 @@ export function tpoDriveWhereItIs(job:{
   return "Offers · "+job.offersMade+" issued/accepted";
  if(job.roundCount>0){
   const next=job.nextRoundAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
-   timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.nextRoundAt))+" IST":"No upcoming date";
+   timeStyle:"short",timeZone:DEFAULT_TIME_ZONE}).format(new Date(job.nextRoundAt))+" IST":"No upcoming date";
   return "Rounds "+job.roundsCompleted+" of "+job.roundCount+" done · "+next;
  }
  if(job.offersMade>0)return "Offers · "+job.offersMade+" issued/accepted";

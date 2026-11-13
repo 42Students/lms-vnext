@@ -30,6 +30,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
 const countTasks=(tasks:readonly ProjectTask[],status:string)=>tasks.filter(task=>task.status===status).length;
@@ -290,7 +291,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
     const when=new Date(stamp);
     return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
       day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
-      timeZone:"Asia/Kolkata",
+      timeZone:DEFAULT_TIME_ZONE,
     }).format(when)+" IST":"Not recorded";
   };
   const lastRecordedAction=(userId:string)=>{
@@ -299,7 +300,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
     const when=new Date(stamp);
     return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
       day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
-      timeZone:"Asia/Kolkata",
+      timeZone:DEFAULT_TIME_ZONE,
     }).format(when)+" IST":"No recorded action";
   };
   return <section className="prototype-mentor-team-overview" aria-label="Current project team">
@@ -762,7 +763,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
       {nextMeeting?<div className="prototype-mentor-overview-actions">
         <strong>{nextMeeting.title}</strong>
         <p>{createDateFormatter("en-IN", {day:"numeric",month:"short",weekday:"short",
-          hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST
+          hour:"numeric",minute:"2-digit",timeZone:DEFAULT_TIME_ZONE}).format(nextMeeting.startsAt)} IST
           {" · "+Math.max(0,Math.round((nextMeeting.endsAt.getTime()-
             nextMeeting.startsAt.getTime())/60000))+" minutes"}</p>
         <p>Type: {nextMeeting.meetingType.replaceAll("_"," ")}
@@ -809,7 +810,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
             <strong>Mentor update · saved project activity</strong>:null}
           <p>{update.summary}</p>
           <span>{update.actorDisplayName||"Recorded project event"} · {createDateFormatter("en-IN", {
-            day:"numeric",month:"short",timeZone:"Asia/Kolkata",
+            day:"numeric",month:"short",timeZone:DEFAULT_TIME_ZONE,
           }).format(update.occurredAt)}</span>
           <Link href={base+"?tab="+(
             update.subjectType==="project_task"?"board":

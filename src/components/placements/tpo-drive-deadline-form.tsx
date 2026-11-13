@@ -12,6 +12,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import { Label } from "@/components/ui/label";
 import { formatDateTimeIst, istDateTimeFormatter } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Deadline={id:string;updatedAt:string;applicationDeadline:string|null};
 
 /** TPO-drives-15, TPO-drives-45: first deadlines work and every failure is recoverable. */
@@ -22,7 +23,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
  const [proposal,setProposal]=useState<{newDeadlineIso:string;reason:string}|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const initial=job.applicationDeadline
-  ?formatDateWith(new Date(job.applicationDeadline), "sv-SE", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone:"Asia/Kolkata" }).replace(" ","T").slice(0,16)
+  ?formatDateWith(new Date(job.applicationDeadline), "sv-SE", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone:DEFAULT_TIME_ZONE }).replace(" ","T").slice(0,16)
   :"";
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending)return;

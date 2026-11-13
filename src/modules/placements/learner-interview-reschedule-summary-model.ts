@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const schema=z.object({
   companyName:z.string().trim().min(1).max(200),
   roleTitle:z.string().trim().min(1).max(200),
@@ -9,7 +10,7 @@ const schema=z.object({
   mode:z.enum(["VIRTUAL","ON_CAMPUS"]).nullable(),
 }).strict();
 const formatter=new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
 });
 /** The text is for the learner to copy, not a notification or provider confirmation. */
 export function learnerInterviewRescheduleSummary(raw:z.input<typeof schema>){

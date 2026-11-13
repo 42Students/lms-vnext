@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Upcoming calendar meetings in the current ISO week in IST. The Mentor
  * home rail is independent of the 48-hour needs-attention projection. */
 export type MentorHomeWeekMeeting={
@@ -8,7 +9,7 @@ export function selectMentorHomeWeekMeetings<T extends MentorHomeWeekMeeting>(
   meetings:readonly T[],now:Date,
 ):T[]{
   const fields=new Intl.DateTimeFormat("en-US",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
   }).formatToParts(now);
   const part=(kind:"year"|"month"|"day")=>{
     const text=fields.find(field=>field.type===kind)?.value;

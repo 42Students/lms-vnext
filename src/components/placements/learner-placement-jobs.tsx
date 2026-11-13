@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type EligibilityStatus =
   | "ELIGIBLE"
   | "ELIGIBLE_WITH_MISSING_EVIDENCE"
@@ -707,7 +708,7 @@ function postedAtLabel(value:string|null|undefined,snapshotNowIso:string|null):s
  if(days<7)return "Posted "+days+" days ago";
  if(days<30)return "Posted "+Math.floor(days/7)+" weeks ago";
  return "Posted "+createDateFormatter("en-IN", {
-  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  day:"2-digit",month:"short",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
  }).format(new Date(value));
 }
 

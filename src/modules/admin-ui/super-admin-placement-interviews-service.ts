@@ -13,6 +13,7 @@ import {
   type SuperAdminReadResult,
 } from "./super-admin-read-directory-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Each row is a real candidate appointment (0116), never a round placeholder.
  * The persisted legacy status is retained for historic confirmations and
  * reschedule requests; new bookings project distinct acknowledgment/outcome facts.
@@ -106,7 +107,7 @@ export async function listSuperAdminInterviews(
  ]);
  const total=totals[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
  });
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),
   items:rows.map(row=>{
@@ -117,7 +118,7 @@ export async function listSuperAdminInterviews(
    const interviewer=row.legacyInterviewerName??row.panel??"Not assigned";
    const conflict=row.candidateConflict&&row.interviewerConflict?"Both candidate and interviewer":
     row.candidateConflict?"Candidate":row.interviewerConflict?"Interviewer":"None";
-   const dateKey=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
+   const dateKey=new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,
     year:"numeric",month:"2-digit",day:"2-digit"}).format(row.startsAt);
    const href="/admin/placements/calendar?view=agenda&date="+
     encodeURIComponent(dateKey)+"&jobId="+encodeURIComponent(row.jobId);

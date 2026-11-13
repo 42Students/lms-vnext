@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { istDateFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Course = {
   deliveryId: string;
   courseId: string;
@@ -220,7 +221,7 @@ export function LearnerAttendanceWorkspace({
     ? Math.max(0,Math.floor((summary.present * 100 / threshold) - summary.markedSessions))
     : 0;
   const monthLabel = createDateFormatter("en-IN", {
-    month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+    month:"long",year:"numeric",timeZone:DEFAULT_TIME_ZONE,
   }).format(month);
 
   function updateUrl(
@@ -288,7 +289,7 @@ export function LearnerAttendanceWorkspace({
     <div className="min-w-0 space-y-4 md:space-y-6">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body leading-[22px]">{urlNotice}</p> : null}
       {isUpdating ? <p role="status" aria-live="polite" className="border-b border-border py-2 text-sm text-body">
-        Updating attendance for {createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(month)}…
+        Updating attendance for {createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(month)}…
       </p> : null}
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
@@ -448,7 +449,7 @@ export function LearnerAttendanceWorkspace({
               cell:(row)=><strong className="block text-foreground">{istDayMonthYearFormatter.format(new Date(row.startsAt))}</strong>},
             {key:"day",header:"Day",mobilePriority:"secondary" as const,
               cell:(row)=><span className="text-foreground">{createDateFormatter("en-IN", {
-                timeZone:"Asia/Kolkata",weekday:"long",
+                timeZone:DEFAULT_TIME_ZONE,weekday:"long",
               }).format(new Date(row.startsAt))}</span>},
             {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,
               cell:(row)=><span className="block min-w-0">

@@ -42,6 +42,7 @@ import {
   type ActivityModule,
 } from "./taxonomy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ActivityWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
@@ -802,8 +803,8 @@ export function groupActivityEvents<
     const previous =
       groups[groups.length - 1];
     const sameIndiaDay=previous ?
-      new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(previous.latest.event.occurredAt)===
-      new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(item.event.occurredAt):false;
+      new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(previous.latest.event.occurredAt)===
+      new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(item.event.occurredAt):false;
     const canGroup =
       sameIndiaDay && Boolean(
         item.event.groupKey,

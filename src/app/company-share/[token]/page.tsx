@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const dynamic="force-dynamic";
 /** Share URLs contain bearer tokens and protected applicant search queries. */
 export const metadata: Metadata = {
@@ -56,7 +57,7 @@ export default async function CompanySharePage({
     "A code can be emailed only to your verified recruiter account. You can request it once per minute, up to three times per hour.":
     <>To protect applicant privacy, email codes are available only to an authenticated recruiter with access to this company and college. <TextLink href="/login">Sign in</TextLink> with that account, or ask the placement cell for the original code.</>}</p>
    </div>
-   <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+   <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
  </main>;
  }
@@ -102,9 +103,9 @@ export default async function CompanySharePage({
     <Heading level={1} size="xl" className="min-w-0 break-words leading-7 text-[var(--lms-heading)]">{formatNumberIN(result.total)} applicants for {result.title}</Heading>
     <ButtonLink variant="secondary" href={publicApplicantExportHref(token,result.search)}>Download list</ButtonLink>
    </div>
-   {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.shortlistBy))}.</span></p>:null}
-   <p className="break-words text-sm text-muted-foreground leading-[22px]">Shared by the placement cell on {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))} for {result.companyName}. Please do not forward this page. Phone numbers appear only for shortlisted students.</p>
-   <p className="break-words text-xs text-muted-foreground leading-[20px]">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+   {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(new Date(result.shortlistBy))}.</span></p>:null}
+   <p className="break-words text-sm text-muted-foreground leading-[22px]">Shared by the placement cell on {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(new Date(result.sharedAt))} for {result.companyName}. Please do not forward this page. Phone numbers appear only for shortlisted students.</p>
+   <p className="break-words text-xs text-muted-foreground leading-[20px]">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:DEFAULT_TIME_ZONE}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
    <p className="break-words text-xs text-muted-foreground leading-[20px]">Only the authorized shortlist and selected applicant details are shared. Private notes remain confidential.</p>
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"

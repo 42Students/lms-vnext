@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type RecruiterSelfGrantFact = {
   id: string;
   collegeName: string;
@@ -23,7 +24,7 @@ export type RecruiterSelfGrantRow = {
 const dateFormatter = new Intl.DateTimeFormat(
   "en-GB",
   {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     day: "2-digit",
     month: "short",
     year: "numeric",

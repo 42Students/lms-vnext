@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const calendarFollowupCreateSchema = z.object({
   leadId: z.string().uuid(),
   dueAt: z.iso.datetime({ offset: true }),
@@ -36,7 +37,7 @@ export function calendarDueAtToIstLocal(value: Date): string {
     hour: "2-digit",
     minute: "2-digit",
     hourCycle: "h23",
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
   }).formatToParts(value);
   const field = (type: string) =>
     parts.find((part) => part.type === type)?.value ?? "";

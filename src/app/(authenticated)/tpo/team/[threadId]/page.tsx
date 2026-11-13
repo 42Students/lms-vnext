@@ -31,6 +31,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istWeekdayDayMonthFormatter, istDateFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -144,7 +145,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
       "mr-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-bl-sm border border-border bg-surface px-3 py-2 md:max-w-[82%] lg:max-w-[74%]"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
-       {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
+       {" "}{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,timeStyle:"short"}).format(message.createdAt)} IST
       </p>
       {message.decision&&!message.removed?<StatusBadge tone="success">Decision</StatusBadge>:null}
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const tpoRoundCalendarMutationSchema = z.object({
   confirmed: z.literal(true),
   acknowledgedBlockedDate:z.boolean().optional(),
@@ -27,7 +28,7 @@ export function parseIstRoundLocalTime(value: string): Date {
   const utc = new Date(parsed + ":00+05:30");
   if (Number.isNaN(utc.getTime())) throw new Error("Invalid IST date and time");
   const formatted = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit",
     day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
   }).formatToParts(utc);
   const parts = new Map(formatted.map((item) => [item.type, item.value]));

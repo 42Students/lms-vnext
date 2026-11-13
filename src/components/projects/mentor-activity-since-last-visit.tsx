@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** The recipient-specific high-water marker and total come from PostgreSQL.
  * The client never stores a parallel localStorage cursor or guesses from
  * the first page of events. New events after marking remain unread.
@@ -35,7 +36,7 @@ export function MentorActivitySinceLastVisit({projectId,lastSeenAt,newCount}:{
      since you last marked this project seen
      {" · "}{createDateFormatter("en-IN", {
        day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
-       timeZone:"Asia/Kolkata",
+       timeZone:DEFAULT_TIME_ZONE,
      }).format(new Date(lastSeenAt))} IST.
      This is the full authorized project event count, not just loaded rows.</p>:
    <p role="status">No saved activity review marker yet.

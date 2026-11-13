@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type HistoryEvent={id:string;eventType:string;summary:string;
  occurredAt:string;actorDisplayName:string|null};
 type Cursor={time:string;id:string};
@@ -59,7 +60,7 @@ export function MentorTaskHistory({projectId,taskId}:{
         {" · "}<time dateTime={event.occurredAt}>
           {createDateFormatter("en-IN", {day:"numeric",month:"short",
             year:"numeric",hour:"numeric",minute:"2-digit",
-            timeZone:"Asia/Kolkata"}).format(new Date(event.occurredAt))} IST
+            timeZone:DEFAULT_TIME_ZONE}).format(new Date(event.occurredAt))} IST
         </time>
       </li>)}
     </ol>:<p>No recorded events for this exact task.</p>}

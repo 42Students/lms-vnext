@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Raw legacy audience numbers need college/organization mapping before sending.
  * The helpers here only normalize copy and saved provenance. */
 export function legacyAnnouncementTitle(source:string|null){
@@ -10,7 +11,7 @@ export function legacyAnnouncementButton(label:string|null,url:string|null){
  return {label:label?.trim().slice(0,60)||"Open",url};
 }
 export function legacyAnnouncementTimestamp(sourceLocal:string,zone:string){
- if(zone!=="Asia/Kolkata"||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(sourceLocal))return null;
+ if(zone!==DEFAULT_TIME_ZONE||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(sourceLocal))return null;
  const date=new Date(sourceLocal+"+05:30");
  return Number.isFinite(date.getTime())?date:null;
 }

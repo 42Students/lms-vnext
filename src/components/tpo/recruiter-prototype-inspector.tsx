@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoRecruiterInspectorLead={
  id:string;name:string;designation:string|null;companyName:string|null;
  stage:TpoRecruiterLeadStage;source:string|null;ownerName:string|null;
@@ -19,7 +20,7 @@ function when(value:string|null){
  if(!value)return "Not recorded";
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "Unavailable";
- return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
+ return createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,
   day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",
  }).format(date)+" IST";
 }

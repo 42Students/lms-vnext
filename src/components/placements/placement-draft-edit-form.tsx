@@ -24,6 +24,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ApplicationMode =
   | "INTERNAL"
   | "HYBRID"
@@ -111,7 +112,7 @@ function splitList(value: string) {
 function civilDay(iso:string):string{
  const d=new Date(iso);
  return Number.isNaN(d.getTime())?"":createDateFormatter("sv-SE", {
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"
  }).format(d);
 }
 type DateRow={id:number;label:string;date:string};
@@ -139,7 +140,7 @@ function toLocalInput(
 ) {
   if (!value) return "";
   return createDateFormatter("sv-SE", {
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
     hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   }).format(new Date(value)).replace(" ","T");
 }

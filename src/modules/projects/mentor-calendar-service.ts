@@ -15,6 +15,7 @@ import {safeMentorCalendarMeetingType,type MentorMeetingCalendarItem}
   from "./mentor-calendar-view";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Organizer time zones describe how meetings were originally scheduled, not
  * the attendee's display zone. vNext intentionally displays every meeting in
@@ -22,7 +23,7 @@ import { ROLE } from "@/modules/identity/roles";
  * timestamptz is already an instant: format it as UTC ISO once, never parse
  * an organizer's wall clock in the server or apply a second zone offset.
  */
-export const MENTOR_CALENDAR_VIEW_ZONE = "Asia/Kolkata" as const;
+export const MENTOR_CALENDAR_VIEW_ZONE = DEFAULT_TIME_ZONE;
 
 export function mentorCalendarMeetingInstants(
   startsAt:Date, endsAt:Date, organizerZone:string,

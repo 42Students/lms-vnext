@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ResultOutcome =
   | "PASS"
   | "FAIL"
@@ -92,7 +93,7 @@ function formatWhen(
     dateStyle: "medium",
     timeStyle: "short",
     timeZone:
-      timezone ?? "Asia/Kolkata",
+      timezone ?? DEFAULT_TIME_ZONE,
   }).format(new Date(value));
 }
 

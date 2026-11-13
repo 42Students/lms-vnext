@@ -1,11 +1,12 @@
 import {createHash} from "node:crypto";
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const tpoRemindNotAppliedSchema=z.object({
  action:z.literal("REMIND"),confirmed:z.literal(true),
  expectedPreviewToken:z.string().length(64),
 }).strict();
 export function placementReminderDay(now:Date){
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",
   month:"2-digit",day:"2-digit"}).formatToParts(now);
  const find=(type:string)=>parts.find(x=>x.type===type)?.value??"";
  return find("year")+"-"+find("month")+"-"+find("day");

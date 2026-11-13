@@ -1,5 +1,6 @@
 import {csvSafeCell} from "./mentor-board-review-model";
 import {taskReviewDecisionLabel} from "./mentor-task-history-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type MentorReviewedTaskExportRow={
   id:string;projectTitle:string;taskTitle:string;status:string;
   version:number;reviewedAt:Date|null;
@@ -7,7 +8,7 @@ export type MentorReviewedTaskExportRow={
 /** Export only pre-scoped task review decisions, never feedback or learner contacts. */
 export function mentorReviewedTasksCsv(rows:readonly MentorReviewedTaskExportRow[],omitted:number){
   const format=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
     hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   });
   const lines=["Review ID,Project,Task,Version,Decision,Reviewed (IST)"];

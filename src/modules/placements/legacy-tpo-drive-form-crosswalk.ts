@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy TPO DriveForm -> reviewed, tenant-scoped modern drive draft.
  * Imported numeric company/season IDs are locators only: they never authorize
  * data access and may NOT be written as placement UUIDs without a college-
@@ -103,7 +104,7 @@ export function crosswalkLegacyTpoDriveForm(raw:unknown){
  if(!input.eligibility)warnings.push("Reapply eligible branches, marks and backlogs through scoped eligibility validation.");
  if(!input.rounds?.length)warnings.push("Review interview/assessment rounds before publishing.");
  return {
-  readyForPersistence:false as const,sourceTimeZone:"Asia/Kolkata" as const,
+  readyForPersistence:false as const,sourceTimeZone:DEFAULT_TIME_ZONE,
   title,description:input.jobDescription??"",locations:input.location?[input.location]:[],
   recordedOutside:input.recordedOutside??false,
   sourceCompany:{legacyCompanyId:input.companyId??null,name:input.companyName??null},

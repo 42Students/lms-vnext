@@ -40,6 +40,7 @@ import { istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Course = {
   deliveryId: string;
   courseName: string;
@@ -111,16 +112,16 @@ function dateTime(value: string) {
 
 function legacySessionDate(value: string) {
   return createDateFormatter("en-GB", {
-    timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short", year: "numeric",
+    timeZone: DEFAULT_TIME_ZONE, weekday: "short", day: "numeric", month: "short", year: "numeric",
   }).format(new Date(value));
 }
 function legacyClockTime(value: string) {
   return createDateFormatter("en-US", {
-    timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true,
+    timeZone: DEFAULT_TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: true,
   }).format(new Date(value));
 }
 function sessionTime(value: Session) {
-  return `${dateTime(value.startsAt)} – ${createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" }).format(new Date(value.endsAt))}`;
+  return `${dateTime(value.startsAt)} – ${createDateFormatter("en-IN", { timeZone: DEFAULT_TIME_ZONE, hour: "numeric", minute: "2-digit" }).format(new Date(value.endsAt))}`;
 }
 
 async function errorMessage(
@@ -165,7 +166,7 @@ export function FacultyAttendanceWorkspace({
   const [month, setMonth] = useState(
     () => indiaAttendanceMonthKey(new Date()),
   );
-  const monthLabel = createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", month: "long", year: "numeric" })
+  const monthLabel = createDateFormatter("en-IN", { timeZone: DEFAULT_TIME_ZONE, month: "long", year: "numeric" })
     .format(new Date(month + "-01T12:00:00+05:30"));
   const [selectedSessionId, setSelectedSessionId] =
     useState(selection);
@@ -812,7 +813,7 @@ export function FacultyAttendanceWorkspace({
                 <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2" />
-                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"})
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short"})
                       .format(new Date(day.dayKey+"T12:00:00+05:30")).slice(0,1)}</th>)}
                   </tr>
                   <tr><th scope="col" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>

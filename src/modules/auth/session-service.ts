@@ -6,6 +6,7 @@ import { getAuthConfig } from "./config";
 import { generateToken, sessionDigest } from "./crypto";
 import { recordSecurityEvent } from "@/security/audit-store";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * First-party device sessions. The browser keeps an opaque 256-bit token; the
  * database keeps only its keyed digest, so a database leak cannot be replayed
@@ -274,7 +275,7 @@ export function sessionLastSeenLabel(lastSeen: Date | string | null): string {
   const when = lastSeen instanceof Date ? lastSeen : new Date(lastSeen);
   return Number.isNaN(when.getTime()) ? "Last active time unavailable" :
     "Last active around " + new Intl.DateTimeFormat("en-IN", {
-      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+      dateStyle: "medium", timeStyle: "short", timeZone: DEFAULT_TIME_ZONE,
     }).format(when);
 }
 

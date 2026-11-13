@@ -6,6 +6,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoTodayView="focus"|"agenda"|"brief";
 export type TpoTodayReply={
  id:string;name:string;company:string|null;subject:string;
@@ -14,7 +15,7 @@ export type TpoTodayReply={
 
 function formatDay(date:Date,weekday:"short"|"long"="short"){
  return createDateFormatter("en-IN", {
-  timeZone:"Asia/Kolkata",weekday,day:"numeric",month:"short",
+  timeZone:DEFAULT_TIME_ZONE,weekday,day:"numeric",month:"short",
  }).format(date);
 }
 function formatTime(date:Date){
@@ -104,7 +105,7 @@ export function TpoTodayAlternateViews({
      className={"rounded-xl border px-2 py-3 text-center "+(selectedDay===index?
       "border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)] bg-surface")}>
      <span className="block text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">{formatDay(day.date).split(" ")[0]}</span>
-     <strong className="mt-1 block text-xl">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
+     <strong className="mt-1 block text-xl">{createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,day:"numeric"}).format(day.date)}</strong>
      <span className="text-xs text-[color:var(--lms-button-primary)]">{day.count||"—"}</span>
     </TextLink>)}
    </nav>

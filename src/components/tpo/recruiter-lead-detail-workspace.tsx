@@ -25,6 +25,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Lead = {
   id: string;
   name: string;
@@ -95,7 +96,7 @@ function leadSourceLabel(source:string|null){
 function leadDueAtIst(value:string){
  const date=new Date(value);
  if(Number.isNaN(date.getTime()))return "Date unavailable";
- return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short",
+ return createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,weekday:"short",
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(date);
 }
 function nextFollowupPreset(preset:"TOMORROW"|"FRIDAY"|"NEXT_MONDAY"){

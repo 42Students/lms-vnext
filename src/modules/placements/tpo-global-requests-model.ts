@@ -1,6 +1,7 @@
 import {parseActivityDateBoundary} from "@/modules/activity/date-boundary";
 import {z} from "zod";
 import {AFTER_COLLEGE_OUTCOMES} from "./tpo-after-college-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
 export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED","ALL"]).default("PENDING"),
@@ -34,11 +35,11 @@ export function tpoRequestUrgent(row:TpoRequestUrgencyFact,now:Date):boolean{
 export function tpoNextRoundCue(row:{nextRoundAt?:Date|null;nextRoundName?:string|null},now:Date):string|null{
  const next=row.nextRoundAt;
  if(!next||!Number.isFinite(next.getTime()))return null;
- const day=(d:Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
+ const day=(d:Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
  const tomorrow=new Date(now.getTime()+86400000);
  const dayLabel=day(next)===day(now)?"today":day(next)===day(tomorrow)?"tomorrow":
-  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(next);
- const time=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(next);
+  new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,day:"numeric",month:"short"}).format(next);
+ const time=new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,hour:"numeric",minute:"2-digit",hour12:true}).format(next);
  return (row.nextRoundName||"Next round")+" "+dayLabel+" "+time+" IST";
 }
 export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?:string;requestType?:string;nextRoundAt?:Date|null;decidedAt?:Date|null}>(
@@ -141,7 +142,7 @@ export function tpoRequestClearAdvancedHref(status:z.infer<typeof globalTpoReque
 /** Date-only today is a Kolkata calendar day; "1–2 days" uses elapsed 24–48h. */
 export function tpoRequestDateBounds(age:z.infer<typeof globalTpoRequestsQuerySchema>["age"],asOf:Date){
  if(age==="TODAY"){
-  const day=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
+  const day=new Intl.DateTimeFormat("sv-SE",{timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
   return {after:parseActivityDateBoundary(day,"from"),before:new Date(parseActivityDateBoundary(day,"to").getTime()+1)};
  }
  if(age==="ONE_TO_TWO_DAYS")return {after:new Date(asOf.getTime()-2*86400000),before:new Date(asOf.getTime()-86400000)};

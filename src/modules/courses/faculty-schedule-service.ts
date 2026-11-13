@@ -16,6 +16,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /**
  * Faculty read-only schedule is grounded in active teaching assignments.
  * Null course links mean Section-wide events; course-linked events must belong
@@ -151,7 +152,7 @@ export async function getFacultyClassSchedule(
     .map(row => [row.id, row] as const)).values()];
   const nextUpcoming=upcomingEvents[0]??null;
   const calendarDay=(value:Date)=>new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+    timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"2-digit",year:"numeric",
   }).format(value);
   const selectedDayEvents=options.selectedDay?visibleEvents.filter(row=>
     calendarDay(row.startsAt)===calendarDay(options.selectedDay!)):[];

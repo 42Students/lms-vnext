@@ -32,6 +32,7 @@ import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
     id: string;
@@ -1126,7 +1127,7 @@ export function PlacementJobCreateForm({
           "Last saved on server at "+istDateTimeFormatter.format(new Date(lastServerSavedAt))+" IST · Draft created by your account; finish setup before publishing.":
           partialJobId?"Draft exists on server · Last-saved timestamp unavailable; retry setup or open the draft.":
           lastLocalSaveAt?
-          "Changes not saved to the server · Browser backup at "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
+          "Changes not saved to the server · Browser backup at "+createDateFormatter("en-IN", {timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
           "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
 

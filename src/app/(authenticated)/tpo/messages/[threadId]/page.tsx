@@ -17,6 +17,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type ThreadHeaderRow={recruiter_name:string|null;job_title:string|null;company_name:string|null;access_ended:boolean};
 
 /** Header fields for an already-authorized thread, projected the same way as
@@ -94,11 +95,11 @@ export default async function TpoRecruiterConversationPage({params}:{
   <section role="log" aria-live="polite" aria-relevant="additions text" aria-busy={false} aria-label="Conversation messages" className="min-w-0 max-h-[70vh] space-y-3 overflow-y-auto rounded-lg border border-border bg-surface p-4">
    {data.messages.length===0?<EmptyState title="No messages yet." description="Write the first message to begin this conversation."/>:data.messages.map((item,index)=>
     <div key={item.id} className="space-y-2">
-     {index===0||createDateFormatter("en-IN", {dateStyle:"full",timeZone:"Asia/Kolkata"})
+     {index===0||createDateFormatter("en-IN", {dateStyle:"full",timeZone:DEFAULT_TIME_ZONE})
        .format((data.messages[index-1]?.createdAt??item.createdAt))!==
-      createDateFormatter("en-IN", {dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)?
+      createDateFormatter("en-IN", {dateStyle:"full",timeZone:DEFAULT_TIME_ZONE}).format(item.createdAt)?
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground leading-5">
-       {createDateFormatter("en-IN", {dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
+       {createDateFormatter("en-IN", {dateStyle:"full",timeZone:DEFAULT_TIME_ZONE}).format(item.createdAt)}
       </p>:null}
     <article className={bubbleStyles["bubble"]+" "+(item.senderType===ROLE.TPO?bubbleStyles["mine"]:"")}>
      <p className="text-xs font-semibold text-muted-foreground leading-5">

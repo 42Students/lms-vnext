@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const TPO_RECRUITER_ACCESS_FILTERS = [
   "ALL",
   "ACTIVE",
@@ -86,7 +87,7 @@ const istDateFormatter = new Intl.DateTimeFormat(
     day: "2-digit",
     month: "short",
     year: "numeric",
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
   },
 );
 

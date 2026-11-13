@@ -1,5 +1,6 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { tenantLifecycleQuerySchema } from "./admin-tenant-lifecycle-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const TENANT_DIRECTORY_CSV_CAP = 1000;
 export const tenantDirectoryExportQuerySchema = tenantLifecycleQuerySchema.omit({ page: true });
 export type TenantDirectoryExportRow = {
@@ -16,7 +17,7 @@ export function tenantDirectoryCsvCell(value: string) {
 export function buildTenantDirectoryCsv(rows: readonly TenantDirectoryExportRow[], truncated: boolean) {
   const header = ["College ID", "College Name", "College Code", "College Status", "Organization ID", "Organization Name",
     "Organization Status", "City", "State", "Country", "Created (IST)", "Updated (IST)"];
-  const format = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+  const format = new Intl.DateTimeFormat("en-GB", { timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
     hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
   const lines = [header.map(tenantDirectoryCsvCell).join(",")];
   for (const row of rows.slice(0, TENANT_DIRECTORY_CSV_CAP)) lines.push([

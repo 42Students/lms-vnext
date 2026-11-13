@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Attempt status and source order are import/presentation compatibility only. */
 export function legacyQuizAttemptStatus(
  attempt:{submittedAt:Date;deletedAt?:Date|null;legacyDeleted?:boolean|null},
@@ -20,7 +21,7 @@ export function legacyQuizResultsVisible(input:{status:string;resultsPublished:b
 }
 export function legacyQuizDayIst(date:Date){
  return new Intl.DateTimeFormat("en-IN",{
-   timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+   timeZone:DEFAULT_TIME_ZONE,day:"2-digit",month:"short",year:"numeric",
  }).format(date);
 }
 export function historicalQuizOptionScore(expected:readonly string[],selected:readonly string[]){

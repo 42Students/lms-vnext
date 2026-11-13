@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Legacy InterviewController mapping to the college-scoped placements model.
  * Historical integer IDs MUST be resolved under the acting college before
  * this adapter runs; never identify a tenant from supplied legacy IDs. */
@@ -120,7 +121,7 @@ export function upcomingInterviewInIst(start:Date,now:Date){
  return Number.isFinite(start.getTime())&&start.getTime()>now.getTime();
 }
 export function interviewIstLabel(date:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
+ return new Intl.DateTimeFormat("en-IN",{timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short"})
   .format(date);
 }
 /** Global overlap defaults to sixty only when no verified policy exists.

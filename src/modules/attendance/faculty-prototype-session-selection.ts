@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Choose the class the instructor can actually mark, instead of
  * blindly selecting the most distant future session in a descending list.
  * Explicit authorized session deep links always win. */
@@ -11,7 +12,7 @@ export function selectFacultyPrototypeSession<T extends {
  const ongoing=ordered.find(row=>Date.parse(row.startsAt)<=time&&Date.parse(row.endsAt)>time);
  if(ongoing)return ongoing;
  const today=new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:DEFAULT_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",
  });
  const todayKey=today.format(now);
  const heldToday=ordered.find(row=>Date.parse(row.startsAt)<=time&&

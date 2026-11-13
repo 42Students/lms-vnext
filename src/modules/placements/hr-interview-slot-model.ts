@@ -1,10 +1,11 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const hrInterviewSlotCreateSchema=z.strictObject({
  action:z.literal("CREATE").optional(),
  roundId:z.string().uuid(),
  startAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  endAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
- timezone:z.literal("Asia/Kolkata"),
+ timezone:z.literal(DEFAULT_TIME_ZONE),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  meetingLocation:z.string().trim().max(500,{message:"Interview venue or link exceeds the 500-character slot limit. Review the legacy value; it cannot be truncated silently."})
   .refine(value=>value===undefined||!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid meeting location"}).optional(),
@@ -65,7 +66,7 @@ export function parseIstLocalSlot(value:unknown):string{
  const input=z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/).parse(value);
  const utc=new Date(input+":00+05:30");
  if(!Number.isFinite(utc.getTime()))throw new Error("INVALID_IST_DATE");
- const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+ const parts=new Intl.DateTimeFormat("en-US",{timeZone:DEFAULT_TIME_ZONE,
   year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).formatToParts(utc);
  const piece=(type:string)=>parts.find(part=>part.type===type)?.value??"";
@@ -88,7 +89,7 @@ export function formatUtcInterviewSlotAsIstLocal(value:Date):string{
  if(!(value instanceof Date)||!Number.isFinite(value.getTime())||
    value.getUTCSeconds()!==0||value.getUTCMilliseconds()!==0)
   throw new Error("Interview start must be a valid minute-precision UTC instant");
- const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+ const parts=new Intl.DateTimeFormat("en-US",{timeZone:DEFAULT_TIME_ZONE,
   year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).formatToParts(value);
  const part=(type:string)=>parts.find(row=>row.type===type)?.value??"";

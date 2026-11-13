@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export function buildTpoRecruiterInviteMessage(input:{
  recruiterName:string;companyName:string|null;inviteUrl:string;expiresAt:string;personalNote:string;
 }):string{
@@ -7,7 +8,7 @@ export function buildTpoRecruiterInviteMessage(input:{
  const date=new Date(input.expiresAt);
  if(!Number.isFinite(date.getTime()))throw Error("INVALID_INVITE_EXPIRY");
  const expires=new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE,
  }).format(date);
  const company=input.companyName?.trim()?" at "+input.companyName.trim():"";
  const salutation=input.recruiterName.trim()||"Recruiter";

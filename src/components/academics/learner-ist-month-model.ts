@@ -1,9 +1,10 @@
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Calendar days in IST, independent of the browser or Node process timezone. */
 export function istCalendarDay(value: string | Date): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) throw new Error("INVALID_CALENDAR_INSTANT");
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(date);
   const part=(type:string)=>parts.find(p=>p.type===type)?.value ?? "";
   return part("year")+"-"+part("month")+"-"+part("day");

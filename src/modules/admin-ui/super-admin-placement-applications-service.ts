@@ -10,6 +10,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export async function listAdminPlacementApplications(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),selected=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
  const source=db.select({
@@ -94,7 +95,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  const rows=await db.select().from(source)
   .orderBy(desc(source.submittedAt),desc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
- const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE});
  const now=Date.now();
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:(row.learnerName||"Unnamed applicant")+" - "+row.jobTitle,

@@ -10,6 +10,7 @@ import {readZeptoMailConfig,resolveZeptoMailTemplateId,sendZeptoMailTemplate} fr
 import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
 
 import { rawEnv } from "@/config/env";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 type Candidate={
  thread_id:string;recruiter_user_id:string;recipient_email:string;
  recipient_name:string;college_id:string;
@@ -183,7 +184,7 @@ export async function dispatchPendingRecruiterInviteReminders(
  const templateName="RECRUITER_INVITE_REMINDER";
  if(!enabled)return {enabled:false,examined:0,sent:0,
   readinessReason:"REMINDER_DISABLED",operatorAlert:"Recruiter invite reminder worker is disabled"};
- const hour=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",
+ const hour=new Intl.DateTimeFormat("en-GB",{timeZone:DEFAULT_TIME_ZONE,hour:"2-digit",
   hourCycle:"h23"}).format(now);
  if(hour!=="09")return {enabled:true,examined:0,sent:0,readinessReason:"OUTSIDE_SCHEDULE"};
  if(!resolveZeptoMailTemplateId({kind:"TPO",templateName},env))

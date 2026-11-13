@@ -1,4 +1,5 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const HR_INBOX_CSV_CAP = 200;
 export type HrInboxExportRow = {
   id:string;jobId:string;title:string;label:string;createdAt:Date;unread:boolean;
@@ -10,7 +11,7 @@ export function buildHrInboxCsv(rows:readonly HrInboxExportRow[],total:number){
  const out=[["Drive","Lifecycle event","Received (IST)","Unread"].map(safeCsvCell).join(",")];
  const selected=rows.slice(0,HR_INBOX_CSV_CAP);
  const date=new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+  timeZone:DEFAULT_TIME_ZONE,dateStyle:"medium",timeStyle:"short",
  });
  for(const item of selected){
   const received=Number.isFinite(item.createdAt.getTime())

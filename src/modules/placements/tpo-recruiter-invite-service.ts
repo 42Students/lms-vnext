@@ -30,6 +30,7 @@ import {
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoRecruiterInviteServiceErrorCode =
   | "TPO_RECRUITER_INVITE_NOT_FOUND"
   | "TPO_RECRUITER_INVITE_NOT_ALLOWED";
@@ -67,7 +68,7 @@ function invalidPublicInvite(): never {
 /** Display the original LocalDateTime semantics in Asia/Kolkata, never browser-local. */
 export function legacyRecruiterInviteIstLocalTime(value: Date): string {
   const fields = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
     hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
   }).formatToParts(value);
   const get = (type: Intl.DateTimeFormatPartTypes) => fields.find(x=>x.type===type)?.value ?? "00";
@@ -77,7 +78,7 @@ export function legacyRecruiterInviteIstLocalTime(value: Date): string {
 
 function indiaDateSixMonthsAfter(now: Date): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
+    timeZone: DEFAULT_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

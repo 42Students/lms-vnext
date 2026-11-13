@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 const inputSchema=z.object({
   scheduledAt:z.string().datetime({offset:true}).nullable(),
   approvedScheduledAt:z.string().datetime({offset:true}).nullable(),
@@ -12,7 +13,7 @@ export function learnerInterviewMobileSummary(raw:unknown):string{
   if(!Number.isFinite(time))return "Interview schedule unavailable";
   const date=new Intl.DateTimeFormat("en-IN",{
     day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",
-    timeZone:"Asia/Kolkata",
+    timeZone:DEFAULT_TIME_ZONE,
   }).format(new Date(time));
   return (value.approvedScheduledAt?"Approved reschedule · ":"Scheduled · ")+date+" IST";
 }

@@ -6,6 +6,7 @@ import {colleges,placementJobs,placementJobEligibilityPolicies} from "@/db/schem
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export async function listSuperAdminJobSettings(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),scope=requireSuperAdminSelectedCollege(context,"placements.read");
  const db=getDb();
@@ -32,7 +33,7 @@ export async function listSuperAdminJobSettings(context:RequestContext,raw:unkno
   db.select().from(source).orderBy(asc(source.title),asc(source.id))
   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
- const total=totals[0]?.total??0;const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+ const total=totals[0]?.total??0;const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:DEFAULT_TIME_ZONE});
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.title,subtitle:r.configuredJobId?"Eligibility policy configured":"No job eligibility policy recorded",
   status:r.status,details:[

@@ -1,5 +1,6 @@
 import {placementReportCsv} from "./report-model";
 import {applicantStage,tpoApplicantPipelineParams} from "./tpo-applicant-pipeline-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export const tpoDriveApplicationsExportQuerySchema=tpoApplicantPipelineParams.omit({page:true});
 /** Search text is literal, never an operator-controlled SQL wildcard. */
 export function tpoApplicantExportSearchPattern(search:string){
@@ -36,8 +37,8 @@ export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicat
   r.applicationId,r.studentName??"Name unavailable",r.roleTitle,
   applicantStage({id:r.applicationId,student:r.studentName,role:r.roleTitle,applicationStatus:r.status,screeningStatus:r.screeningStatus,submittedAt:r.submittedAt}),
   r.status,r.screeningStatus??"Not recorded",r.eligibilityStatus,r.channel,
-  new Date(r.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST",
-  r.screeningUpdatedAt?new Date(r.screeningUpdatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded",
+  new Date(r.submittedAt).toLocaleString("en-IN",{timeZone:DEFAULT_TIME_ZONE})+" IST",
+  r.screeningUpdatedAt?new Date(r.screeningUpdatedAt).toLocaleString("en-IN",{timeZone:DEFAULT_TIME_ZONE})+" IST":"Not recorded",
   r.rollNumber??"Not recorded",r.email??"Not recorded",r.phone??"Not recorded",
   r.batchName??"Not recorded",r.branchName??"Not recorded",r.academicYear??"Not recorded",
   r.pendingWithdrawal?"Yes":"No",r.noShow?"Yes":"No",

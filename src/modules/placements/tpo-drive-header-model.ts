@@ -1,4 +1,5 @@
 import {DRIVE_PAY_CATEGORY_LABEL,isDrivePayCategory} from "./drive-pay-category-model";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 export type TpoDriveHeaderFacts={
  status:string;applicationMode:string;workMode:string;employmentType:string;
  minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
@@ -36,7 +37,7 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts,asOf:Date=new Da
    payLow!==null?"From "+amount(payLow):"Up to "+amount(payHigh!);
  const deadline=facts.applicationDeadline===null?"Deadline not set":
   expiry!==null&&Number.isFinite(expiry.getTime())?
-  new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
+  new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:DEFAULT_TIME_ZONE})
    .format(expiry)+" IST":"Deadline unavailable";
  return {
   status,applicationMode:parts[0],workMode:facts.workMode.replaceAll("_"," ").toLowerCase(),

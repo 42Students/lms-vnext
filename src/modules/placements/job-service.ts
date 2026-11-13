@@ -47,6 +47,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { DEFAULT_TIME_ZONE } from "@/config/locale";
 async function loadActiveRelationship(
   collegeId: string,
   relationshipId: string,
@@ -1004,7 +1005,7 @@ export async function publishPlacementJob(
     // drive advances drive-count debarments. Use the immutable activity event ID.
     await notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id);
     const localDateParts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+      timeZone: DEFAULT_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit",
     }).formatToParts(now);
     const datePart = (type: string) =>
       localDateParts.find((part) => part.type === type)?.value ?? "";
