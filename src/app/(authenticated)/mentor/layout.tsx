@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
 
 export default async function MentorLayout({
   children,
@@ -10,12 +10,7 @@ export default async function MentorLayout({
   const context =
     await getCurrentRequestContext();
 
-  if (
-    !hasMembershipRole(
-      context,
-      "MENTOR",
-    )
-  ) {
+  if (!canAccessRolePortal(context, "mentor")) {
     redirect("/dashboard");
   }
 
