@@ -14,6 +14,7 @@ import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
 import { RATE_LIMITS } from "@/security/limits";
+import { clearAuthCookie } from "@/auth/cookies";
 export const runtime = "nodejs";
 
 /** Legacy session migration map:
@@ -81,13 +82,7 @@ async function handleDELETE(request: Request) {
         SESSION_COOKIE_NAME, MEMBERSHIP_COOKIE_NAME,
         ROLE_COOKIE_NAME, ADMIN_SCOPE_COOKIE_NAME,
       ]) {
-        response.cookies.set(name, "", {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 0,
-        });
+        clearAuthCookie(response, name);
       }
       response.headers.set("Clear-Site-Data", '"storage"');
     }

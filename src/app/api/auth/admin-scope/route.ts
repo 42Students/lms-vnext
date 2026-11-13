@@ -21,6 +21,7 @@ import {
   resolveAdminScopeSelection,
 } from "@/modules/admin-scope/service";
 
+import { clearAuthCookie, setAuthCookie, setOrClearAuthCookie } from "@/auth/cookies";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -72,28 +73,8 @@ const response = privateAuthJson({
       requiresRouterRefresh:true,
       activeScope:cleared?"GLOBAL":scope.collegeId?"COLLEGE":"ORGANIZATION",
     });
-response.cookies.set(
-      ADMIN_SCOPE_COOKIE_NAME,
-      encodeAdminScopeCookie(scope),
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
-      },
-    );
-response.cookies.set(
-      ADMIN_SCOPE_EXPIRY_COOKIE_NAME,
-      cleared?"":String(Math.floor(Date.now()/1000)+ADMIN_SCOPE_MAX_AGE_SECONDS),
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
-      },
-    );
+setAuthCookie(response, ADMIN_SCOPE_COOKIE_NAME, encodeAdminScopeCookie(scope), cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS);
+setOrClearAuthCookie(response, ADMIN_SCOPE_EXPIRY_COOKIE_NAME, cleared?"":String(Math.floor(Date.now()/1000)+ADMIN_SCOPE_MAX_AGE_SECONDS), cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS);
 recordSecurityEvent({ event:"admin_scope."+(cleared?"cleared":"entered"), outcome:"ok", userId:context.user.id, collegeId:scope.collegeId??null, target:scope.organizationId??null, detail:{ ttlSeconds:cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS } });
 writeStructuredLog("INFO","admin_scope.audit",{
       outcome:cleared?"cleared":"entered",
@@ -128,20 +109,8 @@ const response = privateAuthJson({
       ok:true,scope:null,activeScope:"GLOBAL",requiresRouterRefresh:true,
       message:"Super Admin organization and college scope cleared.",
     });
-response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    });
-response.cookies.set(ADMIN_SCOPE_EXPIRY_COOKIE_NAME, "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: 0,
-      });
+clearAuthCookie(response, ADMIN_SCOPE_COOKIE_NAME);
+clearAuthCookie(response, ADMIN_SCOPE_EXPIRY_COOKIE_NAME);
 writeStructuredLog("INFO","admin_scope.audit",{ outcome:"cleared", userId:context.user.id });
 return response;
 } catch (error) {

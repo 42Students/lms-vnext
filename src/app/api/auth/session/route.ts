@@ -1,3 +1,4 @@
+import { clearAuthCookies } from "@/auth/cookies";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -55,24 +56,14 @@ async function handleDELETE(request: Request) {
   // expired first-party auth cookies below are the only intended cookie edits.
   response.headers.set("Clear-Site-Data", '"storage"');
   response.headers.set("Cache-Control", "no-store");
-  const secure = process.env.NODE_ENV === "production";
-
-  for (const name of [
+  clearAuthCookies(response, [
     SESSION_COOKIE_NAME,
     MEMBERSHIP_COOKIE_NAME,
     ROLE_COOKIE_NAME,
     ADMIN_SCOPE_COOKIE_NAME,
     E2E_IDENTITY_COOKIE_NAME,
     E2E_SECRET_COOKIE_NAME,
-  ]) {
-    response.cookies.set(name, "", {
-      httpOnly: true,
-      secure,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    });
-  }
+  ]);
 
   return response;
 }

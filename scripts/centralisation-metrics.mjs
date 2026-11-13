@@ -41,7 +41,7 @@ export const METRICS = [
   { id: "config.readyFlagReads", audit: 9, label: "bare READY/ENABLED flag reads", scope: (p) => p.startsWith("src/") && notIn("src/config/")(p), pattern: /process\.env\["[A-Z0-9_]*(?:READY|ENABLED)[A-Z0-9_]*"\]/g, unit: "matches", enforce: true },
   { id: "limits.rateLimitLiterals", audit: 11, label: "inline rateLimit config literals", scope: (p) => p.startsWith("src/"), pattern: /rateLimit: ?\{/g, unit: "matches", enforce: true },
   { id: "limits.timeoutLiterals", audit: 11, label: "inline timeoutMs literals", scope: (p) => p.startsWith("src/"), pattern: /timeoutMs ?[:=] ?[0-9_]+/g, unit: "matches", enforce: true },
-  { id: "session.cookieSets", audit: 12, label: "cookies.set( calls", scope: (p) => p.startsWith("src/"), pattern: /cookies\.set\(/g, unit: "matches" },
+  { id: "session.cookieSets", audit: 12, label: "cookies.set( calls", scope: (p) => p.startsWith("src/") && p !== "src/auth/cookies.ts", pattern: /cookies\.set\(/g, unit: "matches", enforce: true },
   { id: "roles.roleLiterals", audit: 13, label: "role name string literals", scope: (p) => p.startsWith("src/") && notIn("src/modules/identity/constants.ts", "src/db/")(p), pattern: /"(?:COLLEGE_ADMIN|FACULTY|LEARNER|TPO|MENTOR|SUPER_ADMIN)"/g, unit: "matches", enforce: true },
   { id: "outbound.serverRawFetch", audit: 14, label: "raw fetch( in server code", scope: inServer, pattern: /(?<![A-Za-z.])fetch\(/g, unit: "matches" },
   { id: "exports.csvCellCopies", audit: 15, label: "csvCell redefinitions", scope: (p) => p.startsWith("src/"), pattern: /(?:function|const) csvCell\b/g, unit: "matches" },

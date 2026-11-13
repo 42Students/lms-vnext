@@ -7,6 +7,7 @@ import {
   updateCollege,
 } from "@/modules/colleges/service";
 
+import { clearAuthCookie } from "@/auth/cookies";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -64,19 +65,7 @@ export const DELETE = route(
       context.adminScope?.collegeId ===
       college.id
     ) {
-      response.cookies.set(
-        ADMIN_SCOPE_COOKIE_NAME,
-        "",
-        {
-          httpOnly: true,
-          secure:
-            process.env.NODE_ENV ===
-            "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 0,
-        },
-      );
+      clearAuthCookie(response, ADMIN_SCOPE_COOKIE_NAME);
     }
     return response;
   },

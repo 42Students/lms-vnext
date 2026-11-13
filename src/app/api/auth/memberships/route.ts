@@ -25,6 +25,7 @@ import { recordSecurityEvent } from "@/security/audit-store";
 
 import { env } from "@/config/env";
 import { RATE_LIMITS } from "@/security/limits";
+import { clearAuthCookie, setAuthCookie } from "@/auth/cookies";
 export const runtime = "nodejs";
 
 const switchMembershipSchema = z.strictObject({
@@ -259,26 +260,10 @@ async function handlePOST(request: Request) {
       next:"/dashboard",
     });
 
-    response.cookies.set(
-      MEMBERSHIP_COOKIE_NAME,
-      membership.id,
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production" || env.COOKIE_SECURE === "1",
-        sameSite: "lax",
-        path: "/",
-        maxAge: SESSION_MAX_AGE_SECONDS,
-      },
-    );
+    setAuthCookie(response, MEMBERSHIP_COOKIE_NAME, membership.id, SESSION_MAX_AGE_SECONDS);
 
     // Only a multi-role person needs a remembered workspace; otherwise the default role applies.
-    response.cookies.set(ROLE_COOKIE_NAME, parsed.data.role ?? "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production" || env.COOKIE_SECURE === "1",
-      sameSite: "lax",
-      path: "/",
-      maxAge: parsed.data.role ? SESSION_MAX_AGE_SECONDS : 0,
-    });
+    setAuthCookie(response, ROLE_COOKIE_NAME, parsed.data.role ?? "", parsed.data.role ? SESSION_MAX_AGE_SECONDS : 0);
 
     return response;
   } catch (error) {
@@ -300,20 +285,8 @@ async function handleDELETE(request: Request) {
   }
 
   const response = privateAuthJson({ ok: true });
-  response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production" || env.COOKIE_SECURE === "1",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
-  response.cookies.set(ROLE_COOKIE_NAME, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production" || env.COOKIE_SECURE === "1",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
+  clearAuthCookie(response, MEMBERSHIP_COOKIE_NAME);
+  clearAuthCookie(response, ROLE_COOKIE_NAME);
   return response;
 }
 export const DELETE = route(

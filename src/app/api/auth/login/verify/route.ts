@@ -19,6 +19,7 @@ import { route } from "@/security/route";
 import { LOGIN_VERIFY_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 
 import { RATE_LIMITS } from "@/security/limits";
+import { clearAuthCookie, setAuthCookie } from "@/auth/cookies";
 export const runtime = "nodejs";
 
 // Old GET /verifyOTP exposed secrets in URL logs. Only a guarded POST attempt
@@ -129,27 +130,11 @@ async function handlePOST(request: Request) {
       membershipsEndpoint: "/api/auth/memberships",
       sessionEndpoint: "/api/auth/session",
     });
-    response.cookies.set(SESSION_COOKIE_NAME, session.token, {
-      ...base,
-      maxAge: session.maxAgeSeconds,
-    });
+    setAuthCookie(response, SESSION_COOKIE_NAME, session.token, session.maxAgeSeconds);
     // Never carry a previous person's college or admin scope forward.
-    response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
-      ...base,
-      maxAge: 0,
-    });
-    response.cookies.set(ROLE_COOKIE_NAME, "", {
-      ...base,
-      maxAge: 0,
-    });
-    response.cookies.set(
-      MEMBERSHIP_COOKIE_NAME,
-      autoMembershipId ?? "",
-      {
-        ...base,
-        maxAge: autoMembershipId ? session.maxAgeSeconds : 0,
-      },
-    );
+    clearAuthCookie(response, ADMIN_SCOPE_COOKIE_NAME);
+    clearAuthCookie(response, ROLE_COOKIE_NAME);
+    setAuthCookie(response, MEMBERSHIP_COOKIE_NAME, autoMembershipId ?? "", autoMembershipId ? session.maxAgeSeconds : 0);
     return privateAuthResponse(response);
   } catch (error) {
     // A recruiter-specific start returns a non-persisted dummy attempt for
