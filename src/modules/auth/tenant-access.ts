@@ -27,8 +27,13 @@ export function isTenantAccessAllowed(
   if (tenant.kind === "platform") return true;
   if (tenant.kind === "unknown" || tenant.kind === "unavailable") return false;
 
-  if (hasActiveMembership(context) && context.membership?.collegeId === tenant.collegeId) {
-    return true;
+  // A selected membership is one tenant workspace, not an additive claim.
+  // A separate recruiter grant in another college must not make that
+  // membership's role usable from the other college's host. The recruiter
+  // can instead use an unselected recruiter workspace on its own host.
+  if (context.membership) {
+    return hasActiveMembership(context) &&
+      context.membership.collegeId === tenant.collegeId;
   }
 
   return Boolean(
