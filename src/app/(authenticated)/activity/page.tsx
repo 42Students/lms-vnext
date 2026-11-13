@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { canAccessStaffActivity } from "@/modules/identity/role-portal-policy";
 import {
   ActivityCenter,
   type ActivityCenterGroup,
@@ -15,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import { activityQuickHref } from "@/modules/activity/ux-query";
 import {
-  hasMembershipRole,
   isSuperAdmin,
 } from "@/modules/identity/context";
 import {
@@ -69,13 +69,7 @@ export default async function ActivityPage({
   const context =
     await getCurrentRequestContext();
 
-  if (
-    !isSuperAdmin(context) &&
-    !hasMembershipRole(
-      context,
-      "COLLEGE_ADMIN",
-    )
-  ) {
+  if (!canAccessStaffActivity(context)) {
     redirect("/dashboard");
   }
 
