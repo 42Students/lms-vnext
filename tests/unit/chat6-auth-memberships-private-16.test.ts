@@ -76,13 +76,21 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect(resolveRequestContext).not.toHaveBeenCalled();
   expect(listMembershipChoices).not.toHaveBeenCalled();
  });
- it("rejects wrong-tenant host and does not serialize private memberships on failure",async()=>{
+ it("rejects a host with no active local role and never serializes a foreign membership",async()=>{
   vi.mocked(isTenantAccessAllowed).mockReturnValue(false);
+  vi.mocked(listMembershipChoices).mockResolvedValue([
+   {id:ownMembership,collegeId:own,status:"SUSPENDED",roles:["LEARNER"],
+    collegeName:"Inactive host college",organizationName:"Host org"},
+   {id:foreignMembership,collegeId:other,status:"ACTIVE",roles:["FACULTY"],
+    collegeName:"Foreign college",organizationName:"Foreign org"},
+  ] as never);
   const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(401);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect((await response.text())).not.toContain(ownMembership);
-  expect(listMembershipChoices).not.toHaveBeenCalled();
+  const body=await response.text();
+  expect(body).not.toContain(ownMembership);
+  expect(body).not.toContain(foreignMembership);
+  expect(listMembershipChoices).toHaveBeenCalledWith("identity-1");
  });
  it("AUTH-handoff-19 rejects oversized membership JSON before switching the active college",async()=>{
   const response=await POST(request("POST",{
