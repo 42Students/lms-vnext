@@ -30,8 +30,8 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.6 role-by-route matrix oracle already runs in CI on a built app (scripts/verify/role-route-matrix.mjs vs docs/security/role-matrix-baseline-ci.json; five seeded roles, fails when a role gains a route). Phase 4 must keep it green after every route-family batch; 4.1 will also generate expectations from the policy registry
 
 ## Phase 2: foundations
-- [ ] 2.1 typed config module (migrated directory by directory)
-- [ ] 2.2 feature registry (flags and module access)
+- [x] 2.1 typed config module: src/config/env.ts, generated registry; process.env reads outside config 401 -> 81 (ratchet enforced)
+- [x] 2.2 feature registry: src/config/features.ts, 37 flags, bare flag reads 97 -> 0 (ratchet enforced)
 - [ ] 2.3 role and capability constants
 - [ ] 2.4 clock service and per-college time zone, one formatter set
 - [ ] 2.5 shared utilities (first, when, humanize, initials, isUniqueViolation, ...)

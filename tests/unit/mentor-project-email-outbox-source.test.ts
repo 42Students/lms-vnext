@@ -14,7 +14,7 @@ describe("Mentor durable email-intent producer contracts",()=>{
    .toBeGreaterThan(submission.indexOf('action: "SUBMITTED"'));
  });
  it("requires operations readiness and opt-in before idempotent, scoped job insert",()=>{
-  expect(outbox).toContain('MENTOR_PROJECT_EMAIL_OUTBOX_READY');
+  expect(outbox).toContain('featureReady("mentorProjectEmailOutbox")');
   expect(outbox).toContain('selectDistinctOn([activityEvents.actorUserId]');
   expect(outbox).toContain('mentorEmailPreferenceFromSavedEvent(row).enabled');
   expect(outbox).toContain('eq(membershipRoles.role,"MENTOR")');

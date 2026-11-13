@@ -35,6 +35,6 @@ describe("TPO-campaigns-public-14 signing key convergence",()=>{
   expect(verifyTpoCampaignRecipientToken(token,resolveTpoCampaignRecipientSecret(config),Date.parse("2098-01-01T00:00:00Z"))).toEqual(claim);
   expect(verifyTpoCampaignRecipientToken(token,"mismatched-purpose-secret-of-safe-length",Date.parse("2098-01-01T00:00:00Z"))).toBeNull();
   for(const file of ["src/modules/messaging/tpo-campaign-dispatch-service.ts","src/modules/messaging/tpo-campaign-unsubscribe-service.ts","src/app/api/public/campaign-unsubscribe/route.ts"])
-   expect(read(file)).toContain("resolveTpoCampaignRecipientSecret(process.env)");
+   expect(read(file)).toContain("resolveTpoCampaignRecipientSecret(rawEnv())");
  });
 });

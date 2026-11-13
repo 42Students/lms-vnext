@@ -24,7 +24,7 @@ describe("College Courses & Content gap closure",()=>{
  it("COL-courses-content-02 the course Home fields have guarded persisted editor",()=>{
   const editor=read("src/components/courses/admin-course-display-editor.tsx");
   for(const field of ["Introduction","Rich description HTML","Course Home content","takeaways","thumbnailUrl"])expect(editor).toContain(field);
-  expect(read("src/modules/courses/course-display-readiness.ts")).toContain("DB05_VERIFIED");
+  expect(read("src/modules/courses/course-display-readiness.ts")).toContain('featureReady("courseDisplay")');
  });
  it("COL-courses-content-03 visibility is not faked by an archived record label",()=>{
   expect(catalogue()).toContain('courseVisibleToStudentsLabel(course.status==="ACTIVE"&&course.enabled&&');

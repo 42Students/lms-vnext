@@ -9,7 +9,7 @@ describe("Independent Super Admin audit findings",()=>{
   const detail=source("src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx");
   expect(service).toContain('from "@/db/schema/db10-audit-findings.draft"');
   expect(service).toContain("db10AuditFindings");
-  expect(service).toContain("DB10_AUDIT_FINDINGS_READY");
+  expect(service).toContain('featureReady("auditFindings")');
   expect(service).toContain("context.adminScope?.collegeId||context.adminScope?.organizationId");
   expect(page).toContain('title:"Audit findings · 42 Tracker"');
   expect(page).toContain('title="Audit findings"');
