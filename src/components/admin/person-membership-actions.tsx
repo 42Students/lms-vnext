@@ -105,7 +105,9 @@ export function PersonMembershipActions({
                   ? "You cannot remove your own protected access."
                 : role==="COLLEGE_ADMIN"&&response.status===403
                   ? "Only a Super Admin can change the College Admin role."
-                  : payload?.error==="LAST_MEMBERSHIP_ROLE"
+                  : payload?.error==="LAST_COLLEGE_ADMIN"
+                    ? "Assign another active College Admin to this college before removing this role."
+                    : payload?.error==="LAST_MEMBERSHIP_ROLE"
                     ? "A membership must keep at least one role."
                     : "The role could not be changed.",
         });
@@ -173,7 +175,9 @@ export function PersonMembershipActions({
                 ? "Ended memberships cannot be reactivated or suspended."
                 : payload?.error==="MEMBERSHIP_PROTECTED"
                   ? "Only a Super Admin can manage College Admin or TPO accounts."
-                  : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
+                  : payload?.error==="LAST_COLLEGE_ADMIN"
+                    ? "Assign another active College Admin to this college before suspending or ending this membership."
+                    : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
                     ? "You cannot suspend or end your own protected access."
                     : "The membership state could not be changed.",
           });
