@@ -39,7 +39,7 @@ describe("UX-G159 team interaction recovery contracts",()=>{
  it("cannot render the synthetic fixture in production",()=>{
   const ui=source("src/app/e2e/ux-g159-fixture/page.tsx");
   expect(ui).toContain('process.env.NODE_ENV!=="development"');
-  expect(ui).toContain('process.env.UX_G159_FIXTURE!=="1"');
+  expect(ui).toContain('env.UX_G159_FIXTURE!=="1"');
   expect(ui).toContain('notFound()');
  });
 });

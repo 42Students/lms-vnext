@@ -127,7 +127,7 @@ describe("state-changing API routes", () => {
     const source=fs.readFileSync(file,"utf8");
     expect(ALLOWED["src/app/api/webhooks/telegram/route.ts POST"]).toContain("provider webhook");
     expect(source).toContain('validTelegramWebhookSecret(request.headers.get("x-telegram-bot-api-secret-token"))');
-    expect(source).toContain('process.env["APP_ENV"] !== "production"');
+    expect(source).toContain('env.APP_ENV !== "production"');
     expect(source).not.toContain("getCurrentRequestContext");
   });
 

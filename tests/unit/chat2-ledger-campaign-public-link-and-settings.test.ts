@@ -80,7 +80,7 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
  });
  it("dispatch service requires verified provider and never reclaims an already-started draft",()=>{
   const s=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
-  expect(s).toContain('process.env["TPO_CAMPAIGNS_READY"]!=="VERIFIED"');
+  expect(s).toContain('!featureReady("tpoCampaigns")');
   // Provider config now comes from the shared ZeptoMail reader, not direct env access.
   expect(s).toContain("readZeptoMailConfig()");
   expect(s).toContain("!mail.token.trim()");
@@ -99,11 +99,11 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
   const s=readFileSync("src/modules/messaging/tpo-campaign-draft-service.ts","utf8");
   expect(s).toContain("assertPersistedPlatformPermission");
   expect(s).toContain("planTpoCampaignRecipients");
-  expect(s).toContain('"DB09_VERIFIED"');
+  expect(s).toContain('featureReady("tpoApi")');
   expect(s).toContain('"DRAFT"');
   expect(s).toContain("snapshot.suppressed");
   expect(s).toContain("collegeId:college.id");
-  expect(s).toContain("resolveTpoCampaignRecipientSecret(process.env)");
+  expect(s).toContain("resolveTpoCampaignRecipientSecret(rawEnv())");
  });
  it("recipient unsubscribe requires matching college campaign and lead under transaction lock",()=>{
   const s=readFileSync("src/modules/messaging/tpo-campaign-unsubscribe-service.ts","utf8");

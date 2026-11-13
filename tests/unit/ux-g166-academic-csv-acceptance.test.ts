@@ -143,7 +143,7 @@ describe("UX-G166 route and fixture boundaries",()=>{
  it("denies synthetic export browser fixture outside development",()=>{
   const fixture=readFileSync("src/app/e2e/ux-g166-academic-csv/page.tsx","utf8");
   expect(fixture).toContain('process.env.NODE_ENV!=="development"');
-  expect(fixture).toContain('process.env.UX_G166_FIXTURE!=="1"');
+  expect(fixture).toContain('env.UX_G166_FIXTURE!=="1"');
   expect(fixture).toContain("notFound()");
   expect(fixture).not.toContain("getCurrentRequestContext");
   expect(fixture).not.toContain("getDb()");

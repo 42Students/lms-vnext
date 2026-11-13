@@ -64,7 +64,7 @@ describe("PHASE2-DIVERSITY privacy gates in the service source",()=>{
  const src=fs.readFileSync(path.join(process.cwd(),"src","modules","placements","tpo-diversity-outreach-service.ts"),"utf8");
 
  it("PHASE2-DIVERSITY-08 every database entry point is behind the privacy-approval readiness gate",()=>{
-  expect(src).toContain('process.env["DB10_DIVERSITY_OUTREACH_READY"] !== "PRIVACY_APPROVED"');
+  expect(src).toContain('!featureReady("diversityOutreach")');
   const exported=[...src.matchAll(/export\s+async\s+function\s+([A-Za-z0-9_$]+)/g)].map(m=>m[1]!);
   expect(exported.length).toBeGreaterThan(1);
   for(const name of exported){

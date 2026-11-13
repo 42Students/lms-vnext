@@ -128,7 +128,7 @@ describe("UX-G170/G172 API and fixture boundaries", () => {
   it("prevents the browser proof fixture from exposing live data or running in production", () => {
     const fixture = readFileSync("src/app/e2e/ux-g170-g172-csv/page.tsx", "utf8");
     expect(fixture).toContain('process.env.NODE_ENV !== "development"');
-    expect(fixture).toContain('process.env.UX_EXPORT_FIXTURE !== "1"');
+    expect(fixture).toContain('env.UX_EXPORT_FIXTURE !== "1"');
     expect(fixture).toContain("notFound()");
     expect(fixture).not.toContain("getDb()");
     expect(fixture).not.toContain("getCurrentRequestContext");

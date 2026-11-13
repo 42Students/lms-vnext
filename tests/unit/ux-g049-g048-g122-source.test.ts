@@ -8,7 +8,7 @@ describe("UX-G049 retired E2E sign-in non-escalation and recovery",()=>{
   it("preserves development-only signed administrator gate and no session mint",()=>{
     const source=read(path+"page.tsx");
     expect(source).toContain('process.env.NODE_ENV === "development"');
-    expect(source).toContain('process.env["E2E_AUTH_ENABLED"] === "true"');
+    expect(source).toContain('featureReady("e2eAuth")');
     expect(source).toContain('isSuperAdmin(await getCurrentRequestContext())');
     expect(source).toContain('robots: { index: false, follow: false, noarchive: true }');
     expect(source).toContain('referrer: "no-referrer"');

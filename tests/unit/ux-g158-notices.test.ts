@@ -38,7 +38,7 @@ describe("UX-G158 TPO notice interaction contracts",()=>{
  it("gates the unauthenticated fixture to development-only synthetic data",()=>{
   const fixture=source("src/app/e2e/ux-g158-fixture/page.tsx");
   expect(fixture).toContain('process.env.NODE_ENV!=="development"');
-  expect(fixture).toContain('process.env.UX_G158_FIXTURE!=="1"');
+  expect(fixture).toContain('env.UX_G158_FIXTURE!=="1"');
   expect(fixture).toContain('notFound()');
   expect(fixture).not.toContain('getCurrentRequestContext');
  });

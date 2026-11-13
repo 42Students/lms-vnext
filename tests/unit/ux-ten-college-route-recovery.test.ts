@@ -103,7 +103,7 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
     const code=route("groups/page.tsx");
     expect(code).toContain("No study groups have been created in this college yet.");
     expect(code).toContain("Choose All types");
-    expect(code).toContain('process.env["COLLEGE_STUDY_GROUPS_RELEASED"] !== "true"');
+    expect(code).toContain('env.COLLEGE_STUDY_GROUPS_RELEASED !== "true"');
   });
   it("does not remove College Admin role guard",()=>{
     const code=route("placements/new/page.tsx");
@@ -114,7 +114,7 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
   it("test-only preview is a 404 unless explicitly enabled in development",()=>{
     const code=readFileSync("src/app/e2e/ux-ten-college-recovery/page.tsx","utf8");
     expect(code).toContain('process.env.NODE_ENV!=="development"');
-    expect(code).toContain('process.env["UX_TEN_COLLEGE_FIXTURE"]!=="1"');
+    expect(code).toContain('env.UX_TEN_COLLEGE_FIXTURE!=="1"');
     expect(code).toContain("notFound()");
   });
 });

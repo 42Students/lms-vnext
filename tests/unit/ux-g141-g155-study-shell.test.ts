@@ -36,7 +36,7 @@ describe("G141/G155/G175 synthetic browser fixture security", () => {
   it("fixture is disabled outside an explicit development-mode opt-in", () => {
     const page = source("src/app/e2e/ux-g141-g155-study-shell/page.tsx");
     expect(page).toContain('process.env.NODE_ENV !== "development"');
-    expect(page).toContain('process.env["UX_STUDY_SHELL_FIXTURE"] !== "1"');
+    expect(page).toContain('env.UX_STUDY_SHELL_FIXTURE !== "1"');
     expect(page).toContain("notFound()");
     expect(page).not.toContain("setCookie");
   });

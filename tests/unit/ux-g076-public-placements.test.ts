@@ -27,8 +27,8 @@ describe("UX-G076 public placements disclosure and recovery", () => {
     expect(publicPage).toContain("Individual student and employer records are not shown");
   });
   it("preserves recruiter OTP and trusted proxy readiness gates", () => {
-    expect(publicPage).toContain('process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED"');
-    expect(publicPage).toContain('process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED"');
+    expect(publicPage).toContain('featureReady("tpoApi")');
+    expect(publicPage).toContain('featureReady("publicJoinTrustedProxy")');
     expect(publicRecruit).toContain("publicRecruiterWorkEmailSchema");
     expect(publicRecruit).toContain("if(savingRef.current)return");
   });

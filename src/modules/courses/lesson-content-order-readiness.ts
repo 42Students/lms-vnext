@@ -1,7 +1,4 @@
-import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export function lessonContentOrderRuntimeEnabled() {
-  return (
-    env.DB05_CONTENT_ORDER_READY ===
-    "DB05_VERIFIED"
-  );
+  return featureReady("contentOrder");
 }

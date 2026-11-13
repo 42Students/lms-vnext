@@ -33,7 +33,7 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
   it("development preview cannot expose real tenant records or ship enabled", () => {
     const page=read("src/app/e2e/ux-tpo-ten-recovery/page.tsx");
     expect(page).toContain('process.env.NODE_ENV !== "development"');
-    expect(page).toContain('process.env["UX_TPO_TEN_FIXTURE"] !== "1"');
+    expect(page).toContain('env.UX_TPO_TEN_FIXTURE !== "1"');
     expect(page).toContain("notFound()");
     const h=read("src/app/e2e/ux-tpo-ten-recovery/tpo-ten-recovery-harness.tsx");
     expect(h).not.toContain("getCurrentRequestContext");

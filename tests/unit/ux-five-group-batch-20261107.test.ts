@@ -221,7 +221,7 @@ describe("UX-G184 shared route recovery", () => {
   }
   const fixture=source("src/app/e2e/ux-g184-authenticated-states/page.tsx");
   expect(fixture).toContain('process.env.NODE_ENV!=="development"');
-  expect(fixture).toContain('process.env.UX_G184_ROUTE_STATE_FIXTURE!=="1"');
+  expect(fixture).toContain('env.UX_G184_ROUTE_STATE_FIXTURE!=="1"');
   expect(fixture).toContain('(role==="college-admin"&&state!=="not-found")');
     for(const role of ["admin","college-admin","hr","teach","teacher"]){
    expect(source("src/app/(authenticated)/"+role+"/not-found.tsx")).toContain("Page not found");

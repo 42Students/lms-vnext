@@ -47,7 +47,7 @@ describe("UX-G186 global fallback invariants", () => {
   it("keeps browser fixture disabled in production under all flags", () => {
     const fixture = source("src/app/e2e/ux-root-error-fixture/page.tsx");
     expect(fixture).toContain('process.env.NODE_ENV !== "development"');
-    expect(fixture).toContain('process.env.UX_ROOT_ERROR_FIXTURE !== "1"');
+    expect(fixture).toContain('env.UX_ROOT_ERROR_FIXTURE !== "1"');
     expect(fixture).toContain("notFound()");
   });
 });

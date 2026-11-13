@@ -38,7 +38,7 @@ describe("UX-G157 TPO component recovery and privacy contracts",()=>{
  it("refuses to expose synthetic acceptance page outside dev fixture",()=>{
   const page=source("src/app/e2e/ux-g157-fixture/page.tsx");
   expect(page).toContain('process.env.NODE_ENV!=="development"');
-  expect(page).toContain('process.env.UX_G157_FIXTURE!=="1"');
+  expect(page).toContain('env.UX_G157_FIXTURE!=="1"');
   expect(page).toContain("notFound()");
  });
 });

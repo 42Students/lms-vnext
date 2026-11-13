@@ -47,6 +47,6 @@ describe("Ten atomic DOING College Admin UX recovery groups",()=>{
   const page=readFileSync("src/app/e2e/ux-ten-college-recovery/page.tsx","utf8");
   expect(page).toContain("UXTenCollegeAtomicRecoveryPreview");
   expect(page).toContain('process.env.NODE_ENV!=="development"');
-  expect(page).toContain('process.env["UX_TEN_COLLEGE_FIXTURE"]!=="1"');
+  expect(page).toContain('env.UX_TEN_COLLEGE_FIXTURE!=="1"');
  });
 });

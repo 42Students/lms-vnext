@@ -31,7 +31,7 @@ describe("UX-G156 TPO batch and audit response honesty",()=>{
  it("forbids development fixtures in production",()=>{
   const ui=source("src/app/e2e/ux-g156-fixture/page.tsx");
   expect(ui).toContain('process.env.NODE_ENV!=="development"');
-  expect(ui).toContain('process.env.UX_G156_FIXTURE!=="1"');
+  expect(ui).toContain('env.UX_G156_FIXTURE!=="1"');
   expect(ui).toContain('notFound()');
  });
 });

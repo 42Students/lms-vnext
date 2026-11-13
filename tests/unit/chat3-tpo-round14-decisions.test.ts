@@ -1,3 +1,4 @@
+import { featureReady } from "@/config/features";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -16,10 +17,10 @@ describe("chat-3 owner decisions for uncertain legacy behaviors",()=>{
  });
  it("COL-courses-content-02 fails closed until course display migration is explicitly verified",()=>{
   const source=src("src/modules/courses/course-display-readiness.ts");
-  expect(source).toContain('process.env["DB05_COURSE_DISPLAY_READY"] === "DB05_VERIFIED"');
+  expect(source).toContain('featureReady("courseDisplay")');
   const service=src("src/modules/courses/course-display-service.ts");
   expect(service).toContain('if (!courseDisplayRuntimeEnabled())');
-  expect(courseDisplayRuntimeEnabled()).toBe(process.env.DB05_COURSE_DISPLAY_READY==="DB05_VERIFIED");
+  expect(courseDisplayRuntimeEnabled()).toBe(featureReady("courseDisplay"));
  });
  it("COL-attendance-09 reads period endedness from recorded academic dates in IST",()=>{
   const service=src("src/modules/attendance/admin-service.ts");

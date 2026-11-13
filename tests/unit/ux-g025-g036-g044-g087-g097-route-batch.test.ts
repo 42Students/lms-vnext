@@ -8,7 +8,7 @@ describe("Five-group development acceptance fixture isolation", () => {
   it("never deploys the fixture without development and an explicit opt-in", () => {
     const page = source("src/app/e2e/ux-five-route-recovery/page.tsx");
     expect(page).toContain('process.env.NODE_ENV !== "development"');
-    expect(page).toContain('process.env["UX_FIVE_ROUTE_FIXTURE"] !== "1"');
+    expect(page).toContain('env.UX_FIVE_ROUTE_FIXTURE !== "1"');
     expect(page).toContain("notFound()");
     expect(page).not.toContain("setCookie");
   });
