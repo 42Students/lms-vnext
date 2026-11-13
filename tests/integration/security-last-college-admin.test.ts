@@ -145,6 +145,17 @@ describe("#81 last active College Admin guard",()=>{
     });
   });
 
+  it("does not block cleanup of an administrator who was already disabled outside the membership writer",async()=>{
+    await withAdmins(1,async f=>{
+      const m=f.members[0]!;
+      await pool.query("update users set platform_status='DISABLED' where id=$1",[m.userId]);
+      const remaining=await drizzlePeopleRepository.removeMembershipRole(
+        m.membershipId,"COLLEGE_ADMIN",mutation(f,m));
+      expect(remaining).toEqual(["FACULTY"]);
+      expect(await liveAdmins(f.collegeId)).toEqual([]);
+    });
+  });
+
   it("allows an authorized admin role removal only when an independent active replacement remains",async()=>{
     await withAdmins(2,async f=>{
       const [a,b]=f.members as [Member,Member];
