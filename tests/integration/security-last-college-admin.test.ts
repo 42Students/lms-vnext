@@ -83,7 +83,7 @@ async function withAdmins(count: number, run: (fixture: Fixture) => Promise<void
       "delete from activity_events where subject_type='college_membership' and subject_id=any($1::uuid[])",
       [membershipIds],
     );
-    await pool.query("delete from activity_events where subject_type=\'user\' and subject_id=any($1::uuid[])", [userIds]);
+    await pool.query("delete from activity_events where subject_type='user' and subject_id=any($1::uuid[])", [userIds]);
     await pool.query("delete from identity_device_sessions where user_id=any($1::uuid[])", [userIds]);
     await pool.query("delete from membership_roles where membership_id=any($1::uuid[])", [membershipIds]);
     await pool.query("delete from college_memberships where id=any($1::uuid[])", [membershipIds]);
