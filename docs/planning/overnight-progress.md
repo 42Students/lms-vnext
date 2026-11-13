@@ -20,6 +20,8 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.2a cross-user: quiz attempts (sec-cross-user-quizzes, 7 tests, 2 of 3 guards mutation-checked, third is a redundant layer)
 - [x] 1.2b cross-user: attendance, roster, marking, guardian contacts (sec-cross-user-attendance, 9 tests; faculty guard mutation-checked, admin guard has a redundant second layer)
 - [ ] 1.2c cross-user: placement offers and recruiter/company data
+  - [x] offers: sec-cross-user-offers (6 tests, owner + staff-read guards mutation-checked); shared helper tests/support/placement-college.ts (sec-cross-user-applications to move onto it in 8.1)
+  - [ ] recruiter and company data (grants scope: one company must not read another company's candidates)
 - [ ] 1.2d cross-user: project and mentor workspaces
 - [ ] 1.2e cross-user: notifications and staff inbox
 - [ ] 1.3 export scope tests
