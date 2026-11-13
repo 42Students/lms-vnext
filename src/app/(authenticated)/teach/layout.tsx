@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { canAccessFacultyRoute } from "@/modules/courses/faculty-route-access-model";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const context = await getCurrentRequestContext();
-  if (!canAccessFacultyRoute(context)) {
+  if (!canAccessRolePortal(context, "teach")) {
     redirect("/dashboard");
   }
   // Match the active /teacher faculty surface: no second white canvas or
