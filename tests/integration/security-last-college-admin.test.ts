@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { closeDatabaseConnection } from "@/db/client";
 import { drizzlePeopleRepository } from "@/modules/people/repository";
+import {changePlatformAccountStatus} from "@/modules/people/super-admin-platform-account-service";
 import type { RequestContext } from "@/modules/identity/context";
 import type { MembershipMutationContext } from "@/modules/people/membership-service";
 
@@ -82,6 +83,7 @@ async function withAdmins(count: number, run: (fixture: Fixture) => Promise<void
       "delete from activity_events where subject_type='college_membership' and subject_id=any($1::uuid[])",
       [membershipIds],
     );
+    await pool.query("delete from activity_events where subject_type=\'user\' and subject_id=any($1::uuid[])", [userIds]);
     await pool.query("delete from identity_device_sessions where user_id=any($1::uuid[])", [userIds]);
     await pool.query("delete from membership_roles where membership_id=any($1::uuid[])", [membershipIds]);
     await pool.query("delete from college_memberships where id=any($1::uuid[])", [membershipIds]);
@@ -227,4 +229,51 @@ describe("#81 last active College Admin guard",()=>{
       expect(await liveAdmins(f.collegeId)).toHaveLength(1);
     });
   },20_000);
+
+  it("denies platform-wide disabling of the sole administrator and keeps their user active",async()=>{
+    await withAdmins(1,async f=>{
+      const m=f.members[0]!;
+      await expect(changePlatformAccountStatus(actor,m.userId,{
+        status:"DISABLED",reason:"Check administrator coverage",confirmed:true,
+      })).rejects.toMatchObject({code:"LAST_COLLEGE_ADMIN"});
+      const user=await pool.query<{platform_status:string}>(
+        "select platform_status from users where id=$1",[m.userId]);
+      expect(user.rows[0]?.platform_status).toBe("ACTIVE");
+      expect(await liveAdmins(f.collegeId)).toEqual([m.membershipId]);
+    });
+  });
+
+  it("allows disabling one administrator, but not the remaining administrator",async()=>{
+    await withAdmins(2,async f=>{
+      const [a,b]=f.members as [Member,Member];
+      const allowed=await changePlatformAccountStatus(actor,a.userId,{
+        status:"DISABLED",reason:"Change account access during rotation",confirmed:true,
+      });
+      expect(allowed).toMatchObject({userId:a.userId,status:"DISABLED",changed:true});
+      expect(await liveAdmins(f.collegeId)).toEqual([b.membershipId]);
+      await expect(changePlatformAccountStatus(actor,b.userId,{
+        status:"DISABLED",reason:"Would leave college without an administrator",confirmed:true,
+      })).rejects.toMatchObject({code:"LAST_COLLEGE_ADMIN"});
+      expect(await liveAdmins(f.collegeId)).toEqual([b.membershipId]);
+    });
+  });
+
+  it("serializes a global account disable against another administrator's membership suspension",async()=>{
+    await withAdmins(2,async f=>{
+      const [a,b]=f.members as [Member,Member];
+      const outcomes=await Promise.allSettled([
+        changePlatformAccountStatus(actor,a.userId,{
+          status:"DISABLED",reason:"Concurrent account block test",confirmed:true,
+        }),
+        drizzlePeopleRepository.transitionMembershipLifecycle(
+          b.membershipId,{action:"SUSPEND",reason:"Concurrent membership suspension"},mutation(f,b)),
+      ]);
+      expect(outcomes.filter(o=>o.status==="fulfilled")).toHaveLength(1);
+      expect(outcomes.filter(o=>o.status==="rejected")).toEqual([
+        expect.objectContaining({status:"rejected",reason:expect.objectContaining({code:"LAST_COLLEGE_ADMIN"})}),
+      ]);
+      expect(await liveAdmins(f.collegeId)).toHaveLength(1);
+    });
+  },20_000);
+
 });
