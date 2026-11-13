@@ -15,7 +15,7 @@ describe("legacy learner application per-minute rate gate",()=>{
   expect(svc).toContain("pg_advisory_xact_lock(hashtextextended");
   expect(svc).toContain('eq(placementApplicationStatusHistory.toStatus,"SUBMITTED")');
   expect(svc).toContain("await assertPlacementApplicationRateLimit(tx,membership.id)");
-  expect(api).toMatch(/error\.code\s*===\s*"PLACEMENT_APPLICATION_RATE_LIMITED"\s*\?\s*429/);
+  expect(readFileSync("src/lib/error-registry.ts", "utf8")).toMatch(/PLACEMENT_APPLICATION_RATE_LIMITED:\s*429/);
   expect(api).toContain("Too many applications in the last minute. Please try again shortly.");
  });
 });

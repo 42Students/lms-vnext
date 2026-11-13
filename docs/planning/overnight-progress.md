@@ -38,7 +38,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 2.6 one baselines folder (docs/security/baselines/, 7 files) and one reader (scripts/lib/baselines.mjs) used by every ratchet script; pg-security-baseline.json stays put because the dev k8s cronjob references it (cloud, out of scope)
 
 ## Phase 3: request, response, error plumbing
-- [ ] 3.1 one error model and mapper
+- [x] 3.1 (core) error registry src/lib/error-registry.ts: code-to-status table for 14 families, AppError {code,status,safeMessage,retryable,details}; central mapper cut from ~420 to 170 lines and 4 side mappers (TPO CRM, TPO messaging, lecture hall) read the same table; golden status record proves no code moved. NOT done: converting the 165 custom error classes and 1,800 plain `throw new Error` (long tail, tracked by errors.* metrics), folding the invite mapper's own body
 - [ ] 3.2 response helpers by route class
 - [ ] 3.3 wrapper owns origin, actor, body, query; one body reader
 - [ ] 3.4 limits.ts
