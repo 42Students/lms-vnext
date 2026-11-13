@@ -92,7 +92,7 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   const worker=read("src/modules/placements/recruiter-message-email-dispatch-service.ts");
   expect(provider).toContain("canContactRecipientAtRuntime");
   expect(provider).toContain("isRecruiterReplyAddress");
-  expect(provider).toContain("timeoutMs:10_000,maxAttempts:1");
+  expect(provider).toContain("timeoutMs:TIMEOUT_MS.QUICK,maxAttempts:1");
   expect(provider).toContain("safeRecruiterDigestMessages");
   expect(worker).toContain("RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY");
   expect(worker).toContain("state.lastSentAt");

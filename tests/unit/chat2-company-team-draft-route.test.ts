@@ -19,7 +19,7 @@ describe("Company Team posting routes and graceful draft retention",()=>{
   expect(form).toContain('sessionStorage.setItem(storageKey+":key"');
   expect(form).toContain("pending.current");
   expect(form).toContain("window.addEventListener(\"beforeunload\",warn)");
-  expect(form).toContain("timeoutMs:12000");
+  expect(form).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(form).toContain("router.refresh()");
  });
  it("TPO-inbox-team-29 restricts company activity bell to active college placement-team recipients and links directly to a message",()=>{

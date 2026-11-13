@@ -6,7 +6,7 @@ describe("TPO notification click acknowledgement",()=>{
  it("TPO-inbox-team-64 and GR-71 only navigate after a successful bounded acknowledgement",()=>{
   const component=src("src/components/activity/notification-list.tsx");
   expect(component).toContain("await apiFetch(readEndpoint +");
-  expect(component).toContain("timeoutMs: 12000");
+  expect(component).toContain("timeoutMs: TIMEOUT_MS.REQUEST");
   expect(component).toContain("if (acknowledged) router.refresh()");
   expect(component).toContain("setSelected(item)");
   expect(component).toContain("onClick={() => markRead(item.id)}");
@@ -19,6 +19,6 @@ describe("TPO notification click acknowledgement",()=>{
   expect(bell).toContain("await apiFetch(");
   expect(bell).toContain("setOpen(false)");
   expect(bell).toContain("if(href)router.push(href)");
-  expect(bell).toContain("timeoutMs:12000");
+  expect(bell).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
  });
 });

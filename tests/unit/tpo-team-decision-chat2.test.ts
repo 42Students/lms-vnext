@@ -36,7 +36,7 @@ describe("TPO Team decisions",()=>{
   expect(page).toContain("message.decision");
   expect(page).toContain("<TpoTeamDecisionToggle");
   expect(toggle).toContain("aria-pressed={marked}");
-  expect(toggle).toContain("timeoutMs:12000");
+  expect(toggle).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
 });

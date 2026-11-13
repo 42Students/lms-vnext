@@ -25,7 +25,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
   const c=progress();
   expect(c).toContain("setData(result)");
   expect(c).toContain("apiFetch<unknown>");
-  expect(c).toContain("timeoutMs:15000");
+  expect(c).toContain("timeoutMs:TIMEOUT_MS.STANDARD");
   expect(c).toContain("pending.current");
   expect(c).not.toContain("setData(null)");
   expect(c).toContain('role="alert"');
@@ -33,7 +33,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  });
  it("TPO-inbox-team-60 uses friendly retryable bell acknowledgements without leaking API status codes",()=>{
   expect(bell()).toContain('import {apiFetch} from "@/lib/api-fetch"');
-  expect(bell()).toContain("timeoutMs:12000");
+  expect(bell()).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(bell()).toContain('role="alert"');
   expect(bell()).not.toContain("payload.error");
  });
@@ -47,12 +47,12 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
   expect(c).toContain('"/read"');
   expect(c).toContain("method:\"POST\"");
   expect(c).toContain("apiFetch(");
-  expect(c).toContain("timeoutMs:12000");
+  expect(c).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
  });
  it("TPO-inbox-team-09 keeps recruiter drafts after failed sends or stalled network",()=>{
   const c=recruiter();
   expect(c).toContain("pending.current");
-  expect(c).toContain("timeoutMs:15000");
+  expect(c).toContain("timeoutMs:TIMEOUT_MS.STANDARD");
   expect(c).toContain('role="alert"');
   expect(c).toContain("sessionStorage.setItem");
   expect(c).toContain("setError(reason instanceof Error");

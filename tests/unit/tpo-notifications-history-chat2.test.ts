@@ -27,7 +27,7 @@ describe("TPO Notifications history and refresh legacy fidelity",()=>{
  it("TPO-inbox-team-68 keeps stale notifications visible when a bounded refresh fails",()=>{
   const refresher=src("src/components/tpo/tpo-notification-refresh.tsx");
   const page=src("src/app/(authenticated)/tpo/notifications/page.tsx");
-  expect(refresher).toContain("timeoutMs:12000");
+  expect(refresher).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(refresher).toContain("This refresh failed. Showing the last successful load.");
   expect(refresher).toContain("Refreshing notifications…");
   expect(refresher).toContain('document.addEventListener("visibilitychange",onVisible)');

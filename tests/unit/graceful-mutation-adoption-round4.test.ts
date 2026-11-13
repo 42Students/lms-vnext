@@ -31,7 +31,7 @@ describe("chat-14 guarded mutation adoption", () => {
 
   it("GR-04 GR-30 GR-31 preserves first-reader outcome when guarding TPO cell receipts", () => {
     const code = source("src/components/tpo/tpo-placement-cell-read-action.tsx");
-    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain("await apiFetch<{firstInCollege?:boolean}>");
     expect(code).toContain("data?.firstInCollege?");
@@ -40,7 +40,7 @@ describe("chat-14 guarded mutation adoption", () => {
 
   it("GR-30 GR-31 guards the manual-redirect placement toggle without changing publication copy", () => {
     const code = source("src/components/placements/tpo-public-placement-toggle.tsx");
-    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain('redirect:"manual"');
     expect(code).toContain('response.type==="opaqueredirect"');
@@ -50,7 +50,7 @@ describe("chat-14 guarded mutation adoption", () => {
 
   it("GR-30 GR-31 guards department creation and retains accessible validation and success", () => {
     const code = source("src/components/admin/department-create-form.tsx");
-    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
     expect(code).toContain("void run(async()=>{");
     expect(code).toContain('.catch(()=>fail("Failed to create department"))');
     expect(code).toContain("Department name must be 255 characters or less");
@@ -67,7 +67,7 @@ describe("chat-14 guarded mutation adoption", () => {
 
   it("GR-30 GR-31 guards Super Admin batch graduation without dropping eligibility error details", () => {
     const code = source("src/components/admin/super-admin-batch-graduate-action.tsx");
-    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain("BATCH_NOT_READY_TO_GRADUATE");
     expect(code).toContain("BATCH_GRADUATION_STALE");
@@ -76,7 +76,7 @@ describe("chat-14 guarded mutation adoption", () => {
 
   it("GR-30 GR-31 protects TPO follow-up creation and retains entered details on failure", () => {
     const code = source("src/components/tpo/tpo-new-followup-modal.tsx");
-    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain("calendarLocalIstToOffset(when)");
     expect(code).toContain("setError(\"Follow-up was not saved\")");

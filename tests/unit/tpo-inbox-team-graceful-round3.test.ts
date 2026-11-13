@@ -57,7 +57,7 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(c).toContain("pending.current||busy");
   expect(c).toContain("pending.current=false");
   expect(c).toContain("apiFetch<");
-  expect(c).toContain("30000");
+  expect(c).toContain("TIMEOUT_MS.SLOW");
  });
  it("GR-62 warns about unsent replies and announcement changes before leaving",()=>{
   const forms=source("src/components/tpo/tpo-team-forms.tsx");
@@ -116,9 +116,9 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  it("TPO-inbox-team-54 and GR-90 never surface a read-cell API error code",()=>{
   const view=source("src/components/tpo/tpo-placement-cell-read-action.tsx");
   expect(view).toContain('role="alert"');
-  expect(view).toContain("useGuardedAction({timeoutMs:30000})");
+  expect(view).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW})");
   expect(view).toContain("disabled={busy}");
-  expect(view).toContain("30000");
+  expect(view).toContain("TIMEOUT_MS.SLOW");
   expect(view).not.toContain("body?.error");
   expect(view).not.toContain("setError(data.error)");
  });
@@ -139,7 +139,7 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const reply=source("src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts");
   expect(form).toContain('headers:{Accept:"application/json"}');
   expect(form).toContain("FriendlyFetchError");
-  expect(form).toContain("timeoutMs:30000");
+  expect(form).toContain("timeoutMs:TIMEOUT_MS.SLOW");
   expect(create).toContain('request.headers.get("accept")');
   expect(reply).toContain('request.headers.get("accept")');
   const feedback=source("src/modules/placements/tpo-team-form-feedback-model.ts");

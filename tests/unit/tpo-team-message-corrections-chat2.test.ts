@@ -36,7 +36,7 @@ describe("TPO Team message edit and removal",()=>{
   expect(page).toContain("message.removed?");
   expect(page).toContain("<TpoTeamMessageActions");
   expect(controls).toContain("pending.current");
-  expect(controls).toContain("timeoutMs:12000");
+  expect(controls).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(controls).toContain('role="alertdialog"');
  });
 });

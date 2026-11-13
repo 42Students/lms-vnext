@@ -35,7 +35,7 @@ describe("TPO Team away until",()=>{
   expect(page).toContain("awayByMember.get(member.membershipId)");
   expect(page).toContain("context.membership && awayState.ready ? <TpoTeamAwayForm");
   expect(form).toContain("Back now");
-  expect(form).toContain("timeoutMs:12000");
+  expect(form).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(src("src/app/api/placements/tpo/team/away/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
 });

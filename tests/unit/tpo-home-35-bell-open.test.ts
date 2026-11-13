@@ -15,7 +15,7 @@ describe("TPO-home-35 / TPO-inbox-team-61 bell open and acknowledge",()=>{
   expect(panel).toContain('"/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read"');
   expect(panel).toContain('onClick={()=>void openItem(item)}');
   expect(panel).toContain("await apiFetch(");
-  expect(panel).toContain('method:"POST",credentials:"same-origin",timeoutMs:12000');
+  expect(panel).toContain('method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST');
   expect(panel).toContain("}catch(reason){");
   expect(panel).toContain("return;");
   expect(panel).toContain("if(href)router.push(href)");

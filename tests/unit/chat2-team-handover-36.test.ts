@@ -49,7 +49,7 @@ describe("Scoped Team ownership handover",()=>{
   expect(ui).toContain('await askConfirm("Hand over "');
   expect(ui).toContain("{dialog}");
   expect(ui).toContain("This does not remove team access or transfer private asks.");
-  expect(ui).toContain("timeoutMs:12000");
+  expect(ui).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(page).toContain("<TpoTeamHandover");
   expect(page).toContain('member.membershipId!==actorMembershipId');
   expect(legacyRedirect).toContain('redirect("/tpo/settings/team")');

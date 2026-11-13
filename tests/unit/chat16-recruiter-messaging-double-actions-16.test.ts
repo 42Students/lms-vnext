@@ -10,7 +10,7 @@ describe("chat-16 recruiter messaging double-action and draft recovery",()=>{
   expect(source).toContain("if(sending||submitPendingRef.current||!historyAvailable)return;");
   expect(source).toContain("submitPendingRef.current=true;");
   expect(source).toContain("}finally{submitPendingRef.current=false;setSending(false);}");
-  expect(source).toContain("useGuardedAction({timeoutMs:15000})");
+  expect(source).toContain("useGuardedAction({timeoutMs:TIMEOUT_MS.STANDARD})");
   expect(source).toContain('method:"POST",body:form,credentials:"same-origin"');
  });
  it("UX-chat16-recruiter-message-reply-02 retains the draft after an unconfirmed send",()=>{

@@ -18,7 +18,7 @@ describe("TPO Team conversation rename",()=>{
   const component=src("src/components/tpo/tpo-team-rename.tsx");
   const route=src("src/app/api/placements/tpo/team/threads/[threadId]/rename/route.ts");
   expect(component).toContain("busyRef.current");
-  expect(component).toContain("timeoutMs:12000");
+  expect(component).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(component).toContain("value={topic}");
   expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(route).toContain('status:409');

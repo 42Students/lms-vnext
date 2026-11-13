@@ -57,7 +57,7 @@ describe("Team asks permission and lifecycle",()=>{
   expect(page).toContain('...(highlightAskId !== undefined ? {highlightAskId} : {})');
   expect(panel).toContain('document.getElementById("team-ask-"+highlightAskId)');
   expect(panel).toContain("Could not send the ask. Your draft is still here.");
-  expect(panel).toContain("timeoutMs:12000");
+  expect(panel).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(panel).not.toContain("window.confirm(");
  });
  it("TPO-inbox-team-22 records proposed scoped table/foreign keys, not an unnumbered production migration",()=>{

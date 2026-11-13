@@ -8,7 +8,7 @@ describe("TPO Team opens as read without GET mutations",()=>{
   const route=src("src/app/api/placements/tpo/team/threads/[threadId]/acknowledge/route.ts");
   expect(page).toContain("<TpoTeamOpenRead threadId={result.thread.id}/>");
   expect(action).toContain('method:"POST"');
-  expect(action).toContain("timeoutMs:12000");
+  expect(action).toContain("timeoutMs:TIMEOUT_MS.REQUEST");
   expect(action).toContain("if(active)router.refresh()");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain('request.headers.get("accept")?.includes("application/json")');

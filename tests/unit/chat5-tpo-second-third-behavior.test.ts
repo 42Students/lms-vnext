@@ -157,7 +157,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
   expect(control).toContain("inFlight.current=true");
   expect(control).toContain("inFlight.current=false");
   expect(control).toContain("apiFetch<{seatNumber?:number}>");
-  expect(control).toContain("timeoutMs:35000");
+  expect(control).toContain("timeoutMs:TIMEOUT_MS.BATCH");
   expect(control).toContain('typeof data?.seatNumber!=="number"');
   expect(control).toContain("Number.isSafeInteger(data.seatNumber)");
   expect(control).toContain("data.seatNumber<1");
