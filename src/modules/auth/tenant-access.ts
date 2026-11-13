@@ -44,3 +44,25 @@ export function isTenantAccessAllowed(
     ),
   );
 }
+
+/**
+ * After host authorization, expose only recruiter grants for that host.
+ * Merely allowing a membership request on College A must not expose
+ * unrelated College B recruiting capabilities in the same request context.
+ * The platform host keeps the full verified grant list for account choice.
+ */
+export function scopeContextToTenant(
+  context: RequestContext,
+  tenant: TenantForAccess,
+): RequestContext {
+  if (tenant.kind !== "college" || !context.recruiter) return context;
+  const grants = context.recruiter.grants.filter(
+    grant => grant.collegeId === tenant.collegeId,
+  );
+  return {
+    ...context,
+    recruiter: grants.length > 0
+      ? { ...context.recruiter, grants }
+      : null,
+  };
+}
