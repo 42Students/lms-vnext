@@ -18,7 +18,7 @@ import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
 import { bindTenantScope, ensureTenantHolder, runAsSystem, scopeFromActor, takeRequestValue } from "@/db/tenant-context";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
-import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
+import { isTenantAccessAllowed, scopeContextToTenant } from "@/modules/auth/tenant-access";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   ADMIN_SCOPE_EXPIRY_COOKIE_NAME,
@@ -99,7 +99,9 @@ async function resolveCurrentRequestContext() {
     throw new SessionAuthenticationError("SESSION_INVALID");
   }
 
-  return context;
+  // An active membership and recruiter profile can coexist, but a college
+  // host never exposes another college's recruiting grants to this request.
+  return scopeContextToTenant(context, tenant);
 }
 
 export function getCurrentRequestContext() {
