@@ -1,7 +1,7 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +31,9 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
    setNotice(next==="DISABLED"?"Platform account blocked and sessions revoked.":"Platform account reactivated.");
    setReason("");setConfirmOpen(false);
    router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:friendlyApiError({}));}
+  }catch(cause){setError(cause instanceof FriendlyFetchError&&cause.code==="LAST_COLLEGE_ADMIN"
+    ?"Assign another active College Admin in every affected college before disabling this account."
+    :cause instanceof Error?cause.message:friendlyApiError({}));}
   finally{lock.current=false;setPending(false);}
  }
  return <Disclosure title="Platform-wide account access" ariaLabel="Platform account control" className="min-w-0">
