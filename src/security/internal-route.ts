@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { runAsSystem } from "@/db/tenant-context";
 import { recordSecurityEvent } from "@/security/audit-store";
 import { createInternalRoute } from "@/security/internal-route-core";

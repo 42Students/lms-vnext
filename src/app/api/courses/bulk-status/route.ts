@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { route } from "@/security/route";
 
 import {bulkSuperAdminCourseVisibility} from "@/modules/courses/super-admin-course-bulk-visibility";

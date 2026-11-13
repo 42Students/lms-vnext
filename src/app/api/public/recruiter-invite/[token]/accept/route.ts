@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import {
  recruiterInviteAcceptReady,recruiterInviteAcceptanceBodySchema,

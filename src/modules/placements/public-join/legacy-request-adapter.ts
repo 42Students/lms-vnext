@@ -1,4 +1,4 @@
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 
 /**
  * Convert only the legacy token-in-path API shape into the modern body shape.

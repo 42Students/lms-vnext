@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { createHash } from "node:crypto";
 import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";

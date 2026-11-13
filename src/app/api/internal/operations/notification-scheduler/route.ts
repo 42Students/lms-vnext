@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { postgresScheduledJobLeaseStore } from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {
   executeScheduledJobWithLease,

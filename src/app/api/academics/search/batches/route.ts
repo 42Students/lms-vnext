@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from "@/modules/academics/college-academic-directory-service";
 import { route } from "@/security/route";
 

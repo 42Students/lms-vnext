@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import { requestPublicJoinCode, PublicJoinCodeError } from "@/modules/placements/public-join/send-code-service";
 import { deliverPublicRecruiterJoinCode } from "@/modules/messaging/public-join-code-delivery";
 import { route } from "@/security/route";

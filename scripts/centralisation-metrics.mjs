@@ -25,9 +25,9 @@ export const METRICS = [
   // Tier 1: security and correctness
   { id: "authz.serviceEnforcedRoutes", audit: 1, label: 'routes declaring permission "service-enforced"', scope: inApi, pattern: /permission:\s*["']service-enforced["']/g, unit: "matches" },
   { id: "authz.ownActorGuardDefs", audit: 1, label: "per-file requireX actor guard definitions", scope: (p) => p.startsWith("src/"), pattern: /function require(?:Learner|Faculty|Tpo|College|Staff|Mentor|Recruiter|Admin|Super)[A-Za-z]*\(/g, unit: "matches" },
-  { id: "plumbing.handlerOriginChecks", audit: 2, label: "origin checks inside API handlers", scope: inApi, pattern: /isSameOriginRequest\(/g, unit: "matches" },
+  { id: "plumbing.handlerOriginChecks", audit: 2, label: "origin checks inside API handlers", scope: inApi, pattern: /isSameOriginRequest\(/g, unit: "matches", enforce: true },
   { id: "plumbing.handlerActorLookups", audit: 2, label: "getCurrentRequestContext() inside API handlers", scope: inApi, pattern: /getCurrentRequestContext\(/g, unit: "matches" },
-  { id: "plumbing.bodyReaderModules", audit: 2, label: "request-body reader modules in src/lib", scope: (p) => /^src\/lib\/bounded-[a-z-]+\.ts$/.test(p), pattern: /^/g, unit: "files" },
+  { id: "plumbing.bodyReaderModules", audit: 2, label: "request-body reader modules in src/lib", scope: (p) => /^src\/lib\/bounded-[a-z-]+\.ts$/.test(p), pattern: /^/g, unit: "files", enforce: true },
   { id: "errors.apiErrorMapperModules", audit: 3, label: "API error mapper modules in src/lib", scope: (p) => /^src\/lib\/(?:[a-z-]+-)?api-error\.ts$/.test(p), pattern: /^/g, unit: "files" },
   { id: "errors.plainThrowError", audit: 3, label: 'throw new Error("...") in src', scope: (p) => p.startsWith("src/"), pattern: /throw new Error\("/g, unit: "matches" },
   { id: "errors.customErrorClasses", audit: 3, label: "custom Error classes", scope: (p) => p.startsWith("src/"), pattern: /class \w+Error extends Error/g, unit: "matches" },

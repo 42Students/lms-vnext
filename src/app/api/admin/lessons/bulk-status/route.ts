@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {bulkSuperAdminLessonVisibility} from "@/modules/courses/super-admin-lesson-bulk-visibility";
 import { CACHE } from "@/security/responses";
 export const runtime="nodejs";

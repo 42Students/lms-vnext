@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {changePlatformAccountStatus} from "@/modules/people/super-admin-platform-account-service";
 import { privateJson } from "@/security/responses";
 export const runtime="nodejs";

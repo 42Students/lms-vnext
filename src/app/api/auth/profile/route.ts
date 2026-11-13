@@ -1,7 +1,7 @@
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/lib/request-body";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";

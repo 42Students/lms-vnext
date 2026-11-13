@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {verifyPublicCompanyShareCode} from "@/modules/placements/company-share/access-service";
 import {companyShareTokenSchema} from "@/modules/placements/company-share/token-model";
 import { CACHE } from "@/security/responses";

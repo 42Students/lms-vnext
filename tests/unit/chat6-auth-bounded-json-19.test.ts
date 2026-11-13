@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {
  AuthRequestBodyTooLarge,MAX_AUTH_JSON_BYTES,readBoundedAuthJson,
-} from "@/modules/auth/bounded-json";
+} from "@/lib/request-body";
 
 function post(body:string,headers?:HeadersInit){
  return new Request("https://campus.test/api/auth/login/start",{

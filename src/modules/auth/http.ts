@@ -12,7 +12,7 @@ import { recordSecurityEvent } from "@/security/audit-store";
 import { AuthConfigError } from "./config";
 import { LoginError, loginErrorMessage } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
-import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "./bounded-json";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/lib/request-body";
 
 import { CACHE } from "@/security/responses";
 /** Keyed, purpose-separated privacy tag; fixed 24-hex width fits the DB cap. */

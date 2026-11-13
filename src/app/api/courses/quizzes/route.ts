@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { NextResponse } from "next/server";
 import { and, asc, eq, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";

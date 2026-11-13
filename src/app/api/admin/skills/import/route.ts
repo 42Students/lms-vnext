@@ -1,6 +1,6 @@
 import { route } from "@/security/route";
 import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";

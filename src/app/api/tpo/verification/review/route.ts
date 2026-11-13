@@ -3,7 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {verificationReviewInput} from "@/modules/verification/review-input";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";

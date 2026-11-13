@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
 import {privateAuthJson} from "@/modules/auth/private-response";
-import {AuthRequestBodyTooLarge,readBoundedAuthJson} from "@/modules/auth/bounded-json";
+import {AuthRequestBodyTooLarge,readBoundedAuthJson} from "@/lib/request-body";
 import {POST as startScopedLogin} from "@/app/api/auth/login/start/route";
 import { route } from "@/security/route";
 

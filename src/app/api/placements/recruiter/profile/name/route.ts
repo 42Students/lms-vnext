@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {updateOwnHrDisplayName} from "@/modules/placements/hr-display-name-service";

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {describe,expect,it} from "vitest";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 
 /**
  * Phase 1 ratchet for request-body limits. Routes that call request.json() read an unbounded body.

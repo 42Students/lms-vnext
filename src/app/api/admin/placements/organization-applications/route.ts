@@ -3,7 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {searchOrganizationPlacementApplications,getOrganizationApplicationStats} from "@/modules/placements/organization-application-search-service";
 
 import { CACHE, privateJson } from "@/security/responses";

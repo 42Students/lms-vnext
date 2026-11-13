@@ -15,7 +15,7 @@ import {announcementsRuntimeEnabled} from "@/modules/announcements/readiness";
 import {listSuperAdminBroadcastColleges,publishSuperAdminCollegeBroadcast} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-query";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";

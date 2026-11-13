@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   CourseImageError, grantCourseImage, readCourseImage, removeCourseImage,

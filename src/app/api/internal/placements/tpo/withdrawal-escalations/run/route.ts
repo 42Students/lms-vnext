@@ -3,7 +3,7 @@ import {executeScheduledJobWithLease} from "@/modules/operations/scheduled-job-r
 import {postgresScheduledJobLeaseStore} from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {TPO_SCHEDULED_JOBS} from "@/modules/operations/tpo-scheduled-job-registry";
 import {NextResponse} from "next/server";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import { internalRoute } from "@/security/internal-route";
 import { CACHE } from "@/security/responses";

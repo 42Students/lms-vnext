@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import {isSameOriginRequest} from "@/auth/origin";
 import {requestRecruiterInviteOtp} from "@/modules/placements/recruiter-invite-otp-service";
 import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-code-delivery";

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, completeCourseImage } from "@/modules/courses/course-image-service";
 import { route } from "@/security/route";

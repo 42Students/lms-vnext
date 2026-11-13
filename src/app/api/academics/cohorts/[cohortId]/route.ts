@@ -1,6 +1,6 @@
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import {
   transitionCohort,
   updateCohort,

@@ -4,7 +4,7 @@ import { z, ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import { listPrograms, listProgramsPage } from "@/modules/academics/program-service";
 import { scopedProgramPopularity } from "@/modules/academics/legacy-program-popularity";
 import {parseLegacyProgramPage,legacyProgramPage} from "@/modules/admin-ui/legacy-program-page-model";

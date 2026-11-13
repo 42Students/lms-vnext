@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {POST} from "@/app/api/auth/legacy/otp/start/route";
-import {MAX_AUTH_JSON_BYTES} from "@/modules/auth/bounded-json";
+import {MAX_AUTH_JSON_BYTES} from "@/lib/request-body";
 
 const canonical=vi.hoisted(()=>({post:vi.fn()}));
 vi.mock("@/app/api/auth/login/start/route",()=>({POST:canonical.post}));

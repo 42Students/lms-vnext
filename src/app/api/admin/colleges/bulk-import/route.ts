@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {bulkImportColleges} from "@/modules/colleges/bulk-import-service";
 import { route } from "@/security/route";
 import { privateJson } from "@/security/responses";

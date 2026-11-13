@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {editGlobalCompany} from "@/modules/placements/super-admin-company-edit-service";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const PATCH = route(

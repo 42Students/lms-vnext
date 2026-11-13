@@ -1,7 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import { importFacultyCsv } from "@/modules/people/faculty-bulk-import-service";
 import { parseFacultyBulkCsv } from "@/modules/people/faculty-bulk-import-model";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";

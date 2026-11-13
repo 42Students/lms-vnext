@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { collegeAdminSessionDisplay, listCollegeAdminSessions, revokeCollegeAdminSessions } from "@/modules/colleges/admin-session-service";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";

@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";

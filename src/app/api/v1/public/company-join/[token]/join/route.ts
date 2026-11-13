@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import {acceptPublicRecruiterJoin,PublicJoinAcceptError} from "@/modules/placements/public-join/join-service";
 import {z} from "zod";
 import { route } from "@/security/route";

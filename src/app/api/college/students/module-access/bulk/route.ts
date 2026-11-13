@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {applyCollegeStudentModuleBulk,previewCollegeStudentModuleBulk}
  from "@/modules/module-access/college-student-bulk-rule-service";
 import { CACHE } from "@/security/responses";

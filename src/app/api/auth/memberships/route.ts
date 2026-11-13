@@ -1,5 +1,5 @@
 import {privateAuthJson} from "@/modules/auth/private-response";
-import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/lib/request-body";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import {

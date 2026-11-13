@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { StorageFileError } from "@/modules/storage/file-errors";
 
 import { CACHE } from "@/security/responses";

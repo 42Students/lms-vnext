@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";

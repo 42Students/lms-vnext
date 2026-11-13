@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 
 const request=(text:string,declared?:string)=>
  new Request("https://local.invalid/admin/write",{

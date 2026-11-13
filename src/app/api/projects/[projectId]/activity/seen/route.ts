@@ -1,5 +1,5 @@
 import { route } from "@/security/route";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";

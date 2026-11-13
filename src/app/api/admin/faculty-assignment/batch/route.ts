@@ -1,6 +1,6 @@
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {createCourseTeachingAssignmentsBatch} from "@/modules/courses/teaching-assignment-batch-service";
 
 import { CACHE } from "@/security/responses";

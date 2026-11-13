@@ -1,5 +1,5 @@
 import {NextResponse} from "next/server";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {scannerCallbackRequestRejection} from "@/modules/storage/scan-verdict-request-guard";
 import {
  applyProductionScanVerdict,productionScannerCallbackReady,

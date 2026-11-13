@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 

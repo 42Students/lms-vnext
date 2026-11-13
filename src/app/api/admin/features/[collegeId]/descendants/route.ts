@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {readDescendantRule,writeDescendantRule} from "@/modules/module-access/admin-descendant-rule-write";
 import { privateJson } from "@/security/responses";
 const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","placements","electives"])});

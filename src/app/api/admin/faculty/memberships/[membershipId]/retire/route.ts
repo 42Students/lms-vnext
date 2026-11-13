@@ -9,7 +9,7 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {getPersonMembershipDetailWithRuntime,updateMembershipLifecycleWithRuntime} from "@/modules/people/runtime";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";

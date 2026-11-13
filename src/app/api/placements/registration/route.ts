@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { BoundedFormDataError, readBoundedFormData } from "@/lib/bounded-form-data";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import {

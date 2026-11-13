@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeSuperAdminCompanyDomain} from "@/modules/placements/super-admin-company-identities-service";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },

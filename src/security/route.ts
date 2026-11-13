@@ -5,7 +5,7 @@ import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { clientIp } from "@/auth/ip-rate-limit";
 import { allowRequestShared } from "@/security/shared-store";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { offerRequestValue, runAsSystem, runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";

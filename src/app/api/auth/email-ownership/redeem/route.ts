@@ -3,7 +3,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getCurrentDeviceSession} from "@/auth/current-session";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/lib/request-body";
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownEmailOwnershipScope} from "@/modules/identity/own-email-ownership-scope";
 import {redeemOwnEmailOwnershipLink} from "@/modules/identity/own-email-ownership-runtime";

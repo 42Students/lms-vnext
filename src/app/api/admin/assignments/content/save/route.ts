@@ -11,7 +11,7 @@ import {z} from "zod";
 import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings} from "@/db/schema";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 export const runtime="nodejs";
 /** Compatibility adapter for retired /api/v1/admin/assignments/content/save.
  * Uses the one registered vNext authoring transaction; no opaque historical

@@ -1,8 +1,8 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import { updateCourseDisplayContentSchema } from "@/modules/courses/course-display-validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import {

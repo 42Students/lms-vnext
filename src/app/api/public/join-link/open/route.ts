@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
-import {readBoundedJsonBody} from "@/lib/bounded-json-body";
+import {readBoundedJsonBody} from "@/lib/request-body";
 import {recordPublicJoinOpen} from "@/modules/placements/public-join/open-service";
 import { route } from "@/security/route";
 import { CACHE, noStoreJson } from "@/security/responses";

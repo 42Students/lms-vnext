@@ -4,7 +4,7 @@ import {ZodError} from "zod";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
-import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/lib/request-body";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   ADMIN_SCOPE_EXPIRY_COOKIE_NAME,

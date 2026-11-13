@@ -3,7 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {previewSuperAdminDriveArchive,archiveSuperAdminDrive}
  from "@/modules/placements/super-admin-drive-archive-service";
 import { CACHE } from "@/security/responses";

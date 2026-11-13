@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { boundedRequestJson, RequestBodyError } from "@/lib/bounded-request-json";
+import { boundedRequestJson, RequestBodyError } from "@/lib/request-body";
 
 const post = (body: BodyInit | null) => new Request("https://campus.example.test/api/x", { method: "POST", body });
 

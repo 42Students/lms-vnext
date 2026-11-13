@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { route } from "@/security/route";
 import { sendTpoStudentNudges } from "@/modules/placements/tpo-student-nudge-send-service";
 import { privateJson } from "@/security/responses";

@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { membershipRoleMutationInputSchema } from "@/modules/people/validation";
-import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/lib/request-body";
 import { requirePermission } from "@/modules/permissions/policy";
 import { apiErrorResponse } from "@/lib/api-error";
 import { MEMBERSHIP_ROLE_LABELS, type MembershipRole } from "@/modules/identity/constants";

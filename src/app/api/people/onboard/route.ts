@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { requirePermission } from "@/modules/permissions/policy";
 import { onboardPersonInputSchema } from "@/modules/people/validation";
-import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/lib/request-body";
 import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 
 import {z} from "zod";

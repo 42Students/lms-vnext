@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { recruiterInviteNotHiringNoteSchema } from "@/modules/placements/recruiter-invite-not-hiring-note-model";
 import { isSameOriginRequest } from "@/auth/origin";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { markRecruiterInviteNotHiring } from "@/modules/placements/tpo-recruiter-invite-service";
 import { route } from "@/security/route";

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { BoundedFormDataError, readBoundedFormData } from "@/lib/bounded-form-data";
 import {guessContentTypeFromName,isSafeSignedUrl} from "@/modules/storage/ui-models";
 import {

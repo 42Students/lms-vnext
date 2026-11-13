@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeManagedCollegeSubdomain,getManagedCollegeSubdomain,ManagedSubdomainError} from "@/modules/tenant-domains/managed-subdomain-service";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";

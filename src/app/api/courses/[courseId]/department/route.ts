@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { route } from "@/security/route";
 
 import {moveCourseDepartmentInputSchema} from "@/modules/courses/validation";

@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {getSuperAdminCollegeFeatureSnapshot} from "@/modules/module-access/admin-college-rule-read";
 import {isSameOriginRequest} from "@/auth/origin";
 import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-rule-write";

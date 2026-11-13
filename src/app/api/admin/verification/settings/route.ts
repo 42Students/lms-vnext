@@ -6,7 +6,7 @@ import {getDb} from "@/db/client";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";

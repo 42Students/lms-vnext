@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";

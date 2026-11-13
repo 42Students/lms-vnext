@@ -1,7 +1,7 @@
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 import {MENTOR_SIGNOFF_MAX_BODY_BYTES} from
  "@/modules/projects/mentor-sprint-signoff-request-policy";
 import {

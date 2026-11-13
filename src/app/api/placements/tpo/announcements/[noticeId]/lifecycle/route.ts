@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import {NextResponse} from "next/server";
 import {noticePostError} from "../../form-error-response";
 import {z} from "zod";

@@ -1,4 +1,4 @@
-import { boundedRequestJson } from "@/lib/bounded-request-json";
+import { boundedRequestJson } from "@/lib/request-body";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { createBugTrackerIssueForAdmin } from "@/modules/bug-tracker/report-service";

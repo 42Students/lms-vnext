@@ -3,7 +3,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import { createRequestId } from "@/lib/request-id";
 import { isDatabaseUnavailableError } from "@/lib/db-outage";
 import { ZodError } from "zod";
-import { RequestBodyError } from "@/lib/bounded-request-json";
+import { RequestBodyError } from "@/lib/request-body";
 import { SessionAuthenticationError } from "@/auth/session";
 import { ContextResolutionError } from "@/modules/identity/context-service";
 import { AuthorizationError } from "@/modules/permissions/policy";

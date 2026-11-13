@@ -12,7 +12,7 @@ import {
   db10SkillUsage,
 } from "@/db/schema/db10-skills-catalog.draft";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { readBoundedJsonBody } from "@/lib/request-body";
 import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { readSkillCatalog, recordSkillSelection, invalidateSkillCatalogSearchCache } from "@/modules/skills/catalog-service";

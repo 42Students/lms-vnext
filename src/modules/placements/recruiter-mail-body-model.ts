@@ -6,4 +6,4 @@
  * limits raw inbound bytes, and must not be used as sender authentication.
  */
 /** Compatibility wrapper for the signed recruiter gateway's 20 KB boundary. */
-export {readBoundedUtf8Body as readBoundedRecruiterInboundBody} from "@/lib/bounded-utf8-body";
+export {readBoundedUtf8Body as readBoundedRecruiterInboundBody} from "@/lib/request-body";

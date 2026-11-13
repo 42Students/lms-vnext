@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {NextResponse} from "next/server";
-import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {readBoundedUtf8Body} from "@/lib/request-body";
 
 const calls=vi.hoisted(()=>({
  origin:vi.fn(),context:vi.fn(),recentAuth:vi.fn(),email:vi.fn(),later:vi.fn(),

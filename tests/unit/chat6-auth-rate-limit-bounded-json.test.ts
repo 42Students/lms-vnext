@@ -8,7 +8,7 @@ import {
   AuthRequestBodyTooLarge,
   MAX_AUTH_JSON_BYTES,
   readBoundedAuthJson,
-} from "@/modules/auth/bounded-json";
+} from "@/lib/request-body";
 
 function request(body: string, headers: Record<string, string> = {}) {
   return new Request("https://college.example.edu/api/auth/login/start", {

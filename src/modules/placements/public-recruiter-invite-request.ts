@@ -1,4 +1,4 @@
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 
 export type NoArgumentInviteRequestResult = "OK" | "INVALID" | "TOO_LARGE";
 

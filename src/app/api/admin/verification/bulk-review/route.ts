@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import {readBoundedJsonRequest} from "@/lib/request-body";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {reviewSuperAdminVerificationBulk} from "@/modules/verification/super-admin-bulk-review-service";
 import { CACHE } from "@/security/responses";

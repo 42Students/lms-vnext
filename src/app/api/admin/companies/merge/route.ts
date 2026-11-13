@@ -2,7 +2,7 @@ import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import { CompanyMergeError, mergeSuperAdminCompanies } from "@/modules/placements/admin-company-merge-service";
 
 export const runtime = "nodejs";

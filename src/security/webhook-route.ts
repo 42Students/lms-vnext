@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { readBoundedUtf8Body } from "@/lib/request-body";
 import { runAsSystem } from "@/db/tenant-context";
 import { claimDeliveryShared, releaseDeliveryShared } from "@/security/shared-store";
 import { createWebhookRoute } from "@/security/webhook-route-core";

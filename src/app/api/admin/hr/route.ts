@@ -1,7 +1,7 @@
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
-import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { readBoundedJsonRequest } from "@/lib/request-body";
 import {
   createSuperAdminHrAccount,
   listSuperAdminHrAccounts,
