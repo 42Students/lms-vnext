@@ -5,7 +5,7 @@ Scope: code, migrations and read-only live dev checks. No GCP changes.
 
 Legend: `[x]` checked and fine, `[ ]` not checked yet, `[!]` known gap.
 
-Status: 103 items. About 40 checked and fine, 8 known gaps, the rest unchecked.
+Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 46 unchecked or requiring verification. Deployment/browser evidence is tracked separately.
 
 ## A. Data model (database)
 
@@ -50,7 +50,7 @@ Status: 103 items. About 40 checked and fine, 8 known gaps, the rest unchecked.
 - [x] 30. POST checks origin, applies the host-college rule, requires a single role, and rejects bad or unknown roles.
 - [x] 31. Audit events for success and failure, 60-per-minute limit, rejected role claims logged.
 - [x] 32. The 409 "open the other college's address" path for cross-host switches.
-- [x] 33. GET lists memberships filtered by the host's college; the current role is derived from cookies re-validated against the live list.
+- [ ] 33. GET lists memberships filtered by the host's college; the current role is derived from cookies re-validated against the live list. Reopened: an unselected ordinary college member was incorrectly denied by host eligibility; correction committed, awaiting exact-SHA CI.
 - [!] 34. The route is `auth: "public"` with a hand-written origin check. Deliberate: a stale cookie would otherwise block recovery.
 - [ ] 35. Two tabs switching to different roles. Last cookie wins, so the first tab shows the wrong role until refresh.
 - [ ] 36. What happens to unsaved forms and open pages in another tab after a switch.
@@ -61,8 +61,8 @@ Status: 103 items. About 40 checked and fine, 8 known gaps, the rest unchecked.
 - [x] 38. `resolveRequestContext` checks user, active membership, active college and active organization.
 - [x] 39. A membership without exactly one valid role throws `SESSION_INVALID`.
 - [x] 40. Tenant rule: platform host serves any signed-in person; college host serves only members or granted recruiters of that college; unknown host serves nobody.
-- [ ] 41. College archived mid-session. The lookup joins on an active college, so access should end on the next request. Untested.
-- [ ] 42. Membership suspended or ended mid-session, and user disabled mid-session. Untested.
+- [x] 41. College archived mid-session. A verified PostgreSQL integration test proves the selected college is rejected on the next request and removed from choices; another active college remains available. Deployed-browser check not performed.
+- [x] 42. Membership suspended or ended mid-session, and user disabled mid-session. Verified PostgreSQL integration test covers all three changes and cross-college isolation. Deployed-browser check not performed.
 - [x] 43. Tenant scope binds to the request for row-level security.
 - [ ] 44. `app.rls_mode=enforce` in dev. Not every role's pages tested under it; auth routes work.
 
@@ -155,3 +155,10 @@ Status: 103 items. About 40 checked and fine, 8 known gaps, the rest unchecked.
 ## Highest-risk unchecked items (suggested first batch)
 
 41, 42, 53, 61, 81, 101.
+
+## Evidence updates — 2026-11-13
+
+- **41, 42 — isolated PostgreSQL / code verified:** [CI run 43367670164](https://github.com/42Students/lms-vnext/actions/runs/43367670164), exact SHA `4ea11cfbb0d2b5049aeb080f0533bdd3d07c004a`, database job **success**, `tests/integration/security-live-workspace-revocation.test.ts` **2/2 passed** (overall DB matrix 1,898 passed, 377 skipped). This is not a live-dev session replay and the overall CI workflow had separate lint failures.
+- **33 — reopened, CI pending:** `hostCollegeScope` resolved an unselected identity, then used a workspace-only host guard; this denied valid member-only accounts on their own college host. Repaired with current active membership choices; negative foreign/inactive cases added. Do not close until the new exact-SHA unit/DB evidence is green.
+- **53 — implementation/tests in progress:** the college-host guard was tightened so a selected College A membership cannot borrow a College B recruiter grant; the request context now narrows recruiter grants to the verified college host. Added unit-level negative tests and an isolated PostgreSQL combined-account fixture. No deployed-browser verification yet; leave unchecked until the latest CI proves both.
+- No GCP changes or live-dev data mutations were performed in this audit work.
