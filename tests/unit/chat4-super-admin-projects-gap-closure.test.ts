@@ -342,7 +342,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(control).toContain("Assign selected");
   expect(control).toContain("Remove selected");
   expect(control).toContain("<ConfirmDialog");
-  expect(control).toContain(" No partial changes were saved by this request. Refresh assignments and retry.");
+  expect(control).toContain("Fresh read + single CAS transaction: never loop through partial writes.");
   expect(control).toContain('expectedCollegeIds:[...current].sort()');
   expect(control).toContain("Existing workspaces remain unchanged.");
  });

@@ -37,7 +37,9 @@ describe("chat-16 tracker live log to known error actions",()=>{
     expect(panel).toContain("knownErrorId");
     expect(panel).toContain('method:"PATCH"');
     expect(panel).toContain('action:"MUTE",muted:nextMuted');
-    expect(panel).toContain("Could not update this known error. Try again.");
+    // Failures now show the mapped, safe message of FriendlyFetchError (never the raw exception text).
+    expect(panel).toContain("error instanceof FriendlyFetchError?error.message");
+    expect(panel).not.toMatch(/setNotice\(error\.message\)/);
     const triage=read("src/components/tracker/known-errors-workspace.tsx");
     expect(triage).toContain('id={"known-error-"+item.id}');
     expect(triage).toContain('id="known-errors"');

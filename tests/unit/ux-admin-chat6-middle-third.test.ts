@@ -133,7 +133,7 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  it("UX-admin-placements-jobs-jobId-01 /admin route /admin/placements/jobs/[jobId] preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain("PlacementDriveWorkspace");
-  expect(page).toContain('ariaLabel="Drive workspace"');
+  expect(read("src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx")).toContain('ariaLabel="Drive workspace"');
 
  });
  it("UX-admin-placements-jobs-jobId-applications-01 /admin route /admin/placements/jobs/[jobId]/applications preserves its scoped page and legacy UI surface",()=>{

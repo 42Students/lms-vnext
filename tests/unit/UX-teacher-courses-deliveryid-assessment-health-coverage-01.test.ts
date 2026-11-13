@@ -6,5 +6,6 @@ it("UX-teacher-courses-deliveryid-assessment-health-01 /teacher/courses/[deliver
  expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  expect(source).toContain("<PageHeader eyebrow=\"Faculty · Course Report\" title=\"Section assessment health\"");
  expect(source).toContain("<EmptyState title=\"No published assessments matched\"");
- expect(source).toContain("role=\"alert\"");
+ // Invalid filters render the shared ErrorState (which carries role=alert).
+ expect(source).toContain("<ErrorState title=\"Invalid Section report filters\"");
 });

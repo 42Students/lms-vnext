@@ -17,7 +17,7 @@ describe("chat9 final quick-report launcher",()=>{
   expect(lifecycle).toContain("if (opener?.isConnected) opener.focus()");
   expect(drawer).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
   expect(drawer).toContain("aria-labelledby={titleId}");
-  expect(launcher).toContain("window.location.pathname+window.location.search");
+  expect(launcher).toContain("window.location.pathname+");
   expect(launcher).toContain("navigator.userAgent");
   expect(launcher).toContain("window.innerWidth");
   expect(launcher).toContain("<Drawer open={open} onOpenChange={setOpen}");

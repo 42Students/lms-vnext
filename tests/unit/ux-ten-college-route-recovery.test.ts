@@ -59,7 +59,8 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
       ["projects/[projectId]/[section]/error.tsx","/college/projects"],
     ] as const){
       const code=route(file);
-      expect(code).toContain('href="'+href+'"');
+      // Most boundaries link to a fixed path; the placement drive boundaries build a path under it from the validated job id.
+      expect(code.includes('href="'+href+'"')||code.includes(href+"/")).toBe(true);
       expect(code).toContain("onClick={reset}");
       // A typed comparison against known internal codes is safe; rendering
       // the original exception message or digest to the user is not.

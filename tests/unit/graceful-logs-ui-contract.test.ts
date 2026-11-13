@@ -22,7 +22,8 @@ describe("known error triage UI resilience", () => {
   it("GR-123 GR-125 preserves a safe timeout recovery message on both Logs mutations", () => {
     const source = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
     expect(source).toContain('import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error"');
-    expect(source.match(/error instanceof FriendlyFetchError/g)).toHaveLength(2);
+    // Two mutations render the mapped message; a third use only decides whether the outcome is uncertain and shows nothing.
+    expect(source.match(/error instanceof FriendlyFetchError/g)).toHaveLength(3);
     expect(source.match(/error\.message === FRIENDLY_MESSAGES\.timeout/g)).toHaveLength(2);
     expect(source).not.toMatch(/description:\s*error\.message\b/);
     expect(source).toContain("setConfirmMute(false)");

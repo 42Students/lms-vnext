@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const dir="src/app/(authenticated)/tpo/settings/";
 const pages=[
  ["after-college","requireTpoBatchActor","Outcome-label storage is not available yet."],
- ["blocked-dates","getTpoBlockedDates","Blocked-date storage is pending migration registration."],
+ ["blocked-dates","getTpoBlockedDates","Blocked dates could not be verified, so editing is unavailable."],
  ["branding","hasMembershipRole","No public logo URL is configured"],
  ["job-types","getTpoJobTypes","The job type list is temporarily unavailable. No changes were made."],
  ["notices","requireTpoBatchActor","Communication settings are not available in this database."],

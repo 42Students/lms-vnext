@@ -60,7 +60,7 @@ describe("UX-tpo-LAST-THIRD-01 TPO settings server-page states",()=>{
  });
  it("UX-tpo-LAST-THIRD-01 renders honest blocked-date unavailable state without an empty list claim",async()=>{
   const html=renderToStaticMarkup(await BlockedDatesPage());
-  expect(html).toContain("Blocked-date storage is pending migration registration.");
+  expect(html).toContain("Blocked dates could not be verified, so editing is unavailable.");
   expect(html).toContain('role="status"');
   expect(state.editor).not.toHaveBeenCalled();
   expect(state.header.mock.calls[0]?.[0]).toMatchObject({title:"Blocked dates"});

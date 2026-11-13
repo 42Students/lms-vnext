@@ -25,7 +25,9 @@ describe("chat-6 source-evidence gaps",()=>{
     expect(launcher).toContain("event.preventDefault()");
     expect(launcher).toContain('<Drawer open={open} onOpenChange={setOpen} title="Report an issue"');
     expect(launcher).toContain('closest("input,textarea,select,[contenteditable=true]")');
-    expect(launcher).toContain("window.location.pathname+window.location.search");
+    // Privacy: the reported page is the path only; any query string is replaced by a fixed note.
+    expect(launcher).toContain("window.location.pathname+");
+    expect(launcher).toContain("query parameters omitted for privacy");
     expect(launcher).toContain("navigator.userAgent");
     expect(launcher).toContain("window.innerWidth");
     expect(launcher).toContain("window.innerHeight");
