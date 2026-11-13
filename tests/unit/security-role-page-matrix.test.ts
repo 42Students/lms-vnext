@@ -5,6 +5,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getShellNavigation} from "@/components/shell/shell-model";
 import {
   canAccessRolePortal,
+  canAccessStaffActivity,
   ROLE_PORTAL_FAMILIES,
   type RolePortalFamily,
 } from "@/modules/identity/role-portal-policy";
@@ -130,8 +131,7 @@ describe("#61/#101 all role portal families against registered App Router pages"
         expect(file,page).toContain("getCurrentRequestContext");
       }
       if(policy==="STAFF"){
-        expect(file,page).toContain("isSuperAdmin");
-        expect(file,page).toContain("hasMembershipRole");
+        expect(file,page).toContain("canAccessStaffActivity");
       }
       if(policy==="SUPER_ADMIN"){
         expect(file,page).toContain("isSuperAdmin");
@@ -154,8 +154,8 @@ describe("#61/#101 all role portal families against registered App Router pages"
     for(const role of testedRoles){
       for(const policy of Object.values(SHARED_PAGE_POLICIES)){
         if(policy==="STAFF"){
-          const allowed=role==="COLLEGE_ADMIN"||role==="SUPER_ADMIN";
-          expect(allowed,`STAFF pages must match ${role} entitlement`)
+          expect(canAccessStaffActivity(principal(role)),
+            `STAFF pages must match ${role} entitlement`)
             .toBe(["COLLEGE_ADMIN","SUPER_ADMIN"].includes(role));
         }
         if(policy==="SUPER_ADMIN"||policy==="SUPER_ADMIN_SERVICE"){
