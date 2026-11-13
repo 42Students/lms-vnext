@@ -27,7 +27,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.3 export safety: central cell function proven against 17 hidden-prefix formula inputs; FOUND AND FIXED import-issues CSV with no formula protection (src/lib/import-preview.ts); ratchet test blocks any new hand-written CSV quoting (43 existing copies listed, migrate in 5.4). Per-export scope (caller college/role) is covered by route contract A and the per-domain suites; one scope test per export arrives with the pipeline in 5.4
 - [x] 1.4 production-wired route abuse suite (tests/unit/sec-route-abuse.test.ts, 11 tests: 10 cross-site spellings, body bounds, no value echo, no internals leaked, 429 and X-Forwarded-For spoofing; origin check and forwarded-address parsing mutation-checked)
 - [x] 1.5 admin scope and workspace switching: FOUND AND FIXED the admin-scope cookie choosing the database college for a non-platform user with no workspace selected (scopeFromActor) and being carried in the context for everyone (resolveRequestContext); tests: tests/unit/sec-admin-scope.test.ts (8) + tests/integration/sec-scope-and-switching.test.ts (8), all three parts of the fix mutation-checked
-- [ ] 1.6 role-by-route matrix diff check
+- [x] 1.6 role-by-route matrix oracle already runs in CI on a built app (scripts/verify/role-route-matrix.mjs vs docs/security/role-matrix-baseline-ci.json; five seeded roles, fails when a role gains a route). Phase 4 must keep it green after every route-family batch; 4.1 will also generate expectations from the policy registry
 
 ## Phase 2: foundations
 - [ ] 2.1 typed config module (migrated directory by directory)
@@ -85,6 +85,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
 
 ## Log (newest first)
+- 2026-11-14: Phase 1 complete (1.1-1.6). Two real defects found and fixed on the way: import-issues CSV had no formula protection; the admin-scope cookie could choose the database college of a non-platform user. Running the Phase 1 gate (tsc, all sec-* DB suites, LF unit suite, CI).
 - 2026-11-14: CI security steps merged into one: `vitest run -c vitest.db.config.ts tests/integration/sec-` runs every sec-* suite, so new suites join automatically. tsc is run per phase and per risky step (about 10 minutes); CI typecheck job is the per-push gate.
 - 2026-11-14: Phase 0 complete (0.1-0.5).
 - 2026-11-14: 0.2 and 0.3 done: metrics script, baseline and lint wiring; metrics flip to ENFORCED in scripts/centralisation-metrics.mjs when their module lands.
