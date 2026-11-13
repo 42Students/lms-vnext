@@ -6,9 +6,9 @@ const ADMIN_LAYOUT = "src/app/(authenticated)/admin/layout.tsx";
 describe("Phase 3: /admin layout is the Super Admin console fence", () => {
   const src = read(ADMIN_LAYOUT);
 
-  it("reads the request context and checks isSuperAdmin before rendering children", () => {
+  it("reads the request context and checks the admin portal policy before rendering children", () => {
     expect(src).toMatch(/getCurrentRequestContext\(\)/);
-    const check = src.indexOf("isSuperAdmin(context)");
+    const check = src.indexOf('canAccessRolePortal(context,"admin")');
     const children = src.lastIndexOf("{children}");
     expect(check).toBeGreaterThan(-1);
     expect(children).toBeGreaterThan(check);
@@ -21,7 +21,7 @@ describe("Phase 3: /admin layout is the Super Admin console fence", () => {
   });
 
   it("returns before the children when access is denied (guard is an early return)", () => {
-    const denied = src.indexOf("if(!isSuperAdmin(context))return");
+    const denied = src.indexOf('if(!canAccessRolePortal(context,"admin"))return');
     expect(denied).toBeGreaterThan(-1);
     expect(denied).toBeLessThan(src.lastIndexOf("{children}"));
   });

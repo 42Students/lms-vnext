@@ -9,16 +9,16 @@ import {
 const roleLayouts = [
   {
     path: "src/app/(authenticated)/mentor/layout.tsx",
-    guard: 'hasMembershipRole(\n      context,\n      "MENTOR",',
+    guard: 'canAccessRolePortal(context, "mentor")',
   },
   {
     path: "src/app/(authenticated)/tpo/layout.tsx",
-    guard: "canOpenTpoWorkspace(context)",
+    guard: 'canAccessRolePortal(context, "tpo")',
     redirect: 'redirect(deniedPortalHome(context))',
   },
   {
     path: "src/app/(authenticated)/hr/layout.tsx",
-    guard: "hasActiveRecruiter(context)",
+    guard: 'canAccessRolePortal(context, "hr")',
   },
 ] as const;
 

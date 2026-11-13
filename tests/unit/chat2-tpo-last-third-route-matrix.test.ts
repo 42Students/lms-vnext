@@ -26,7 +26,7 @@ describe("UX-tpo-LAST-THIRD-01: route-level security and resilient rendering",()
  });
  it("TPO route boundary denies unscoped or expired sessions before mounting any page",()=>{
   expect(layout).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
-  expect(layout).toContain("canOpenTpoWorkspace(context)");
+  expect(layout).toContain('canAccessRolePortal(context, "tpo")');
   expect(layout).toContain("redirect(deniedPortalHome(context))");
   expect(layout).toContain("{children}");
  });

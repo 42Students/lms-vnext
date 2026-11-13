@@ -55,7 +55,7 @@ describe("UX-tpo-LAST-THIRD-01 account authorization journey across 42 inherited
  });
  it("the top-level Next.js layout redirects before any private inbox or notifications are fetched",()=>{
   const source=readFileSync("src/app/(authenticated)/tpo/layout.tsx","utf8");
-  const guard=source.indexOf("if (!canOpenTpoWorkspace(context)) redirect(deniedPortalHome(context))");
+  const guard=source.indexOf('if (!canAccessRolePortal(context, "tpo")) redirect(deniedPortalHome(context))');
   expect(guard).toBeGreaterThan(-1);
   expect(guard).toBeLessThan(source.indexOf("<TpoKeyboardShortcuts"));
   expect(guard).toBeLessThan(source.indexOf("<TpoMobileFooter"));
