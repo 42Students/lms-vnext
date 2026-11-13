@@ -50,7 +50,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 - [x] 30. POST checks origin, applies the host-college rule, requires a single role, and rejects bad or unknown roles.
 - [x] 31. Audit events for success and failure, 60-per-minute limit, rejected role claims logged.
 - [x] 32. The 409 "open the other college's address" path for cross-host switches.
-- [ ] 33. GET lists memberships filtered by the host's college; the current role is derived from cookies re-validated against the live list. Reopened: an unselected ordinary college member was incorrectly denied by host eligibility; correction committed, awaiting exact-SHA CI.
+- [x] 33. GET membership chooser accepts a current active local membership even when no role has been selected, but does not accept a suspended/foreign identity. The explicit role-switch HTTP unit suite passed on exact SHA 472c6f12; deployed host/browser regression remains separate.
 - [!] 34. The route is `auth: "public"` with a hand-written origin check. Deliberate: a stale cookie would otherwise block recovery.
 - [ ] 35. Two tabs switching to different roles. Last cookie wins, so the first tab shows the wrong role until refresh.
 - [ ] 36. What happens to unsaved forms and open pages in another tab after a switch.
@@ -79,7 +79,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 
 - [x] 51. A recruiter profile with grants gives a recruiter-only sidebar of 5 items (when there is no membership).
 - [x] 52. The recruiter bell endpoint answers only for recruiters.
-- [ ] 53. The combined case: membership plus recruiter profile. Additive sidebar and `scopedShellNavigation` exist for it; never seen live.
+- [x] 53. Combined membership plus recruiter profile: real PostgreSQL fixture and tenant-access unit tests passed on exact SHA 472c6f12. Host-scoped recruiter grants cannot supply another college's member role; combined sidebar is exercised. Deployed-browser confirmation remains separate.
 - [ ] 54. A recruiter whose grant expires while signed in.
 - [ ] 55. A recruiter switching between colleges. Grants are listed, but no UI to switch among them was found.
 
@@ -90,7 +90,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 - [x] 58. The Placement cell shortcut has a stable key.
 - [x] 59. Links point at real routes (new test `shell-nav-routes-exist`).
 - [x] 60. Multi-role sidebar code is documented as reached only by the recruiter-plus-membership case.
-- [!] 61. No test checks that each role can open its own links and that other roles can't.
+- [!] 61. Runtime role-portal gates have been unified for the eleven protected page families, including legacy aliases, and source-level seven-role navigation and denial tests plus Playwright cases committed. Await exact-SHA CI and browser execution before closure.
 - [ ] 62. Sidebar badges for TPO and Faculty, and what they show if the count call fails.
 - [ ] 63. Active-item highlighting for aliased paths (`/tpo/drives` and so on).
 - [ ] 64. Super Admin and HR sidebars live.
@@ -119,7 +119,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 
 - [x] 79. Nobody can add or remove a role on their own membership (`MEMBERSHIP_SELF_ROLE_CHANGE`). A College Admin can't remove their own admin role.
 - [x] 80. Suspend, reactivate and end have a protection check in the service and again in the repository.
-- [ ] 81. Removing the last College Admin of a college. Repository and Super Admin account-block guards, conflict messages, and disposable PostgreSQL concurrency tests have been committed. Await exact-SHA CI and live-dev read-only verification; direct SQL and unreviewed bulk paths remain outside this guard.
+- [ ] 81. Last active College Admin: live transaction safeguards cover role removal, membership SUSPEND/END and platform-wide user disable; 10 PostgreSQL tests and one HTTP test passed on exact SHA 472c6f12. Additional suspended-at edge-case regression is committed, awaiting its exact-SHA CI. No direct-SQL trigger or deployed-browser claim.
 - [ ] 82. What an admin sees when removing a role from a user who is signed in.
 - [!] 83. Dual approval for sensitive role changes is not built (needs a migration).
 - [ ] 84. Bulk imports that create memberships and roles, and whether they pass the same protections.
@@ -148,7 +148,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 
 - [x] 99. Unit tests for nav, topbar contracts, switch audit and the membership route.
 - [ ] 100. End-to-end tests for switching (`core-platform.spec.ts` and others mention the switcher). E2E suite not run.
-- [ ] 101. A test matrix of every role against every route (allowed and denied).
+- [ ] 101. Seven-role matrix authored for 557 protected App Router pages and explicit classification of 14 shared authenticated pages (571 total); linked to actual parent layouts and selected browser negative cases. CI/browser execution and exhaustive API-method/resource authorization matrix remain open.
 - [ ] 102. Runbook for "a user is stuck without a role".
 - [ ] 103. Seed data: only two test accounts are multi-role. None with three or more roles, several colleges, or membership plus recruiter profile.
 
@@ -164,3 +164,11 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 - No GCP changes or live-dev data mutations were performed in this audit work.
 
 - **81 — implementation committed, NOT yet verified/closed:** shared per-college transaction advisory lock and active-replacement check are now used by role removal, membership SUSPEND/END, and Super Admin platform account disable; a disabled or suspended purported replacement does not count. API returns `LAST_COLLEGE_ADMIN` (409); person and platform-block UIs show specific guidance. `tests/integration/security-last-college-admin.test.ts` exercises sole-admin denial, permitted replacement, disabled/suspended exclusions, and concurrent mixed writers. `tests/unit/security-last-college-admin-http.test.ts` covers the HTTP response. CI is pending. Direct SQL, bulk imports and deployed-browser checks have not yet been certified.
+
+## Batch A verified and outstanding evidence — 2026-11-13
+
+- **33 — checked for scoped HTTP contract:** [CI 43375087199](https://github.com/42Students/lms-vnext/actions/runs/43375087199), exact SHA `472c6f12b15ce87151d3ca8f08aa5112780b6241`: `tests/unit/security-explicit-role-switch-http.test.ts` 8/8 passed, including unselected active local membership and inactive/foreign denial. Deployed college-domain session replay remains an unverified browser scenario.
+- **53 — checked for database and unit behavior:** same exact SHA and run: `tests/integration/security-combined-recruiter-membership.test.ts` 1/1 passed, `tests/unit/auth-tenant-access.test.ts` 12/12 passed, and `tests/unit/security-auth-context-role-boundary.test.ts` 6/6 passed. Deployed-browser check not performed.
+- **81 — PostgreSQL guard proven at earlier SHA, new edge test pending:** same CI database job passed `tests/integration/security-last-college-admin.test.ts` 10/10, unit HTTP denial 1/1. Later patch excludes nominally ACTIVE memberships with non-null suspension timestamps; do not close until this exact-SHA regression is passing. Direct SQL callers do not participate in the application advisory lock.
+- **61/101 — implemented, tests still awaiting execution:** `src/modules/identity/role-portal-policy.ts` now powers the canonical and alias role layouts; `tests/unit/security-role-page-matrix.test.ts` inventories 571 authenticated pages (557 protected + 14 shared/scoped), and `tests/e2e/role-portal-access-matrix.spec.ts` adds seven browser navigation cases. This proves neither every API method nor resource ownership automatically. Track API-level all-role matrix separately under 101.
+- Overall CI run 43375087199 was **not green**: database, typecheck and build succeeded, while lint and 49 broader unit assertions failed. New Batch A test-run evidence must be reviewed before status changes for 61, 81 and 101.
