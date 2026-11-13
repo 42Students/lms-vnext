@@ -97,10 +97,24 @@ async function hostCollegeScope(identityUid: string) {
     identityUid,
     activeMembershipId: null,
   });
-  if (!isTenantAccessAllowed(context, tenant)) {
-    throw new SessionAuthenticationError("SESSION_INVALID");
+  if (isTenantAccessAllowed(context, tenant)) {
+    return tenant.kind === "college" ? tenant.collegeId : null;
   }
-  return tenant.kind === "college" ? tenant.collegeId : null;
+  // The chooser intentionally has no selected membership. It must still be
+  // reachable on the signed-in user's own verified college host, based on a
+  // fresh active membership/role lookup rather than a stale selection cookie.
+  // This is only host eligibility, never an implicit role selection or grant.
+  if (tenant.kind === "college") {
+    const choices = await listMembershipChoices(identityUid);
+    if (choices.some(choice =>
+      choice.collegeId === tenant.collegeId &&
+      choice.status === "ACTIVE" &&
+      choice.roles.length > 0
+    )) {
+      return tenant.collegeId;
+    }
+  }
+  throw new SessionAuthenticationError("SESSION_INVALID");
 }
 
 async function handleGET() {
