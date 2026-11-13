@@ -125,7 +125,7 @@ describe("live workspace revocation (#41 and #42)", () => {
       });
 
       await pool.query(
-        "update colleges set status='ARCHIVED',archived_at=clock_timestamp() where id=$1",
+        "update colleges set status='ARCHIVED',updated_at=clock_timestamp() where id=$1",
         [f.collegeA],
       );
       await expect(selectA(f)).rejects.toMatchObject({
@@ -138,7 +138,7 @@ describe("live workspace revocation (#41 and #42)", () => {
       });
 
       await pool.query(
-        "update colleges set status='ACTIVE',archived_at=null where id=$1",
+        "update colleges set status='ACTIVE',updated_at=clock_timestamp() where id=$1",
         [f.collegeA],
       );
       await expect(selectA(f)).resolves.toMatchObject({
