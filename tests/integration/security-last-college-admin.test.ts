@@ -114,7 +114,7 @@ async function liveAdmins(collegeId:string) {
     "select cm.id from college_memberships cm",
     "join membership_roles mr on mr.membership_id=cm.id and mr.role='COLLEGE_ADMIN'",
     "join users u on u.id=cm.user_id and u.platform_status='ACTIVE'",
-    "where cm.college_id=$1 and cm.status='ACTIVE' order by cm.id",
+    "where cm.college_id=$1 and cm.status='ACTIVE' and cm.suspended_at is null order by cm.id",
   ].join(" "),[collegeId]);
   return result.rows.map(row=>row.id);
 }
@@ -184,6 +184,17 @@ describe("#81 last active College Admin guard",()=>{
       );
       await expect(drizzlePeopleRepository.transitionMembershipLifecycle(
         a.membershipId,{action:"END"},mutation(f,a),
+      )).rejects.toMatchObject({code:"LAST_COLLEGE_ADMIN"});
+      expect(await liveAdmins(f.collegeId)).toEqual([a.membershipId]);
+    });
+  });
+
+  it("does not count a nominally ACTIVE replacement with a lingering suspension timestamp",async()=>{
+    await withAdmins(2,async f=>{
+      const [a,b]=f.members as [Member,Member];
+      await pool.query("update college_memberships set suspended_at=now() where id=$1",[b.membershipId]);
+      await expect(drizzlePeopleRepository.removeMembershipRole(
+        a.membershipId,"COLLEGE_ADMIN",mutation(f,a),
       )).rejects.toMatchObject({code:"LAST_COLLEGE_ADMIN"});
       expect(await liveAdmins(f.collegeId)).toEqual([a.membershipId]);
     });
