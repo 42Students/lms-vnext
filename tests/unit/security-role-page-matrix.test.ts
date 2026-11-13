@@ -3,6 +3,8 @@ import {join,resolve,relative,sep} from "node:path";
 import {describe,expect,it} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {getShellNavigation} from "@/components/shell/shell-model";
+import {TPO_PROTOTYPE_NAV,TPO_PROTOTYPE_SECTIONS} from "@/components/shell/tpo-prototype-navigation";
+import {FACULTY_PROTOTYPE_NAV} from "@/components/shell/faculty-prototype-navigation";
 import {
   canAccessRolePortal,
   canAccessStaffActivity,
@@ -214,6 +216,39 @@ describe("#61/#101 all role portal families against registered App Router pages"
       expect(denied).toBeGreaterThan(0);
     });
   }
+
+  it("checks the ACTUALLY RENDERED TPO and Faculty prototype nav and TPO section links",()=>{
+    const tpo=principal("TPO");
+    const faculty=principal("FACULTY");
+    const allTpo=[
+      ...TPO_PROTOTYPE_NAV,
+      ...Object.values(TPO_PROTOTYPE_SECTIONS).flat(),
+    ];
+    expect(TPO_PROTOTYPE_NAV).toHaveLength(8);
+    expect(FACULTY_PROTOTYPE_NAV).toHaveLength(4);
+    for(const item of allTpo){
+      expect(registeredPageMatchesHref(item.href),
+        `Missing rendered TPO prototype page for ${item.href}`).toBe(true);
+      expect(canAccessRolePortal(tpo,"tpo")).toBe(true);
+      for(const role of testedRoles){
+        if(role==="COLLEGE_ADMIN"||role==="TPO")continue;
+        expect(canAccessRolePortal(principal(role),"tpo"),
+          `${role} must not inherit TPO route through prototype link ${item.href}`)
+          .toBe(false);
+      }
+    }
+    for(const item of FACULTY_PROTOTYPE_NAV){
+      expect(registeredPageMatchesHref(item.href),
+        `Missing rendered Faculty prototype page for ${item.href}`).toBe(true);
+      expect(canAccessRolePortal(faculty,"teacher")).toBe(true);
+      for(const role of testedRoles){
+        if(role==="FACULTY")continue;
+        expect(canAccessRolePortal(principal(role),"teacher"),
+          `${role} must not inherit Faculty prototype route ${item.href}`)
+          .toBe(false);
+      }
+    }
+  });
 
   it("every shell sidebar link resolves to a portal authorized for its selected role",()=>{
     for(const role of testedRoles){
