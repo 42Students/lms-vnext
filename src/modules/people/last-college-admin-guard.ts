@@ -37,6 +37,10 @@ export async function assertAnotherActiveCollegeAdmin(
       eq(membershipRoles.membershipId,collegeMemberships.id),
       eq(membershipRoles.role,"COLLEGE_ADMIN"),
     ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
     .where(and(
       eq(collegeMemberships.id,removedMembershipId),
       eq(collegeMemberships.collegeId,collegeId),
