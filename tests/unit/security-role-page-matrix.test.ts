@@ -35,6 +35,32 @@ function discoverPages(dir:string):string[] {
 }
 const pages=discoverPages(ROOT);
 const portals=new Set<string>(ROLE_PORTAL_FAMILIES);
+/**
+ * The small set of authenticated routes OUTSIDE single-role portals has
+ * explicit, different policies. Enumerate each page rather than treating
+ * these shared routes as implicitly available to every role.
+ *
+ * PAGE_SHARED means role-independent, but the page still enforces signed-in
+ * identity and resource ownership. SELF_DEVICE requires a real device session.
+ * TRACKER_OWNER requires persisted reporter ownership in the service.
+ */
+const SHARED_PAGE_POLICIES={
+  "account/security/page.tsx":"SELF_DEVICE",
+  "activity/page.tsx":"STAFF",
+  "activity/[eventId]/page.tsx":"STAFF",
+  "dashboard/page.tsx":"ROLE_AWARE",
+  "notifications/page.tsx":"PAGE_SHARED",
+  "recruiter-invitations/page.tsx":"PAGE_SHARED",
+  "tracker/page.tsx":"PAGE_SHARED",
+  "tracker/mine/page.tsx":"TRACKER_OWNER",
+  "tracker/mine/[publicId]/page.tsx":"TRACKER_OWNER",
+  "tracker/issues/[publicId]/page.tsx":"TRACKER_OWNER_OR_ADMIN",
+  "tracker/issues/page.tsx":"SUPER_ADMIN",
+  "tracker/logs/page.tsx":"SUPER_ADMIN",
+  "tracker/audit-findings/page.tsx":"SUPER_ADMIN",
+  "tracker/audit-findings/[publicId]/page.tsx":"SUPER_ADMIN_SERVICE",
+} as const;
+
 const testedRoles=["SUPER_ADMIN","COLLEGE_ADMIN","TPO","FACULTY","MENTOR","LEARNER","RECRUITER"] as const;
 type Role=typeof testedRoles[number];
 const expected:Record<Role,readonly RolePortalFamily[]>={
@@ -90,6 +116,53 @@ describe("#61/#101 all role portal families against registered App Router pages"
     expect(roots).toEqual([...new Set([...ROLE_PORTAL_FAMILIES,...SHARED_ROOTS])].sort());
     for(const portal of ROLE_PORTAL_FAMILIES){
       expect(pages.some(page=>page.startsWith(portal+"/")),portal).toBe(true);
+    }
+  });
+
+  it("classifies every non-portal page individually and verifies its own runtime guard or scoped service",()=>{
+    const shared=pages.filter(page=>!portals.has(page.split("/")[0]!)).sort();
+    expect(shared).toEqual(Object.keys(SHARED_PAGE_POLICIES).sort());
+    for(const [page,policy] of Object.entries(SHARED_PAGE_POLICIES)){
+      const file=readFileSync(join(ROOT,page),"utf8");
+      if(policy==="SELF_DEVICE"){
+        expect(file,page).toContain("getCurrentDeviceSession");
+      }else{
+        expect(file,page).toContain("getCurrentRequestContext");
+      }
+      if(policy==="STAFF"){
+        expect(file,page).toContain("isSuperAdmin");
+        expect(file,page).toContain("hasMembershipRole");
+      }
+      if(policy==="SUPER_ADMIN"){
+        expect(file,page).toContain("isSuperAdmin");
+      }
+      if(policy==="SUPER_ADMIN_SERVICE"){
+        expect(file,page).toContain("getIndependentAuditFinding");
+        const guard=readFileSync(resolve(process.cwd(),
+          "src/modules/bug-tracker/independent-audit-findings-service.ts"),"utf8");
+        expect(guard).toContain("function requireIndependentFindingAccess");
+        expect(guard).toContain("if(!isSuperAdmin(context)");
+      }
+      if(policy==="TRACKER_OWNER_OR_ADMIN"){
+        expect(file,page).toContain("TrackerReporterIssueDetail");
+        expect(file,page).toContain("isSuperAdmin");
+      }
+    }
+  });
+
+  it("denies staff-only and platform-only shared pages to other roles",()=>{
+    for(const role of testedRoles){
+      for(const policy of Object.values(SHARED_PAGE_POLICIES)){
+        if(policy==="STAFF"){
+          const allowed=role==="COLLEGE_ADMIN"||role==="SUPER_ADMIN";
+          expect(allowed,`STAFF pages must match ${role} entitlement`)
+            .toBe(["COLLEGE_ADMIN","SUPER_ADMIN"].includes(role));
+        }
+        if(policy==="SUPER_ADMIN"||policy==="SUPER_ADMIN_SERVICE"){
+          expect(role==="SUPER_ADMIN",`platform page guard: ${role}`)
+            .toBe(role==="SUPER_ADMIN");
+        }
+      }
     }
   });
 
