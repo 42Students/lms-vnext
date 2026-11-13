@@ -19,7 +19,7 @@ test("manual importer live privilege recheck runs under its actual write transac
   assert.ok(liveCheck > transaction, "actor recheck must be in write transaction");
   assert.ok(read > liveCheck, "no tenant data reads before authority recheck");
   assert.ok(mutation > liveCheck, "no importer SQL write before authority recheck");
-  assert.match(importer, /if\(authority\.kind==="SUPER_ADMIN"\)/);
+  assert.match(importer, /if\(authority\.kind===ROLE.SUPER_ADMIN\)/);
   assert.match(importer, /throw new AuthorizationError\("admin-scope\.select"\)/);
 });
 

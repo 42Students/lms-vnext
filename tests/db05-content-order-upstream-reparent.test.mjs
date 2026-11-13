@@ -57,8 +57,8 @@ test("reorder remains complete-set + delivery-locked and disabled until verifica
   assert.match(orderWriter, /for update/);
   assert.match(orderWriter, /\.delete\(\s*lessonContentDeliverySequences/);
   assert.match(orderWriter, /\.insert\(\s*lessonContentDeliverySequences/);
-  assert.match(readiness, /DB05_CONTENT_ORDER_READY/);
-  assert.match(readiness, /DB05_VERIFIED/);
+  assert.match(readiness, /featureReady\("contentOrder"\)/);
+  assert.match(readFileSync("src/config/features.ts", "utf8"), /DB05_VERIFIED/);
 });
 
 test("candidate is unregistered and explicitly does not overclaim upstream closure", () => {

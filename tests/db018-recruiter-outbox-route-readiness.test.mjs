@@ -8,7 +8,7 @@ const issuer=read("src/modules/placements/tpo-recruiter-invite-service.ts");
 
 test("TPO invitation endpoint admits verified queue even without the legacy direct mail flag",()=>{
   assert.match(leads,/!outboundQueueRuntimeEnabled\(\)/);
-  assert.match(leads,/TPO_RECRUITER_INVITE_EMAIL_READY/);
+  assert.match(leads,/featureReady\("tpoRecruiterInviteEmail"\)/);
   assert.match(leads,/status:202/);
   assert.match(leads,/emailed:false,queued:true/);
   assert.match(leads,/if\(!invite\.emailed\)/);

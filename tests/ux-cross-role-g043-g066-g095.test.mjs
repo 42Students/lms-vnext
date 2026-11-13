@@ -15,7 +15,7 @@ test("UX-G043/G066/G095 source inventory fully accounted for without deleting pa
 test("UX-G043 college student onboarding links and error recovery preserve role checks",()=>{
  const imported=read("src/app/(authenticated)/college/students/import/page.tsx");
  const single=read("src/app/(authenticated)/college/students/register/page.tsx");
- assert.match(imported,/hasMembershipRole\(context, "COLLEGE_ADMIN"\)/);
+ assert.match(imported,/hasMembershipRole\(context, ROLE.COLLEGE_ADMIN\)/);
  assert.match(imported,/can\(context, "people.manage"/);
  assert.match(imported,/href="\/college\/students\/register"/);
  assert.match(single,/listCollegeStudentImportOptions\(context\)/);
@@ -47,7 +47,7 @@ test("UX-G095 faculty profile and student details keep membership scope and read
  const student=read("src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx");
  const classes=read("src/app/(authenticated)/teacher/live-classes/page.tsx");
  assert.match(profile,/context\.membership\?\.status !== "ACTIVE"/);
- assert.match(profile,/roles\.includes\("FACULTY"\)/);
+ assert.match(profile,/roles\.includes\(ROLE.FACULTY\)/);
  assert.match(profile,/<progress/);
  assert.match(student,/getFacultyStudentDetail\(context, await params\)/);
  assert.match(student,/Number\.isFinite\(date\.getTime\(\)\)/);

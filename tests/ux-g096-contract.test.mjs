@@ -13,7 +13,7 @@ test("UX-G096: faculty identity checked before malformed query handling or profi
     const query=source.indexOf('const raw=await searchParams');
     const parse=source.indexOf("facultySubmissionReportSearchSchema.safeParse");
     assert.ok(gate>=0,"missing active Faculty guard in "+path);
-    assert.match(source,/context\.membership\.roles\.includes\("FACULTY"\)/);
+    assert.match(source,/context\.membership\.roles\.includes\(ROLE.FACULTY\)/);
     const firstDanger=[query,parse,source.indexOf('redirect("/teacher/profile#social-profiles")')].filter(n=>n>=0);
     assert.ok(firstDanger.length>0 && firstDanger.every(n=>gate<n),"auth must precede recovery in "+path);
     assert.match(source,/notFound\(\)/);

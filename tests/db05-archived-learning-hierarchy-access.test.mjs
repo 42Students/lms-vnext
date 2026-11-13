@@ -42,7 +42,7 @@ test("DB05 historical mode does not remove learner publication gates", () => {
   const path = list(...sources[0]);
   const lesson = list(...sources[1]);
   const content = list(...sources[2]);
-  assert.match(path, /if \(access === "LEARNER"\)/);
+  assert.match(path, /if \(access === ROLE.LEARNER\)/);
   assert.match(path, /"PUBLISHED"/);
   assert.match(lesson, /path\.status !== "PUBLISHED"/);
   assert.match(content, /lesson\.learningPathStatus !== "PUBLISHED"/);

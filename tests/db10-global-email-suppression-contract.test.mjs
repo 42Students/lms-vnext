@@ -54,7 +54,7 @@ test("queue atomically suppresses on either active local or global email opt-out
   assert.match(queue, /and not exists \([\s\S]*outbound_global_email_suppressions/);
   assert.match(queue, /\) or exists \([\s\S]*outbound_global_email_suppressions/);
   assert.match(queue, /OUTBOUND_QUEUE_DISABLED/);
-  assert.match(queue, /process\.env\["DB10_OUTBOUND_READY"\]\s*===\s*"DB10_VERIFIED"/);
+  assert.match(queue, /featureReady\("outbound"\)/);
 });
 
 test("registered suppression is persisted while runtime sender remains separately fail-closed", () => {
@@ -65,7 +65,7 @@ test("registered suppression is persisted while runtime sender remains separatel
   assert.match(sql, /db10_global_email_suppressions_active_uq/);
   assert.match(barrel, /db10-outbound-messages\.draft/);
   assert.match(draft, /migration 0164 is registered/);
-  assert.match(queue, /DB10_OUTBOUND_DISPATCH_READY/);
-  assert.match(queue, /DB10_VERIFIED/);
+  assert.match(queue, /featureReady\("outboundDispatch"\)/);
+  assert.match(readFileSync("src/config/features.ts", "utf8"), /DB10_VERIFIED/);
   assert.doesNotMatch(queue, /\b(?:sendMail|sendSms|sendWhatsapp|provider\.send)\s*\(/i);
 });

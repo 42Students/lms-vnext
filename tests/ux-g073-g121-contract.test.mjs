@@ -8,9 +8,9 @@ const read = (path) => readFileSync(root + path, "utf8");
 test("UX-G073: all Mentor report and review routes authorize before parsing invalid filters", () => {
   for (const route of ["reports", "review-history", "reviews", "sprint-progress", "task-review-history"]) {
     const source = read("mentor/" + route + "/page.tsx");
-    const guard = source.indexOf('hasMembershipRole(context,"MENTOR")') >= 0
-      ? source.indexOf('hasMembershipRole(context,"MENTOR")')
-      : source.indexOf('hasMembershipRole(context, "MENTOR")');
+    const guard = source.indexOf('hasMembershipRole(context,ROLE.MENTOR)') >= 0
+      ? source.indexOf('hasMembershipRole(context,ROLE.MENTOR)')
+      : source.indexOf('hasMembershipRole(context, ROLE.MENTOR)');
     assert.ok(guard >= 0, route + " must check Mentor membership");
     const parse = Math.min(...[
       source.indexOf("mentorReportsQuerySchema.safeParse"),

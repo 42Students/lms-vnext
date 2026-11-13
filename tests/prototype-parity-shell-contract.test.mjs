@@ -16,8 +16,8 @@ test("prototype parity remains limited to the three opted-in single-workspace po
   assert.match(shell,/resolvedNavigation\[0\]\?\.href === "\/mentor\/projects" \? "mentor"/);
   const routeFrame=source("src/components/shell/prototype-portal-frame.tsx");
   assert.match(shell,/<PrototypePortalFrame\s/);
-  assert.match(shell,/mentorEnabled=\{hasMembershipRole\(context,"MENTOR"\)\}/);
-  assert.match(shell,/tpoEnabled=\{hasMembershipRole\(context,"TPO"\)\}/);
+  assert.match(shell,/mentorEnabled=\{hasMembershipRole\(context,ROLE.MENTOR\)\}/);
+  assert.match(shell,/tpoEnabled=\{hasMembershipRole\(context,ROLE.TPO\)\}/);
   assert.match(shell,/recruiterEnabled=\{/);
   const roleSkin=source("src/components/shell/prototype-role-skin-model.ts");
   assert.match(routeFrame,/prototypeRoleSkinForPath\(/);
@@ -107,7 +107,7 @@ test("Mentor table milestones come from scoped nondeleted sprint and task record
   const service=source("src/modules/projects/mentor-prototype-sprint-summary-service.ts");
   const list=source("src/components/projects/project-list.tsx");
   const page=source("src/app/(authenticated)/mentor/projects/page.tsx");
-  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/hasMembershipRole\(context,ROLE.MENTOR\)/);
   assert.match(service,/inArray\(projectSprints\.projectId,ids\)/);
   assert.match(service,/isNull\(projectSprints\.deletedAt\)/);
   assert.match(service,/return summarizeMentorProjectSprints\(rows\)/);
@@ -153,7 +153,7 @@ test("Mentor detail route integrates substantive Overview, Sprints, Team, Perfor
 test("Mentor resource earlier-sprint grouping preserves manager filters",()=>{
   const resources=source("src/components/projects/project-resource-list.tsx");
   const workspace=source("src/components/projects/project-workspace.tsx");
-  assert.match(resources,/mode==="MENTOR"&&earlierCount>0/);
+  assert.match(resources,/mode===ROLE.MENTOR&&earlierCount>0/);
   assert.match(resources,/earlierSprintIds/);
   assert.match(resources,/showEarlier,setShowEarlier/);
   assert.match(workspace,/label:item\.title,status:item\.status/);
@@ -187,7 +187,7 @@ test("Mentor review uses actual decision field and editable reason shortcuts",()
 
 test("collapsed earlier sprint resources cannot be reordered invisibly",()=>{
   const resources=source("src/components/projects/project-resource-list.tsx");
-  assert.match(resources,/mode==="MENTOR"&&!showEarlier&&sprints\.some/);
+  assert.match(resources,/mode===ROLE.MENTOR&&!showEarlier&&sprints\.some/);
   assert.match(resources,/setShowEarlier\(value=>!value\)/);
 });
 
@@ -237,7 +237,7 @@ test("Mentor posted Activity updates are persisted in scoped project events and 
   const overview=source("src/components/projects/mentor-prototype-project-summaries.tsx");
   assert.match(taxonomy,/PROJECTS_MENTOR_UPDATE_POSTED/);
   assert.match(service,/requireProjectLifecycleMutationAccess/);
-  assert.match(service,/access\.access!=="MENTOR"\|\|access\.project\.status!=="ACTIVE"/);
+  assert.match(service,/access\.access!==ROLE.MENTOR\|\|access\.project\.status!=="ACTIVE"/);
   assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_MENTOR_UPDATE_POSTED/);
   assert.match(route,/export (?:async function|const) POST\b/);
   assert.match(route,/readMentorProjectCommandBody\(request,4096\)/);
@@ -274,7 +274,7 @@ test("Mentor student watch uses active scoped learner roles and real blocked/rev
   const service=source("src/modules/projects/mentor-student-watch-service.ts");
   const route=source("src/app/(authenticated)/mentor/projects/page.tsx");
   const home=source("src/components/projects/mentor-prototype-home.tsx");
-  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/hasMembershipRole\(context,ROLE.MENTOR\)/);
   assert.match(service,/inArray\(projectTasks\.projectId,ids\)/);
   assert.match(service,/eq\(projectMembers\.role,"LEARNER"\)/);
   assert.match(service,/eq\(collegeMemberships\.status,"ACTIVE"\)/);
@@ -293,7 +293,7 @@ test("Mentor global search covers projects tasks active students and resources w
   const search=source("src/modules/projects/mentor-unified-search-service.ts");
   const page=source("src/app/(authenticated)/mentor/search/page.tsx");
   const config=source("src/components/shell/topbar/portal-config.ts");
-  assert.match(search,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(search,/hasMembershipRole\(context,ROLE.MENTOR\)/);
   assert.match(search,/listMyProjectInstances\(context\)/);
   assert.match(search,/byId=new Map\(projects\.map/);
   assert.match(search,/inArray\(projectTasks\.projectId,ids\)/);
@@ -454,7 +454,7 @@ test("Mentor Projects last activity uses recorded scoped events rather than proj
   const service=source("src/modules/projects/mentor-project-last-activity-service.ts");
   const page=source("src/app/(authenticated)/mentor/projects/page.tsx");
   const list=source("src/components/projects/project-list.tsx");
-  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/hasMembershipRole\(context,ROLE.MENTOR\)/);
   assert.match(service,/listMyProjectInstances\(context\)/);
   assert.match(service,/eq\(activityEvents\.collegeId,member\.collegeId\)/);
   assert.match(service,/inArray\(groupProjectId,ids\)/);

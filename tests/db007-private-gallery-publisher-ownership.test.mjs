@@ -14,7 +14,7 @@ const deactivate = gallery.slice(gallery.indexOf("export async function deactiva
   gallery.indexOf("export async function openLearnerGalleryImage("));
 
 test("DB-007 private gallery publishing requires current learner ownership", () => {
-  assert.match(own, /hasMembershipRole\(context, "LEARNER"\)/);
+  assert.match(own, /hasMembershipRole\(context, ROLE.LEARNER\)/);
   assert.match(own, /context\.user\.platformStatus !== "ACTIVE"/);
   assert.match(own, /context\.membership\.status !== "ACTIVE"/);
   assert.match(own, /access\.membershipId !== context\.membership\.id/);

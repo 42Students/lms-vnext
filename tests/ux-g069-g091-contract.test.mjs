@@ -18,7 +18,7 @@ test("UX-G069: every legacy Mentor bookmark checks real membership before forwar
   const gate=s.indexOf('hasActiveMembership(context)');
   const target=s.lastIndexOf('redirect("/mentor/projects")');
   assert.ok(gate>=0 && gate<target,route+" must authorize before routing");
-  assert.match(s,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(s,/hasMembershipRole\(context,ROLE.MENTOR\)/);
   assert.match(s,/redirect\("\/dashboard"\)/);
   assert.match(s,/async function MentorLegacyRedirect/);
  }
@@ -35,7 +35,7 @@ test("UX-G091: Faculty calendar and contact directory deny before displaying mal
   const s=read(route),gate=s.indexOf("hasActiveMembership(context)");
   const invalid=route.includes("calendar")?s.indexOf("facultyMonthQuerySchema.safeParse"):s.indexOf("parseFacultyContactsQuery(raw)");
   assert.ok(gate>=0&&invalid>gate,route+" guard ordering");
-  assert.match(s,/hasMembershipRole\(context,"FACULTY"\)/);
+  assert.match(s,/hasMembershipRole\(context,ROLE.FACULTY\)/);
   assert.match(s,/No (class schedule data|contact records) (was|were) loaded/);
   assert.equal((s.match(/const context\s*=\s*await getCurrentRequestContext\(\)/g)||[]).length,1);
  }
