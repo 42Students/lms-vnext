@@ -8,8 +8,8 @@ describe("Mentor-only learner academic facts boundaries",()=>{
  const ui=read("src/components/projects/mentor-prototype-project-summaries.tsx");
  it("requires a current Mentor workspace read and denies observer/learner readers",()=>{
   expect(academic).toContain("await requireProjectReadAccess(context,projectIdInput)");
-  expect(academic).toContain('scope.access!=="MENTOR"');
-  expect(workspace).toContain('mentorLearnerAcademicFacts=access.access==="MENTOR"');
+  expect(academic).toContain('scope.access!==ROLE.MENTOR');
+  expect(workspace).toContain('mentorLearnerAcademicFacts=access.access===ROLE.MENTOR');
  });
  it("links only active learner members in the current college and project",()=>{
   expect(academic).toContain("eq(projectMembers.projectId,scope.project.id)");

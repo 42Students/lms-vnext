@@ -45,7 +45,7 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
   expect(service).toContain("eq(placementTpoSavedViews.collegeId,collegeId)");
   expect(service).toContain("eq(placementTpoSavedViews.userId,userId)");
   expect(service).toContain('eq(placementTpoSavedViews.scope,"AUDIT")');
-  expect(service).toContain('hasMembershipRole(persisted,"TPO")');
+  expect(service).toContain('hasMembershipRole(persisted,ROLE.TPO)');
   expect(service).toContain("assertPersistedPlatformPermission(tx,ctx");
   expect(service).toContain('.for("update").limit(1)');
   expect(service).toContain("rows.length>=12");

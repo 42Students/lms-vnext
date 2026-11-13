@@ -62,13 +62,13 @@ describe("chat-11 delegated College Admin decisions",()=>{
   const svc=src("src/modules/people/membership-service.ts");
   for(const method of ["addMembershipRole","removeMembershipRole"]){
    const part=svc.slice(svc.indexOf("export async function "+method));
-   expect(part).toContain('if (input.role === "COLLEGE_ADMIN" || input.role === "TPO")');
+   expect(part).toContain('if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO)');
    expect(part).toContain('requirePermission(context, "admin-scope.select")');
   }
  });
  it("COL-placements-03 does not misrepresent TPO-only offer-letter tools as College Admin authoring",()=>{
   const workspace=src("src/components/placements/placement-drive-workspace.tsx");
-  expect(workspace).toContain('hasMembershipRole(context, "TPO")');
+  expect(workspace).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(workspace).toContain('Offer letter evidence');
   expect(workspace).toContain('<PlacementOfferControls');
  });

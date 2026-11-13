@@ -5,7 +5,7 @@ describe("PROJ-BREAK-evaluation-actor-01 compile-safe reauthorization",()=>{
  it("requires evaluator role narrowing before authorizing inside the transaction",()=>{
   const code=source();
   const body=code.slice(code.indexOf("export async function createProjectEvaluation("));
-  expect(body).toContain('if(evaluatorAccess!=="ADMIN"&&evaluatorAccess!=="MENTOR")');
+  expect(body).toContain('if(evaluatorAccess!=="ADMIN"&&evaluatorAccess!==ROLE.MENTOR)');
   expect(body).toContain('throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED")');
   expect(body).toContain("await assertCurrentEvaluationActor(tx,context,{");
   expect(body).toContain("project:{id:scope.project.id}");

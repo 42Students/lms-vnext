@@ -34,7 +34,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-selections-02 protects release permissions and readiness",()=>{
   const page=source(root+"/selections/page.tsx");
-  expect(page).toContain('hasMembershipRole(context,"TPO")');
+  expect(page).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(page).toContain("getTpoSelectionWorkspace(context,jobId)");
   expect(page).toContain("data.job.status!==\"PUBLISHED\"");
   expect(page).toContain("!data.storageReady");
@@ -44,7 +44,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-waitlist-02 protects ranked release",()=>{
   const page=source(root+"/waitlist/page.tsx");
-  expect(page).toContain('hasMembershipRole(context,"TPO")');
+  expect(page).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(page).toContain("getTpoWaitlistPreview(context,jobId)");
   expect(page).toContain("TpoWaitlistPromotionControl");
   expect(page.match(/inline-flex min-h-11 items-center/g)?.length).toBeGreaterThanOrEqual(2);
@@ -55,7 +55,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-offers-02 binds export to validated filters and ownership",()=>{
   const page=source(root+"/offers/page.tsx");
-  expect(page).toContain('hasMembershipRole(context,"TPO")');
+  expect(page).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(page).toContain("offerRegisterQuery.safeParse");
   expect(page).toContain("getTpoDriveOfferRegister(context,parsed.data)");
   expect(page).toContain("new URLSearchParams");
@@ -66,7 +66,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-offers-offerid-02 never infers employer acceptance from letter delivery",()=>{
   const page=source(root+"/offers/[offerId]/page.tsx");
-  expect(page).toContain('hasMembershipRole(context,"TPO")');
+  expect(page).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(page).toContain("tpoOfferEvidenceQuery.safeParse");
   expect(page).toContain("getTpoOfferEvidence(context,parsed.data)");
   expect(page).toContain("No persisted status or joining history events");
@@ -97,7 +97,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-joining-02 records only scoped accepted offers, not guessed joins",()=>{
   const page=source(root+"/joining/page.tsx");
-  expect(page).toContain('hasMembershipRole(context, "TPO")');
+  expect(page).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(page).toContain("tpoJoiningTrackerQuerySchema.safeParse");
   expect(page).toContain("getTpoJoiningTracker(context, parsed.data)");
   expect(page).toContain("No currently accepted offers are recorded for this drive");
@@ -107,7 +107,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-tpo-placements-jobs-jobid-rounds-roundid-results-02 filters before loading learner data",()=>{
   const page=source(root+"/rounds/[roundId]/results/page.tsx");
-  expect(page).toContain('hasMembershipRole(context,"TPO")');
+  expect(page).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(page).toContain("tpoRoundResultViewSchema.safeParse");
   expect(page).toContain("Invalid round result filters. No learner data loaded.");
   expect(page).toContain("Stage results for this roster page (up to 500 learners).");

@@ -7,7 +7,7 @@ describe("Project workspace legacy title-only headings across roles",()=>{
   expect(ui).toContain('<PageHeader');
   // The Mentor header computes the scoped course/primary-Mentor subtitle
   // before passing it to PageHeader; the legacy inline ternary was removed.
-  expect(ui).toContain('const headerDescription = mode==="MENTOR"');
+  expect(ui).toContain('const headerDescription = mode===ROLE.MENTOR');
   expect(ui).toContain('description:headerDescription');
   expect(ui).toContain('workspace.project.summary??undefined');
   expect(ui).toContain('Mentor: {workspace.members.find');

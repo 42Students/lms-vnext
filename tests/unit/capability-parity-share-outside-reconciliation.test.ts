@@ -77,7 +77,7 @@ describe("2026-11-03 source-backed missing-surface triage",()=>{
     expect(newPage).toContain('href="/tpo/placements/recorded-outside"');
     expect(list).toContain('href="/tpo/placements/recorded-outside"');
     const page=source(path.outside);
-    expect(page).toContain("hasMembershipRole(context,\"TPO\")");
+    expect(page).toContain("hasMembershipRole(context,ROLE.TPO)");
     expect(page).toContain("<RecordedOutsideForm");
     expect(page).toContain("listTpoOutsideDriveRecords");
     expect(page).toContain("verifyRecordedOutsideConfirmation");

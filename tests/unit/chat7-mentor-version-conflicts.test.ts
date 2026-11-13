@@ -5,7 +5,7 @@ describe("Mentor concurrency contracts",()=>{
  it("MEN-projects-meetings-R07 requires version tokens for resource edit and archive",()=>{
   const source=read("src/modules/projects/resource-service.ts");
   const ui=read("src/components/projects/project-resource-controls.tsx");
-  expect(source).toContain('scope.access==="MENTOR" && !input.expectedUpdatedAt');
+  expect(source).toContain('scope.access===ROLE.MENTOR && !input.expectedUpdatedAt');
   expect(source).toContain("PROJECT_RESOURCE_STALE_VERSION");
   expect(source).toContain("resource.updatedAt.getTime()");
   expect(ui).toContain("expectedUpdatedAt:new Date(resource.updatedAt).toISOString()");
@@ -14,7 +14,7 @@ describe("Mentor concurrency contracts",()=>{
   const source=read("src/modules/projects/meeting-service.ts");
   const ui=read("src/components/projects/project-meeting-controls.tsx");
   expect(source).toContain("PROJECT_MEETING_STALE_VERSION");
-  expect(source).toContain('scope.access==="MENTOR"');
+  expect(source).toContain('scope.access===ROLE.MENTOR');
   expect(source).toContain("input.expectedProjectUpdatedAt");
   expect(source).toContain("existing.updatedAt.getTime()");
   expect(ui).toContain("expectedProjectUpdatedAt: new Date(projectUpdatedAt).toISOString()");
@@ -23,7 +23,7 @@ describe("Mentor concurrency contracts",()=>{
  it("MEN-projects-meetings-R07 checks release ship and unship against the locked row",()=>{
   const source=read("src/modules/projects/lifecycle-service.ts");
   const ui=read("src/components/projects/project-lifecycle-actions.tsx");
-  expect(source).toContain('scope.access==="MENTOR"&&!expected');
+  expect(source).toContain('scope.access===ROLE.MENTOR&&!expected');
   expect(source).toContain("release.updatedAt.getTime()");
   expect(ui).toContain('projectMutation("/api/projects/"+projectId+"/releases/"+releaseId+"/"+action,"POST",{expectedUpdatedAt})');
  });

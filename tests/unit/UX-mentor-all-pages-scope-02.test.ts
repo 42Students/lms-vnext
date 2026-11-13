@@ -172,7 +172,7 @@ describe("UX-mentor-all-pages-scope-02 mentor page-state and scope coverage",()=
       if(page.route==="/mentor"){
         expect(src).toContain("<Heading level={1}");
         expect(src).toContain("Retry access check");
-        expect(src).toContain('hasMembershipRole(context,"MENTOR")');
+        expect(src).toContain('hasMembershipRole(context,ROLE.MENTOR)');
         // The mentor landing is a semantic, accessible route-level fallback
         // and uses a Next Link rather than importing a shared page control.
         expect(src).toMatch(/import Link from "next\/link"|from "@\/components\/ui\/(?:text-link|button-link)"/);

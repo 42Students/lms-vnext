@@ -51,7 +51,7 @@ describe("Mentor resources and delivery complete source contracts", () => {
     expect(ui).toContain("Lock submission");
     expect(ui).toContain("expectedUpdatedAt");
     expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-    expect(service).toContain('scope.access!=="MENTOR"');
+    expect(service).toContain('scope.access!==ROLE.MENTOR');
     expect(service).toContain('eventType:"LOCKED"');
     expect(service).toContain("notifyActiveProjectMembers");
     expect(source("src/components/projects/project-workspace.tsx")).toContain("<MentorDeliveryLockControl");

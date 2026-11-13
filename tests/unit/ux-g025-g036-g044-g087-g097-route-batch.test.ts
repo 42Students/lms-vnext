@@ -45,7 +45,7 @@ describe("UX-G025 Super Admin setup/content routing and denial safety", () => {
 describe("UX-G036 college placements page and drive guard", () => {
   it("verifies College Admin before any module-settings read", () => {
     const drives = route("college/placements/drives/page.tsx");
-    const role = drives.indexOf('if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");');
+    const role = drives.indexOf('if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) redirect("/dashboard");');
     const moduleAccess = drives.indexOf('const moduleAccess = await resolveOptionalModuleAccess(context)');
     expect(role).toBeGreaterThan(0);
     expect(moduleAccess).toBeGreaterThan(role);
@@ -69,7 +69,7 @@ describe("UX-G036 college placements page and drive guard", () => {
   });
   it("keeps calendar and interview routes bound to College Admin memberships", () => {
     expect(route("college/placements/calendar/page.tsx")).toContain("hasMembershipRole");
-    expect(route("college/placements/interviews/page.tsx")).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    expect(route("college/placements/interviews/page.tsx")).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
   });
 });
 

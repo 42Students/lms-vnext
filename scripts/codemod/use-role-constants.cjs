@@ -37,7 +37,7 @@ for (const f of files) {
   });
   if (!n) continue;
   let result = out.join("\n");
-  if (!/import\s*\{[^}]*\bROLE\b[^}]*\}\s*from\s*["']@\/modules\/identity\/roles["']/.test(result)) {
+  if (!process.argv.includes("--no-import") && !/import\s*\{[^}]*\bROLE\b[^}]*\}\s*from\s*["']@\/modules\/identity\/roles["']/.test(result)) {
     const imports = [...result.matchAll(/^import\s[\s\S]*?\sfrom\s+["'][^"']+["'];?\s*$|^import\s+["'][^"']+["'];?\s*$/gm)];
     const line = 'import { ROLE } from "@/modules/identity/roles";';
     if (imports.length) {

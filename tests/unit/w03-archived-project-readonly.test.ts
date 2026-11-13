@@ -25,7 +25,7 @@ describe("W03 archived project read-only UI contract", () => {
 
   it("hides team and lifecycle mutations", () => {
     expect(workspace).toContain('mode === "ADMIN" && !readOnly');
-    expect(workspace).toContain('mode !== "LEARNER" && !readOnly');
+    expect(workspace).toContain('mode !== ROLE.LEARNER && !readOnly');
     expect(workspace).toContain("!readOnly &&");
   });
 

@@ -8,7 +8,7 @@ describe("PR-S2-03 visible task ownership assignment",()=>{
     expect(form).toContain(" to a team member");
     expect(form).toContain('"/assignee"');
     expect(workspace).toContain("assigneeMembershipId={task.assigneeMembershipId}");
-    expect(workspace).toContain('member.role==="LEARNER"');
+    expect(workspace).toContain('member.role===ROLE.LEARNER');
   });
   it("updates DB test fixtures to assign before learner submission",()=>{
     const fixture=get("tests/integration/support/projects-review-fixture.ts");

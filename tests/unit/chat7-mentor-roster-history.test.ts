@@ -5,7 +5,7 @@ describe("mentor roster history and public spotlight",()=>{
  it("MEN-projects-meetings-25 shows mentor-first active/inactive roster and restricted public bio",()=>{
    const service=read("src/modules/projects/workspace-view-service.ts");
    const ui=read("src/components/projects/project-workspace.tsx");
-   expect(service).toContain('access.access === "MENTOR"');
+   expect(service).toContain('access.access === ROLE.MENTOR');
    expect(service).toContain("mentorRoster,");
    expect(service).toContain("projectMembers.endedAt");
    expect(service).toContain("collegeMemberships.status");

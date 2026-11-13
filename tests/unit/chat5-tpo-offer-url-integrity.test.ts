@@ -18,7 +18,7 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(ui).toContain('Object.prototype.hasOwnProperty.call(q,"jobId")');
   expect(ui).toContain("<TpoReportInvalidFilters");
   expect(ui.indexOf("tpoReportHasAmbiguousFilters(q)")).toBeLessThan(ui.indexOf("offerRegisterQuery.safeParse("));
-  expect(ui).toContain('hasMembershipRole(context,"TPO")');
+  expect(ui).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(ui).toContain('getTpoDriveOfferRegister(context,parsed.data)');
  });
  it("TPO-OFFERS-EXPORT-33 prevents one requested job from silently exporting a different jobId",()=>{

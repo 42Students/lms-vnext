@@ -20,7 +20,7 @@
   "limits.rateLimitLiterals": 65,
   "limits.timeoutLiterals": 116,
   "session.cookieSets": 20,
-  "roles.roleLiterals": 2826,
+  "roles.roleLiterals": 1199,
   "outbound.serverRawFetch": 10,
   "exports.csvCellCopies": 16,
   "files.dispositionLiterals": 133,

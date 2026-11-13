@@ -22,7 +22,7 @@ describe("Learner projects page-scoped attention", () => {
       service.indexOf("export async function listMyLearnerProjectPageAttention"),
     );
     expect(scoped).toContain('context.user.platformStatus !== "ACTIVE"');
-    expect(scoped).toContain('hasMembershipRole(context, "LEARNER")');
+    expect(scoped).toContain('hasMembershipRole(context, ROLE.LEARNER)');
     expect(scoped).toContain("inArray(projectSubmissions.projectId, scopedIds)");
     expect(scoped).toContain('eq(projectMembers.role, "LEARNER")');
     expect(scoped).toContain("isNull(projectMembers.endedAt)");

@@ -9,7 +9,7 @@ describe("College Admin / Faculty permission-sensitive parity",()=>{
   const decisions=read("docs/audit/owner-decisions-resolved.md");
   expect(decisions).toContain("OD-07");
   expect(access).toContain('can(context, "placements.manage"');
-  expect(access).toContain('hasMembershipRole(context, "TPO")');
+  expect(access).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(home).toContain("if(!hasTpoTooling(ctx))");
   expect(home).toContain('"/college/placements"');
  });

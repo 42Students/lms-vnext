@@ -32,7 +32,7 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
     expect(source).toContain('aria-current={active ? "page" : undefined}');
     expect(source).toContain('href:"/tpo/more"');
     expect(source).not.toContain('target="_blank"');
-    expect(morePage).toContain('hasMembershipRole(context, "TPO")');
+    expect(morePage).toContain('hasMembershipRole(context, ROLE.TPO)');
     expect(morePage).toContain("<TpoMoreNavigation />");
     expect(source).toContain('className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-(--lms-z-shell) grid min-w-0 grid-cols-5 md:hidden"');
   });

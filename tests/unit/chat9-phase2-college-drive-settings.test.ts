@@ -23,7 +23,7 @@ describe("college legacy drive settings safety",()=>{
   it("requires college admin then scoped persisted job read",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx"),"utf8");
-    expect(src).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    expect(src).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
     expect(src).toContain("getCollegeDriveOverview(context,jobId)");
   });
 });

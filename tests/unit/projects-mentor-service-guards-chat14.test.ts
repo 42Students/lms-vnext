@@ -31,8 +31,8 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
   });
   it("mentor task creation refuses other-tenant assignees and notifies only active assigned learner",()=>{
     const s=service("mentor-task-create");
-    expect(s).toContain('hasMembershipRole(context,"MENTOR")');
-    expect(s).toContain('scope.access!=="MENTOR"');
+    expect(s).toContain('hasMembershipRole(context,ROLE.MENTOR)');
+    expect(s).toContain('scope.access!==ROLE.MENTOR');
     expect(s).toContain("eq(collegeMemberships.collegeId,scope.collegeId)");
     expect(s).toContain('eq(projectMembers.role,"LEARNER")');
     expect(s).toContain("eq(users.platformStatus,\"ACTIVE\")");
@@ -58,8 +58,8 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
   });
   it("meeting decisions only allow project-scoped mentors and suppress notifications for drafts",()=>{
     const s=service("mentor-meeting-decision");
-    expect(s).toContain('scope.access!=="MENTOR"');
-    expect(s).toContain('hasMembershipRole(context,"MENTOR")');
+    expect(s).toContain('scope.access!==ROLE.MENTOR');
+    expect(s).toContain('hasMembershipRole(context,ROLE.MENTOR)');
     expect(s).toContain("mentorMeetingDecisionStatus(input.action,current.status)");
     expect(s).toContain("PROJECT_MEETING_STALE_VERSION");
     expect(s).toContain('if(current.status==="DRAFT")return updated;');
@@ -95,8 +95,8 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
     // A Mentor final-delivery review is a mutation, not a read-only route;
     // the lifecycle mutation gate is deliberately stronger than read access.
     expect(s).toContain("requireProjectLifecycleMutationAccess");
-    expect(s).toContain('scope.access!=="MENTOR"');
-    expect(s).toContain('hasMembershipRole(context,"MENTOR")');
+    expect(s).toContain('scope.access!==ROLE.MENTOR');
+    expect(s).toContain('hasMembershipRole(context,ROLE.MENTOR)');
     expect(s).toContain("date_trunc('milliseconds'");
     expect(s).toContain("notifyActiveProjectMembers(tx,reviewedEvent.id");
     expect(s).toContain("recordActivityEventInTransaction(tx,context");

@@ -9,7 +9,7 @@ const source = readFileSync(
 describe("PR-S2-03 task assignee JSX condition", () => {
   it("closes the conditional before the Mentor task-status action", () => {
     expect(source).toMatch(
-      /<ProjectTaskAssigneeControl[\s\S]*?\/>\s*\) : null\}\s*\{mode === "MENTOR"/,
+      /<ProjectTaskAssigneeControl[\s\S]*?\/>\s*\) : null\}\s*\{mode === ROLE.MENTOR/,
     );
   });
 });

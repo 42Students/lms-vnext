@@ -39,18 +39,18 @@ describe("Projects IIT Dharwad — cross-account navigation and denial breaker",
   expect(p).toContain("Invalid Project filters");
   const detail=src("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
   expect(detail).toContain("requireProjectReadAccess(");
-  expect(detail).toContain('access.access !== "MENTOR"');
+  expect(detail).toContain('access.access !== ROLE.MENTOR');
   expect(detail).toContain('redirect("/mentor/projects")');
  });
  it("PROJ-BREAK-pages-04 Learner direct URL honors membership and disabled module flag",()=>{
   const p=src("src/app/(authenticated)/learn/projects/page.tsx");
-  expect(p).toContain('hasMembershipRole(context, "LEARNER")');
+  expect(p).toContain('hasMembershipRole(context, ROLE.LEARNER)');
   expect(p).toContain("resolveOptionalModuleAccess(context)");
   expect(p).toContain("This module is currently disabled for your college.");
   expect(p).toContain("parsePageSize");
   expect(p).toContain("learnerProjectListEmptyState");
   const access=src("src/modules/projects/access.ts");
-  expect(access).toContain('member.role === "LEARNER"');
+  expect(access).toContain('member.role === ROLE.LEARNER');
   expect(access).toContain('new ProjectsServiceError("PROJECT_ACCESS_DENIED")');
  });
  it("PROJ-BREAK-pages-05 all role entrypoints keep visible empty/error and filtered navigation states",()=>{

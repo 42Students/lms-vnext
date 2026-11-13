@@ -79,7 +79,7 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
  });
  it("TPO-home-27 denies Faculty-only accounts the TPO tooling they were not explicitly granted",()=>{
   const model=source("src/modules/placements/tpo-workspace-access-model.ts");
-  expect(model).toContain('hasMembershipRole(context, "TPO")');
+  expect(model).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(model).toContain('can(context, "placements.manage"');
  });
  it("TPO-inbox-team-08 never fabricates email relay or inbound-email delivery when provider is absent",()=>{
@@ -100,7 +100,7 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
  it("TPO-settings-audit-05 avoids inventing an unregistered TPO_ADMIN security role",()=>{
   const model=source("src/modules/placements/tpo-workspace-access-model.ts");
   expect(model).toContain("placements.manage");
-  expect(model).toContain('hasMembershipRole(context, "TPO")');
+  expect(model).toContain('hasMembershipRole(context, ROLE.TPO)');
  });
  it("TPO-settings-audit-12 does not mutate canonical learner marks merely to change derived percentages",()=>{
   const docs=source("docs/audit/acceptance/tpo-settings-audit-verification.md");

@@ -35,7 +35,7 @@ describe("IIT Dharwad Projects breaker: backlog, readiness and tenant boundaries
     const code = source("src/modules/projects/learner-backlog-pull-service.ts");
     const body = code.slice(code.indexOf("export async function pullOwnBacklogTask("));
     expect(body).toContain("requireProjectReadAccess(context,projectIdInput)");
-    expect(body).toContain('scope.access!=="LEARNER"');
+    expect(body).toContain('scope.access!==ROLE.LEARNER');
     expect(body).toContain("getDb().transaction(async tx=>");
     expect(body).toContain('eq(projectInstances.collegeId,scope.collegeId)');
     expect(body).toContain('.for("update")');

@@ -6,7 +6,7 @@ describe("TPO People roster legacy copy",()=>{
  it("TPO-inbox-team-37 stops representing historical drive-day coordinators as permanent team members",()=>{
   const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(page).toContain("TPO_TEAM_ROLE_LABELS[role]");
-  expect(page).toContain('hasMembershipRole(context, "TPO")');
+  expect(page).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(page).toContain("summary.tpoMemberships");
   expect(page).toContain("Only active college memberships");
   expect(page).toContain("String(summary.total)");

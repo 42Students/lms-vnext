@@ -12,7 +12,7 @@ describe("chat-16 mentor delivery review verified actions",()=>{
    expect(ui).toContain('onConfirm={()=>void review()}');
    expect(ui).toContain('confirmLabel={decision==="APPROVED"?"Accept submission":"Request changes"}');
    expect(ui).toContain('decision==="CHANGES_REQUESTED"&&!feedback.trim()');
-   expect(ui).toContain('mode!=="MENTOR" ? <Label');
+   expect(ui).toContain('mode!==ROLE.MENTOR ? <Label');
  });
  it("MEN-projects-meetings-65 preserves feedback on conflict and refuses raw exception text",()=>{
    const ui=code();

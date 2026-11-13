@@ -14,7 +14,7 @@ describe("TPO inbox/team outstanding legacy contracts",()=>{
   const team=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(team).toContain('member.roles.includes("TPO_ADMIN")');
   expect(team).toContain('member.roles.includes("FACULTY_COORDINATOR")');
-  expect(team).toContain('permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}');
+  expect(team).toContain('permanentRole={member.roles.includes(ROLE.TPO) || member.roles.includes(ROLE.COLLEGE_ADMIN)}');
   expect(team).toContain("permanent membership role.");
   expect(team).toContain("Student coordinator");
  });

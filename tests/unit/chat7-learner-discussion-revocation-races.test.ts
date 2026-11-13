@@ -93,7 +93,7 @@ describe("LEARNER-DISCUSSIONS-RACE-01 recheck learner role at write commit",()=>
    'eq(membershipRoles.role,"LEARNER")',
    'eq(users.platformStatus,"ACTIVE")',
    '.for("share").limit(1)',
-   'if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context)',
+   'if(mode===ROLE.LEARNER)await assertLiveLearnerDiscussionWriter(tx,context)',
   ])expect(code).toContain(guard);
  });
  it("rejects malformed posting payload before opening a write transaction",async()=>{

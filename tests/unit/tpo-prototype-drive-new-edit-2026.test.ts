@@ -7,7 +7,7 @@ describe("TPO original New drive / Edit drive code acceptance (screen 17)",()=>{
  it("authorizes the new-drive route and scopes clone sources to completed college jobs",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/new/page.tsx");
   const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
-  expect(page).toContain('hasMembershipRole(context, "TPO")');
+  expect(page).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(page).toContain("<PlacementJobCreateWorkspace");
   expect(page).toContain("invalidCompany");
   expect(workspace).toContain("result.reason instanceof AuthorizationError");

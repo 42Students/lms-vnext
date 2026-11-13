@@ -6,7 +6,7 @@ describe("chat-6 source-evidence gaps",()=>{
   it("FAC-attendance-grades-R02 constrains faculty schedules to owned delivery, academic period, conflicts and marked-session lock",()=>{
     const service=src("src/modules/attendance/faculty-schedule-mutation-service.ts");
     expect(service).toContain("hasActiveMembership(context)");
-    expect(service).toContain('hasMembershipRole(context,"FACULTY")');
+    expect(service).toContain('hasMembershipRole(context,ROLE.FACULTY)');
     expect(service).toContain("listFacultyCourseDeliveries(context)");
     expect(service).toContain('owned.academicPeriodStatus==="CLOSED"');
     expect(service).toContain("periodStartDate");

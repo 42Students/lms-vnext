@@ -9,8 +9,8 @@ describe("College Admin TPO drive overview access",()=>{
   expect(page).toContain("await getPlacementJob(context, jobId)");
   expect(page).toContain("AuthorizationError");
   expect(page).toContain("notFound()");
-  expect(page).not.toContain('hasMembershipRole(context, "TPO")');
+  expect(page).not.toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(policy).toContain('case "placements.manage":');
-  expect(policy).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
+  expect(policy).toContain('hasMembershipRole(context, ROLE.COLLEGE_ADMIN)');
  });
 });

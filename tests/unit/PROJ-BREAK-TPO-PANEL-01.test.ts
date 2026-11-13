@@ -12,7 +12,7 @@ const src=(name:string)=>readFileSync(resolve(process.cwd(),
 describe("PROJ-BREAK-TPO-PANEL-01 private quick panel and note boundaries",()=>{
  it("rejects inactive/disabled learner links and limits event history to placement actions",()=>{
   const source=src("tpo-student-panel-detail-service.ts");
-  expect(source).toContain('hasMembershipRole(ctx,"TPO")');
+  expect(source).toContain('hasMembershipRole(ctx,ROLE.TPO)');
   expect(source).toContain('membership.status!=="ACTIVE"');
   expect(source).toContain("const collegeId=await requireTpoBatchActor(ctx)");
   expect(source).toContain("requirePlacementManageScope(ctx,collegeId)");

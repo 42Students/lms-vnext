@@ -59,7 +59,7 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
 
   it("protects G099 history and G100-G101 scheduling filters before data access",()=>{
     const history=read(base+"batches/[batchId]/history/page.tsx");
-    expect(history).toContain('hasMembershipRole(context,"TPO")');
+    expect(history).toContain('hasMembershipRole(context,ROLE.TPO)');
     expect(history).toContain("duplicateOrUnknown=Object.values(raw).some(Array.isArray)");
     expect(history).toContain("listTpoBatchHistory(context,batchId)");
     const rounds=read(base+"calendar/rounds/page.tsx");

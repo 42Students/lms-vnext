@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -11,13 +12,13 @@ const tpo:RequestContext={user:{id:userId,identityUid:"officer",platformStatus:"
   collegeId,organizationId,status:"ACTIVE",roles:["TPO"]}};
 describe("TPO-settings-audit-NOTIFY-READ-05 private inbox data after role revocation",()=>{
  it("denies revoked TPO and inactive membership even if the college selected before the request was correct",()=>{
-  expect(hasMembershipRole(tpo,"TPO")).toBe(true);
+  expect(hasMembershipRole(tpo,ROLE.TPO)).toBe(true);
   expect(()=>requirePermission(tpo,"placements.manage",{collegeId,organizationId})).not.toThrow();
   const revoked:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
   const disabled:RequestContext={...tpo,user:{...tpo.user,platformStatus:"DISABLED"}};
   const suspended:RequestContext={...tpo,membership:{...tpo.membership!,status:"SUSPENDED"}};
   for(const actor of [revoked,disabled,suspended]){
-   expect(hasMembershipRole(actor,"TPO")).toBe(false);
+   expect(hasMembershipRole(actor,ROLE.TPO)).toBe(false);
    expect(()=>requirePermission(actor,"placements.manage",{collegeId,organizationId}))
     .toThrow(AuthorizationError);
   }
@@ -28,7 +29,7 @@ describe("TPO-settings-audit-NOTIFY-READ-05 private inbox data after role revoca
   const preference=source.indexOf("persistedPreferences = preference?");
   const transaction=source.indexOf("await db.transaction(async tx=>",preference);
   const live=source.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"',transaction);
-  const membership=source.indexOf('hasMembershipRole(persisted,"TPO")',live);
+  const membership=source.indexOf('hasMembershipRole(persisted,ROLE.TPO)',live);
   const result=source.indexOf("return {\n    query,\n    collegeId,",membership);
   expect(counts).toBeGreaterThan(0);
   expect(preference).toBeGreaterThan(counts);

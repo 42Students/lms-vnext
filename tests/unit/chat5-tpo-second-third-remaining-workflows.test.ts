@@ -74,7 +74,7 @@ describe("TPO second-third — close preview and cancellation model state",()=>{
  });
  it("TPO-2ND-PAGE-close-preview-03 maintains guarded explicit form vs actionable blocked reason",()=>{
   const code=page("close-preview");
-  expect(code).toContain('hasMembershipRole(context,"TPO")');
+  expect(code).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(code).toContain('getTpoDriveClosePreview(context,jobId)');
   expect(code).toContain('preview.canClose?<TpoDriveClosePreviewForm');
   expect(code).toContain('preview.pendingSelections>0');
@@ -96,7 +96,7 @@ describe("TPO second-third — offer letters never invent proof",()=>{
  });
  it("TPO-2ND-PAGE-letters-02 enforces TPO and persisted scope, explains unsupported letters in an accessible table",()=>{
   const code=page("letters");
-  for(const must of ['hasMembershipRole(context, "TPO")','can(context, "placements.manage", { collegeId })',
+  for(const must of ['hasMembershipRole(context, ROLE.TPO)','can(context, "placements.manage", { collegeId })',
    'requirePermission(context, "placements.manage", { collegeId })',
    "requirePlacementManageScope(context, collegeId)","listPlacementJobOffers(context, parsed.data)",
    "letter document, delivery or acknowledgement","Bulk letter-status changes are disabled",

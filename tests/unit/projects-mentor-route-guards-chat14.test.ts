@@ -122,7 +122,7 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
   it("selects mentor or learner task creation by authenticated project access, not posted role",()=>{
     const src=readFileSync(base+"tasks/route.ts","utf8");
     expect(src).toContain("requireProjectReadAccess(context,path.projectId)");
-    expect(src).toContain('scope.access==="LEARNER"');
+    expect(src).toContain('scope.access===ROLE.LEARNER');
     expect(src).toContain("createLearnerOwnTask");
     expect(src).toContain("createMentorProjectTask");
   });

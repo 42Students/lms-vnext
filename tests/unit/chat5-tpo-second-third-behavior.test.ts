@@ -140,7 +140,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
   it("TPO-2ND-PAGE-"+route.replace(/[^a-z]+/g,"-")+"-01 authenticates and handles missing/empty evidence",()=>{
    const code=page(route);
    expect(code).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
-   expect(code).toMatch(/hasMembershipRole\(context,\s*"TPO"\)/);
+   expect(code).toMatch(/hasMembershipRole\(context,\s*ROLE.TPO\)/);
    expect(code).toContain('redirect("/dashboard")');
    expect(code).toContain(fetcher);
    expect(code).toContain("notFound()");
@@ -178,7 +178,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
  });
  it("TPO-2ND-PAGE-recorded-outside-02 denies unauthorized reads and shows truthful empty evidence",()=>{
   const code=src("src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx");
-  expect(code).toContain('hasMembershipRole(context,"TPO")');
+  expect(code).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(code).toContain('redirect("/dashboard")');
   expect(code).toContain("listTpoOutsideDriveRecords(context)");
   expect(code).toContain("No outside-platform drives have been recorded yet.");

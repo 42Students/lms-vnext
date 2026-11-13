@@ -31,7 +31,7 @@ describe("chat-11 college and mentor interaction contracts",()=>{
   expect(open).toContain('rel="noopener noreferrer"');
   expect(open).toContain("<TextLink href={safe}");
   expect(src("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList projectId=");
-  expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}');
+  expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode===ROLE.LEARNER?"Open resource ↗":"Open link"}');
   expect(src("src/components/projects/project-resource-controls.tsx")).toContain('"Resource added."');
  });
  it("MEN-projects-meetings-65 uses submission decision wording and exact feedback",()=>{

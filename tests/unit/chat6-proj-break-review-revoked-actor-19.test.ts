@@ -9,7 +9,7 @@ describe("PROJ-BREAK-reviews-19 persisted reviewer authorizations",()=>{
   expect(review).toContain("requireProjectLifecycleAccess");
   expect(review).toContain('eq(projectSubmissions.id, submissionId)');
   expect(review).toContain('.for("update")');
-  expect(review).toContain('if(reviewerAccess!=="ADMIN"&&reviewerAccess!=="MENTOR")');
+  expect(review).toContain('if(reviewerAccess!=="ADMIN"&&reviewerAccess!==ROLE.MENTOR)');
   expect(review).toContain("await assertCurrentEvaluationActor(tx,context,{");
   expect(review).toContain("project:{id:scope.project.id}");
   expect(review).toContain("collegeId:scope.collegeId,organizationId:scope.organizationId");

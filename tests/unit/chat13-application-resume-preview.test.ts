@@ -7,7 +7,7 @@ describe("Super Admin verified private resume preview",()=>{
   expect(s).toContain("verificationDocumentManifest(receiptRecord.snapshot)");
   expect(s).toContain('doc.purpose==="RESUME"');
   expect(s).toContain("isSuperAdmin(ctx)");
-  expect(s).toContain('hasMembershipRole(ctx,"TPO")');
+  expect(s).toContain('hasMembershipRole(ctx,ROLE.TPO)');
   expect(s).not.toContain("privateObjectKey");
  });
  it("SA-placements-projects-21 delegates private access to the established CLEAN-verified route",()=>{

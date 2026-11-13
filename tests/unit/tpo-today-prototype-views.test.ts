@@ -195,7 +195,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(service).toContain('eq(placementCompanyRelationships.collegeId,collegeId)');
   expect(service).toContain('eq(placementTpoLeads.collegeId,collegeId)');
   expect(service).toContain('isNotNull(placementTpoLeads.recruiterUserId)');
-  expect(service).toContain('hasMembershipRole(context,"TPO")');
+  expect(service).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(service).toContain('scope==="MINE"?[or(');
   expect(today).toContain("College trust:");
   expect(today).toContain("Not verified by 42");

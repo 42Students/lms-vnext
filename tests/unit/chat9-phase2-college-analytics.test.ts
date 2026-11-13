@@ -21,7 +21,7 @@ describe("legacy College Admin Analytics scope and URL",()=>{
   it("requires the persisted membership college before calling the report service",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/hiring-dashboard/page.tsx"),"utf8");
-    expect(src).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
+    expect(src).toContain('hasMembershipRole(context, ROLE.COLLEGE_ADMIN)');
     expect(src).toContain("collegeId:context.membership.collegeId");
     expect(src).toContain("getPlacementReportWorkspace");
     expect(src).not.toContain("listSuperAdmin");

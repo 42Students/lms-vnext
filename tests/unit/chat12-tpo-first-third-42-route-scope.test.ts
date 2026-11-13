@@ -67,7 +67,7 @@ describe("UX-tpo-first-third-42 route scope and navigation inventory",()=>{
    }else if(route==="/tpo/home"){
     expect(source).toContain("hasTpoTooling(ctx)");
    }else{
-    const explicit=/hasMembershipRole\([\s\S]{0,80}["']TPO["']\)|can\(context,\s*["']placements\.manage["']/.test(source);
+    const explicit=/hasMembershipRole\([\s\S]{0,80}(?:["']TPO["']|ROLE.TPO)\)|can\(context,\s*["']placements\.manage["']/.test(source);
     const operationsGate=/requireTpo\w*\(|getPlacementTpoOperations\(/.test(source);
     expect(explicit||operationsGate).toBe(true);
    }

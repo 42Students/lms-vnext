@@ -9,7 +9,7 @@ describe("Legacy TPO versus administrator calendar source scope",()=>{
   expect(service).toContain('input.tpoLegacyScope?inArray(placementJobs.status,["DRAFT","PUBLISHED"])');
   expect(service).toContain('input.tpoLegacyScope?isNull(placementTpoFollowups.doneAt)');
   expect(service).toContain('input.tpoLegacyScope?["PUBLISHED"]');
-  expect(caller).toContain('tpoLegacyScope:audience==="TPO"');
+  expect(caller).toContain('tpoLegacyScope:audience===ROLE.TPO');
   expect(service).toContain("tpoLegacyScope:z.boolean().optional()");
  });
 });

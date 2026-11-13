@@ -27,7 +27,7 @@ describe("chat-3 college people and attendance source contract audit",()=>{
  });
  it("COL-people-20 college admin role can be changed only by super admin",()=>{
   const code=source("src/modules/people/membership-service.ts");
-  expect(code).toContain("if (input.role === \"COLLEGE_ADMIN\" || input.role === \"TPO\")");
+  expect(code).toContain("if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO)");
   expect(code).toContain("requirePermission(context, \"admin-scope.select\")");
  });
  it("COL-people-25 mobile validation and partial failures stay actionable",()=>{

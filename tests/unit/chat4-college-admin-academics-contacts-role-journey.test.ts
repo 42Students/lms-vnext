@@ -72,7 +72,7 @@ describe("College Admin people and academic journey security", () => {
 
   it("COL-ADMIN-JOURNEY-04 contacts page gates role before reads and maintains masked student CSV, partial, empty and recovery", () => {
     const page=source("src/app/(authenticated)/college/contacts/page.tsx");
-    const redirect=page.indexOf('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    const redirect=page.indexOf('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
     const read=page.indexOf("listCollegeContacts(context,filter)");
     expect(redirect).toBeGreaterThan(-1);
     expect(read).toBeGreaterThan(redirect);
@@ -88,7 +88,7 @@ describe("College Admin people and academic journey security", () => {
     const service=source("src/modules/people/college-contacts-service.ts");
     expect(service).toContain('assertPersistedPlatformPermission(tx,context,"people.manage"');
     expect(service).toContain("eq(collegeMemberships.collegeId,claim.collegeId)");
-    expect(service).toContain("isLearner:memberRoles.includes(\"LEARNER\")");
+    expect(service).toContain("isLearner:memberRoles.includes(ROLE.LEARNER)");
     expect(service).toContain("A masked learner contact must not become guessable via search queries.");
     expect(service).toContain('eq(membershipRoles.role,role)');
   });

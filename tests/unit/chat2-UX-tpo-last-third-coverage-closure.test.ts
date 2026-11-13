@@ -8,7 +8,7 @@ const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 describe("TPO last third page-level UX coverage closure",()=>{
  it("UX-tpo-team-everyone-01 retains permission-scoped, recoverable Everyone messages with paging and IST dates",()=>{
   const s=readFileSync("src/app/(authenticated)/tpo/team/everyone/page.tsx","utf8");
-  expect(s).toContain('hasMembershipRole(context,"TPO")');
+  expect(s).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(s).toContain("AuthorizationError");
   expect(s).toContain('result.status==="NOT_REGISTERED"');
   expect(s).toContain('result.status==="FAILED"');

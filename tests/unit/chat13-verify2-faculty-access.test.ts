@@ -17,7 +17,7 @@ describe("Lane 13 verification: faculty lifecycle and private staff profile", ()
     }
     expect(service).toContain("assertPersistedPlatformPermission(tx,context,\"people.manage\",scope)");
     expect(service).toContain("profile_document_version=${version}");
-    expect(service).toContain('roles.includes("COLLEGE_ADMIN")||roles.includes("TPO")');
+    expect(service).toContain('roles.includes(ROLE.COLLEGE_ADMIN)||roles.includes(ROLE.TPO)');
     expect(legacy).not.toContain("tx.update(facultyProfiles)");
     expect(legacy).toContain('aadhaarDocumentId:null,panDocumentId:null');
     expect(legacy).toContain('profileImageDocumentId:null');
@@ -25,7 +25,7 @@ describe("Lane 13 verification: faculty lifecycle and private staff profile", ()
 
   it("preserves Super Admin protected-staff edit authority but makes college staff read-only", () => {
     const route = source("src/app/api/people/[membershipId]/faculty-profile/route.ts");
-    expect(route).toContain('roles.includes("FACULTY")&&(!protectedRole||isSuperAdmin(context))');
+    expect(route).toContain('roles.includes(ROLE.FACULTY)&&(!protectedRole||isSuperAdmin(context))');
     expect(route).toContain('protectedRole&&!isSuperAdmin(context)');
   });
 

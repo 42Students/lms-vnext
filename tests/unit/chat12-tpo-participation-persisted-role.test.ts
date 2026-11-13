@@ -79,7 +79,7 @@ describe("TPO-BREAK-participation-session-06 role removal, stale cookie, txn rev
   expect(src).toContain('requireTpoBatchActor(context)');
   expect(src).toContain('const persistedActor=await assertPersistedPlatformPermission(');
   expect(src).toContain('tx,context,"placements.manage"');
-  expect(src).toContain('persistedActor.membership?.roles.includes("TPO")');
+  expect(src).toContain('persistedActor.membership?.roles.includes(ROLE.TPO)');
   expect(src.indexOf("const persistedActor=await assertPersistedPlatformPermission"))
    .toBeLessThan(src.indexOf("const [member] = await tx.select({"));
   expect(src).toContain('await tx.insert(activityEvents).values');

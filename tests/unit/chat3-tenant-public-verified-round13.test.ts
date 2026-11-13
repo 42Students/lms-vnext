@@ -50,7 +50,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
     expect(page).toContain(token);
   const service=src("src/modules/colleges/admin-session-service.ts");
   expect(service).toContain('requirePermission(ctx,"college.manage"');
-  expect(page).toContain('hasMentorRole={item.roles.includes("MENTOR")}');
+  expect(page).toContain('hasMentorRole={item.roles.includes(ROLE.MENTOR)}');
  });
  it("SA-tenants-modules-19 retains college-scoped activity read and authorized CSV without a duplicate GET write",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");

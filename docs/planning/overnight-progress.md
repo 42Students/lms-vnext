@@ -32,7 +32,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 ## Phase 2: foundations
 - [x] 2.1 typed config module: src/config/env.ts, generated registry; process.env reads outside config 401 -> 81 (ratchet enforced)
 - [x] 2.2 feature registry: src/config/features.ts, 37 flags, bare flag reads 97 -> 0 (ratchet enforced)
-- [ ] 2.3 role and capability constants
+- [x] 2.3 role constants: ROLE in src/modules/identity/roles.ts; role literals in value positions 2826 -> 1199 (remaining are type positions, keys, tables; ratchet enforced)
 - [ ] 2.4 clock service and per-college time zone, one formatter set
 - [ ] 2.5 shared utilities (first, when, humanize, initials, isUniqueViolation, ...)
 - [ ] 2.6 one baselines folder and reader

@@ -7,10 +7,10 @@ describe("TPO-home-27 delegated access decision",()=>{
   const access=source("src/modules/placements/tpo-workspace-access-model.ts");
   const policy=source("src/modules/permissions/policy.ts");
   expect(access).toContain('can(context, "placements.manage"');
-  expect(access).toContain('hasMembershipRole(context, "TPO")');
+  expect(access).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(policy).toContain('case "placements.manage":');
-  expect(policy).toContain('hasMembershipRole(context, "TPO")');
+  expect(policy).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(policy).toContain("isSameMembershipCollege(context, resource)");
-  expect(access).not.toContain('hasMembershipRole(context, "FACULTY")');
+  expect(access).not.toContain('hasMembershipRole(context, ROLE.FACULTY)');
  });
 });

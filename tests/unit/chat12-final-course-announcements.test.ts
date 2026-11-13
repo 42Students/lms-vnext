@@ -12,7 +12,7 @@ describe("LEARNER-home-courses-14 official class announcements",()=>{
   const service=read("src/modules/courses/learner-course-announcements-service.ts");
   const guard=read("src/modules/courses/learner-access-guard.ts");
   expect(service).toContain("requireOwnCourseLearnerRead(context)");
-  expect(guard).toContain('membership.roles.includes("LEARNER")');
+  expect(guard).toContain('membership.roles.includes(ROLE.LEARNER)');
   expect(guard).toContain('eq(membershipRoles.role,"LEARNER")');
   expect(guard).toContain("owner.userId!==context.user.id");
   expect(service).toContain("eq(learnerProgramEnrollments.membershipId,member.id)");

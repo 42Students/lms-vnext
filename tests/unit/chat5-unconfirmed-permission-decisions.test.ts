@@ -22,7 +22,7 @@ describe("Chat5 delegated central-scope placement decisions",()=>{
   const writer=src("src/modules/placements/tpo-job-write-base.ts");
   const reader=src("src/modules/placements/tpo-drive-lifecycle-list-service.ts");
   expect(writer).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
-  expect(reader).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+  expect(reader).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
   expect(reader).toContain("requireTpoJobActor(tx,context)");
  });
  it("TPO-companies-R03 admits centrally authorized college admins without giving unscoped company reads",()=>{

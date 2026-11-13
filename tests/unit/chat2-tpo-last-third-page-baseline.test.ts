@@ -65,7 +65,7 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
  });
  it("UX-tpo-team-everyone-01 preserves messages on backend failure and paginates explicitly",()=>{
   const s=read("/tpo/team/everyone");
-  expect(s).toContain('hasMembershipRole(context,"TPO")');
+  expect(s).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(s).toContain("error instanceof AuthorizationError");
   expect(s).toContain('result.status==="FAILED"');
   expect(s).toContain('<Alert tone="error">');

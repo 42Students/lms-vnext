@@ -23,7 +23,7 @@ it("MEN-projects-meetings-11 review-only memberships are not granted write acces
  const source=read("src/modules/projects/access.ts");
  expect(source).toContain("mayMutateProjectWithRole(member.roleKind");
  expect(source).toContain("\"OBSERVER\" as const");
- expect(source).toContain("scope.access !== \"MENTOR\"");
+ expect(source).toContain("scope.access !== ROLE.MENTOR");
 });
 it("MEN-projects-meetings-16 mentor readiness and final-delivery states derive from workspace facts",()=>{
  const source=read("src/components/projects/project-workspace.tsx");

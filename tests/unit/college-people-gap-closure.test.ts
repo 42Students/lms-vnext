@@ -239,7 +239,7 @@ describe("College People legacy audited page contracts",()=>{
   const panel=src("src/components/admin/person-membership-actions.tsx");
   const grant=service.slice(service.indexOf("export async function addMembershipRole("));
   const remove=service.slice(service.indexOf("export async function removeMembershipRole("));
-  const guard='if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {';
+  const guard='if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO) {';
   expect(grant).toContain(guard);
   expect(remove).toContain(guard);
   expect(grant).toContain('requirePermission(context, "admin-scope.select")');

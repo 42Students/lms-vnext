@@ -4,7 +4,7 @@ const src=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("TPO bulk decisions audit",()=>{
  it("TPO-requests-verification-13 records only authenticated college-scoped requests in the batch",()=>{
   const code=src("src/modules/placements/tpo-request-bulk-audit-service.ts");
-  expect(code).toContain('hasMembershipRole(ctx,"TPO")');
+  expect(code).toContain('hasMembershipRole(ctx,ROLE.TPO)');
   expect(code).toContain("requirePlacementManageScope(ctx,actor.collegeId)");
   expect(code).toContain("eq(placementJobs.collegeId,college.id)");
   expect(code).toContain("rows.length!==input.requestIds.length");

@@ -5,9 +5,9 @@ const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("College Admin Projects S2 legacy gap closure",()=>{
  it("COL-projects-03 confirms admin Overview and Resources editors but leaves Sprint/Task plan parity open",()=>{
   const workspace=source("src/components/projects/project-workspace.tsx");
-  expect(workspace).toContain('(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor');
+  expect(workspace).toContain('(mode==="ADMIN"||mode===ROLE.MENTOR)&&!readOnly?<WorkspaceBriefEditor');
   expect(workspace).toContain("<CreateProjectResourceControl");
-  expect(workspace).toContain('mode === "MENTOR" &&');
+  expect(workspace).toContain('mode === ROLE.MENTOR &&');
  });
  it("COL-projects-06 creates one workspace per student only after scoped cohort preflight and confirmation",()=>{
   const editor=source("src/components/projects/class-team-workspace-creator.tsx");

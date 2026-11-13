@@ -20,7 +20,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   const service=source("src/modules/courses/learner-course-file-reference-service.ts");
   const route=source("src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts");
   expect(service).toContain("requireLearningReadAccess(context,delivery.offeringId,deliveryId");
-  expect(service).toContain('access!=="LEARNER"');
+  expect(service).toContain('access!==ROLE.LEARNER');
   expect(service).toContain("eq(lessonContents.id,contentId)");
   expect(service).toContain("eq(lessonContents.visibleToStudents,true)");
   expect(route).toContain("getLearnerCourseFileReference(");

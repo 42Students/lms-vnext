@@ -9,7 +9,7 @@ describe("chat-16 linked private file resources",()=>{
   const panel=code("src/components/projects/project-resource-files-panel.tsx");
   const service=code("src/modules/projects/project-resource-file-service.ts");
   expect(workspace).toContain('resources={workspace.resources.filter(item=>');
-  expect(workspace).toContain('item.status==="ACTIVE"||mode!=="LEARNER"&&item.status==="DRAFT"');
+  expect(workspace).toContain('item.status==="ACTIVE"||mode!==ROLE.LEARNER&&item.status==="DRAFT"');
   expect(section).toContain('row.status==="ACTIVE"&&row.visibility==="TEAM"');
   expect(section).toContain('(row.status==="ACTIVE"||row.status==="DRAFT")');
   expect(panel).toContain('Related resource (optional)');

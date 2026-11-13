@@ -36,7 +36,7 @@ describe("2026 TPO Companies / Emails prototype",()=>{
  });
  it("list and composer share a prototype split-screen shell without flattening authorization",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx");
-  expect(page).toContain("hasMembershipRole(ctx,\"TPO\")");
+  expect(page).toContain("hasMembershipRole(ctx,ROLE.TPO)");
   expect(page).toContain("validIds.length!==candidateIds.length");
   expect(page).toContain("<TpoCampaignPrototypeSidebar");
   expect(page).toContain("<TpoCampaignCompose");

@@ -37,14 +37,14 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
 
   it("UX-tpo-calendar-01 checks active TPO membership before fetching calendar data", () => {
     const source = page("/calendar");
-    expect(source).toContain('hasMembershipRole(context, "TPO")');
+    expect(source).toContain('hasMembershipRole(context, ROLE.TPO)');
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("parsed.success");
   });
 
   it("UX-tpo-announcements-01 denies an expired membership and rejects forged tab filters", () => {
     const source = page("/announcements");
-    expect(source).toContain('hasMembershipRole(context,"TPO")');
+    expect(source).toContain('hasMembershipRole(context,ROLE.TPO)');
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("tpoAnnouncementTabSchema.safeParse");
     expect(source).toContain('<Alert tone="error"');
@@ -53,7 +53,7 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
 
   it("UX-tpo-audit-01 confines privileged audit views and provides invalid query recovery", () => {
     const source = page("/audit");
-    expect(source).toContain('hasMembershipRole(context, "TPO")');
+    expect(source).toContain('hasMembershipRole(context, ROLE.TPO)');
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("tpoAuditQuerySchema.safeParse");
     expect(source).toContain("<ErrorState");
@@ -81,7 +81,7 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
 
   it("UX-tpo-companies-archived-01 keeps other-college archived employers out of the directory", () => {
     const source = page("/companies/archived");
-    expect(source).toContain('hasMembershipRole(context, "TPO")');
+    expect(source).toContain('hasMembershipRole(context, ROLE.TPO)');
     expect(source).toContain("listArchivedTpoCompanyRelationships(context)");
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("Showing only the first 100 archived relationships");

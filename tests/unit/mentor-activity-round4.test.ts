@@ -8,7 +8,7 @@ describe("chat-11 mentor activity and resource parity",()=>{
   const form=source("src/components/projects/project-resource-controls.tsx");
   expect(form).toContain('value="MENTOR_ONLY"');
   const resourceList=source("src/components/projects/project-resource-list.tsx");
-  expect(resourceList).toContain('resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"');
+  expect(resourceList).toContain('resource.visibility==="MENTOR_ONLY"&&mode!==ROLE.LEARNER');
   expect(resourceList).toContain("Mentors only");
   expect(source("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList");
  });

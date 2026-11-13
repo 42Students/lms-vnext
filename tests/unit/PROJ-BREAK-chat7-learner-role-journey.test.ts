@@ -73,7 +73,7 @@ describe("IIT Dharwad Learner project role journey: hostile edits and stale sess
   const move=read("src/modules/projects/learner-task-status-service.ts");
   for(const source of [create,move]){
    expect(source).toMatch(/project\??\.status\s*!==\s*"ACTIVE"/);
-   expect(source).toContain('scope.access!=="LEARNER"');
+   expect(source).toContain('scope.access!==ROLE.LEARNER');
    expect(source).toContain('getDb().transaction(async tx=>');
   }
   expect(create).toContain("assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId)");

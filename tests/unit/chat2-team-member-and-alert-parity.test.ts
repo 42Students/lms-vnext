@@ -10,12 +10,12 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");
   const create=source("src/modules/placements/tpo-team-internal-create-service.ts");
   const reply=source("src/modules/placements/tpo-team-internal-reply-service.ts");
-  expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+  expect(access).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
   expect(page).toContain("hasPlacementTeamMembership(context)");
   expect(page).toContain('if (tab === "people" || tab === "members" || tab === "roster")');
   expect(page).toContain('redirect("/tpo/settings/team")');
   expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
-  expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+  expect(access).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
   expect(create).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(create).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(reply).toContain('eq(placementTpoInternalThreads.collegeId,college.id)');
@@ -52,7 +52,7 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   expect(page).toContain("TPO Admin assignments");
   expect(page).toContain("Faculty Coordinators");
   expect(page).toContain("Student Coordinators");
-  expect(page).toContain('permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}');
+  expect(page).toContain('permanentRole={member.roles.includes(ROLE.TPO) || member.roles.includes(ROLE.COLLEGE_ADMIN)}');
  });
  it("TPO-inbox-team-34 retains Away until and back-now updates on Team People",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");

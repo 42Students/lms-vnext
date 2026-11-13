@@ -30,7 +30,7 @@ describe("recent first-party OTP authentication for privileged role grants", () 
     expect(call).toBeGreaterThan(0);
     const guards = source.slice(Math.max(0, call - 900), call);
     expect(guards).toContain("onboardPersonInputSchema.parse(body)");
-    expect(guards).toContain('role === "COLLEGE_ADMIN" || role === "TPO"');
+    expect(guards).toContain('role === ROLE.COLLEGE_ADMIN || role === ROLE.TPO');
     expect(guards).toContain('requirePermission(context, "admin-scope.select")');
     expect(guards).toContain("await requireRecentDeviceAuthentication(context.user.id)");
   });
@@ -43,7 +43,7 @@ describe("recent first-party OTP authentication for privileged role grants", () 
       // The branch must make fresh sign-in mandatory before the privileged
       // mutation call, rather than after it has already changed a role.
       const prefix = source.slice(Math.max(0, end - 600), end);
-      expect(prefix).toContain('input.role === "COLLEGE_ADMIN" || input.role === "TPO"');
+      expect(prefix).toContain('input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO');
       expect(prefix).toContain('requirePermission(context, "admin-scope.select")');
       expect(prefix).toContain("await requireRecentDeviceAuthentication(context.user.id)");
     }

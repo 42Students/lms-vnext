@@ -37,7 +37,7 @@ describe("TPO-students-10 optional due-date, assignment and notification contrac
   expect(ui).toContain("dueAt:deadline");
   expect(writer).toContain("input.dueAt?new Date(input.dueAt):null");
   expect(writer).toContain('assertPersistedPlatformPermission(tx,ctx,"placements.manage"');
-  expect(writer).toContain('hasMembershipRole(persisted,"TPO")');
+  expect(writer).toContain('hasMembershipRole(persisted,ROLE.TPO)');
   expect(writer).toContain("onConflictDoNothing()");
   expect(writer).toContain("body:\"Your placement cell assigned \"");
  });

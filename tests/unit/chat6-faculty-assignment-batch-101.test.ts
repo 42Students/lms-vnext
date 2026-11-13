@@ -26,7 +26,7 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
   expect(service).toContain("delivery.sectionId===first.sectionId");
   expect(service).toContain("delivery.academicPeriodId===first.academicPeriodId");
   expect(service).toContain("delivery.organizationId===first.organizationId");
-  expect(service).toContain("member.roles.includes(\"FACULTY\")");
+  expect(service).toContain("member.roles.includes(ROLE.FACULTY)");
   expect(service).toContain("const ids=[...input.deliveryIds].sort()");
   expect(service).toContain("return await getDb().transaction(async tx=>");
   expect(service).toContain('orderBy(courseSectionDeliveries.id).for("update")');

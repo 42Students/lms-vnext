@@ -197,7 +197,7 @@ describe("UX-G178 people CSV completeness and deduplication", () => {
  });
  it("keeps authorization and warns when pagination has a gap or truncation", () => {
   const src=source("src/modules/people/college-people-export-service.ts");
-  expect(src).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
+  expect(src).toContain('hasMembershipRole(context, ROLE.COLLEGE_ADMIN)');
   expect(src).toContain('requirePermission(context, "people.manage"');
   expect(src).toContain("appendUniquePeopleCsvRows(rows, page.items)");
   expect(src).toContain("rows.length < Math.min(total, PEOPLE_CSV_CAP)");

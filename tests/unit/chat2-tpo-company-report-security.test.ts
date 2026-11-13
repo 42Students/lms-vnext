@@ -67,7 +67,7 @@ describe("UX-tpo-reports-company-01 tenant-safe company report and visible CSV p
  it("visible-page GET verifies role and repeated params before private workspace queries",()=>{
   const s=readFileSync("src/app/api/placements/tpo/reports/by-company-page/export/route.ts","utf8");
   expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
-  expect(s).toContain('hasMembershipRole(context,"TPO")');
+  expect(s).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(s).toContain("tpoReportHasRepeatedSearchParams(params)");
   expect(s.indexOf("tpoReportHasRepeatedSearchParams(params)")).toBeLessThan(s.indexOf("getPlacementReportWorkspace(context"));
   expect(s).toContain("companyReportViewSchema.safeParse");

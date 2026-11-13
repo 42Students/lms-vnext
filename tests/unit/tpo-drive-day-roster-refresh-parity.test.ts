@@ -18,7 +18,7 @@ describe("G2-11-008-048: TPO drive-day last-good roster refresh",()=>{
  });
  it("permits refresh only after authenticated TPO permission and an authorized scoped roster read",()=>{
   const route=read("src/app/api/placements/tpo/drive-day/[roundId]/refresh/route.ts");
-  expect(route).toContain('hasMembershipRole(context,"TPO")');
+  expect(route).toContain('hasMembershipRole(context,ROLE.TPO)');
   expect(route).toContain('requirePermission(context,"placements.manage"');
   expect(route).toContain('placementRoundIdSchema.parse(roundId)');
   expect(route).toContain('await getTpoRoundDriveDay(context,placementRoundIdSchema.parse(roundId))');

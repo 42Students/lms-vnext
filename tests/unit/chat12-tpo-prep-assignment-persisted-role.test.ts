@@ -55,7 +55,7 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
   const tx=src.indexOf("return await getDb().transaction(async tx=>");
   const lock=src.indexOf('for("update").limit(1)',tx);
   const guard=src.indexOf('await assertPersistedPlatformPermission(tx,ctx,"placements.manage"',tx);
-  const persistedTpo=src.indexOf('if(!hasMembershipRole(persisted,"TPO"))',guard);
+  const persistedTpo=src.indexOf('if(!hasMembershipRole(persisted,ROLE.TPO))',guard);
   const notification=src.indexOf("await tx.insert(inAppNotifications)",guard);
   expect(lock).toBeGreaterThan(tx);
   expect(guard).toBeGreaterThan(lock);

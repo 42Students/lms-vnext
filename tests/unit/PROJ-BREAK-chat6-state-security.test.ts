@@ -110,7 +110,7 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
  });
  it("PROJ-BREAK-grading-02 evaluation routes never expose unreleased rubric to learners or observers",()=>{
   const code=src("src/modules/projects/evaluation-service.ts");
-  expect(code.match(/scope.access !== "ADMIN" && scope.access !== "MENTOR"/g)).toHaveLength(2);
+  expect(code.match(/scope.access !== "ADMIN" && scope.access !== ROLE.MENTOR/g)).toHaveLength(2);
   const api=src("src/app/api/projects/[projectId]/submissions/[submissionId]/evaluation/route.ts");
   expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(api).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);

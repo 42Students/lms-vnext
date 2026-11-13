@@ -50,7 +50,7 @@ describe("TPO-BREAK-session-01 / TPO-BREAK-tenant-01",()=>{
  });
  it("TPO-BREAK-tenant-01 checks persisted role, membership and college before job writes",()=>{
   const guard=source("src/modules/placements/tpo-job-write-base.ts");
-  for(const clause of ['hasMembershipRole(context,"TPO")','hasMembershipRole(context,"COLLEGE_ADMIN")',
+  for(const clause of ['hasMembershipRole(context,ROLE.TPO)','hasMembershipRole(context,ROLE.COLLEGE_ADMIN)',
    'member.status!=="ACTIVE"','context.user.platformStatus!=="ACTIVE"',
    'can(context,"placements.manage",{collegeId})',
    'requirePlacementManageScope(context,collegeId)',

@@ -97,7 +97,7 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
   it("UX-G033 elective allocation denied-state provides a touch-sized safe exit",()=>{
     const code=route("electives/[slotId]/allocate/page.tsx");
     expect(code).toContain('href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9"');
-    expect(code).toContain('hasMembershipRole(actor,"COLLEGE_ADMIN")');
+    expect(code).toContain('hasMembershipRole(actor,ROLE.COLLEGE_ADMIN)');
   });
   it("UX-G034 empty-state copy does not conflate study groups and other types",()=>{
     const code=route("groups/page.tsx");

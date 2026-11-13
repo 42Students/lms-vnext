@@ -35,7 +35,7 @@ describe("W03 learner project discovery and attention contract", () => {
     expect(service).toContain("listMyProjectInstances");
     expect(service).toContain('"CHANGES_REQUESTED"');
     expect(service).toContain('"DRAFT"');
-    expect(service).toContain('row.memberRole === "LEARNER"');
+    expect(service).toContain('row.memberRole === ROLE.LEARNER');
     expect(service).toContain('row.project.status !==');
     expect(service).toContain('"ARCHIVED"');
   });

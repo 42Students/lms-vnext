@@ -52,7 +52,7 @@ describe("chat12 remaining Students scope and safety",()=>{
  });
  it("TPO-students-49 does not broaden college membership role authorization without parity approval",()=>{
   const exportRoute=s("src/app/api/placements/tpo/students/export/route.ts");
-  expect(exportRoute).toContain('hasMembershipRole(context, "TPO")');
+  expect(exportRoute).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(exportRoute).toContain('result.definitions.registrationsAvailable');
  });
  it("TPO-students-50 retains explicit registration choice ahead of the existing application fallback",()=>{

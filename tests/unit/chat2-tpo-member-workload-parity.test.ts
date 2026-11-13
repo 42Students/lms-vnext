@@ -24,7 +24,7 @@ describe("TPO Team People persisted workloads",()=>{
   expect(legacy).toContain('redirect("/tpo/settings/team")');
   expect(legacy).toContain('tab === "people" || tab === "members" || tab === "roster"');
   expect(page).toContain("getTpoPlacementTeam(context,context.membership.collegeId)");
-  expect(page).toContain('hasMembershipRole(context, "TPO")');
+  expect(page).toContain('hasMembershipRole(context, ROLE.TPO)');
   for(const label of ["TPO memberships","Faculty Coordinators","Student Coordinators"])
     expect(page).toContain(label);
   expect(page).toContain("sources.teamAssignmentsAvailable");

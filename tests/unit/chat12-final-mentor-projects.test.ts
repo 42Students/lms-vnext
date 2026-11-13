@@ -7,8 +7,8 @@ const version="2099-01-01T10:00:00.000Z";
 describe("chat-12 final sprint mentor projects",()=>{
  it("MEN-projects-meetings-20 exposes Edit details on the authorized mentor About tab",()=>{
   const workspace=read("src/components/projects/project-workspace.tsx");
-  expect(workspace).toContain('mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}');
-  expect(workspace).toContain('(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor');
+  expect(workspace).toContain('mode===ROLE.MENTOR&&!readOnly?<MentorProjectAboutEditor project={workspace.project}');
+  expect(workspace).toContain('(mode==="ADMIN"||mode===ROLE.MENTOR)&&!readOnly?<WorkspaceBriefEditor');
   const editor=read("src/components/projects/mentor-project-about-editor.tsx");
   expect(editor).toContain("Edit details");
   expect(editor).toContain("Edit about this project");

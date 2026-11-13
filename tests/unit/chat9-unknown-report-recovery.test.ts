@@ -23,7 +23,7 @@ describe("TPO report unknown-route recovery",()=>{
   expect(code).toContain('title="Unknown report"');
   expect(code).toContain("Back to reports");
   expect(code).toContain('href="/tpo/reports"');
-  expect(code).toContain('hasMembershipRole(context, "TPO")');
+  expect(code).toContain('hasMembershipRole(context, ROLE.TPO)');
   expect(code).toContain('redirect("/dashboard")');
  });
 });

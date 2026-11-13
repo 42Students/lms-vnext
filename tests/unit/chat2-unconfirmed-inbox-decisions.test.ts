@@ -18,7 +18,7 @@ describe("TPO inbox ambiguous legacy behaviours resolved by safer policy",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");
   const model=source("src/modules/placements/placement-team-access-model.ts");
   expect(page).toContain("hasPlacementTeamMembership(context)");
-  expect(model).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+  expect(model).toContain('hasMembershipRole(context,ROLE.COLLEGE_ADMIN)');
   expect(page).not.toContain('action="/api/placements/tpo/team/grant-role"');
  });
 });

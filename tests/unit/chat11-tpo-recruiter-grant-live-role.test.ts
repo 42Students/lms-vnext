@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -15,19 +16,19 @@ const actor:RequestContext={
 
 describe("TPO-settings-audit-GRANT-REVOCATION-09 recruiter access mutations",()=>{
  it("denies disabled and revoked roles even if a college administrator role remains",()=>{
-  expect(hasMembershipRole(actor,"TPO")).toBe(true);
+  expect(hasMembershipRole(actor,ROLE.TPO)).toBe(true);
   const roleChanged:RequestContext={...actor,membership:{...actor.membership!,roles:["COLLEGE_ADMIN"]}};
-  expect(hasMembershipRole(roleChanged,"TPO")).toBe(false);
+  expect(hasMembershipRole(roleChanged,ROLE.TPO)).toBe(false);
   expect(can(roleChanged,"placements.manage",{collegeId,organizationId})).toBe(true);
   const disabled:RequestContext={...actor,user:{...actor.user,platformStatus:"DISABLED"}};
-  expect(hasMembershipRole(disabled,"TPO")).toBe(false);
+  expect(hasMembershipRole(disabled,ROLE.TPO)).toBe(false);
   expect(can(actor,"placements.manage",{collegeId:organizationId,organizationId})).toBe(false);
  });
  it("revalidates persisted TPO before first GRANT insert and before extend/revoke lookup",()=>{
   const source=readFileSync("src/modules/placements/tpo-recruiter-grant-write-service.ts","utf8");
   const transaction=source.indexOf("return getDb().transaction(async (tx) => {");
   const persisted=source.indexOf("assertPersistedPlatformPermission(",transaction);
-  const role=source.indexOf('hasMembershipRole(persisted, "TPO")',persisted);
+  const role=source.indexOf('hasMembershipRole(persisted, ROLE.TPO)',persisted);
   const grant=source.indexOf('if (input.action === "GRANT")',role);
   const firstWrite=source.indexOf("tx.insert(placementTpoCollegeSettings)",grant);
   const lookup=source.indexOf("const [record] = await tx.select(",firstWrite);

@@ -47,7 +47,7 @@ describe("learner/projects round-two gap verification",()=>{
  });
  it("LEARNER-projects-21 shows project team role explanation and roster count",()=>{
   const s=workspace();expect(s).toContain("Project team · Works on assigned tasks and shared submissions");
-  expect(s).toContain('mode==="LEARNER"?workspace.members.map');
+  expect(s).toContain('mode===ROLE.LEARNER?workspace.members.map');
   expect(s).toContain('workspace.members.length + " member"');
  });
  it("LEARNER-projects-34 distinguishes absent and malformed resource links without popups",()=>{

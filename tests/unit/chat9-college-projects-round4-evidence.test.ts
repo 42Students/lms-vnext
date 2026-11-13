@@ -21,7 +21,7 @@ describe("College Projects gap closure round 4",()=>{
   const workspace=source("src/components/projects/project-workspace.tsx");
   expect(workspace).toContain('<WorkspaceBriefEditor');
   expect(workspace).toContain('<CreateProjectResourceControl');
-  expect(workspace).toContain('mode === "MENTOR" &&');
+  expect(workspace).toContain('mode === ROLE.MENTOR &&');
  });
  it("COL-projects-08 exports the scoped visible workspace page with safe CSV and list sizing",()=>{
   const exportPage=source("src/components/projects/project-admin-workspace-page-export.tsx");
