@@ -2,6 +2,8 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool, type PoolConfig } from "pg";
 import { withTenantScope } from "./tenant-pool";
 import { assertTenantScopePoolingSafe } from "./pooling-guard";
+import { assertTenantIsolationEnforced, tenantReadinessIssues } from "./tenant-readiness-policy";
+import { sharedStoreEnabled } from "@/security/shared-store-flag";
 import {
   getDatabaseConnectionConfig,
   getServerEnv,
@@ -165,6 +167,24 @@ export async function checkDatabaseConnection() {
         WHERE r.rolname = current_user
       `);
       assertRuntimeDatabasePrincipal(principal.rows[0]);
+      // Isolation must be switched on, not merely present: row-level security ships inert and the per-request college
+      // setting is applied only with DB_TENANT_SCOPE=on. Fail readiness closed if either was forgotten.
+      const tenant = await client.query<{ rls_mode: string | null; store: string | null }>(
+        "select current_setting('app.rls_mode', true) as rls_mode, to_regclass('public.security_shared_store')::text as store",
+      );
+      const facts = {
+        tenantScopeEnv: process.env["DB_TENANT_SCOPE"],
+        rlsMode: tenant.rows[0]?.rls_mode,
+        sharedStoreEnabled: sharedStoreEnabled(),
+        sharedStoreTablePresent: Boolean(tenant.rows[0]?.store),
+      };
+      try {
+        assertTenantIsolationEnforced(facts);
+      } catch (error) {
+        // The reasons are for the log (names only, never values); the caller only sees the stable code.
+        process.stderr.write(JSON.stringify({ severity: "ERROR", event: "readiness.tenant_isolation", reasons: tenantReadinessIssues(facts) }) + "\n");
+        throw error;
+      }
     }
     const result = await client.query<{
       organizations: string | null;

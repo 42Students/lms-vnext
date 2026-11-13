@@ -16,8 +16,8 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 0.5 docs/planning/CENTRALISATION-IN-PROGRESS.md (what changes, what to use instead, which dirs, ratchet rules)
 
 ## Phase 1: safety nets
-- [ ] 1.1 production readiness startup guard
-- [ ] 1.2a cross-user: quiz attempts and answers
+- [x] 1.1 production readiness: checkDatabaseConnection() now also fails closed unless DB_TENANT_SCOPE=on, app.rls_mode=enforce and the shared-store table exists (src/db/tenant-readiness-policy.ts, pure + 7 unit tests); applies only where the unsafe-role check already applies (production, APP_ENV not dev/test)
+- [x] 1.2a cross-user: quiz attempts (sec-cross-user-quizzes, 7 tests, 2 of 3 guards mutation-checked, third is a redundant layer)
 - [ ] 1.2b cross-user: attendance and parent contacts
 - [ ] 1.2c cross-user: placement offers and recruiter/company data
 - [ ] 1.2d cross-user: project and mentor workspaces
@@ -83,6 +83,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
 
 ## Log (newest first)
+- 2026-11-14: CI security steps merged into one: `vitest run -c vitest.db.config.ts tests/integration/sec-` runs every sec-* suite, so new suites join automatically. tsc is run per phase and per risky step (about 10 minutes); CI typecheck job is the per-push gate.
 - 2026-11-14: Phase 0 complete (0.1-0.5).
 - 2026-11-14: 0.2 and 0.3 done: metrics script, baseline and lint wiring; metrics flip to ENFORCED in scripts/centralisation-metrics.mjs when their module lands.
 - 2026-11-14: owner confirmed GCP and Cloudflare are out of scope; rule added above and to memory.

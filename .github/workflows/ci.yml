@@ -198,14 +198,8 @@ jobs:
         run: npm run db:migrate
       - name: Tenant row-level security acceptance (non-superuser role, inert and enforce modes)
         run: node scripts/rls-tenant-acceptance.mjs
-      - name: Tenant isolation on the real tables (every table forced or classified; non-owner role sees only its college)
-        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-rls-live-catalog.test.ts
-      - name: Uploaded files, learner profiles, gallery images and verification documents cannot cross between people
-        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-cross-user-files.test.ts tests/integration/sec-cross-user-profiles.test.ts
-      - name: Placement applications and assignment submissions cannot cross between people of one college
-        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-cross-user-applications.test.ts tests/integration/sec-cross-user-submissions.test.ts
-      - name: Same-college object access (sessions and addressed notices cannot cross between people)
-        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-same-college-isolation.test.ts
+      - name: Security suites on real tables and real people (tenant isolation, same-college access, applications, submissions, quizzes, files, profiles)
+        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-
       - name: Shared security store acceptance (claims, rate windows, atomicity under concurrency)
         run: node scripts/shared-store-acceptance.mjs
       - name: Read-only PostgreSQL 17 migration/catalog witness
