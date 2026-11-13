@@ -22,7 +22,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.2c cross-user: placement offers and recruiter/company data
   - [x] offers: sec-cross-user-offers (6 tests, owner + staff-read guards mutation-checked); shared helper tests/support/placement-college.ts (sec-cross-user-applications to move onto it in 8.1)
   - [x] recruiters: sec-cross-user-recruiters (7 tests; ownership predicate and resume job-binding mutation-checked; first draft was blind to the binding because the applicant had no resume, fixed)
-- [ ] 1.2d cross-user: project and mentor workspaces
+- [x] 1.2d cross-user: project workspaces, member list, team files, mentor meeting notes (sec-cross-user-projects, 7 tests; membership guards caught when a whole layer is removed, single filters are covered by a second layer)
 - [ ] 1.2e cross-user: notifications and staff inbox
 - [ ] 1.3 export scope tests
 - [ ] 1.4 request-level abuse suite through the wrapper
