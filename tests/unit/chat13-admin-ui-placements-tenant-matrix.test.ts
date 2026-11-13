@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 
@@ -41,7 +42,7 @@ describe("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01 all Super Admin placement directo
   expect(csv).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(csv).toContain("config.loader(context,");
   expect(csv).toContain("pageSize:SUPER_ADMIN_READ_PAGE_SIZE");
-  expect(csv).toContain('"Cache-Control":"private, no-store"');
+  expect(csv).toMatch(CACHE_PIN);
   expect(csv).toContain("SUPER_ADMIN_SCOPED_CSV_CAP");
  });
  it("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-03 central filters never silently include an unrelated candidate",()=>{

@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -69,7 +70,7 @@ describe("learner Course page parity contract", () => {
     expect(route).toContain("presignUrl(");
     expect(route).toContain("expiresSeconds:900");
     expect(route).toContain("status:302");
-    expect(route).toContain('"Cache-Control":"private, no-store"');
+    expect(route).toMatch(CACHE_PIN);
     expect(route).toContain('download');
     expect(player).toContain("<video");
     expect(player).toContain("positionSeconds");

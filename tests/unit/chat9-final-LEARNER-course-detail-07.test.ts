@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -20,6 +21,6 @@ describe("chat-9 final sprint",()=>{
  expect(service).toContain('content.status!=="PUBLISHED"');
  expect(service).toContain("asc(lessonContentMaterials.sequence)");
  expect(service).toContain("object keys");
- expect(route).toContain('Cache-Control":"private, no-store"');
+ expect(route).toMatch(CACHE_PIN);
  });
 });

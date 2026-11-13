@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import type {TpoRecruiterGrantView} from "@/modules/placements/tpo-recruiter-access-model";
@@ -73,7 +74,7 @@ describe("TPO-settings-audit-60 historical recruiter grant Excel and CSV parity"
   expect(route).toContain("exportAll:true");
   expect(route).toContain('gridExportFilename("recruiters", "csv")');
   expect(route).toContain('gridExportFilename("recruiters", "xlsx")');
-  expect(route).toContain("private, no-store");
+  expect(route).toMatch(CACHE_PIN);
   expect(ui).toContain('tpoRecruiterGrantExportHref(query,"xlsx")');
  });
 });

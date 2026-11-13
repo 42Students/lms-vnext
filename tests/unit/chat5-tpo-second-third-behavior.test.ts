@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {
@@ -94,7 +95,7 @@ describe("TPO bounded mutation request contracts",()=>{
   expect(put).toContain("error instanceof TpoBulkBodyError");
   expect(put).toContain("status:error.status");
   expect(put).not.toContain("request.json()");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
  it("PLACEMENTS-SELECTION-BODY-41 maps parser failure on POST, not in the read-only GET route",()=>{
   const source=src("src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts");

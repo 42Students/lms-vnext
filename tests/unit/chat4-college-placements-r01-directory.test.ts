@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -43,8 +44,8 @@ describe("COL-placements-R01 college directory and export behavior",()=>{
   expect(company).toMatch(/export const GET\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
   expect(company).toContain("const context = __actor!");
   expect(interview).toContain("listCollegeInterviewDirectory(await getCurrentRequestContext()");
-  expect(company).toContain("no-store");
-  expect(interview).toContain("no-store");
+  expect(company).toMatch(CACHE_PIN);
+  expect(interview).toMatch(CACHE_PIN);
  });
  it("COL-placements-R01 shows filters, factual drive activity and export actions",()=>{
   const page=source("src/app/(authenticated)/college/companies/page.tsx");

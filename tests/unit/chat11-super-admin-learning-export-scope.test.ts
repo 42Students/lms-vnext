@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {can} from "@/modules/permissions/policy";
@@ -35,7 +36,7 @@ describe("SA-tenants-modules-COURSE-EXPORT-09 authenticated Super Admin CSV only
   expect(source).toContain('type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ"');
   expect(source).toContain("searchParams.getAll(key).length!==1");
   expect(source).toContain('headers:');
-  expect(source).toContain("private, no-store");
+  expect(source).toMatch(CACHE_PIN);
   expect(source).toContain("X-Export-Truncated");
  });
 });

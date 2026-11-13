@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import { describe, expect, it } from "vitest";
 import { exportedMethods, hopSources, read, rel, routeFiles } from "./phase3-scan-helpers";
 
@@ -30,9 +31,9 @@ describe("Phase 3: Super Admin GET responses are private and not cached", () => 
   });
 
   it("the three routes fixed in Phase 3 keep their private no-store header on the success response", () => {
-    expect(read("src/app/api/admin/hr/options/route.ts")).toMatch(/Cache-Control":"private, no-store"/);
-    expect(read("src/app/api/admin/hr/[userId]/route.ts")).toMatch(/Cache-Control": "private, no-store"/);
-    expect(read("src/app/api/admin/onboarding/resolve-preview/route.ts")).toMatch(/Cache-Control":"private, no-store"/);
+    expect(read("src/app/api/admin/hr/options/route.ts")).toMatch(CACHE_PIN);
+    expect(read("src/app/api/admin/hr/[userId]/route.ts")).toMatch(CACHE_PIN);
+    expect(read("src/app/api/admin/onboarding/resolve-preview/route.ts")).toMatch(CACHE_PIN);
   });
 
   it("no admin route opts into static or time-based caching", () => {

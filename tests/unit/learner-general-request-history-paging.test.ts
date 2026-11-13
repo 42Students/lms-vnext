@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoOwnGeneralRequestQuerySchema} from "@/modules/placements/tpo-general-request-model";
@@ -35,7 +36,7 @@ describe("learner's bounded general-request history",()=>{
   expect(route).toContain('params.getAll(key).length>1');
   expect(route).toContain("tpoOwnGeneralRequestQuerySchema.safeParse");
   expect(route).toContain("listOwnTpoGeneralRequestsPage(ctx,filter.data)");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("renders paging, retry, and returns to newest history after send",()=>{

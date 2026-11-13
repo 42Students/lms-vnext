@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -19,7 +20,7 @@ describe("legacy semester-class staffing independent of deliveries",()=>{
   const route=source("src/app/api/academics/semesters/[semesterId]/staffing/route.ts");
   expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("getCollegeTermStaffingReport(");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   const manager=source("src/components/academics/college-term-mapping-manager.tsx");
   expect(manager).toContain("<CollegeTermStaffingReport termId={termId}/>");
   const component=source("src/components/academics/college-term-staffing-report.tsx");

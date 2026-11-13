@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 const read=(p:string)=>readFileSync(p,"utf8");
@@ -61,7 +62,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(schema).toContain("prpr_recruiter_application_uq");
   expect(schema).toContain("prpr_note_ck");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("private, no-store");
+  expect(route).toMatch(CACHE_PIN);
   expect(ui).toContain("Only you can read or change this rating and note.");
   expect(ui).toContain("Clear rating and note");
   expect(job()).toContain("<RecruiterPrivateRatingEditor");

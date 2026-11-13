@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -91,7 +92,7 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   expect(ui).not.toContain("window.confirm(");
   expect(route).toContain("getTpoPublicJoinLinkStatus(");
   expect(route).toMatch(/export const GET\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
-  expect(route).toContain('"Cache-Control":"no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
  it("TPO-companies-R05 canonical list sorts the company's drives newest first",()=>{
   const service=read("src/modules/placements/tpo-companies-view-service.ts");

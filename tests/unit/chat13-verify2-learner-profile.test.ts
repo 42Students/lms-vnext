@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -84,7 +85,7 @@ describe("Lane 13 verification: learner contact, preferences and signed resume",
   expect(catalog).toContain('eq(colleges.status,"ACTIVE")');
   expect(catalog).toContain(".limit(25)");
   expect(route).toContain("getOwnLearnerEducationCatalog(");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   expect(editor).toContain("/api/profile/me/education-config?q=");
   expect(editor).toContain("choices.educationTypes");
   expect(editor).toContain("choices.programs");

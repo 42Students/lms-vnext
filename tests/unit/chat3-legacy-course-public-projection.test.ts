@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {projectLegacyCoursePublic,type CourseProjectionSource} from "@/modules/courses/legacy-course-public-projection";
@@ -40,6 +41,6 @@ describe("course legacy-compatible readonly projection",()=>{
   expect(route).toContain('rawView==="legacy"');
   expect(route).toContain("listCoursesPage(context,collegeId");
   expect(route).toContain("courses.map(projectLegacyCoursePublic)");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
 });

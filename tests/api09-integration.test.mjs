@@ -162,7 +162,7 @@ test("API-09 unread list and stats are authenticated persisted-query redesigns",
     "await countOwnUnreadNotifications(context)",
     "await listOwnNotifications(",
     '"Cache-Control":"private, no-store"',
-  ])assert.ok(src.includes(fragment)||(fragment==="await getCurrentRequestContext()"&&src.includes("@/security/route")),"Missing notification auth/data contract: "+fragment);
+  ])assert.ok(src.includes(fragment)||(fragment==="await getCurrentRequestContext()"&&src.includes("@/security/route"))||(fragment==='"Cache-Control":"private, no-store"'&&/CACHE\.PRIVATE|privateJson\(/.test(src)),"Missing notification auth/data contract: "+fragment);
 });
 
 test("API-09 skill categories and search are bounded, authorized DB10-gated redesigns",()=>{

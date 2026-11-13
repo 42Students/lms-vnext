@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {
@@ -73,6 +74,6 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
   expect(ui).toContain("sync across your signed-in devices");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoSettingsBody(request)");
-  expect(route).toContain("private, no-store");
+  expect(route).toMatch(CACHE_PIN);
  });
 });

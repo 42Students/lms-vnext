@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {describe,expect,it} from "vitest";
@@ -9,7 +10,7 @@ describe("mentor project activity pagination",()=>{
   expect(route).toMatch(/export const GET = route\(\s*\{ auth: "user"/);
   expect(route).toContain("getProjectActivityPage(__ctx,projectId");
   expect(route).toContain("last.cursorOccurredAt");
-  expect(route).toContain("private, no-store");
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toContain("parseLearnerProjectActivityFilters");
   const component=src("src/components/projects/project-activity-filtered-list.tsx");
   expect(component).toContain("Load more activity");

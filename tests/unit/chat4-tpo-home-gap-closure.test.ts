@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -259,7 +260,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(api).toContain("termSchema=z.string().trim().min(2).max(100)");
   expect(api).toContain("hasTpoTooling(context)");
   expect(api).toContain("findTpoPeopleAndCompanies(context,collegeId,q)");
-  expect(api).toContain("Cache-Control");
+  expect(api).toMatch(CACHE_PIN);
   expect(api).toContain("slice(0,5)");
  });
  it("TPO-home-34 polls the actual bell unread count and refreshes on tab focus",()=>{

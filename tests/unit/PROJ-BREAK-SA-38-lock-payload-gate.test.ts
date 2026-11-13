@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {readLimitedProjectLockInput} from "@/modules/projects/admin-lock-request-model";
@@ -38,6 +39,6 @@ describe("PROJ-BREAK-SA-38 bounded streaming submission-lock input",()=>{
   expect(code.indexOf("route(")).toBeLessThan(code.indexOf("readLimitedProjectLockInput(request)"));
   // A malformed payload is rejected with the generic error inside the handler.
   expect(code).toContain('error:"INVALID_REQUEST"');
-  expect(code).toContain('Cache-Control":"private, no-store"');
+  expect(code).toMatch(CACHE_PIN);
  });
 });

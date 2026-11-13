@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -16,7 +17,7 @@ describe("Super Admin cross-college department directory",()=>{
  });
  it("exposes no-tenant-selector read-only route and accessible directory",()=>{
   const route=read("src/app/api/admin/departments/directory/route.ts");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toContain("getAll(key).length!==1");
   const page=read("src/app/(authenticated)/admin/departments/all/page.tsx");
   expect(page).toContain('aria-label="Departments table, scroll for columns"');

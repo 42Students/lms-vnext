@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {collegeApplicationRetentionCutoff} from "@/modules/placements/college-retention-report-policy";
@@ -19,7 +20,7 @@ describe("College Admin 180-day retention disclosure",()=>{
   expect(route).toContain("getCollegeApplicationRetentionReport(context,");
   expect(route).toContain("olderThanDays:180,page:1,pageSize:100");
   expect(route).toContain("olderThanDays:180,page:2,pageSize:100");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).not.toContain("searchParams.get(\"collegeId\")");
  });
  it("uses a real 180-day cutoff and never advertises deletions",()=>{

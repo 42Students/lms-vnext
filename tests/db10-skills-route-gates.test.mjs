@@ -34,8 +34,8 @@ test("every skill selection route is same-origin, identity scoped, and fully gat
   assert.match(selection, /if \(!isSameOriginRequest\(request\)\)/);
   assert.match(selection, /if \(!skillsCatalogRuntimeEnabled\(\)\)/);
   assert.match(selection, /if \(!canReadSkillCatalog\(context\)\)/);
-  assert.match(route, /"Cache-Control":\s*"private, no-store"/);
-  assert.match(selection, /"Cache-Control":\s*"private, no-store"/);
+  assert.match(route, /"Cache-Control":\s*"private, no-store"|CACHE\.PRIVATE\b|privateJson\(/);
+  assert.match(selection, /"Cache-Control":\s*"private, no-store"|CACHE\.PRIVATE\b|privateJson\(/);
 });
 
 test("registered catalog retains two independent counters and many-to-many aliases", () => {

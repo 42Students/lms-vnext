@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {buildCollegeDirectoryCsv,collectCollegeExportRows} from "@/modules/academics/college-directory-export-model";
@@ -134,7 +135,7 @@ describe("UX-G166 route and fixture boundaries",()=>{
    const source=readFileSync(path,"utf8");
    expect(source).toContain('auth: "user"');
    expect(source).toContain("stepUp: true");
-   expect(source).toContain("private, no-store");
+   expect(source).toMatch(CACHE_PIN);
    expect(source).toContain("nosniff");
    expect(source).toContain("text/csv; charset=utf-8");
   }

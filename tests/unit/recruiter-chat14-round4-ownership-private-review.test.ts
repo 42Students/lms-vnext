@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 const source=(path:string)=>readFileSync(path,"utf8");
@@ -201,7 +202,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(route).toContain('status:503,headers');
   expect(route).toContain('if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)');
   expect(route).toContain('status:404,headers');
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
  it("REC-home-drives-41 validates and authorizes private reviews without company-wide notes",()=>{
   const service=source("src/modules/placements/recruiter-private-rating-service.ts");
@@ -214,7 +215,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(service).toContain("new RecruiterPrivateReviewConflict()");
   const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("private, no-store");
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toContain("status:409");
  });
  it("REC-home-drives-41 renders an editable self-only rating and preserves edits on conflict",()=>{

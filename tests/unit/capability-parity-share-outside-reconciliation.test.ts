@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -69,7 +70,7 @@ describe("2026-11-03 source-backed missing-surface triage",()=>{
     expect(exportRoute).toContain("NO_VERIFIED_RESUMES");
     expect(exportRoute).toContain('redirect:"error"');
     expect(exportRoute).toContain("maxZipFiles=20");
-    expect(exportRoute).toContain('Cache-Control":"private, no-store');
+    expect(exportRoute).toMatch(CACHE_PIN);
     expect(companyShareIssueSchema.safeParse({jobId:"not-a-uuid"}).success).toBe(false);
   });
   it("outside-platform drive is reachable from both creation and lifecycle, with a genuine guarded POST",()=>{

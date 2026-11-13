@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -12,7 +13,7 @@ describe("DB04 registered migration 0081 live withdrawal boundary",()=>{
   expect(source).not.toContain("learnerMembershipId:");
   expect(source).not.toContain("submittedSnapshot:");
   expect(source).toContain("STALE_VERSION");
-  expect(source).toContain('Cache-Control":"private, no-store"');
+  expect(source).toMatch(CACHE_PIN);
  });
  it("requires the real migration with the explicit audit action",()=>{
   const sql=readFileSync(join(process.cwd(),

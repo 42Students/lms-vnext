@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,it,expect} from "vitest";
 import {tpoRecruiterGrantCsv,tpoRecruiterGrantExportHref} from "@/modules/placements/tpo-recruiter-grant-export-model";
@@ -18,7 +19,7 @@ describe("TPO recruiter grant final sprint export",()=>{
   const exportRoute=readFileSync("src/app/api/placements/tpo/settings/recruiter-grants/export/route.ts","utf8");
   expect(exportRoute).toContain('gridExportFilename("recruiters", "csv")');
   expect(exportRoute).toContain("listTpoRecruiterAccess(await getCurrentRequestContext()");
-  expect(exportRoute).toContain("private, no-store");
+  expect(exportRoute).toMatch(CACHE_PIN);
   expect(tpoRecruiterGrantExportHref({status:"REVOKED",q:"Example"})).toContain("status=REVOKED");
  });
 });

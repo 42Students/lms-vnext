@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
@@ -30,7 +31,7 @@ describe("TPO general request paged queue contract",()=>{
   expect(route).toContain("Unknown review filter");
   expect(route).toContain("tpoGeneralReviewQuerySchema.safeParse");
   expect(route).toContain("listTpoGeneralRequests(await getCurrentRequestContext(),parsed.data)");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
  it("disables stale destructive actions, avoids out-of-order refresh, and exposes next/history",()=>{
   const panel=src("src/components/placements/tpo-general-requests-panel.tsx");

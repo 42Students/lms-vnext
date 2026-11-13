@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {
@@ -82,7 +83,7 @@ describe("chat-16 reassigned Tracker acceptance, round 2",()=>{
     expect(route).toContain("getBugTrackerIssueForAdmin(context,publicId)");
     expect(route).toContain("anchorAt:issue.report.createdAt.toISOString()");
     expect(route).toContain('minimumSeverity:"WARNING"');
-    expect(route).toContain('"Cache-Control":"private, no-store"');
+    expect(route).toMatch(CACHE_PIN);
   });
 
   it("SA-placements-projects-112 exposes the exact tracker nav and accessible theme control",()=>{
@@ -97,7 +98,7 @@ describe("chat-16 reassigned Tracker acceptance, round 2",()=>{
     expect(route).toContain("isSuperAdmin(context)");
     expect(route).toContain("context.adminScope?.collegeId");
     expect(route).toContain("url.searchParams.getAll(key).length>1");
-    expect(route).toContain('"Cache-Control":"private, no-store"');
+    expect(route).toMatch(CACHE_PIN);
     const explorer=source("src/components/tracker/tracker-live-logs-explorer.tsx");
     expect(explorer).toContain("Live Cloud Logging is not configured.");
     expect(explorer).toContain("Load older");

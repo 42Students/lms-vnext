@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 const read=(file:string)=>readFileSync(file,"utf8");
@@ -32,7 +33,7 @@ describe("REC-home-drives-38 employer-shared private resume grants",()=>{
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toMatch(/export (?:async function|const) POST\b/);
   expect(route).not.toMatch(/export (?:async function|const) GET\b/);
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toContain('error:"RESUME_NOT_AVAILABLE"');
  });
  it("REC-home-drives-38 avoids server-rendering object keys and requests signed link on click",()=>{

@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {tpoReportHasAmbiguousFilters,tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
@@ -32,7 +33,7 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(route).toContain("tpoReportHasRepeatedSearchParams(url.searchParams)");
   expect(route).toContain('{...Object.fromEntries(url.searchParams.entries()),jobId}');
   expect(route).toContain("getTpoDriveOfferRegisterCsv");
-  expect(route).toContain('"Cache-Control":"private, no-store, max-age=0"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).toContain('status:400');
   expect(route).toContain("Invalid report filters. Clear the filters and try again.");
   expect(route).toContain('"X-Content-Type-Options":"nosniff"');

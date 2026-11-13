@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
@@ -21,7 +22,7 @@ describe("TPO-home-33 and TPO-inbox-team-62 live topbar counts",()=>{
   const route=readFileSync("src/app/api/tpo/header-snapshot/route.ts","utf8");
   expect(route).toContain("getTpoPersonalInbox(context");
   expect(route).toContain("countTpoUnreadRecruiterMessages(context)");
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
  it("TPO-home-33 keeps bell local read state consistent with refreshed server revisions",()=>{
   const source=readFileSync("src/components/tpo/tpo-bell-panel.tsx","utf8");

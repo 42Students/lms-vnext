@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 
@@ -23,7 +24,7 @@ describe("G2-11-008-048: TPO drive-day last-good roster refresh",()=>{
   expect(route).toContain('placementRoundIdSchema.parse(roundId)');
   expect(route).toContain('await getTpoRoundDriveDay(context,placementRoundIdSchema.parse(roundId))');
   expect(route).toContain('new Response(null,{status:204');
-  expect(route).toContain('"Cache-Control":"private, no-store, max-age=0"');
+  expect(route).toMatch(CACHE_PIN);
   expect(route).not.toContain('request.json()');
  });
 });

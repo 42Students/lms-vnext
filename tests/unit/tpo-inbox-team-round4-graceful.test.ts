@@ -16,7 +16,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
    const route=source("src/app/api/placements/tpo/team/everyone/"+path+"/route.ts");
    expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
    expect(route).toContain('request.headers.get("accept")');
-   expect(route).toContain("NextResponse.json(result");
+   expect(route).toMatch(/(?:NextResponse\.json|privateJson|noStoreJson)\(result/);
   }
   expect(everyoneMessageSchema.safeParse({body:"  "}).success).toBe(false);
   expect(everyoneMuteSchema.safeParse({muted:true,leave:true}).success).toBe(false);

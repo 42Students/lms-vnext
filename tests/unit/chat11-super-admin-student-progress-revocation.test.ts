@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {parseSuperAdminStudentProgressParams} from "@/modules/courses/super-admin-course-progress-query";
@@ -35,7 +36,7 @@ describe("SA-tenants-modules-COURSE-STUDENTS-10 private learner names survive re
   expect(filters).toBeLessThan(reader);
   expect(source).toContain('const keys=[...search.keys()]');
   expect(source).toContain("parseSuperAdminStudentProgressParams(");
-  expect(source).toContain("private, no-store");
+  expect(source).toMatch(CACHE_PIN);
   expect(source).toContain('X-Content-Type-Options');
  });
 });

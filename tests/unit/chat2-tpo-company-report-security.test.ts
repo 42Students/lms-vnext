@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {companyReportViewSchema,paginateCompanyReport,companyReportViewHref,companyReportHasUserFilters,COMPANY_REPORT_PAGE_SIZE} from "@/modules/placements/tpo-company-report-view-model";
@@ -72,7 +73,7 @@ describe("UX-tpo-reports-company-01 tenant-safe company report and visible CSV p
   expect(s.indexOf("tpoReportHasRepeatedSearchParams(params)")).toBeLessThan(s.indexOf("getPlacementReportWorkspace(context"));
   expect(s).toContain("companyReportViewSchema.safeParse");
   expect(s).toContain('collegeId:context.membership.collegeId');
-  expect(s).toContain('"Cache-Control":"private, no-store"');
+  expect(s).toMatch(CACHE_PIN);
   expect(s).toContain('"X-Content-Type-Options":"nosniff"');
  });
 });

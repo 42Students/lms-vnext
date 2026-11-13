@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {readFileSync} from "node:fs";
 import type {RequestContext} from "@/modules/identity/context";
@@ -82,6 +83,6 @@ describe("LEARNER-COURSE-FILE-EMBARGO-01 private course file read boundary",()=>
   expect(route.indexOf("getLearnerCourseFileReference")).toBeLessThan(route.indexOf("headObject(config,key)"));
   expect(route.indexOf("headObject(config,key)")).toBeLessThan(route.indexOf("presignUrl(config,"));
   expect(route).toContain('expiresSeconds:900');
-  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(route).toMatch(CACHE_PIN);
  });
 });

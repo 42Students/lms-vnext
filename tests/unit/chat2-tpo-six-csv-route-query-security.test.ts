@@ -1,3 +1,4 @@
+import { CACHE_PIN } from "../support/cache-pin";
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
@@ -25,11 +26,11 @@ describe("UX-tpo-last-third-CSV-01 private report export ambiguity and tenant co
   const s=readFileSync(path,"utf8");
   expect(s).toMatch(/tpoReportHasRepeatedSearchParams\((?:params|q)\)/);
   expect(s).toContain('error:"INVALID_QUERY"');
-  expect(s).toContain('status:400');
+  expect(s).toMatch(/status:\s*400/);
   const check=s.indexOf("tpoReportHasRepeatedSearchParams(");
   expect(check).toBeGreaterThan(-1);
   expect(check).toBeLessThan(s.indexOf(service));
-  expect(s).toContain('"Cache-Control":"private, no-store"');
+  expect(s).toMatch(CACHE_PIN);
   expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(s).not.toContain("dangerouslySetInnerHTML");
  });
