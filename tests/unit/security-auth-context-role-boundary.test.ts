@@ -27,7 +27,10 @@ vi.mock("@/auth/e2e-identity",()=>({
 }));
 vi.mock("@/modules/identity/context-service",()=>({resolveRequestContext:vi.fn()}));
 vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
-vi.mock("@/modules/auth/tenant-access",()=>({isTenantAccessAllowed:vi.fn()}));
+vi.mock("@/modules/auth/tenant-access",async(importOriginal)=>{
+ const actual=await importOriginal<typeof import("@/modules/auth/tenant-access")>();
+ return {...actual,isTenantAccessAllowed:vi.fn()};
+});
 
 const user="11111111-1111-4111-8111-111111111111";
 const member="22222222-2222-4222-8222-222222222222";
@@ -76,6 +79,33 @@ describe("authenticated request context never grants an ambiguous membership",()
   expect(await getCurrentRequestContext()).toEqual(selected);
   expect(isTenantAccessAllowed).toHaveBeenCalledOnce();
  });
+ it("scopes a combined recruiter membership to the current college host, not unrelated recruiter grants",async()=>{
+  const selected=requestContext(["COLLEGE_ADMIN"]);
+  const mixed:RequestContext={...selected,recruiter:{
+   userId:user,companyId:"company-a",companyName:"Example",title:null,status:"ACTIVE",
+   grants:[
+    {id:"grant-a",collegeId:college,organizationId:org,collegeName:"Current college",companyRelationshipId:"rel-a"},
+    {id:"grant-b",collegeId:"another-college",organizationId:org,collegeName:"Other college",companyRelationshipId:"rel-b"},
+   ],
+  }};
+  vi.mocked(resolveRequestContext).mockResolvedValue(mixed);
+  const resolved=await getCurrentRequestContext();
+  expect(resolved.membership).toEqual(mixed.membership);
+  expect(resolved.recruiter?.grants.map(grant=>grant.collegeId)).toEqual([college]);
+ });
+
+ it("hides recruiter navigation on a member's college host when the only recruiter grant belongs to another college",async()=>{
+  const selected=requestContext(["COLLEGE_ADMIN"]);
+  const mixed:RequestContext={...selected,recruiter:{
+   userId:user,companyId:"company-a",companyName:"Example",title:null,status:"ACTIVE",
+   grants:[{id:"grant-b",collegeId:"another-college",organizationId:org,collegeName:"Other college",companyRelationshipId:"rel-b"}],
+  }};
+  vi.mocked(resolveRequestContext).mockResolvedValue(mixed);
+  const resolved=await getCurrentRequestContext();
+  expect(resolved.membership).toEqual(mixed.membership);
+  expect(resolved.recruiter).toBeNull();
+ });
+
  it("does not block a separately authorized platform workspace without a college membership",async()=>{
   const platform={...requestContext(["COLLEGE_ADMIN"]),membership:null,
    user:{...requestContext(["COLLEGE_ADMIN"]).user,systemRoles:["SUPER_ADMIN"] as const}};
