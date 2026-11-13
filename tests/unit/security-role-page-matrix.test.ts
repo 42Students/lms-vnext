@@ -35,6 +35,27 @@ function discoverPages(dir:string):string[] {
   });
 }
 const pages=discoverPages(ROOT);
+/** Match Next.js static and dynamic page segments, without treating a
+ * JavaScript source file or sidebar link as proof that a server rendered 200.
+ * This is an inventory crosscheck, including contacts/[contactsTab] etc.
+ */
+function registeredPageMatchesHref(href:string):boolean{
+  const segs=href.split("?")[0]!.split("/").filter(Boolean);
+  return pages.some(page=>{
+    const pattern=page.replace(/\/page\.(tsx|ts|jsx|js)$/,"").split("/");
+    let i=0,j=0;
+    for(;j<pattern.length;j++,i++){
+      const part=pattern[j]!;
+      if(/^\[\[\.\.\.[^\]]+\]\]$/.test(part))return true;
+      if(/^\[\.\.\.[^\]]+\]$/.test(part))return i<segs.length;
+      if(i>=segs.length)return false;
+      if(/^\[[^\]]+\]$/.test(part))continue;
+      if(part!==segs[i])return false;
+    }
+    return i===segs.length;
+  });
+}
+
 const portals=new Set<string>(ROLE_PORTAL_FAMILIES);
 /**
  * The small set of authenticated routes OUTSIDE single-role portals has
@@ -202,6 +223,9 @@ describe("#61/#101 all role portal families against registered App Router pages"
         true,{projectsEnabled:true,placementsEnabled:true,tpoTeamActive:true,recruiterCollegeGrantActive:true});
       expect(links.length,role).toBeGreaterThan(0);
       for(const item of links){
+        expect(registeredPageMatchesHref(item.href),
+          `${role} sidebar link must resolve to a registered static/dynamic App Router page: ${item.href}`)
+          .toBe(true);
         const family=item.href.split("/")[1]!;
         expect(portals.has(family)||SHARED_ROOTS.has(family),
           `${role} unknown route family for ${item.href}`).toBe(true);
