@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne,sql} from "drizzle-orm";
+import {and,eq,isNull,ne,sql} from "drizzle-orm";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import {PeopleServiceError} from "./errors";
@@ -44,7 +44,8 @@ export async function assertAnotherActiveCollegeAdmin(
     .where(and(
       eq(collegeMemberships.id,removedMembershipId),
       eq(collegeMemberships.collegeId,collegeId),
-      eq(collegeMemberships.status,"ACTIVE"),
+      eq(collegeMemberships.status, "ACTIVE"),
+      isNull(collegeMemberships.suspendedAt),
     ))
     .limit(1);
   if(!stillAdmin)return;
@@ -61,6 +62,7 @@ export async function assertAnotherActiveCollegeAdmin(
       eq(collegeMemberships.collegeId, collegeId),
       ne(collegeMemberships.id, removedMembershipId),
       eq(collegeMemberships.status, "ACTIVE"),
+      isNull(collegeMemberships.suspendedAt),
       eq(users.platformStatus, "ACTIVE"),
     ))
     .limit(1);
