@@ -24,9 +24,12 @@ import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
  * Learner A and learner B share a college; a faculty member and the other college's admin are also present.
  * Nobody may read or change another person's device sessions, nor manage or see a notice addressed to someone else.
  */
-const enabled = Boolean(process.env.TEST_DATABASE_URL) && process.env.DB03_ISOLATED_TEST_DATABASE === "1";
-if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
-const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 }) : null;
+// Runs only under the database config (vitest.db.config.ts). Without a disposable database it fails loudly instead of skipping.
+if (!process.env.TEST_DATABASE_URL || process.env.DB03_ISOLATED_TEST_DATABASE !== "1") {
+  throw new Error("sec-same-college-isolation needs TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE=1 (disposable database)");
+}
+assertDb018DisposableTarget(process.env, { serviceBound: true });
+const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 });
 
 const label = "SEC-ISO-" + randomUUID().slice(0, 8);
 
@@ -63,7 +66,7 @@ async function insertSession(s: { id: string; digest: string }, userId: string) 
 const revokedAt = async (id: string) =>
   (await pool!.query("SELECT revoked_at FROM identity_device_sessions WHERE id=$1", [id])).rows[0]?.revoked_at ?? null;
 
-describe.skipIf(!enabled)("same-college object-level isolation — PostgreSQL", () => {
+describe("same-college object-level isolation — PostgreSQL", () => {
   beforeAll(async () => {
     const q = pool!.query.bind(pool);
     await q("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)", [b.user, "sec-iso-" + b.user, label + " Learner B"]);

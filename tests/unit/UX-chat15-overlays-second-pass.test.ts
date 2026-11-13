@@ -22,7 +22,8 @@ describe("UX-chat15-overlays-second-pass scroll, dismiss and motion",()=>{
   expect(s).toContain("Daily digest");
   expect(s).toContain("The sent digest uses up to 100 signatures.");
   expect(s).toContain("Manual sends are rate-limited.");
-  expect(s).toContain("if(pending)return");
+  // A ref lock as well as the pending flag, so a fast double click cannot send twice.
+  expect(s).toContain("if(pending||sendLock.current)return");
   expect(s).toContain('<InlineNotice tone={error?"error":"success"} message={notice}/>');
   expect(s).not.toContain("min-h-10");
   expect(s).toContain("min-h-11");

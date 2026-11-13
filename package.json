@@ -15,6 +15,7 @@
     "security:api-surface": "node scripts/security/api-surface-audit.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:quarantine": "node scripts/run-quarantine.mjs",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",

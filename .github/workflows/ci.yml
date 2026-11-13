@@ -200,6 +200,8 @@ jobs:
         run: node scripts/rls-tenant-acceptance.mjs
       - name: Tenant isolation on the real tables (every table forced or classified; non-owner role sees only its college)
         run: npx vitest run -c vitest.db.config.ts tests/integration/sec-rls-live-catalog.test.ts
+      - name: Same-college object access (sessions and addressed notices cannot cross between people)
+        run: npx vitest run -c vitest.db.config.ts tests/integration/sec-same-college-isolation.test.ts
       - name: Shared security store acceptance (claims, rate windows, atomicity under concurrency)
         run: node scripts/shared-store-acceptance.mjs
       - name: Read-only PostgreSQL 17 migration/catalog witness

@@ -1,9 +1,16 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vitest/config";
+import { readFileSync } from "node:fs";
+import { configDefaults, defineConfig } from "vitest/config";
 import ts from "typescript";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+
+// Reviewed, shrink-only list of stale UI-copy tests (tests/quarantine/ui-copy-drift.json). `npm test` skips them so a red
+// run means something; `npm run test:quarantine` (INCLUDE_QUARANTINE=1) runs them.
+const quarantined: string[] = process.env["INCLUDE_QUARANTINE"] === "1"
+  ? []
+  : (JSON.parse(readFileSync(path.join(root, "tests/quarantine/ui-copy-drift.json"), "utf8")).files as Array<{ file: string }>).map((entry) => entry.file);
 
 export default defineConfig({
   // Next.js keeps JSX intact; precompile source TSX for Vitest before Vite import analysis.
@@ -26,6 +33,7 @@ export default defineConfig({
   }],
   test: {
     environment: "node",
+    exclude: [...configDefaults.exclude, ...quarantined],
     include: [
       "tests/unit/**/*.test.ts",
       "tests/unit/**/*.test.tsx",

@@ -1,6 +1,6 @@
 {
- "note": "Skipped or conditional tests may only go down. Conditional database suites (runIf/skipIf on isolation flags) are counted: they are skipped unless their disposable database is configured.",
- "testFiles": 6917,
+ "note": "Skipped or conditional tests may only go down. Conditional database suites (runIf/skipIf on isolation flags) are counted: they are skipped unless their disposable database is configured. Re-baselined 2026-11-14 from 527 to 556 after review: the 29 added since the previous baseline are Playwright end-to-end specs and PostgreSQL suites that skip only when their seeded database or test-auth harness is absent (E2E_AUTH_SECRET, *_ISOLATED_TEST_DATABASE and similar); none is a disabled test. New security tests must not use skipIf: they throw when their database is missing (see tests/integration/sec-rls-live-catalog.test.ts).",
+ "testFiles": 6988,
  "focusedFiles": 0,
- "skippedOrConditional": 527
+ "skippedOrConditional": 556
 }
