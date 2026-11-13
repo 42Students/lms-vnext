@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { canAccessStaffActivity } from "@/modules/identity/role-portal-policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -7,7 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { SubjectEventHistory } from "@/components/activity/subject-event-history";
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { getActivityEventDetail } from "@/modules/activity/service";
-import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -23,10 +24,7 @@ export default async function ActivityDetailPage({
   params: Promise<{ eventId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (
-    !isSuperAdmin(context) &&
-    !hasMembershipRole(context, "COLLEGE_ADMIN")
-  ) {
+  if (!canAccessStaffActivity(context)) {
     redirect("/dashboard");
   }
 
