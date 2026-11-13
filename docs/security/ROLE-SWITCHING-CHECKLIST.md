@@ -119,7 +119,7 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 
 - [x] 79. Nobody can add or remove a role on their own membership (`MEMBERSHIP_SELF_ROLE_CHANGE`). A College Admin can't remove their own admin role.
 - [x] 80. Suspend, reactivate and end have a protection check in the service and again in the repository.
-- [ ] 81. Removing the last College Admin of a college. Protection mentions administrators; "last admin" not confirmed.
+- [ ] 81. Removing the last College Admin of a college. Repository and Super Admin account-block guards, conflict messages, and disposable PostgreSQL concurrency tests have been committed. Await exact-SHA CI and live-dev read-only verification; direct SQL and unreviewed bulk paths remain outside this guard.
 - [ ] 82. What an admin sees when removing a role from a user who is signed in.
 - [!] 83. Dual approval for sensitive role changes is not built (needs a migration).
 - [ ] 84. Bulk imports that create memberships and roles, and whether they pass the same protections.
@@ -162,3 +162,5 @@ Status (2026-11-13): 103 items — 48 checked against code/tests, 9 known gaps, 
 - **33 — reopened, CI pending:** `hostCollegeScope` resolved an unselected identity, then used a workspace-only host guard; this denied valid member-only accounts on their own college host. Repaired with current active membership choices; negative foreign/inactive cases added. Do not close until the new exact-SHA unit/DB evidence is green.
 - **53 — implementation/tests in progress:** the college-host guard was tightened so a selected College A membership cannot borrow a College B recruiter grant; the request context now narrows recruiter grants to the verified college host. Added unit-level negative tests and an isolated PostgreSQL combined-account fixture. No deployed-browser verification yet; leave unchecked until the latest CI proves both.
 - No GCP changes or live-dev data mutations were performed in this audit work.
+
+- **81 — implementation committed, NOT yet verified/closed:** shared per-college transaction advisory lock and active-replacement check are now used by role removal, membership SUSPEND/END, and Super Admin platform account disable; a disabled or suspended purported replacement does not count. API returns `LAST_COLLEGE_ADMIN` (409); person and platform-block UIs show specific guidance. `tests/integration/security-last-college-admin.test.ts` exercises sole-admin denial, permitted replacement, disabled/suspended exclusions, and concurrent mixed writers. `tests/unit/security-last-college-admin-http.test.ts` covers the HTTP response. CI is pending. Direct SQL, bulk imports and deployed-browser checks have not yet been certified.
