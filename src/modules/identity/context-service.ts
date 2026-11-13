@@ -244,6 +244,10 @@ export async function resolveRequestContext(
     findRecruiterContext(user.id),
   ]);
 
+  // The admin-scope cookie is only meaningful for a platform administrator; for anyone else it is dropped here, once, so no
+  // downstream code can honour a scope the person was never granted.
+  const isPlatformAdmin = assignedSystemRoles.includes("SUPER_ADMIN");
+
   if (!input.activeMembershipId) {
     return {
       user: {
@@ -253,7 +257,7 @@ export async function resolveRequestContext(
         systemRoles: assignedSystemRoles,
       },
       membership: null,
-      adminScope: input.adminScope ?? null,
+      adminScope: isPlatformAdmin ? input.adminScope ?? null : null,
       recruiter,
     };
   }
@@ -308,7 +312,7 @@ export async function resolveRequestContext(
       status: membership.status,
       roles,
     },
-    adminScope: input.adminScope ?? null,
+    adminScope: isPlatformAdmin ? input.adminScope ?? null : null,
     recruiter,
   };
 }

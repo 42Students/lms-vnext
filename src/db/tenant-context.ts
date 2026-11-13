@@ -111,7 +111,9 @@ export function scopeFromActor(actor: ActorLike): TenantScope {
   const platform = Boolean(actor.user.systemRoles?.includes("SUPER_ADMIN")) && !actor.membership;
   return {
     userId: actor.user.id,
-    collegeId: actor.membership?.collegeId ?? actor.adminScope?.collegeId ?? null,
+    // The admin-scope cookie narrows only a platform administrator who has not entered a college workspace. For anyone else it
+    // is an unverified browser value and must never choose the college the database isolates them to.
+    collegeId: actor.membership?.collegeId ?? (platform ? actor.adminScope?.collegeId : null) ?? null,
     // Defensive: a malformed context yields no role (and so no RLS access when enforced), never an exception.
     role: actor.membership?.roles?.[0] ?? (platform ? "SUPER_ADMIN" : null),
     platform,

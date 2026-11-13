@@ -26,7 +26,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.2e cross-user: personal inbox, mark-read, mark-all, staff notices (sec-cross-user-notifications, 6 tests, all three per-user filters mutation-checked)
 - [x] 1.3 export safety: central cell function proven against 17 hidden-prefix formula inputs; FOUND AND FIXED import-issues CSV with no formula protection (src/lib/import-preview.ts); ratchet test blocks any new hand-written CSV quoting (43 existing copies listed, migrate in 5.4). Per-export scope (caller college/role) is covered by route contract A and the per-domain suites; one scope test per export arrives with the pipeline in 5.4
 - [x] 1.4 production-wired route abuse suite (tests/unit/sec-route-abuse.test.ts, 11 tests: 10 cross-site spellings, body bounds, no value echo, no internals leaked, 429 and X-Forwarded-For spoofing; origin check and forwarded-address parsing mutation-checked)
-- [ ] 1.5 admin-scope and role-switch tests
+- [x] 1.5 admin scope and workspace switching: FOUND AND FIXED the admin-scope cookie choosing the database college for a non-platform user with no workspace selected (scopeFromActor) and being carried in the context for everyone (resolveRequestContext); tests: tests/unit/sec-admin-scope.test.ts (8) + tests/integration/sec-scope-and-switching.test.ts (8), all three parts of the fix mutation-checked
 - [ ] 1.6 role-by-route matrix diff check
 
 ## Phase 2: foundations
