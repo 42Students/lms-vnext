@@ -260,6 +260,27 @@ describe("startLogin", () => {
     expect(result.emailFallbackAvailable).toBe(true);
   });
 
+  it("gives a college host a campus-sized per-address budget and keeps the per-contact budgets strict", async () => {
+    const seen: Array<{ perAddress: number; perContact: number; perContactAndAddress: number }> = [];
+    const { deps, repository } = setup();
+    const original = repository.createAttempt.bind(repository);
+    repository.createAttempt = async (input: Parameters<typeof original>[0]) => {
+      seen.push({
+        perAddress: input.rateLimit.perAddress,
+        perContact: input.rateLimit.perContact,
+        perContactAndAddress: input.rateLimit.perContactAndAddress,
+      });
+      return original(input);
+    };
+    await startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps);
+    await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A },
+      deps,
+    );
+    expect(seen[0]).toEqual({ perAddress: 20, perContact: 8, perContactAndAddress: 5 });
+    expect(seen[1]).toEqual({ perAddress: 600, perContact: 8, perContactAndAddress: 5 });
+  });
+
   it("starts with email as the only channel", async () => {
     const { deps, sent } = setup();
     const result = await startLogin(

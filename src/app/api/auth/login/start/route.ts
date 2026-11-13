@@ -9,6 +9,7 @@ import {
 } from "@/modules/auth/http";
 import { startLoginWithRuntime } from "@/modules/auth/runtime";
 import { route } from "@/security/route";
+import { LOGIN_START_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 import { decoyStartResult, isMaskedStartError, padToFloor, uniformStartEnabled } from "@/modules/auth/uniform-start";
 
 export const runtime = "nodejs";
@@ -45,7 +46,7 @@ async function handlePOST(request: Request) {
     request,
     schema,
     "login-start",
-    10,
+    LOGIN_START_PER_IP_PER_MINUTE,
   );
   if (!guarded.ok) return guarded.response;
 

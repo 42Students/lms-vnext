@@ -1,6 +1,7 @@
 import { reportErrorForAlert } from "@/modules/log-alerts/reporter";
 import { createRequestId } from "@/lib/request-id";
 import { privacySafeAuthInfoLogFields } from "./auth-info-field-policy";
+import { redactLogFields } from "./redact";
 
 export type LogSeverity =
   | "DEBUG"
@@ -38,7 +39,8 @@ export function createStructuredLogRecord(
 ): StructuredLogRecord {
   return {
     requestId: typeof fields["requestId"] === "string" ? fields["requestId"] : createRequestId(),
-    ...fields,
+    // Every severity is redacted centrally: database errors echo row values, URLs carry signatures, tokens leak.
+    ...redactLogFields(fields),
     severity,
     event,
     timestamp: now.toISOString(),

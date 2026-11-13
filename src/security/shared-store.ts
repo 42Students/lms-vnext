@@ -3,13 +3,14 @@ import { getDb } from "@/db/client";
 import { allowRequest as allowInMemory } from "@/auth/ip-rate-limit";
 import { createMemoryLimiter } from "@/security/memory-limiter";
 import { createSharedStore } from "@/security/shared-store-core";
+import { sharedStoreEnabled } from "@/security/shared-store-flag";
 
 /**
  * Wiring for the cross-instance security store. Off unless SECURITY_SHARED_STORE=on (the migration must be applied
  * first); when on, a database error never blocks traffic: the call falls back to this process's memory and logs once.
  */
 const store = createSharedStore((query) => getDb().execute(query) as never);
-const enabled = () => process.env["SECURITY_SHARED_STORE"] === "on";
+const enabled = () => sharedStoreEnabled();
 let warned = false;
 function degraded(error: unknown) {
   if (warned) return;

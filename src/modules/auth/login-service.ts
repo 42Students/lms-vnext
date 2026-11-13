@@ -37,6 +37,13 @@ export const MAX_SENDS_PER_CONTACT = 5;
 export const MAX_SENDS_PER_CONTACT_TOTAL = 8;
 /** Per requesting address across all contacts: bounds SMS pumping. */
 export const MAX_SENDS_PER_ADDRESS = 20;
+/**
+ * A verified college host is served from one campus network: thousands of people can share one public
+ * address, so the per-address ceiling there is a coarse backstop only. The per-contact budgets above (and the
+ * per-challenge verification budget) stay strict and are what actually stop guessing. Codes are only ever sent
+ * to numbers and emails of already registered users.
+ */
+export const MAX_SENDS_PER_ADDRESS_ON_COLLEGE_HOST = 600;
 export const SEND_WINDOW_MINUTES = 10;
 export const EMAIL_RESEND_GAP_SECONDS = 30;
 /** Hard cap on email re-sends per challenge (resend_attempts column). */
@@ -442,7 +449,9 @@ export async function startLogin(
       windowMinutes: SEND_WINDOW_MINUTES,
       perContactAndAddress: MAX_SENDS_PER_CONTACT,
       perContact: MAX_SENDS_PER_CONTACT_TOTAL,
-      perAddress: MAX_SENDS_PER_ADDRESS,
+      perAddress: input.tenantCollegeId
+        ? MAX_SENDS_PER_ADDRESS_ON_COLLEGE_HOST
+        : MAX_SENDS_PER_ADDRESS,
     },
   });
   if (!created) {

@@ -5,11 +5,12 @@ import {
   rollNumberStartSchema, startLearnerRollNumberLogin,
 } from "@/modules/auth/roll-number-login-service";
 import { route } from "@/security/route";
+import { LOGIN_ROLL_NUMBER_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 
 export const runtime = "nodejs";
 async function handlePOST(request: Request) {
   const guarded = await guardLoginRequest(request, rollNumberStartSchema,
-    "roll-number-login-start", 6);
+    "roll-number-login-start", LOGIN_ROLL_NUMBER_PER_IP_PER_MINUTE);
   if (!guarded.ok) return guarded.response;
   try {
     const result = await startLearnerRollNumberLogin(

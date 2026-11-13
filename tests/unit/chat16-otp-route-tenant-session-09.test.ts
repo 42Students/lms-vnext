@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { guardLoginRequest, auditLogin, ipTag, loginErrorResponse } from "@/modules/auth/http";
+import { LOGIN_EMAIL_PER_IP_PER_MINUTE, LOGIN_START_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 import {
   startLoginWithRuntime, sendEmailFallbackWithRuntime, verifyLoginWithRuntime,
 } from "@/modules/auth/runtime";
@@ -56,7 +57,7 @@ describe("chat-16 real OTP route handlers: tenant binding, stale tabs and sessio
     expect(startLoginWithRuntime).not.toHaveBeenCalled();
     expect(auditLogin).not.toHaveBeenCalled();
     expect(guardLoginRequest).toHaveBeenCalledWith(
-      expect.any(Request), expect.anything(), "login-start", 10,
+      expect.any(Request), expect.anything(), "login-start", LOGIN_START_PER_IP_PER_MINUTE,
     );
   });
 
@@ -151,7 +152,7 @@ describe("chat-16 real OTP route handlers: tenant binding, stale tabs and sessio
       attemptId, tenantCollegeId: collegeId,
     });
     expect(guardLoginRequest).toHaveBeenLastCalledWith(
-      expect.any(Request), expect.anything(), "login-email", 6,
+      expect.any(Request), expect.anything(), "login-email", LOGIN_EMAIL_PER_IP_PER_MINUTE,
     );
   });
 });

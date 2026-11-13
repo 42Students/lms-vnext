@@ -25,7 +25,7 @@ beforeEach(()=>{
  state.context.mockReset().mockResolvedValue({user:{id:"learner"}});
  state.file.mockReset().mockResolvedValue(key);
  state.config.mockReset().mockReturnValue(config);
- state.head.mockReset().mockResolvedValue({sizeBytes:1024});
+ state.head.mockReset().mockResolvedValue({sizeBytes:1024,contentType:"video/mp4"});
  state.sign.mockReset().mockReturnValue("https://private.example.edu/presigned-file?signature=redacted");
 });
 describe("LEARNER-COURSE-FILE-ROUTE-02 signed learner download security and recovery",()=>{
@@ -55,6 +55,16 @@ describe("LEARNER-COURSE-FILE-ROUTE-02 signed learner download security and reco
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
   expect(response.headers.get("Location")).toContain("https://private.example.edu");
+ });
+ it("never lets an active or unknown stored type render inline",async()=>{
+  for(const contentType of ["text/html","image/svg+xml","application/octet-stream"]){
+   state.sign.mockClear();
+   state.head.mockResolvedValue({sizeBytes:1024,contentType});
+   const response=await GET(request(),params);
+   expect(response.status).toBe(302);
+   const options=state.sign.mock.calls[0]![1] as {query?:Record<string,string>};
+   expect(options.query?.["response-content-disposition"],contentType).toMatch(/^attachment; filename="/);
+  }
  });
  it("denies hidden or scheduled files before any R2 lookup or signing",async()=>{
   state.file.mockResolvedValueOnce(null);

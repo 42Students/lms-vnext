@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool, type PoolConfig } from "pg";
 import { withTenantScope } from "./tenant-pool";
+import { assertTenantScopePoolingSafe } from "./pooling-guard";
 import {
   getDatabaseConnectionConfig,
   getServerEnv,
@@ -52,7 +53,12 @@ function poolConfig(): PoolConfig {
 
 function getPool() {
   // DB_TENANT_SCOPE=on makes every connection carry the request's college/user/role for row-level security.
-  state.pool ??= withTenantScope(new Pool(poolConfig()), process.env["DB_TENANT_SCOPE"] === "on");
+  if (!state.pool) {
+    const config = poolConfig();
+    // Fail closed: per-request tenant settings are unsafe behind a transaction-mode pooler (see pooling-guard.ts).
+    assertTenantScopePoolingSafe("connectionString" in config ? config.connectionString : `postgres://${config.host ?? ""}`);
+    state.pool = withTenantScope(new Pool(config), process.env["DB_TENANT_SCOPE"] === "on");
+  }
   return state.pool;
 }
 

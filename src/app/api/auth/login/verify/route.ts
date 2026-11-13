@@ -16,6 +16,7 @@ import { verifyLoginWithRuntime } from "@/modules/auth/runtime";
 import { getAuthConfig } from "@/modules/auth/config";
 import {LoginError} from "@/modules/auth/login-service";
 import { route } from "@/security/route";
+import { LOGIN_VERIFY_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 
 export const runtime = "nodejs";
 
@@ -57,7 +58,7 @@ async function handlePOST(request: Request) {
     request,
     schema,
     "login-verify",
-    10,
+    LOGIN_VERIFY_PER_IP_PER_MINUTE,
   );
   if (!guarded.ok) return guarded.response;
 

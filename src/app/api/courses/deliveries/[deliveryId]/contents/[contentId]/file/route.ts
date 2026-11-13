@@ -5,6 +5,7 @@ import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
 import {listLessonResourceMaterials,resolveLegacyResourceMaterialId} from "@/modules/courses/lesson-resource-materials-service";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
+import {attachmentDisposition,isInlineSafeContentType} from "@/modules/storage/inline-safe";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
@@ -115,9 +116,11 @@ async function handleGET(request:Request,{params}:RouteContext){
  }catch(error){return apiErrorResponse(error);}
  if(!key)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
  let config:ReturnType<typeof getPrivateR2Config>;
+ let storedContentType:string|null=null;
  try{
   config=getPrivateR2Config();
   const existing=await headObject(config,key);
+  storedContentType=existing?.contentType??null;
   if(!existing||!existing.sizeBytes||existing.sizeBytes<=0)
    return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
  }catch{
@@ -125,7 +128,10 @@ async function handleGET(request:Request,{params}:RouteContext){
    message:"Resource file storage is not allowed"},{status:503,headers:{"Cache-Control":"private, no-store"}});
  }
  const download=values[0]==="1";
- const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:undefined;
+ // Inline only for types that cannot run script (PDF, images, audio, video). HTML, SVG and anything unknown is
+ // always a download, so an uploaded file can never execute from the file host or our own origin.
+ const inlineSafe=isInlineSafeContentType(storedContentType);
+ const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:inlineSafe?undefined:{"response-content-disposition":attachmentDisposition(fileName(displayName??key))};
  let signed:string;
  try{
   signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,...(query === undefined ? {} : {query})});

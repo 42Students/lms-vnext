@@ -16,7 +16,7 @@ const grantBodySchema = z.object({ membershipId: z.string().uuid() }).strict();
 
 /** College admin: who coordinates this course now, who could, and what changed before. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { offeringId } = params;
@@ -31,7 +31,7 @@ export const GET = route(
 
 /** College admin: nominate one of the course's teachers. */
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { offeringId } = params;
@@ -43,7 +43,7 @@ export const PUT = route(
 
 /** College admin: remove the current coordinator. */
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { offeringId } = params;

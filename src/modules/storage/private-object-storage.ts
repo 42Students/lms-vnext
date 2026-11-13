@@ -8,6 +8,7 @@ import {
   replaceObjectMetadata,
 } from "./s3-client";
 import { PrivateObjectStorageError } from "./storage-errors";
+import { attachmentDisposition, isInlineSafeContentType } from "./inline-safe";
 
 export { PrivateObjectStorageError };
 
@@ -321,7 +322,13 @@ export async function createPrivateReadGrant(raw: PrivateReadRequest) {
     key: input.objectKey,
     expiresSeconds: Math.floor(input.expiresInMs / 1000),
     // Prevent private files being cached in an intermediary browser/proxy.
-    query: { "response-cache-control": "private, no-store, max-age=0" },
+    query: {
+      "response-cache-control": "private, no-store, max-age=0",
+      // Active or unknown types are always a download; only PDF, images, audio and video may render inline.
+      ...(isInlineSafeContentType(attestation.contentType)
+        ? {}
+        : { "response-content-disposition": attachmentDisposition(input.objectKey.split("/").pop() ?? "download") }),
+    },
   });
 
   return {

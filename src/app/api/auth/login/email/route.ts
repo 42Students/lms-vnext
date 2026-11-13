@@ -8,6 +8,7 @@ import {
 } from "@/modules/auth/http";
 import { sendEmailFallbackWithRuntime } from "@/modules/auth/runtime";
 import { route } from "@/security/route";
+import { LOGIN_EMAIL_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 
 export const runtime = "nodejs";
 
@@ -29,7 +30,7 @@ async function handlePOST(request: Request) {
     request,
     schema,
     "login-email",
-    6,
+    LOGIN_EMAIL_PER_IP_PER_MINUTE,
   );
   if (!guarded.ok) return guarded.response;
   const candidate=guarded.body.attemptId ?? "";
