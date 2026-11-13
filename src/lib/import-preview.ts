@@ -8,6 +8,7 @@
  * Always give users a per-row error CSV. Never call once per row.
  */
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 
 export type ImportIssue = { row: number; field: string; message: string };
 export type ImportPreview<T> = {
@@ -46,9 +47,8 @@ export async function applyImportAtomically<T, Result>(
   return transaction(preview.records);
 }
 
-function csvCell(value: string | number): string {
-  return `"${String(value).replaceAll('"', '""')}"`;
-}
+// Uploaded cell text can come back in an issue message: the central function neutralises formulas.
+const csvCell = (value: string | number): string => spreadsheetCsvCell(value);
 
 export function importIssuesCsv(issues: readonly ImportIssue[]): string {
   return "Row,Field,Message\r\n" + issues.map(
