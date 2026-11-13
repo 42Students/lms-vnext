@@ -26,7 +26,8 @@ vi.mock("@/components/ui/button",()=>({Button:({children}:{children:ReactNode})=
 vi.mock("@/components/projects/mentor-meeting-reschedule",()=>({
  MentorMeetingReschedule:()=>null,
 }));
-vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor"}})}));
+vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"mentor-membership",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}})}));
+vi.mock("@/modules/projects/mentor-project-recovery-guard",()=>({assertMentorProjectRecoveryAccess:async()=>undefined}));
 vi.mock("@/modules/projects/mentor-board-review-service",()=>({
  getMentorBoardReview:async(_:unknown,query:unknown)=>{
   state.board++;if(state.reject)throw new Error("PROJECT_ACCESS_DENIED");

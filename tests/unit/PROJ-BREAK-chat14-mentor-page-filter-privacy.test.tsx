@@ -19,7 +19,8 @@ vi.mock("@/components/ui/page-header",()=>({
 vi.mock("@/components/ui/empty-state",()=>({
  EmptyState:({title}:{title:string})=><section>{title}</section>,
 }));
-vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor"}})}));
+vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"mentor-membership",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}})}));
+vi.mock("@/modules/projects/mentor-project-recovery-guard",()=>({assertMentorProjectRecoveryAccess:async()=>undefined}));
 vi.mock("@/modules/projects/mentor-board-review-service",()=>({
  getMentorBoardReview:async()=>{
   state.board++;

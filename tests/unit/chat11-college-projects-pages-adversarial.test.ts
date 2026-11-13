@@ -13,7 +13,7 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
   it(`PROJ-BREAK-COL-PAGES-01 /${page} refuses unselected/wrong-college navigation`,()=>{
    const source=readFileSync(base+page,"utf8");
    if(page==="workspaces/new/page.tsx"){
-    expect(source).toContain('redirect("/college/projects/create?mode=teams")');
+    expect(source).toContain('redirect(legacyClassWorkspaceCreateHref(await searchParams))');
     return;
    }
    const scope=source.indexOf("getProjectAdminCollegeId(context)");
@@ -48,7 +48,7 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
  });
  it("does not produce a class team when authority or published templates are unavailable",()=>{
   const alias=readFileSync(base+"workspaces/new/page.tsx","utf8");
-  expect(alias).toContain('redirect("/college/projects/create?mode=teams")');
+  expect(alias).toContain('redirect(legacyClassWorkspaceCreateHref(await searchParams))');
   const source=readFileSync(base+"create/page.tsx","utf8");
   expect(source).toContain('if(mode!=="single")await requireTeamCreationAuthority(context,collegeId)');
   expect(source).toContain("templates.length===0?");

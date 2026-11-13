@@ -11,7 +11,7 @@ const state=vi.hoisted(()=>({
  reject:false,resourcesEnabled:false,riskEnabled:false,complete:false,
 }));
 const projectId="11111111-1111-4111-8111-111111111111";
-const context={user:{id:"mentor",platformStatus:"ACTIVE"}};
+const context=({user:{id:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"mentor-membership",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}});
 vi.mock("next/link",()=>({
  default:({href,children}:{href:string;children:ReactNode})=><a href={href}>{children}</a>,
 }));
@@ -30,6 +30,7 @@ vi.mock("@/components/projects/mentor-project-closeout-control",()=>({
  MentorProjectCloseoutControl:()=> <button>Complete project now</button>,
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>context}));
+vi.mock("@/modules/projects/mentor-project-recovery-guard",()=>({assertMentorProjectRecoveryAccess:async()=>undefined}));
 vi.mock("@/modules/projects/mentor-review-overview-service",()=>({
  getMentorDeliveryReviewOverview:async(_:unknown,query:Record<string,unknown>)=>{
   state.reviewCalls++;

@@ -45,7 +45,9 @@ describe("SA-COURSES-CONTENT-AUDIT-01 assignments and quizzes route filters",()=
     expect(assignmentPage).toContain('lessonsResult.status==="fulfilled"');
     expect(assignmentPage).toContain("Existing assignments remain visible");
     expect(assignmentPage).toContain("Retry loading assignments");
-    expect(assignmentPage).not.toContain("throw dataResult.reason");
+    // Only an authorization failure may be rethrown (to reach the access-denied boundary); any other data failure keeps the retry state.
+    for(const line of assignmentPage.split(/\r?\n/).filter(l=>l.includes("throw dataResult.reason")))
+      expect(line).toContain("instanceof AuthorizationError");
     expect(quizPage).toContain("parseSuperAdminQuizQuery(raw)");
     expect(quizPage).toContain("Promise.allSettled([");
     expect(quizPage).toContain('if(dataResult.status==="rejected")');

@@ -12,6 +12,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { formatDateIst } from "@/lib/format-date";
+import { Disclosure } from "@/components/ui/disclosure";
 import { coordinatorErrorMessage } from "@/modules/courses/coordinator-copy";
 
 export type CoordinatorPanelData = {
@@ -32,12 +34,7 @@ const ACTION_LABEL: Record<string, string> = {
   REVOKED: "Removed as coordinator",
 };
 
-function when(iso: string) {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
-}
+const when = (iso: string) => formatDateIst(iso);
 
 /** College admin: pick, change or remove the one teacher who coordinates this course. */
 export function AdminOfferingCoordinatorPanel({
@@ -136,8 +133,7 @@ export function AdminOfferingCoordinatorPanel({
       )}
 
       {history.length ? (
-        <details className="text-sm text-body">
-          <summary className="cursor-pointer text-muted-foreground">History</summary>
+        <Disclosure title="History" className="text-sm text-body">
           <ul className="mt-2 space-y-1">
             {history.map((item, index) => (
               <li key={index} className="break-words">
@@ -146,7 +142,7 @@ export function AdminOfferingCoordinatorPanel({
               </li>
             ))}
           </ul>
-        </details>
+        </Disclosure>
       ) : null}
 
       <ConfirmDialog

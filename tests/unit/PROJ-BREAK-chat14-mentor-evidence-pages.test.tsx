@@ -25,7 +25,7 @@ vi.mock("@/components/ui/empty-state",()=>({
   <section role="status"><h2>{title}</h2><p>{description}</p>{action}</section>,
 }));
 vi.mock("@/auth/request-context",()=>({
- getCurrentRequestContext:async()=>({user:{id:"mentor"}}),
+ getCurrentRequestContext:async()=>({user:{id:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"mentor-membership",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}}),
 }));
 vi.mock("@/modules/projects/mentor-delivery-version-service",()=>({
  getMentorDeliveryVersion:async()=>{

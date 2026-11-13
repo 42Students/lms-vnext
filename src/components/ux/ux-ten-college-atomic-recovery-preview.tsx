@@ -1,4 +1,6 @@
 "use client";
+
+import { Heading } from "@/components/ui/heading";
 import { useState, type ComponentType } from "react";
 import G030 from "@/app/(authenticated)/college/batch-promotion/error";
 import G031 from "@/app/(authenticated)/college/companies/error";
@@ -32,10 +34,10 @@ const syntheticError = Object.assign(new Error("Private fixture error: tenant-se
 export function UXTenCollegeAtomicRecoveryPreview() {
   const [counts,setCounts]=useState<Record<string,number>>({});
   return <section aria-label="Atomic College Admin recovery" className="min-w-0 space-y-6">
-    <h2 className="text-xl font-semibold">Atomic College Admin route recovery</h2>
+    <Heading level={2} className="text-xl font-semibold">Atomic College Admin route recovery</Heading>
     {rows.map(({id,Boundary})=><section key={id} aria-label={id+" atomic recovery"}
       className="min-w-0 space-y-3 border-b border-border pb-5">
-      <h3 className="text-sm font-semibold">{id}</h3>
+      <Heading level={3} className="text-sm font-semibold">{id}</Heading>
       <Boundary error={syntheticError}
         reset={()=>setCounts(current=>({...current,[id]:(current[id]??0)+1}))}/>
       <p role="status">{id} retry count: {counts[id]??0}</p>

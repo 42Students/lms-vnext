@@ -107,7 +107,7 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
       const source = readFileSync(route, "utf8");
       if(route.endsWith("/workspaces/new/page.tsx")){
         expect(source).toContain("redirect(");
-        expect(source).toContain("/college/projects/create");
+        expect(source).toContain("legacyClassWorkspaceCreateHref");
         continue;
       }
       expect(source, route).toContain("getProjectAdminCollegeId(context)");

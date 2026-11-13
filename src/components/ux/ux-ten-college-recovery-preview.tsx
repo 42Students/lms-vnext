@@ -1,4 +1,6 @@
 "use client";
+
+import { Heading } from "@/components/ui/heading";
 import { useState, type ComponentType } from "react";
 import G030 from "@/app/(authenticated)/college/batch-promotion/error";
 import G031 from "@/app/(authenticated)/college/college-profile/error";
@@ -35,18 +37,18 @@ export function UXTenCollegeRecoveryPreview() {
   const [counts,setCounts]=useState<Record<string,number>>({});
   return <div className="min-w-0 space-y-8">
     {examples.map(({id,label,Boundary})=><section key={id} aria-label={label+" recovery"} className="min-w-0 space-y-3 border-b border-border pb-6">
-      <h2 className="text-lg font-semibold">{id} · {label}</h2>
+      <Heading level={2} className="text-lg font-semibold">{id} · {label}</Heading>
       <Boundary error={syntheticError} reset={()=>setCounts(previous=>({...previous,[id]:(previous[id]??0)+1}))}/>
       <p role="status">{id} retry count: {counts[id]??0}</p>
     </section>)}
     <section aria-label="Course progress unknown failure" className="min-w-0 space-y-3 border-b border-border pb-6">
-      <h2 className="text-lg font-semibold">Course progress — unexpected failure</h2>
+      <Heading level={2} className="text-lg font-semibold">Course progress — unexpected failure</Heading>
       <CollegeCourseProgressError error={privateCourseError}
         reset={()=>setCounts(previous=>({...previous,unknownCourse:(previous.unknownCourse??0)+1}))}/>
       <p role="status">Unknown course retry count: {counts.unknownCourse??0}</p>
     </section>
     <section aria-label="Course progress metadata failure" className="min-w-0 space-y-3 border-b border-border pb-6">
-      <h2 className="text-lg font-semibold">Course progress — metadata failure</h2>
+      <Heading level={2} className="text-lg font-semibold">Course progress — metadata failure</Heading>
       <CollegeCourseProgressError error={metadataCourseError}
         reset={()=>setCounts(previous=>({...previous,metadataCourse:(previous.metadataCourse??0)+1}))}/>
       <p role="status">Metadata course retry count: {counts.metadataCourse??0}</p>

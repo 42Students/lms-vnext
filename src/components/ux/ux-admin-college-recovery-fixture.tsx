@@ -1,5 +1,9 @@
 "use client";
 
+import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+
 import { useMemo, useState, type ComponentType } from "react";
 import Case0 from "@/app/(authenticated)/admin/placements/drives/error";
 import Case1 from "@/app/(authenticated)/admin/placements/hiring/error";
@@ -61,21 +65,20 @@ export function UXAdminCollegeRecoveryFixture() {
 
   return (
     <main className="mx-auto min-w-0 w-full max-w-4xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-semibold">Admin and college recovery acceptance</h1>
+      <Heading level={1} className="text-2xl font-semibold">Admin and college recovery acceptance</Heading>
       <p className="text-sm text-muted-foreground">
         Synthetic error only: no accounts, placement records or tenant information are loaded.
       </p>
-      <label className="flex min-w-0 max-w-md flex-col gap-2 text-sm font-medium" htmlFor="recovery-route">
+      <Label htmlFor="recovery-route" stack className="min-w-0 max-w-md">
         Route to inspect
-        <select
+        <Select
           id="recovery-route"
-          className="min-h-11 w-full rounded-md border border-border bg-surface px-3"
           value={routeId}
           onChange={event => { setRouteId(event.target.value); setRetries(0); }}
         >
           {routes.map(route => <option key={route.id} value={route.id}>{route.label}</option>)}
-        </select>
-      </label>
+        </Select>
+      </Label>
       <p data-testid="recovery-count" role="status">Retry count: {retries}</p>
       <section aria-label="Selected error recovery" className="min-w-0 max-w-full rounded-lg border border-border p-4">
         <SelectedError key={routeId} error={fakeError} reset={() => setRetries(value => value + 1)} />

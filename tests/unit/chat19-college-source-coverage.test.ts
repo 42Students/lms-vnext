@@ -62,7 +62,8 @@ describe("chat-19 all /college route entry point source coverage", () => {
     ];
     for (const file of files) {
       const source = readFileSync(file, "utf8");
-      expect(source).toContain("/college/projects");
+      // The legacy aliases build their target in a reviewed helper (see legacy-college-redirect-helpers.test.ts).
+      expect(/\/college\/projects|legacy\w+Href\(/.test(source)).toBe(true);
       expect(source).not.toContain('href="//');
     }
     const projects = readFileSync(files[0], "utf8");

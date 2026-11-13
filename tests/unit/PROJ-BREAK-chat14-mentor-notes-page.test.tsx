@@ -19,7 +19,7 @@ vi.mock("@/components/projects/mentor-meeting-notes-editor",()=>({
  MentorMeetingNotesEditor:({projectId,meetingId}:{projectId:string;meetingId:string})=>
   <form data-editor-for={projectId+":"+meetingId}><label>Meeting outcome<input/></label></form>,
 }));
-vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor"}})}));
+vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:async()=>({user:{id:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"mentor-membership",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}})}));
 vi.mock("@/modules/projects/mentor-meeting-notes-service",()=>({
  getMentorMeetingNotes:async(_:unknown,params:{projectId:string;meetingId:string})=>{
   state.receivedProjectId=params.projectId;state.receivedMeetingId=params.meetingId;

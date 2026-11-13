@@ -16,7 +16,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
 
   it("COL-ux-redirect-02 legacy workspace list resolves to one canonical Projects list", () => {
     const source = read(root + "/projects/workspaces/page.tsx");
-    expect(source).toContain('redirect("/college/projects"+');
+    expect(source).toContain('redirect(legacyCollegeWorkspacesListHref(await searchParams))');
     const destination = read(root + "/projects/page.tsx");
     expect(destination).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   });

@@ -12,6 +12,13 @@ describe("UX-learn-redirect-alias-coverage-01 canonical learner entrypoints",()=
   it(`UX-learn-alias ${alias} uses canonical feature page instead of a blank duplicate UI`,()=>{
    const src=read(alias);
    expect(src).toContain('import { redirect } from "next/navigation"');
+   if(target==="/learn/allAssignments"){
+    // Validated alias with a recoverable invalid-link state instead of a blind redirect.
+    expect(src).toContain("learnerAssignmentsLegacyAliasHref");
+    expect(src).toContain("redirect(target)");
+    expect(src).toContain('retryHref="/learn/allAssignments"');
+    return;
+   }
    expect(src).toContain(`redirect("${target}")`);
    expect(src).not.toContain("<PageHeader");
    expect(src).not.toContain("return <div");

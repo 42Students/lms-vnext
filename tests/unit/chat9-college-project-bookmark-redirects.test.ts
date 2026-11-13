@@ -5,8 +5,8 @@ describe("legacy College Admin workspace deep-link continuity",()=>{
   const root=join(process.cwd(),"src/app/(authenticated)/college/projects");
   it("redirects stale Workspaces list bookmarks to the canonical list",()=>{
     const src=readFileSync(join(root,"workspaces/page.tsx"),"utf8");
-    expect(src).toContain('redirect("/college/projects"+(target.size?"?"+target.toString():""))');
-    expect(src).toContain('const target=new URLSearchParams()');
+    expect(src).toContain('redirect(legacyCollegeWorkspacesListHref(await searchParams))');
+    expect(src).toContain('legacyCollegeWorkspacesListHref');
     expect(existsSync(join(root,"page.tsx"))).toBe(true);
   });
   it("preserves workspace ID and section under the canonical scoped route",()=>{

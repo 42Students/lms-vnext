@@ -43,6 +43,13 @@ describe("legacy learner route contract", () => {
 
     for (const [relativePath, target] of aliases) {
       const content = fs.readFileSync(path.join(process.cwd(), relativePath), "utf8");
+      if (target === "/learn/allAssignments") {
+        // Validated alias: forwards only a well-formed course and page, otherwise shows a recoverable invalid-link state.
+        expect(content).toContain("learnerAssignmentsLegacyAliasHref");
+        expect(content).toContain("redirect(target)");
+        expect(content).toContain('retryHref="/learn/allAssignments"');
+        continue;
+      }
       expect(content).toContain(`redirect("${target}")`);
     }
   });
