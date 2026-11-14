@@ -82,9 +82,10 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 8.2 docs/security/ENVIRONMENT-MATRIX.md generated from src/config (136 variables, exact on-values, harness switches marked never-in-production) by scripts/gen-env-matrix.ts; tests/unit/sec-env-matrix.test.ts fails when it is stale
 - [x] 8.3 docs/planning/centralisation-before-after-2026-11-14.md: 35 metrics before and after, 31 enforced ratchets
 - [x] 8.4 docs/security/WHERE-TO-CHANGE.md (one edit location per concern, with its guard test), centralisation before/after report, memory note overnight-centralisation-program updated with state, gotchas and open items
-- [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
+- [x] 8.5 final gate on 95a54a01c2: LF unit suite (8 pin repairs rerun, not whole suite), 14 sec-* DB suites 114/114, node:test sweep no new failures, tsc, npm run lint chain, main CI green (all 17+ jobs). Other workflows red from first record (UX-G030-G040, UX-G161, Recruiter/Faculty/Mentor prototype acceptance, DB19-P28) are NOT shown to be caused by this program
 
 ## Log (newest first)
+- 2026-11-14: all phases worked through; main CI green on 95a54a01c2. Items marked [~] are NOT built (see each line); built-but-not-migrated items are listed in docs/planning/centralisation-before-after-2026-11-14.md.
 - 2026-11-14: Phase 1 complete (1.1-1.6). Two real defects found and fixed on the way: import-issues CSV had no formula protection; the admin-scope cookie could choose the database college of a non-platform user. Running the Phase 1 gate (tsc, all sec-* DB suites, LF unit suite, CI).
 - 2026-11-14: CI security steps merged into one: `vitest run -c vitest.db.config.ts tests/integration/sec-` runs every sec-* suite, so new suites join automatically. tsc is run per phase and per risky step (about 10 minutes); CI typecheck job is the per-push gate.
 - 2026-11-14: Phase 0 complete (0.1-0.5).
