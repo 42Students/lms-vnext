@@ -4,6 +4,7 @@ import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { internalRoute } from "@/security/internal-route";
 import { credentialMatches } from "@/security/internal-route-core";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export const isValidTickSecret = credentialMatches;
 export const POST = internalRoute(
   {
     name: "internal.alerts.tick",
-    credential: { kind: "header", header: "x-internal-alerts-key", secretEnv: "INTERNAL_ALERT_TICK_SECRET" },
+    credential: jobCredential("internal.alerts.tick"),
     emptyBody: true,
     denied: { status: 403, body: { message: "Not authorized." } },
     invalid: { message: "Invalid request." },

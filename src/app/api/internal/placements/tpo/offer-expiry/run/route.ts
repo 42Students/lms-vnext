@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { runTpoOfferExpiryTick } from "@/modules/operations/tpo-offer-expiry-worker";
 import { internalRoute } from "@/security/internal-route";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const POST = internalRoute(
   {
     name: "internal.tpo.offer-expiry.run",
-    credential: { kind: "header", header: "x-tpo-scheduler-key", secretEnv: "TPO_NOTICE_SCHEDULER_SECRET" },
+    credential: jobCredential("internal.tpo.offer-expiry.run"),
     emptyBody: true,
     denied: { status: 403, body: { error: "FORBIDDEN" } },
     invalid: { error: "INVALID_REQUEST" },

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { deliverDueTpoNotices } from "@/modules/announcements/tpo-notice-delivery-service";
 import { internalRoute } from "@/security/internal-route";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const POST = internalRoute(
   {
     name: "internal.tpo.notices.deliver",
-    credential: { kind: "header", header: "x-tpo-scheduler-key", secretEnv: "TPO_NOTICE_SCHEDULER_SECRET" },
+    credential: jobCredential("internal.tpo.notices.deliver"),
     emptyBody: true,
     denied: { status: 403, body: { error: "FORBIDDEN" } },
     invalid: { error: "INVALID_REQUEST" },

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { releaseDueStaffNotifications } from "@/modules/activity/notification-service";
 import { internalRoute } from "@/security/internal-route";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const POST = internalRoute(
   {
     name: "internal.notifications.release",
-    credential: { kind: "bearer", secretEnv: "NOTIFICATION_RELEASE_TOKEN" },
+    credential: jobCredential("internal.notifications.release"),
     emptyBody: true,
     denied: { status: 401, body: { error: "UNAUTHORIZED" } },
     invalid: { error: "INVALID_REQUEST" },

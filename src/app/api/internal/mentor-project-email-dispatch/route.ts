@@ -3,6 +3,7 @@ import { mentorProjectEmailWorkerReady, runMentorProjectEmailDispatchBatch }
   from "@/modules/projects/mentor-project-email-dispatch-worker";
 import { internalRoute } from "@/security/internal-route";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const POST = internalRoute(
   {
     name: "internal.mentor-project-email-dispatch",
-    credential: { kind: "bearer", secretEnv: "MENTOR_PROJECT_EMAIL_WORKER_TOKEN" },
+    credential: jobCredential("internal.mentor-project-email-dispatch"),
     emptyBody: true,
     denied: { status: 403, body: { error: "FORBIDDEN" } },
     invalid: { error: "INVALID_REQUEST" },

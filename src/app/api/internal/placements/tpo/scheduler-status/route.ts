@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getTpoScheduledJobLeaseHealth } from "@/modules/operations/tpo-scheduled-job-health";
 import { internalRoute } from "@/security/internal-route";
 
+import { jobCredential } from "@/security/jobs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const GET = internalRoute(
   {
     name: "internal.tpo.scheduler-status",
-    credential: { kind: "header", header: "x-tpo-scheduler-key", secretEnv: "TPO_NOTICE_SCHEDULER_SECRET" },
+    credential: jobCredential("internal.tpo.scheduler-status"),
     denied: { status: 403, body: { error: "FORBIDDEN" } },
     invalid: { error: "INVALID_REQUEST" },
   },

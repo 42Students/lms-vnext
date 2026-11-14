@@ -12,6 +12,7 @@ import { internalRoute } from "@/security/internal-route";
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
 import { CACHE } from "@/security/responses";
+import { jobCredential } from "@/security/jobs";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":CACHE.NONE};
@@ -49,9 +50,7 @@ async function handlePOST(request:Request){
  }
 }
 // Names of the deployment variable and request header that carry the scheduler credential (names only, no values).
-const WORKER_ENV = "TPO_REMINDER_SCHEDULER_SECRET";
-const WORKER_HEADER = "x-tpo-reminder-key";
 export const POST = internalRoute(
-  { name: "internal.placements.tpo.interview-evening", credential: { kind: "header", header: WORKER_HEADER, secretEnv: WORKER_ENV }, emptyBody: true, denied: { status: 403, body: { error: "FORBIDDEN" } } },
+  { name: "internal.placements.tpo.interview-evening", credential: jobCredential("internal.placements.tpo.interview-evening"), emptyBody: true, denied: { status: 403, body: { error: "FORBIDDEN" } } },
   ({ request }) => handlePOST(request),
 );
