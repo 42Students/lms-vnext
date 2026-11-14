@@ -30,13 +30,9 @@ import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 const uuid = z.string().uuid();
 const ROSTER_PAGE_SIZE = 50;
-function csvCell(value: string | null | undefined): string {
-  const text = String(value ?? "");
-  const safe = /^[=+@\-\t\r]/.test(text) ? "'" + text : text;
-  return '"' + safe.replace(/"/g, '""') + '"';
-}
 const href = (slotId: string, offeringId: string) =>
   "/college/electives/" + slotId + "/offerings/" + offeringId + "/roster";
 async function scoped(slotId: string, offeringId: string) {

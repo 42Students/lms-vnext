@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import type {SuperAdminReadRow} from "@/modules/admin-ui/super-admin-read-directory-model";
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 export function AdminScopedCsvControl({href,filename,visibleFacultyRows}:{
  href:string;filename:string;visibleFacultyRows?:readonly SuperAdminReadRow[];
 }){
@@ -9,10 +10,6 @@ export function AdminScopedCsvControl({href,filename,visibleFacultyRows}:{
  const [error,setError]=useState<string|null>(null);
  /** Legacy six-column roster exports authorized visible rows only.
   * The separate server export keeps its full-matching 250-row cap. */
- function csvCell(value:string){
-  const safe=/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*[=+@-]/u.test(value)?"'"+value:value;
-  return '"'+safe.replaceAll('"','""')+'"';
- }
  function visibleFacultyCsv(){
   if(!visibleFacultyRows)return null;
   const columns=["Name","Mobile","Email","Type","Gender","Status"];

@@ -7,13 +7,10 @@ import {listSuperAdminContentDirectory} from "@/modules/courses/super-admin-cont
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
-function csvCell(value:unknown):string{
- const string=value==null?"":String(value);
- return '"'+(/^[\s]*[=+@-]/.test(string)?"'"+string:string).replaceAll('"','""')+'"';
-}
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;

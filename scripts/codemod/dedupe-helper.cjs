@@ -53,7 +53,8 @@ function findDefinitions(text) {
   return out;
 }
 
-const files = execSync("git ls-files src", { encoding: "utf8" }).split("\n").filter((f) => /\.(ts|tsx)$/.test(f) && f !== importFrom.replace("@/", "src/") + ".ts");
+const only = process.env.ONLY ? process.env.ONLY.split(",") : null;
+const files = execSync("git ls-files src", { encoding: "utf8" }).split("\n").filter((f) => /\.(ts|tsx)$/.test(f) && f !== importFrom.replace("@/", "src/") + ".ts" && (!only || only.includes(f)));
 let changed = 0;
 const unmatched = [];
 for (const file of files) {
@@ -76,9 +77,9 @@ for (const file of files) {
     removed++;
   }
   if (!removed) continue;
-  const already = new RegExp(`import\\s*\\{[^}]*\\b${name}\\b[^}]*\\}\\s*from\\s*["']${importFrom.replace(/[/]/g, "\\/")}["']`).test(text);
+  const already = !process.env.IMPORT_AS && new RegExp(`import\\s*\\{[^}]*\\b${name}\\b[^}]*\\}\\s*from\\s*["']${importFrom.replace(/[/]/g, "\\/")}["']`).test(text);
   if (!already) {
-    const line = `import { ${name} } from "${importFrom}";`;
+    const line = process.env.IMPORT_AS ? `import { ${process.env.IMPORT_AS} as ${name} } from "${importFrom}";` : `import { ${name} } from "${importFrom}";`;
     const imports = [...text.matchAll(/^import\s[\s\S]*?\sfrom\s+["'][^"']+["'];?\s*$|^import\s+["'][^"']+["'];?\s*$/gm)];
     if (imports.length) {
       const last = imports[imports.length - 1];

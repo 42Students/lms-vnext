@@ -23,6 +23,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istIsoDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 function adminInterviewsHref(...args:Parameters<typeof driveInterviewsHref>){
  return driveInterviewsHref(...args)
   .replace("/college/placements/","/admin/placements/")
@@ -112,12 +113,6 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     ?href+(href.includes("?")?"&":"?")+"conflictsOnly=1":href;
   const conflictHref=conflictsOnly
     ?refreshHref:refreshHref+(refreshHref.includes("?")?"&":"?")+"conflictsOnly=1";
-  const csvCell=(value:string|number|null|undefined)=>{
-    const raw=String(value??"");
-    // Prevent spreadsheet formula execution when exported text is opened.
-    const safe=/^\s*[=+\-@]/.test(raw)?"'"+raw:raw;
-    return '"'+safe.replaceAll('"','""')+'"';
-  };
   const appointmentCsv=[
     ["Appointment ID","Application ID","Round ID","Start (UTC)","Duration (minutes)",
       "Mode","Venue","Panel","Status"].map(csvCell).join(","),

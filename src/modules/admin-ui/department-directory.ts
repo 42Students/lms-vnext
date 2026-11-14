@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 /**
  * W06 presentational contracts for the legacy Departments directory.
  * Data is already scoped and permission-checked server-side; this module
@@ -60,14 +61,6 @@ export function pageDepartmentRows(
     total: rows.length,
     items: rows.slice((currentPage - 1) * size, currentPage * size),
   };
-}
-
-function csvCell(value: string | number | null | undefined) {
-  const raw = value === null || value === undefined ? "" : String(value);
-  // Excel and LibreOffice execute cells starting with =,+,-,@, including
-  // those prefixed by whitespace or control characters. Prefix as text.
-  const safe = /^[\s\u200b]*[=+\-@]/u.test(raw) ? "'" + raw : raw;
-  return `"${safe.replaceAll('"', '""')}"`;
 }
 
 export function departmentRowsCsv(

@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 export type SuperAdminCalendarRound={
  id:string;roundId:string|null;jobId:string|null;jobTitle:string|null;
  title:string;companyName:string;status:string;kind:string;
@@ -21,10 +22,6 @@ export function potentialRoomConflicts(rows:readonly SuperAdminCalendarRound[]){
   }
  }
  return conflicted;
-}
-function csvCell(value:string){
- const safe=/^\s*[=+@-]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
 }
 export function superAdminInterviewCsv(rows:readonly SuperAdminCalendarRound[]){
  const headers=["Candidate","Round","Company","Drive","Department","Type","Status","Starts at (IST)","Mode","Interviewer","Venue","Conflict"];

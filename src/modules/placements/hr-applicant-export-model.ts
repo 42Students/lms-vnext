@@ -1,4 +1,4 @@
-import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
 import type { SharedApplicant } from "./hr-job-applicants-model";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
@@ -8,9 +8,6 @@ const HEADER = [
   "Screening", "Submitted (IST)", "Contact",
 ] as const;
 
-function csvCell(raw: string) {
- return spreadsheetCsvCell(raw);
-}
 
 export function buildHrApplicantCsv(rows: readonly SharedApplicant[], total: number) {
   const safeRows = rows.slice(0, HR_APPLICANT_EXPORT_CAP);
