@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { legacyRedirects } from "./src/lib/legacy-routes";
 import { BASE_SECURITY_HEADERS, PRIVATE_API_HEADERS } from "./src/security/headers";
 
 const nextConfig: NextConfig = {
@@ -7,24 +8,8 @@ const nextConfig: NextConfig = {
   // The image build's type check runs out of memory on GitHub runners; CI's typecheck job still gates this.
   typescript: { ignoreBuildErrors: process.env.SKIP_BUILD_TYPECHECK === "1" },
   async redirects() {
-    // Retired mentor paths remain safe for old bookmarks; no token handoff.
-    return [
-      { source: "/mentor/profile", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/contacts", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/contacts/:path*", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/allQuizzes", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/fileExplorer", destination: "/mentor/projects", permanent: false },
-      // Legacy faculty bookmarks must resolve before authorization on /teacher/courses.
-      { source: "/teacher/fileExplorer", destination: "/teacher/courses", permanent: false },
-      { source: "/mentor/courses", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/courses/:path*", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/quizzes", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/quizzes/:path*", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/allQuizzes/:path*", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/fileExplorer/:path*", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/files", destination: "/mentor/projects", permanent: false },
-      { source: "/mentor/files/:path*", destination: "/mentor/projects", permanent: false },
-    ];
+    // Retired paths live in one table (src/lib/legacy-routes.ts) with a removal date each.
+    return legacyRedirects();
   },
   async headers() {
     return [
