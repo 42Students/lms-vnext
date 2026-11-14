@@ -14,7 +14,8 @@ import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
 import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const slotInput = z.object({
   collegeId: uuid,
   programId: uuid,

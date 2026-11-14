@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerClosingSoonQuerySchema = z.literal("1");
 /** A seven-day IST calendar window, including the current day and its next
  * seven local dates. India has a fixed UTC+05:30 offset (no DST).
@@ -36,8 +37,8 @@ export const LEGACY_LEARNER_JOB_SEARCH_CROSSWALK = {
 export const learnerLegacyTypeaheadSchema=z.strictObject({
  q:z.string().trim().max(150).default(""),
  limit:z.coerce.number().int().min(0).max(100).default(15),
- departmentId:z.string().uuid().optional(),
- programId:z.string().uuid().optional(),
+ departmentId:zUuid.optional(),
+ programId:zUuid.optional(),
  jobType:z.string().trim().min(1).max(100).optional(),
 });
 

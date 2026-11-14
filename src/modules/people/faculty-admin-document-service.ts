@@ -15,7 +15,8 @@ import {facultySelfSectionPatchSchema,updateFacultyProfileSection} from "./facul
 import {PeopleServiceError} from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
-const targetSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const targetSchema=zUuid;
 type DocumentRow={profile_document:unknown;profile_document_version:number};
 
 async function requireFacultyTarget(
@@ -101,10 +102,10 @@ export async function patchFacultyDocumentForAdmin(
  * self-profile editing. A known receipt UUID never authorizes its own read;
  * the current Faculty document must still reference that same receipt. */
 const evidenceRead=z.strictObject({
- receiptId:z.uuid(),
+ receiptId:zUuid,
  purpose:z.enum(["AADHAAR","PAN","EDUCATION_CERTIFICATE","CERTIFICATION",
    "EXPERIENCE_CERTIFICATE","OFFER_LETTER"]),
- entryId:z.uuid().optional(),
+ entryId:zUuid.optional(),
 });
 export async function openFacultyDocumentForAdmin(
  context:RequestContext,membershipIdRaw:unknown,inputRaw:unknown,
@@ -181,7 +182,7 @@ const adminReceiptPurpose=z.enum([
 ]);
 type AdminReceiptPurpose=z.infer<typeof adminReceiptPurpose>;
 const adminReceiptKey=z.strictObject({
- purpose:adminReceiptPurpose,entryId:z.uuid().optional(),
+ purpose:adminReceiptPurpose,entryId:zUuid.optional(),
 });
 const adminBeginReceipt=adminReceiptKey.extend({
  contentType:z.enum(["application/pdf","image/jpeg","image/png","image/webp"]),

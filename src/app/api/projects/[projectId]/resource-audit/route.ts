@@ -6,10 +6,11 @@ import {getProjectResourceAuditPage} from "@/modules/projects/workspace-view-ser
 import {z} from "zod";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const cursorSchema=z.object({
   beforeTime:z.iso.datetime().optional(),
-  beforeId:z.string().uuid().optional(),
+  beforeId:zUuid.optional(),
 }).strict().refine(value=>Boolean(value.beforeTime)===Boolean(value.beforeId));
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

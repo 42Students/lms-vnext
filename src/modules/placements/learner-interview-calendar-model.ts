@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerInterviewCalendarInputSchema = z.object({
-  applicationId: z.string().uuid(),
-  roundId: z.string().uuid(),
+  applicationId: zUuid,
+  roundId: zUuid,
   companyName: z.string().trim().min(1).max(200),
   roleTitle: z.string().trim().min(1).max(200),
   roundName: z.string().trim().min(1).max(200),

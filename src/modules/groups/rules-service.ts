@@ -14,7 +14,8 @@ import {
   type GroupRuleCriteria,
 } from "./rule-evaluator";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const inputSchema=z.object({
   criteria:groupRuleCriteriaSchema,
   autoRefresh:z.boolean().default(false),

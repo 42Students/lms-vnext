@@ -7,6 +7,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {TpoPrepError,assignTpoPrepCourse,listTpoPrepCourseOptions} from "@/modules/placements/tpo-prep-assignment-service";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -25,11 +26,11 @@ export const POST = route(
     try {
 const payload=await boundedRequestJson(request) as unknown;
 const base=z.strictObject({
-   offeringId:z.uuid().optional(),courseId:z.uuid().optional(),
-   membershipIds:z.array(z.uuid()).min(1).max(100).optional(),
-   learnerIds:z.array(z.uuid()).min(1).max(100).optional(),
+   offeringId:zUuid.optional(),courseId:zUuid.optional(),
+   membershipIds:z.array(zUuid).min(1).max(100).optional(),
+   learnerIds:z.array(zUuid).min(1).max(100).optional(),
    dueAt:z.iso.datetime({offset:true}).nullable().optional(),
-   assessmentId:z.union([z.uuid(),z.number().int().positive()]).nullable().optional(),
+   assessmentId:z.union([zUuid,z.number().int().positive()]).nullable().optional(),
   }).safeParse(payload);
 if(!base.success)
    return NextResponse.json({error:"INVALID_PREP_SELECTION",details:base.error.flatten()},

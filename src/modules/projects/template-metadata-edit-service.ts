@@ -10,9 +10,10 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { ProjectsServiceError } from "./errors";
 import { templateMetadataEditSchema, templateMetadataEditDecision } from "./template-metadata-edit-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function editSuperAdminTemplateMetadata(context: RequestContext, rawId: unknown, rawInput: unknown) {
   requirePermission(context, "project-template.manage");
-  const id = z.uuid().parse(rawId);
+  const id = zUuid.parse(rawId);
   const input = templateMetadataEditSchema.parse(rawInput);
   return getDb().transaction(async tx => {
     const [locked] = await tx.select({ template: projectTemplates,

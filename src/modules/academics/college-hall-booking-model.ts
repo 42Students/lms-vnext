@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 const date=z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value=>{
   const start=new Date(value+"T00:00:00+05:30");
   return Number.isFinite(start.getTime())&&
@@ -6,8 +7,8 @@ const date=z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value=>{
 },"Valid IST calendar date required");
 const time=z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/);
 export const collegeHallBookingSchema=z.strictObject({
-  sectionId:z.string().uuid(),
-  facultyMembershipId:z.string().uuid().nullable(),
+  sectionId:zUuid,
+  facultyMembershipId:zUuid.nullable(),
   date,
   from:time,to:time,
   title:z.string().trim().min(1).max(160),

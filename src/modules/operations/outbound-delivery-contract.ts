@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Shared W06 outbound intent. Producers own permission checks; this contract
  * is not an authorization shortcut or a send API.
@@ -88,10 +89,10 @@ const mergeVariables = z.object({
 const offsetInstant = z.iso.datetime({ offset: true });
 
 const intentSchema = z.object({
-  organizationId: z.string().uuid(),
-  collegeId: z.string().uuid(),
+  organizationId: zUuid,
+  collegeId: zUuid,
   /** One stable producer-issued UUID per logical invitation/reminder event. */
-  sourceEventId: z.string().uuid(),
+  sourceEventId: zUuid,
   channel: z.enum(OUTBOUND_CHANNELS),
   templateKey: z.enum(OUTBOUND_TEMPLATE_KEYS),
   recipient: z.string().trim().min(3).max(320),

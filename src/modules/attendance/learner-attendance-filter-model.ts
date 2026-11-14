@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerAttendanceMonthSchema = z.string().regex(/^(20\d{2}|21\d{2})-(0[1-9]|1[0-2])$/);
-const deliverySchema = z.string().uuid();
+const deliverySchema = zUuid;
 
 /** UTC instants belong to the College calendar month in IST, regardless of device timezone. */
 export function learnerAttendanceIstMonth(value: string | Date): string {

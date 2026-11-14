@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const verificationReviewInput=z.strictObject({
- learnerMembershipId:z.string().uuid(),
+ learnerMembershipId:zUuid,
  section:z.enum(["EDUCATION","IDENTITY"]),
  expectedVersion:z.number().int().min(1),
  action:z.enum(["VERIFY","SEND_BACK"]),

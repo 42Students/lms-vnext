@@ -20,6 +20,7 @@ import {
 } from "./college-drive-applications-model";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 const LEGACY_CSV_EXPORT_CAP=20_000;
 function pattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
@@ -241,9 +242,9 @@ export const legacyCollegeApplicationsQuerySchema=z.object({
  status:z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  q:z.string().trim().max(100).default(""),
- departmentId:z.string().uuid().optional(),
- programId:z.string().uuid().optional(),
- cohortId:z.string().uuid().optional(),
+ departmentId:zUuid.optional(),
+ programId:zUuid.optional(),
+ cohortId:zUuid.optional(),
 }).strict();
 
 export async function listLegacyCollegeDriveApplications(

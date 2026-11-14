@@ -8,6 +8,7 @@ import {z} from "zod";
 import { readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge } from "@/modules/people/faculty-profile-request-body";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -54,7 +55,7 @@ export const POST=PATCH;
 const deleteInput=z.strictObject({
  section:z.enum(["languages","education","certifications","experiences","skills",
   "publications","awards"]),
- id:z.string().uuid(),
+ id:zUuid,
  expectedVersion:z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
 });
 export const DELETE = route(

@@ -7,6 +7,7 @@ import { collegeAdminSessionDisplay, listCollegeAdminSessions, revokeCollegeAdmi
 import { readBoundedJsonRequest } from "@/lib/request-body";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type RouteContext = {params:Promise<{collegeId:string}>};
 async function handleGET(request:Request,{params}:RouteContext){
@@ -19,7 +20,7 @@ async function handleGET(request:Request,{params}:RouteContext){
    [...new Set(rawParams.keys())].map(key=>[key,rawParams.getAll(key)]),
   );
   const {userId:[userId]}=z.strictObject({
-   userId:z.array(z.uuid()).length(1),
+   userId:z.array(zUuid).length(1),
   }).parse(raw);
   // Legacy numeric faculty IDs and adminType are not trusted as canonical
   // identities. The target must be a verified, college-scoped user UUID.
@@ -27,7 +28,7 @@ async function handleGET(request:Request,{params}:RouteContext){
   // Raw SQL results are surfaced as unknown records by the DB driver.
   // Validate the session projection before formatting its sensitive fields.
   const sessionRow=z.object({
-   id:z.uuid(),device_name:z.string().nullable(),user_agent:z.string().nullable(),
+   id:zUuid,device_name:z.string().nullable(),user_agent:z.string().nullable(),
    ip_address:z.string().nullable(),last_seen_at:z.union([z.date(),z.string()]),
    created_at:z.union([z.date(),z.string()]),expires_at:z.union([z.date(),z.string()]),
   });
@@ -49,7 +50,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
  try{
   const _parsed=await readBoundedJsonRequest(request,8192);
   if(!_parsed.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const input=z.strictObject({userId:z.uuid(),confirm:z.literal(true)}).parse(_parsed.value);
+  const input=z.strictObject({userId:zUuid,confirm:z.literal(true)}).parse(_parsed.value);
   // Unlike the legacy bodyless revoke endpoint, explicit target UUID and
   // confirmation guard against cross-college or accidental sign-outs.
   const result=await revokeCollegeAdminSessions(await getCurrentRequestContext(),(await params).collegeId,input.userId);

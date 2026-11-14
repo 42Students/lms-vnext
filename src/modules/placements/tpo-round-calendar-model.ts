@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoRoundCalendarMutationSchema = z.object({
   confirmed: z.literal(true),
   acknowledgedBlockedDate:z.boolean().optional(),
-  roundId: z.string().uuid(),
+  roundId: zUuid,
   expectedUpdatedAt: z.iso.datetime({ offset: true }).transform(value=>new Date(value).toISOString()),
   action: z.enum(["SCHEDULE", "CANCEL"]),
   localDateTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/).optional(),

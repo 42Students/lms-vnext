@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyStudentDetailParamsSchema = z.object({
-  deliveryId: z.string().uuid(),
-  membershipId: z.string().uuid(),
+  deliveryId: zUuid,
+  membershipId: zUuid,
 }).strict();
 
 export function findAuthorizedFacultyStudent<T extends { membershipId: string }>(

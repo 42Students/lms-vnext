@@ -10,6 +10,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {loadCourseScope} from "@/modules/courses/scope";
 import {legacyCourseMetadataPreview} from "@/modules/courses/legacy-course-metadata-preview";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":CACHE.PRIVATE,Vary:"Cookie"} as const;
@@ -19,7 +20,7 @@ export const GET = route(
     const context = __actor!;
     try {
 const {courseId}=params;
-const id=z.string().uuid().parse(courseId);
+const id=zUuid.parse(courseId);
 const scope=await loadCourseScope(id);
 requirePermission(context,"courses.manage",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,

@@ -1,14 +1,15 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Bounded typed edit-history cursor. This is not the Past meetings list;
  * it can be wired only after DB07 meeting history migration is registered.
  * The caller must still prove project-level read permission in the DB query. */
 export const projectMeetingHistoryQuerySchema = z.strictObject({
- projectId: z.string().uuid(),
+ projectId: zUuid,
  meetingKey: z.string().trim().min(1).max(120),
  limit: z.coerce.number().int().min(1).max(50).default(25),
  beforeCreatedAt: z.iso.datetime({offset:true}).optional(),
- beforeId: z.string().uuid().optional(),
+ beforeId: zUuid.optional(),
 }).superRefine((query,ctx)=>{
  if(Boolean(query.beforeCreatedAt)!==Boolean(query.beforeId)){
   ctx.addIssue({code:"custom",path:["beforeId"],

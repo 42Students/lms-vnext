@@ -21,6 +21,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 function currentMonth() {
   return createDateFormatter("en-CA", {
     timeZone: DEFAULT_TIME_ZONE,
@@ -54,9 +55,9 @@ export default async function CollegeAttendancePage({
     </div>;
   }
   const parsed = z.object({
-    deliveryId: z.uuid().optional(),
-    sectionId: z.uuid().optional(),
-    courseId: z.uuid().optional(),
+    deliveryId: zUuid.optional(),
+    sectionId: zUuid.optional(),
+    courseId: zUuid.optional(),
     allCourses: z.enum(["1"]).optional(),
     month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   }).safeParse(await searchParams);

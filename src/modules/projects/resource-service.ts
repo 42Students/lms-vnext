@@ -44,6 +44,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function mapResourceConstraint(error: unknown) {
   if (["project_resources_project_sequence_uq",
        "project_resources_project_key_uq"].includes(postgresConstraintName(error)??"")) {
@@ -529,10 +530,10 @@ export async function archiveProjectResource(
  * authorized project; a stale/partial array cannot silently lose an item.
  */
 export const projectResourceReorderSchema=z.strictObject({
-  orderIds:z.array(z.string().uuid()).min(1).max(250).refine(
+  orderIds:z.array(zUuid).min(1).max(250).refine(
     ids=>new Set(ids).size===ids.length,{message:"Resource order contains duplicates"},
   ),
-  expectedOrderIds:z.array(z.string().uuid()).min(1).max(250).optional(),
+  expectedOrderIds:z.array(zUuid).min(1).max(250).optional(),
 });
 export async function reorderProjectResources(
   context:RequestContext,projectIdInput:string,rawInput:unknown,

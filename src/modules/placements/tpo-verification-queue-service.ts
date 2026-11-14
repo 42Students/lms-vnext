@@ -15,6 +15,7 @@ import {submittedMarksheets} from "@/modules/verification/queue-mark-sheets";
 import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {verificationAttentionFlags} from "@/modules/verification/attention-flags";
 import {tpoVerificationStatuses,tpoVerificationWaitingDateRange,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
+import { zUuid } from "@/lib/schema-primitives";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
 export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery,memberIds?:readonly string[]):Promise<{
@@ -163,7 +164,7 @@ export async function getTpoVerificationHistory(
 ):Promise<Array<{section:string;action:string;actorName:string|null;
  note:string|null;createdAt:Date;priorVersion:number;nextVersion:number}>>{
  const collegeId=await requireTpoBatchActor(ctx);
- const learnerMembershipId=z.string().uuid().parse(learnerMembershipIdInput);
+ const learnerMembershipId=zUuid.parse(learnerMembershipIdInput);
  const [setting,grant]=await Promise.all([
   getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
    .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1),

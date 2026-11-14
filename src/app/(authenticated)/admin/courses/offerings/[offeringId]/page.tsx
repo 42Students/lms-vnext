@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveSuperAdminOfferingDetail } from "@/modules/admin-ui/super-admin-offering-detail";
 import { AdminOfferingLearningPage } from "@/components/courses/admin-offering-learning-page";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function SuperAdminOfferingLearningPage({
   params,
   searchParams,
@@ -21,7 +22,7 @@ export default async function SuperAdminOfferingLearningPage({
   const { offeringId } = await params;
   if (!(await resolveSuperAdminOfferingDetail(context, offeringId))) notFound();
   const requestedDeliveryId = (await searchParams)["deliveryId"];
-  const deliveryId = typeof requestedDeliveryId === "string" && z.uuid().safeParse(requestedDeliveryId).success
+  const deliveryId = typeof requestedDeliveryId === "string" && zUuid.safeParse(requestedDeliveryId).success
     ? requestedDeliveryId : null;
 
   return (

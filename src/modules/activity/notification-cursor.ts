@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const cursorSchema = z.object({
   beforeCreatedAt: z.iso.datetime({ offset: true }),
-  beforeId: z.string().uuid(),
+  beforeId: zUuid,
 }).strict();
 
 /** Invalid or incomplete URL cursors are rejected, not silently ignored. */

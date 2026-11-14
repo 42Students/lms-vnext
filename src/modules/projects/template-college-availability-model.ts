@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { templateAssignmentMatchesScope, type TemplateAssignmentReadScope } from "./template-assignment-read-scope";
+import { zUuid } from "@/lib/schema-primitives";
 export const templateCollegeAvailabilityQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ASSIGNED", "UNASSIGNED"]).default("ALL"),
@@ -22,7 +23,7 @@ export function projectTemplateCollegeAvailability(
     items: matching.slice((page - 1) * 10, page * 10) };
 }
 export function templateCollegeAvailabilityHref(templateId: string, rawQuery: unknown) {
-  const id = z.uuid().parse(templateId);
+  const id = zUuid.parse(templateId);
   const query = templateCollegeAvailabilityQuerySchema.parse(rawQuery);
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);

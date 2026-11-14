@@ -11,6 +11,7 @@ import {enrichTpoOfferFacts} from "./tpo-offer-academic-enrichment";
 import {requirePlacementManageScope} from "./scope";
 import {offerRegisterQuery,offerRegisterCsvQuery,projectOfferRegister,tpoDriveOfferRegisterCsv} from "./tpo-drive-offer-register-model";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknown){
  const member=context.membership;
  if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
@@ -41,7 +42,7 @@ export async function getTpoDriveOfferRegisterCsv(context:RequestContext,raw:unk
 export async function listTpoLearnerOffers(
  context:RequestContext,rawMembershipId:unknown,
 ){
- const membershipId=z.uuid().parse(rawMembershipId);
+ const membershipId=zUuid.parse(rawMembershipId);
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
     !hasMembershipRole(context,ROLE.TPO))
@@ -74,7 +75,7 @@ export async function listTpoLearnerOffers(
 export async function getTpoLatestOfferForApplication(
  context:RequestContext,rawApplicationId:unknown,
 ){
- const applicationId=z.uuid().parse(rawApplicationId);
+ const applicationId=zUuid.parse(rawApplicationId);
  if(!context.membership||!hasMembershipRole(context,ROLE.TPO)||
     context.membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
@@ -87,7 +88,7 @@ export async function getTpoLatestOfferForApplication(
 export async function listTpoJobLearnerOffers(
  context:RequestContext,rawJobId:unknown,rawMembershipId:unknown,
 ){
- const jobId=z.uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const rows=await listTpoLearnerOffers(context,rawMembershipId);
  return rows.filter(row=>row.jobId===jobId);
 }

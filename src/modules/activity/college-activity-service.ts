@@ -9,6 +9,7 @@ import { getActivityEventDetail, listActivityEvents, groupActivityEvents } from 
 import { z } from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 async function requireCollegeActivity(context: RequestContext): Promise<string> {
   if(isSuperAdmin(context)){
     // A Super Admin must explicitly select one active college before viewing
@@ -67,7 +68,7 @@ export async function listCollegeActivity(context: RequestContext, raw: unknown)
 }
 
 export async function getCollegeActivityDetail(context: RequestContext, rawId: unknown) {
-  const id = z.string().uuid().parse(rawId);
+  const id = zUuid.parse(rawId);
   await requireCollegeActivity(context);
   return getActivityEventDetail(context, id);
 }

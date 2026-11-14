@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** V1 supported subset: reject unsupported legacy JSON criteria rather than silently ignoring them. */
 export const groupRuleCriteriaSchema = z.object({
-  allowedProgramIds: z.array(z.string().uuid()).max(100).default([]),
-  allowedCohortIds: z.array(z.string().uuid()).max(200).default([]),
+  allowedProgramIds: z.array(zUuid).max(100).default([]),
+  allowedCohortIds: z.array(zUuid).max(200).default([]),
   minCgpa: z.number().min(0).max(10).nullable().default(null),
   maxActiveBacklogs: z.number().int().min(0).nullable().default(null),
   allowedPassingYears: z.array(z.number().int().min(1900).max(2150)).max(50).default([]),

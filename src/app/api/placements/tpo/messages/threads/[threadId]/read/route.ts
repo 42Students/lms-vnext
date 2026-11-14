@@ -8,13 +8,14 @@ import {listThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-mes
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
 import { noStoreJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 const confirm=z.strictObject({confirmed:z.literal(true)});
 export const runtime="nodejs";
 /** POST is the only TPO read acknowledgement; GET remains read-only. */
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body=confirm.safeParse(await boundedRequestJson(request).catch(()=>null));
- const id=z.string().uuid().safeParse((await params).threadId);
+ const id=zUuid.safeParse((await params).threadId);
  if(!body.success||!id.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,ROLE.TPO))

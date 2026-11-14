@@ -1,7 +1,8 @@
 import {z} from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorMeetingRescheduleParamsSchema=z.object({
-  projectId:z.string().uuid(),meetingId:z.string().uuid(),
+  projectId:zUuid,meetingId:zUuid,
 }).strict();
 export const mentorMeetingRescheduleSchema=z.object({
   startsAt:z.iso.datetime({offset:true}),

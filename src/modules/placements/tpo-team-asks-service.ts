@@ -12,6 +12,7 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoTeamAskActionSchema,tpoTeamAskCanTransition,tpoTeamAskCreateSchema} from "./tpo-team-asks-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Action-needed conflict for a verified member missing from a private thread.
  * The HTTP handler must serialize the safe IDs with a 409 ADD_PEOPLE response.
  */
@@ -307,7 +308,7 @@ export async function getTpoTeamAskSummary(context:RequestContext){
   limited:items.length===200};
 }
 export async function lookupTpoTeamAsk(context:RequestContext,askId:string){
- if(!z.string().uuid().safeParse(askId).success)
+ if(!zUuid.safeParse(askId).success)
   throw new Error("TEAM_ASK_NOT_FOUND");
  const [item]=await scopedTeamAskQuery(context,{view:"all",askId});
  if(!item)throw new Error("TEAM_ASK_NOT_FOUND");

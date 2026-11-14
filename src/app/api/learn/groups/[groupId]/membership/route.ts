@@ -7,6 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {joinGroup,leaveGroup} from "@/modules/groups/service";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,7 +15,7 @@ export const POST = route(
     const context = actor!;
     if(!hasMembershipRole(context,ROLE.LEARNER)||!context.membership)throw new AuthorizationError("academics.read");
     const {groupId}=params;
-    const id=z.uuid().parse(groupId);
+    const id=zUuid.parse(groupId);
     const input=z.strictObject({action:z.enum(["JOIN","LEAVE"])}).parse(await boundedRequestJson(request));
     const membership=input.action==="JOIN"?
    await joinGroup(context,id,context.membership.id,"SELF"):

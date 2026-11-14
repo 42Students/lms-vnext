@@ -8,6 +8,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { requireLearnerNotificationsAccess } from "./learner-notifications-access";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** No section/class enrollment is required for membership-scoped notices.
  * A learner without current classes still receives authorized college and
  * batch announcements; only class-specific feeds may be empty.
@@ -52,7 +53,7 @@ export async function requirePersistedLearnerNotificationMembership(
 export async function canOwnLearnerReceiveClassNotice(
  context:RequestContext,rawSectionId:unknown,
 ):Promise<boolean>{
- const sectionId=z.string().uuid().parse(rawSectionId);
+ const sectionId=zUuid.parse(rawSectionId);
  const member=await requirePersistedLearnerNotificationMembership(context);
  const [row]=await getDb().select({id:sectionEnrollments.id})
   .from(sectionEnrollments)

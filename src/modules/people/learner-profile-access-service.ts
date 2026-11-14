@@ -7,11 +7,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ownLearnerProfilePrincipalMatches} from "./learner-profile-access-model";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function requireOwnLearnerProfileAccess(context:RequestContext){
   const member=context.membership;
   if(!member)throw new AuthorizationError("profile.self.manage");
   requirePermission(context,"profile.self.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
-  const membershipId=z.uuid().parse(member.id);
+  const membershipId=zUuid.parse(member.id);
   const [row]=await getDb().select({membershipId:collegeMemberships.id,userId:collegeMemberships.userId,
     collegeId:collegeMemberships.collegeId,organizationId:colleges.organizationId,
     status:collegeMemberships.status,platformStatus:users.platformStatus,role:membershipRoles.role,
@@ -33,7 +34,7 @@ export async function requireOwnLearnerProfileAccess(context:RequestContext){
 export async function requireStaffLearnerProfileReadAccess(
  context:RequestContext,rawTargetMembershipId:unknown,
 ){
- const id=z.uuid().parse(rawTargetMembershipId);
+ const id=zUuid.parse(rawTargetMembershipId);
  const actor=context.membership;
  if(context.user.platformStatus!=="ACTIVE"||!actor||actor.status!=="ACTIVE")
   throw new AuthorizationError("people.manage");

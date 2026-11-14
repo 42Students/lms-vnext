@@ -11,6 +11,7 @@ import {
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 const projectKeySchema = z
   .string()
   .trim()
@@ -267,7 +268,7 @@ export const projectTemplateBlueprintSchema = z
     });
   });
 
-export const projectTemplateIdSchema = z.string().uuid();
+export const projectTemplateIdSchema = zUuid;
 export const projectTemplateVersionSchema = z.number().int().min(1);
 
 export const createProjectTemplateInputSchema = z
@@ -349,11 +350,11 @@ export type DuplicateProjectTemplateInput = z.infer<
   typeof duplicateProjectTemplateInputSchema
 >;
 
-export const projectInstanceIdSchema = z.string().uuid();
+export const projectInstanceIdSchema = zUuid;
 
 export const createProjectInstanceInputSchema = z
   .object({
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
     templateId: projectTemplateIdSchema,
     slug: projectKeySchema,
     title: z.string().trim().min(1, "Title is required").max(160, "Title must be 160 characters or fewer"),
@@ -363,10 +364,10 @@ export const createProjectInstanceInputSchema = z
     dueLabel: z.string().trim().max(80).optional(),
     blocker: z.string().trim().max(4000).optional(),
     nextAction: z.string().trim().max(4000).optional(),
-    primaryMentorMembershipId: z.string().uuid().optional(),
-    sectionId: z.string().uuid().optional(),
+    primaryMentorMembershipId: zUuid.optional(),
+    sectionId: zUuid.optional(),
     initialStatus: z.enum(["PLANNED","ACTIVE"]).default("PLANNED"),
-    learnerMembershipIds: z.array(z.string().uuid()).max(500).default([]),
+    learnerMembershipIds: z.array(zUuid).max(500).default([]),
   })
   .strict().superRefine((v,ctx)=>{
     if(v.initialStatus==="ACTIVE"&&!v.primaryMentorMembershipId)
@@ -379,7 +380,7 @@ export type CreateProjectInstanceInput = z.infer<
   typeof createProjectInstanceInputSchema
 >;
 
-export const projectMemberIdSchema = z.string().uuid();
+export const projectMemberIdSchema = zUuid;
 
 export const projectMemberCandidateQuerySchema = z
   .object({
@@ -395,7 +396,7 @@ export const projectMemberCandidateQuerySchema = z
 
 export const addProjectMemberInputSchema = z
   .object({
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     role: z.enum(PROJECT_MEMBER_ROLES),
     isPrimary: z.boolean().default(false),
     roleKind: z.enum(["LEARNER","MENTOR","CO_MENTOR","OBSERVER","REVIEWER","QA"]).optional(),
@@ -462,7 +463,7 @@ export const projectMentorCandidateQuerySchema = z
 export const bulkProjectMentorReassignmentInputSchema =
   z
     .object({
-      collegeId: z.string().uuid(),
+      collegeId: zUuid,
       projectIds: z
         .array(projectInstanceIdSchema)
         .min(1)
@@ -470,7 +471,7 @@ export const bulkProjectMentorReassignmentInputSchema =
         .transform((ids) => [
           ...new Set(ids),
         ]),
-      mentorMembershipId: z.string().uuid(),
+      mentorMembershipId: zUuid,
       roleLabel: z
         .string()
         .trim()
@@ -491,9 +492,9 @@ export type UpdateProjectMemberInput = z.infer<
 
 export const projectReleaseVersionInputSchema = z.object({expectedUpdatedAt:z.iso.datetime({offset:true}).optional()}).strict();
 
-export const projectReleaseIdSchema = z.string().uuid();
-export const projectSprintIdSchema = z.string().uuid();
-export const projectTaskIdSchema = z.string().uuid();
+export const projectReleaseIdSchema = zUuid;
+export const projectSprintIdSchema = zUuid;
+export const projectTaskIdSchema = zUuid;
 
 export const updateProjectTaskStatusInputSchema = z
   .object({
@@ -507,7 +508,7 @@ export type UpdateProjectTaskStatusInput = z.infer<
 >;
 
 export const projectTaskSubmissionIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const submitProjectTaskInputSchema = z
   .object({
@@ -585,7 +586,7 @@ const optionalHttpUrlSchema = z
   .optional();
 
 export const projectSubmissionIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const projectSubmissionDraftInputSchema = z
   .object({
@@ -709,7 +710,7 @@ export type CreateProjectEvaluationInput = z.infer<
   typeof createProjectEvaluationInputSchema
 >;
 
-export const projectResourceIdSchema = z.string().uuid();
+export const projectResourceIdSchema = zUuid;
 
 const projectResourceHttpUrlSchema = z
   .string()
@@ -746,8 +747,8 @@ export const createProjectResourceInputSchema = z
     status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).optional(),
     pinned: z.boolean().optional(),
     accessNotes: z.string().trim().max(4000).nullable().optional(),
-    sprintId: z.string().uuid().nullable().optional(),
-    taskId: z.string().uuid().nullable().optional(),
+    sprintId: zUuid.nullable().optional(),
+    taskId: zUuid.nullable().optional(),
   })
   .strict()
   .refine(
@@ -786,8 +787,8 @@ export const updateProjectResourceInputSchema = z
     status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).optional(),
     pinned: z.boolean().optional(),
     accessNotes: z.string().trim().max(4000).nullable().optional(),
-    sprintId: z.string().uuid().nullable().optional(),
-    taskId: z.string().uuid().nullable().optional(),
+    sprintId: zUuid.nullable().optional(),
+    taskId: zUuid.nullable().optional(),
   })
   .strict()
   .refine(
@@ -808,7 +809,7 @@ export type UpdateProjectResourceInput = z.infer<
   typeof updateProjectResourceInputSchema
 >;
 
-export const projectMeetingIdSchema = z.string().uuid();
+export const projectMeetingIdSchema = zUuid;
 
 const projectMeetingWindowShape = {
   title: titleSchema,

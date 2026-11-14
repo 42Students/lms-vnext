@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeInterviewPreviewSchema = z.strictObject({
-  applicationId: z.uuid(),
+  applicationId: zUuid,
   scheduledAt: z.iso.datetime({offset:true}),
   durationMinutes: z.number().int().min(5).max(480),
   interviewer: z.string().trim().max(255).nullable().optional(),
   room: z.string().trim().max(500).nullable().optional(),
-  excludingInterviewId: z.uuid().optional(),
+  excludingInterviewId: zUuid.optional(),
 });
 
 export function summarizeCollegeInterviewPreview(

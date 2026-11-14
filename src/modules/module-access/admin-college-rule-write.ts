@@ -10,6 +10,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {StudentRuleConflict} from "./admin-student-rule-write";
 import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange,hasCollegeAncestorLock} from "./admin-college-rule-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export async function writeSuperAdminCollegeRule(context:RequestContext,rawCollege:string,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
@@ -21,7 +22,7 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
    "enabled" in raw && !("action" in raw)){
    throw new StudentRuleConflict("EXPECTED_STATE_REQUIRED");
  }
- const collegeId=z.uuid().parse(rawCollege),input=collegeRuleWriteSchema.parse(raw);
+ const collegeId=zUuid.parse(rawCollege),input=collegeRuleWriteSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);

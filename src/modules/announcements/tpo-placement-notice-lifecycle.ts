@@ -13,10 +13,11 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {canUndoTpoAnnouncementSend} from "./tpo-notice-undo-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function deletingAction(action:"DELETE"|"RESTORE"|"UNDO_SEND"){return action!=="RESTORE";}
 
 export const tpoNoticeLifecycleSchema=z.object({
- noticeId:z.string().uuid(),action:z.enum(["DELETE","RESTORE","UNDO_SEND"]),
+ noticeId:zUuid,action:z.enum(["DELETE","RESTORE","UNDO_SEND"]),
  expectedVersion:z.number().int().nonnegative(),
 }).strict();
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
-export const candidateScheduleJobIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const candidateScheduleJobIdSchema = zUuid;
 export type RoundCandidateScheduleFact = {
   id: string; name: string; kind: string; status: string;
   scheduledAt: Date | null; venue: string | null; mode: string | null;

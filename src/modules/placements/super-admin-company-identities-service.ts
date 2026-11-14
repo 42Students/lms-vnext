@@ -14,11 +14,12 @@ import {companyDomainCommandSchema,companyAliasCommandSchema,
 import {canonicalCompanyAlias} from "./company-curation-alias-model";
 import {tpoTrustedDomainErrorMessage} from "./tpo-trusted-domain-validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Read each company's domain aliases in one bounded, consistently ordered query.
  * This is a privileged global directory projection, not a college-owned list. */
 export async function listSuperAdminCompanyDomainsByCompanyIds(context:RequestContext,rawCompanyIds:unknown){
  requireGlobal(context);
- const ids=z.array(z.uuid()).max(100).parse(rawCompanyIds);
+ const ids=z.array(zUuid).max(100).parse(rawCompanyIds);
  if(!ids.length)return new Map<string,Array<{id:string;domain:string;verifiedBy42:boolean;createdAt:Date}>>();
  const db=getDb();
  return db.transaction(async tx=>{

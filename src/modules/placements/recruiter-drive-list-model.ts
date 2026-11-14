@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Explicit vNext owner decision: ALL means all visible, recruiter-owned
  * published and closed drives, not an unrestricted college-wide global list.
  * Pending approvals live in WAITING; drafts remain in the authoring workspace.
@@ -11,7 +12,7 @@ export const RECRUITER_DRIVE_ALL_VIEW_POLICY={
 } as const;
 export const recruiterDriveListQuerySchema = z.object({
   view: z.preprocess(value=>typeof value==="string"?value.toUpperCase():value,z.enum(["ALL","LIVE","CLOSED","WAITING"]).default("ALL")),
-  collegeId: z.string().uuid().optional(),
+  collegeId: zUuid.optional(),
   q: z.string().trim().max(100).default(""),
   employment: z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
   mode: z.enum(["ALL","ONSITE","HYBRID","REMOTE"]).default("ALL"),

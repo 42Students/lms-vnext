@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoOwnNotificationQuerySchema = z.object({
   status: z.enum(["ALL", "UNREAD", "READ"]).default("ALL"),
   q: z.string().trim().max(100).default(""),
@@ -7,7 +8,7 @@ export const tpoOwnNotificationQuerySchema = z.object({
 }).strict();
 export const tpoMarkOwnNotificationSchema = z.object({
   confirmed: z.literal(true),
-  notificationId: z.string().uuid(),
+  notificationId: zUuid,
   expectedUnread: z.literal(true),
 }).strict();
 

@@ -2,8 +2,9 @@ import { z } from "zod";
 import { updateCourseAssignmentInputSchema } from "./assignment-validation";
 import {assignmentMethodsSchema,normalizeAssignmentMethods} from "./assignment-submission-methods";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyAssignmentParamsSchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
 }).strict();
 
 const text=z.string().trim().min(1).max(10000);
@@ -40,25 +41,25 @@ const expected=z.iso.datetime({offset:true});
 export const facultyAssignmentCommandSchema=z.discriminatedUnion("action",[
   common.extend({
     action:z.literal("CREATE"),
-    lessonId:z.string().uuid(),
+    lessonId:zUuid,
     sequence:z.number().int().min(0).max(10000),
     confirmed:z.literal(true),
   }),
   common.extend({
     action:z.literal("EDIT"),
-    assignmentId:z.string().uuid(),
+    assignmentId:zUuid,
     expectedUpdatedAt:expected,
     confirmed:z.literal(true),
   }),
   // Resource-only update avoids resubmitting assessment points or due dates;
   // College Admin courses may have up to 10,000 points while the historic
   // Faculty text editor retains its 0..1,000-point authoring guard.
-  z.strictObject({action:z.literal("RESOURCES"),assignmentId:z.string().uuid(),
+  z.strictObject({action:z.literal("RESOURCES"),assignmentId:zUuid,
     resources:facultyAssignmentResourcesSchema,
     expectedUpdatedAt:expected,confirmed:z.literal(true)}),
   z.object({
     action:z.enum(["PUBLISH","ARCHIVE"]),
-    assignmentId:z.string().uuid(),
+    assignmentId:zUuid,
     expectedUpdatedAt:expected,
     confirmed:z.literal(true),
   }).strict(),

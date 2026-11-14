@@ -7,6 +7,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {getCollegeVerificationDetail} from "@/modules/verification/staff-review-detail-service";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     try {
 const raw=params;
-const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
+const input=z.strictObject({membershipId:zUuid,section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
 const review=await getCollegeVerificationDetail(__ctx,input.membershipId,input.section);
 return privateJson({review});
 } catch(error){

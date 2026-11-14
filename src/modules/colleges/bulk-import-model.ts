@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const MAX_COLLEGE_IMPORT_ROWS=200;
-export const collegeImportInputSchema=z.strictObject({organizationId:z.uuid(),csv:z.string().min(1).max(150000)});
+export const collegeImportInputSchema=z.strictObject({organizationId:zUuid,csv:z.string().min(1).max(150000)});
 export type CollegeImportRow={line:number;name:string;code:string;city:string|null;state:string|null;country:string|null};
 /** One organization is selected for each import. This recognizes legacy
  * uniqueId/orgId headings but never guesses a numeric legacy organization ID
@@ -41,7 +42,7 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
  const withHeader=header.includes("name")&&header.includes(codeHeader);
  const organizationColumn=header.indexOf("organizationid")>=0?header.indexOf("organizationid"):header.indexOf("orgid");
  const legacyPositional=!withHeader&&firstRecord.length>=3&&
-   (/^\d+$/.test(firstRecord[0]??"")||z.uuid().safeParse(firstRecord[0]).success);
+   (/^\d+$/.test(firstRecord[0]??"")||zUuid.safeParse(firstRecord[0]).success);
  const keys=["name",codeHeader,"city","state","country"];
  const positions=withHeader?keys.map(k=>header.indexOf(k)):
    legacyPositional?[1,2,3,4,-1]:[0,1,2,3,4];
@@ -55,7 +56,7 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
   if(legacyPositional&&/^\d+$/.test(row[0]??""))throw Error("Legacy numeric organization IDs cannot establish a vNext tenant. Convert orgId to its verified organization UUID and import each organization separately using organizationId,name,uniqueId,city,state.");
   const sourceOrg=withHeader&&organizationColumn>=0?(row[organizationColumn]??"").trim():legacyPositional?(row[0]??"").trim():"";
   if(sourceOrg){
-   if(!z.uuid().safeParse(sourceOrg).success)
+   if(!zUuid.safeParse(sourceOrg).success)
     throw Error("Row "+(index+1)+": legacy organization ID needs an explicit UUID mapping; numeric IDs cannot be imported directly.");
    if(selectedOrganizationId&&sourceOrg.toLowerCase()!==selectedOrganizationId.toLowerCase())
     throw Error("Row "+(index+1)+": this college belongs to another organization. Import one organization at a time.");

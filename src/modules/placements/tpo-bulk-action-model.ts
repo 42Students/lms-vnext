@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const bulkSelectionSchema = z.object({ id: z.string().uuid(), version: z.string().min(1).max(160) }).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const bulkSelectionSchema = z.object({ id: zUuid, version: z.string().min(1).max(160) }).strict();
 export const bulkActionCommandSchema = z.object({
   action: z.string().min(1).max(80),
   selections: z.array(bulkSelectionSchema).min(1).max(200).refine(

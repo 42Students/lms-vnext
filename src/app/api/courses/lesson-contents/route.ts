@@ -15,6 +15,7 @@ import {
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const noStore={"Cache-Control":CACHE.PRIVATE};
 /** Server-side legacy→vNext crosswalk (numeric course/class/lesson IDs are not
@@ -74,14 +75,14 @@ export const GET = route(
         message:"Use the authorized assessment results report. No grade data was fetched.",
       },{status:503,headers:noStore});
     if(url.searchParams.get("view")==="metrics"){
-      const lessonId=z.string().uuid().parse(url.searchParams.get("lessonId"));
+      const lessonId=zUuid.parse(url.searchParams.get("lessonId"));
       const metrics=await listLessonContentMetrics(context,lessonId,url.searchParams.get("deliveryId"));
       return NextResponse.json({metrics,data:metrics,status:"SUCCESS",reason:"Lesson content metrics retrieved"},
         {headers:noStore});
     }
     const assessmentKind=url.searchParams.get("assessmentKind");
     if(contentId){
-      const id=z.string().uuid().parse(contentId);
+      const id=zUuid.parse(contentId);
       const scoped=await loadLessonContentScope(id);
       const contents=await listLessonContents(context,scoped.lessonId,
         url.searchParams.get("deliveryId"),false);

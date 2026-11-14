@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** One release at a time: every row is identified and versioned, never addressed by array index. */
 const sprintPlanRowSchema = z.strictObject({
-  id: z.string().uuid(),
+  id: zUuid,
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
   key:z.string().trim().min(1).max(120),
   title: z.string().trim().min(1,"Title is required").max(200),
@@ -23,7 +24,7 @@ const sprintPlanRowSchema = z.strictObject({
 });
 
 export const projectSprintPlanSchema = z.strictObject({
-  releaseId: z.string().uuid(),
+  releaseId: zUuid,
   sprints: z.array(sprintPlanRowSchema).min(1).max(500),
 }).superRefine((value, ctx) => {
   const seen = new Set<string>();

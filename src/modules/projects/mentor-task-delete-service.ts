@@ -10,9 +10,10 @@ import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyProjectMemberships} from "./project-notification-service";
+import { zUuid } from "@/lib/schema-primitives";
 const schema=z.strictObject({expectedUpdatedAt:z.iso.datetime({offset:true}),confirm:z.literal(true)});
 export async function deleteMentorProjectTask(context:RequestContext,projectIdRaw:string,taskIdRaw:string,raw:unknown){
- const projectId=z.string().uuid().parse(projectIdRaw),taskId=z.string().uuid().parse(taskIdRaw);
+ const projectId=zUuid.parse(projectIdRaw),taskId=zUuid.parse(taskIdRaw);
  const input=schema.parse(raw),scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)

@@ -10,6 +10,7 @@ import {listLearnerCourseDeliveries} from "./learner-course-service";
 import {listOwnLearnerAssessmentRows} from "./learner-assessment-flat-query";
 import {learnerAssessmentAuthorizedCourse} from "./learner-assessment-course-query-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 function byDueDateThenTitle<
   T extends {
     dueAt: Date | null;
@@ -92,7 +93,7 @@ export async function getLearnerAssessmentOverview(
   if (requestedCourse && (!explicitCourseId || (slugCourseId && explicitCourseId!==slugCourseId)))
     throw new CoursesServiceError("COURSE_NOT_FOUND");
   const requestedDelivery=options.deliveryId===undefined||options.deliveryId===null||
-    options.deliveryId===""?null:z.string().uuid().parse(options.deliveryId);
+    options.deliveryId===""?null:zUuid.parse(options.deliveryId);
   const scopedDeliveries=deliveries.filter(row=>
     (!selectedCourseId||row.courseId===selectedCourseId)&&
     (!requestedDelivery||row.deliveryId===requestedDelivery));

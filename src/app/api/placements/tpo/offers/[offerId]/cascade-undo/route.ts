@@ -8,8 +8,9 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
-const body=z.object({cascadeId:z.string().uuid(),confirmed:z.literal(true)}).strict();
+const body=z.object({cascadeId:zUuid,confirmed:z.literal(true)}).strict();
 /** P-S1-06: no GET mutation, no client-supplied actor or tenant scope. */
 async function handlePOST(request:Request,{params}:{
  params:Promise<{offerId:string}>

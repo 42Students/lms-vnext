@@ -50,6 +50,7 @@ import {
   type UpdateCourseOfferingInput,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 function mapOfferingConstraint(error: unknown) {
   if (
     postgresConstraintName(error) ===
@@ -745,9 +746,9 @@ export function offeringDraftFromSemesterCourseMapping(input:{
  * removed. A failed row does not undo prior successfully assigned courses.
  */
 export const semesterCourseBulkAddSchema=z.strictObject({
- courseIds:z.array(z.uuid()).min(1).max(100)
+ courseIds:z.array(zUuid).min(1).max(100)
   .refine(ids=>new Set(ids).size===ids.length,"Duplicate course IDs"),
- cohortId:z.uuid(),academicPeriodId:z.uuid(),
+ cohortId:zUuid,academicPeriodId:zUuid,
  type:createCourseOfferingInputSchema.shape.type,
  credits:createCourseOfferingInputSchema.shape.credits,
 });
@@ -782,7 +783,7 @@ export async function addCoursesToSemester(
  * Historical teaching deliveries and grades remain intact; a delivery may
  * block one archival, with the failure explicitly reported to the caller. */
 export const semesterCourseBulkRemoveSchema=z.strictObject({
- cohortId:z.uuid(),academicPeriodId:z.uuid(),
+ cohortId:zUuid,academicPeriodId:zUuid,
  confirm:z.literal(true),limit:z.number().int().min(1).max(100).default(100),
 });
 export async function removeAllCoursesFromSemester(

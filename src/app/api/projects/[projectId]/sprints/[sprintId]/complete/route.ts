@@ -8,6 +8,7 @@ import {
   completeProjectSprint,
 } from "@/modules/projects/lifecycle-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -27,10 +28,10 @@ export const POST = route(
     }
     const parsed=z.object({
       note:z.string().trim().max(1000).optional(),
-      nextSprintId:z.string().uuid().optional(),
+      nextSprintId:zUuid.optional(),
       startNextSprint:z.boolean().optional(),
       decisions:z.array(z.strictObject({
-        taskId:z.string().uuid(),
+        taskId:zUuid,
         destination:z.enum(["NEXT","BACKLOG","DROP"]),
         expectedUpdatedAt:z.iso.datetime({offset:true}),
       })).max(250).optional(),

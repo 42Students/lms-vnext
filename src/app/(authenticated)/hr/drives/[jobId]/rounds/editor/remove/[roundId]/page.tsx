@@ -9,13 +9,14 @@ import {Input} from "@/components/ui/input";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
+import { zUuid } from "@/lib/schema-primitives";
 export default async function HrRoundRemovalConfirm({params}:{
  params:Promise<{jobId:string;roundId:string}>;
 }){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId,roundId}=await params;
- if(!z.string().uuid().safeParse(jobId).success||!z.string().uuid().safeParse(roundId).success)notFound();
+ if(!zUuid.safeParse(jobId).success||!zUuid.safeParse(roundId).success)notFound();
  let rounds:Awaited<ReturnType<typeof listHrRoundEditorRows>>;
  try{rounds=await listHrRoundEditorRows(context,jobId);}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}

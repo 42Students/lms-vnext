@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoActorAuditQuerySchema = z.object({
-  actorId: z.string().uuid().optional(),
+  actorId: zUuid.optional(),
   entityType: z.string().trim().regex(/^[a-zA-Z][a-zA-Z0-9_]{0,79}$/).optional(),
   entityId: z.string().trim().min(1).max(128).optional(),
   from: z.iso.date().optional(),

@@ -15,6 +15,7 @@ import {decideTpoRequest} from "./tpo-request-decision-service";
 
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuery: unknown) {
   const member = context.membership;
   if (!member || !hasMembershipRole(context, ROLE.TPO) ||
@@ -64,7 +65,7 @@ export async function getLegacyTpoPendingRequests(context:RequestContext){
 export async function decideLegacyTpoRequest(
  context:RequestContext,rawId:unknown,raw:unknown,
 ){
- const uuid=z.string().uuid().parse(rawId);
+ const uuid=zUuid.parse(rawId);
  const input=z.strictObject({
   approve:z.boolean(),reason:z.string().trim().max(2000).default(""),
  }).parse(raw);

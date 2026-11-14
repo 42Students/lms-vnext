@@ -1,11 +1,12 @@
 import {z} from "zod";
 import {parseSelectionCsv} from "./tpo-selection-import-model";
 import {parseResultXlsx} from "./tpo-result-xlsx-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const roundImportActionSchema=z.object({
  action:z.literal("STAGE_IMPORT"),confirmed:z.literal(true),
  previewToken:z.string().regex(/^[0-9a-f]{64}$/, "Invalid round import preview token"),
  missingPolicy:z.enum(["LEAVE_PENDING","MARK_NOT_CLEARED"]),
- overrides:z.array(z.object({line:z.number().int().positive(),applicationId:z.string().uuid()}).strict()).max(1000),
+ overrides:z.array(z.object({line:z.number().int().positive(),applicationId:zUuid}).strict()).max(1000),
  skippedLines:z.array(z.number().int().positive()).max(1000),
 }).strict().superRefine((command,ctx)=>{
  const lines=command.overrides.map(item=>item.line);

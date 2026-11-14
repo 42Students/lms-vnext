@@ -14,9 +14,10 @@ import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {PlacementsServiceError} from "./errors";
 
 import { featureReady } from "@/config/features";
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeStageUndoSchema=z.strictObject({
- applicationId:z.string().uuid(),
- undoEventId:z.string().uuid(),
+ applicationId:zUuid,
+ undoEventId:zUuid,
  expectedStageVersion:z.number().int().positive(),
  confirmed:z.literal(true),
 });

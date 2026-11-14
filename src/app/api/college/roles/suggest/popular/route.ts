@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listPopularFacultyDirectory,recordFacultyDirectorySelection}
  from "@/modules/people/college-role-directory-service";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":CACHE.PRIVATE};
@@ -24,7 +25,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const raw:unknown=await boundedRequestJson(request);
-    const parsed=z.strictObject({facultyMembershipId:z.uuid()}).parse(raw);
+    const parsed=z.strictObject({facultyMembershipId:zUuid}).parse(raw);
     const outcome=await recordFacultyDirectorySelection(
    __ctx,parsed.facultyMembershipId);
     return NextResponse.json(outcome,{headers:noStore});

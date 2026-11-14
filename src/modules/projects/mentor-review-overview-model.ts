@@ -1,8 +1,9 @@
 import {z} from "zod";
 import {csvSafeCell} from "./mentor-board-review-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorReviewOverviewSchema=z.object({
- projectId:z.string().uuid(),
+ projectId:zUuid,
  status:z.enum(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"]).default("ALL"),
  feedback:z.enum(["ALL","WITH","WITHOUT"]).default("ALL"),
  version:z.preprocess(value=>value===""?undefined:value,

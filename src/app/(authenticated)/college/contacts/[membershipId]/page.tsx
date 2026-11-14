@@ -9,9 +9,10 @@ import { getCollegeContactById } from "@/modules/people/college-contacts-service
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter } from "@/lib/format-date";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeContactDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
- if(!z.string().uuid().safeParse(membershipId).success)notFound();
+ if(!zUuid.safeParse(membershipId).success)notFound();
  const contact=await getCollegeContactById(await getCurrentRequestContext(),membershipId);
  if(!contact)notFound();
  const links = contactRecordLinks(contact);

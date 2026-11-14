@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerApplicationLatestActivity,type LearnerApplicationBrowseItem} from "./learner-applications-browse-model";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 /** Saved own activity only, not a claimed employer update/response. */
 export function learnerApplicationCardActivity(item:LearnerApplicationBrowseItem){
  const latest=learnerApplicationLatestActivity(item);

@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** LEARNER-learning-misc-15: only roster-authorized course IDs may narrow
  * server-side assessment queries. Unknown/malformed query never broadens access. */
-const uuid=z.string().uuid();
+const uuid=zUuid;
 export function learnerAssessmentAuthorizedCourse(raw:unknown,
  courses:readonly {courseId:string}[]):string|null{
  const parsed=uuid.safeParse(raw);

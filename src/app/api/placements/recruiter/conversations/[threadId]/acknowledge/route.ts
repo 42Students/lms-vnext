@@ -7,11 +7,12 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {acknowledgeRecruiterThread,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const id=z.string().uuid().safeParse((await params).threadId);
+ const id=zUuid.safeParse((await params).threadId);
  if(!id.success)return NextResponse.json({error:"NOT_FOUND"},{status:404});
  try{
   const context=await getCurrentRequestContext();

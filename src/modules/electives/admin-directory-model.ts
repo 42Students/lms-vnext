@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const adminElectiveQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   semesterNumber: z.coerce.number().int().min(1).max(12).optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   pageSize: z.coerce.number().int().refine(n=>n===20||n===50||n===100).default(20),
@@ -12,7 +13,7 @@ export const adminElectiveQuerySchema = z.strictObject({
  * The advanced ARCHIVED selector remains available to vNext callers.
  */
 const legacySlotFiltersSchema = z.strictObject({
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   semester: z.coerce.number().int().min(1).max(12).optional(),
   includeArchived: z.boolean().default(false),
 });

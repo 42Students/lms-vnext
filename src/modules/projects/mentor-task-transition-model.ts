@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTaskTransitionParamsSchema = z.object({
-  projectId: z.string().uuid(), taskId: z.string().uuid(),
+  projectId: zUuid, taskId: zUuid,
 }).strict();
 export const mentorTaskTransitionSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "BLOCKED"]),

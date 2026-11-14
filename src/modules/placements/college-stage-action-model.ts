@@ -1,5 +1,6 @@
 import {driveApplicationsQuerySchema} from "./college-drive-applications-model";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_APPLICATION_STAGES=[
  "APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED",
 ] as const;
@@ -8,7 +9,7 @@ export const collegeStageCommandSchema=z.object({
   z.enum(["MOVE","REINSTATE","CORRECT"])),
  // Legacy integer application IDs require an explicit import crosswalk.
  // Never coerce arbitrary numbers to another college\'s UUID.
- applicationIds:z.array(z.string().uuid()).max(100).default([]).refine(ids=>new Set(ids).size===ids.length,
+ applicationIds:z.array(zUuid).max(100).default([]).refine(ids=>new Set(ids).size===ids.length,
   "Duplicate applications are not allowed"),
  matchingFilter:driveApplicationsQuerySchema.optional(),
  stage:z.preprocess(value=>typeof value==="string"?value.trim().toUpperCase():value,

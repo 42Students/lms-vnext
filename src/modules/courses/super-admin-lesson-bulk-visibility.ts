@@ -11,6 +11,7 @@ import {recordActivityEvent} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 
+import { zUuid } from "@/lib/schema-primitives";
 // Legacy active and enabled are independent lesson-level switches. Keep the
 // visibility-only input as an alias for callers that already use this endpoint.
 const inputSchema=z.strictObject({
@@ -66,7 +67,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
  const seen=new Set<string>();
  const enabled=input.enabled??input.visibleToStudents;
  for(const lessonId of input.lessonIds){
-  if(!z.uuid().safeParse(lessonId).success){
+  if(!zUuid.safeParse(lessonId).success){
    failed.push({lessonId,reason:"Invalid lesson id"});continue;
   }
   if(seen.has(lessonId)){

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const text = (max: number) =>
   z.string().trim().max(max).default("");
 
@@ -41,7 +42,7 @@ const year = z
   .regex(/^$|^\d{4}$/)
   .default("");
 
-const receiptId = z.string().uuid().nullable().default(null);
+const receiptId = zUuid.nullable().default(null);
 
 const contactSchema = z
   .object({
@@ -154,7 +155,7 @@ const personalDetailsSchema = z
 
 const languageSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     // Legacy rows can be untitled; the editor may repair them without deleting history.
     language: text(120),
     proficiency: text(64),
@@ -163,7 +164,7 @@ const languageSchema = z
 
 const skillSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     skill: text(120),
     proficiency: text(64),
   })
@@ -171,7 +172,7 @@ const skillSchema = z
 
 const educationSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     educationType: text(100),
     program: text(100),
     specialization: text(100),
@@ -214,7 +215,7 @@ const educationSchema = z
 
 const certificationSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     authority: text(300),
     name: text(300),
     certificationDate: calendarDate,
@@ -232,7 +233,7 @@ const certificationSchema = z
 
 const experienceSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     organization: text(200),
     designation: text(200),
     description: text(2000),
@@ -258,7 +259,7 @@ const experienceSchema = z
 
 const publicationSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     title: text(300),
     journal: text(300),
     year,
@@ -271,7 +272,7 @@ const publicationSchema = z
 
 const awardSchema = z
   .object({
-    id: z.string().uuid(),
+    id: zUuid,
     title: requiredText(300),
     year,
     description: text(3000),
@@ -468,7 +469,7 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
     if (!Array.isArray(records)) { warnings.push(section + ": expected a list"); return []; }
     return records.map((item, index) => {
       const row = object(item);
-      const id = typeof row["id"] === "string" && z.string().uuid().safeParse(row["id"]).success
+      const id = typeof row["id"] === "string" && zUuid.safeParse(row["id"]).success
         ? row["id"] : stableId(section, index);
       const mapped: Record<string, unknown> = { id };
       for (const key of fields[section] ?? []) {

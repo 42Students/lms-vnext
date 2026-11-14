@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const membershipPair=z.strictObject({
- membershipId:z.uuid(),cohortId:z.uuid(),
+ membershipId:zUuid,cohortId:zUuid,
 });
 export type TpoPrepLearnerPair=z.infer<typeof membershipPair>;
 

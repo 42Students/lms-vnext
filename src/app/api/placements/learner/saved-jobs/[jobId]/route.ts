@@ -9,13 +9,14 @@ import {saveOwnPlacementJob,unsaveOwnPlacementJob,SavedJobsStorageUnavailableErr
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{jobId:string}>};
 
 // Legacy integer IDs are not portable across colleges. The API accepts only
 // migrated UUID job references and always derives the learner from auth scope.
 function validateJobId(raw:string){
- return z.string().uuid().safeParse(raw).success;
+ return zUuid.safeParse(raw).success;
 }
 function savedJobError(error:unknown,action:"SAVE"|"UNSAVE"="SAVE"){
  const retryMessage=action==="UNSAVE"?

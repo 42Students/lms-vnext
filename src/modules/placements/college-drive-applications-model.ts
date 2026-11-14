@@ -1,13 +1,14 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const driveApplicationsQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
   source: z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
   stage: z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ALL"),
-  departmentId: z.string().uuid().optional(),
-  programId: z.string().uuid().optional(),
-  cohortId: z.string().uuid().optional(),
+  departmentId: zUuid.optional(),
+  programId: zUuid.optional(),
+  cohortId: zUuid.optional(),
   appliedFrom: z.iso.date().optional(),
   appliedTo: z.iso.date().optional(),
   minScore:z.coerce.number().int().min(0).max(100).optional(),

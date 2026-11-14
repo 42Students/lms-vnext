@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-export const collegeIdSchema = z.string().uuid();
-export const departmentIdSchema = z.string().uuid();
-export const programIdSchema = z.string().uuid();
-export const academicPeriodIdSchema = z.string().uuid();
-export const cohortIdSchema = z.string().uuid();
-export const sectionIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const collegeIdSchema = zUuid;
+export const departmentIdSchema = zUuid;
+export const programIdSchema = zUuid;
+export const academicPeriodIdSchema = zUuid;
+export const cohortIdSchema = zUuid;
+export const sectionIdSchema = zUuid;
 
 export const academicNameSchema = z
   .string()
@@ -211,15 +212,15 @@ export const updateSectionInputSchema = z
     "At least one section field is required",
   );
 
-export const membershipIdSchema = z.string().uuid();
+export const membershipIdSchema = zUuid;
 export const learnerEnrollmentIdSchema =
-  z.string().uuid();
+  zUuid;
 export const sectionEnrollmentIdSchema =
-  z.string().uuid();
+  zUuid;
 export const facultyAssignmentIdSchema =
-  z.string().uuid();
+  zUuid;
 export const scheduleEventIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const createLearnerProgramEnrollmentInputSchema =
   z.object({
@@ -265,8 +266,8 @@ export const createSectionScheduleEventInputSchema =
       sectionId: sectionIdSchema,
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
-      deliveryId: z.string().uuid().nullable().optional(),
-      lectureHallId: z.string().uuid().nullable().optional(),
+      deliveryId: zUuid.nullable().optional(),
+      lectureHallId: zUuid.nullable().optional(),
       title: academicNameSchema,
       description: z
         .string()
@@ -362,10 +363,10 @@ export function adaptLegacyClassScheduleCreate(
   if (source.lectureHallId > 0 && !lectureHallId)
     throw new Error("LEGACY_SCHEDULE_HALL_UNMAPPED");
   return createSectionScheduleEventInputSchema.parse({
-    sectionId: z.uuid().parse(sectionId),
-    facultyMembershipId: z.uuid().parse(facultyMembershipId),
-    deliveryId: deliveryId ? z.uuid().parse(deliveryId) : null,
-    lectureHallId: lectureHallId ? z.uuid().parse(lectureHallId) : null,
+    sectionId: zUuid.parse(sectionId),
+    facultyMembershipId: zUuid.parse(facultyMembershipId),
+    deliveryId: deliveryId ? zUuid.parse(deliveryId) : null,
+    lectureHallId: lectureHallId ? zUuid.parse(lectureHallId) : null,
     title: source.title || "Class schedule",
     startsAt: legacyClassScheduleInstant(source.startTime),
     endsAt: legacyClassScheduleInstant(source.endTime),
@@ -380,8 +381,8 @@ export const updateSectionScheduleEventInputSchema =
       expectedUpdatedAt: scheduleDateTimeSchema,
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
-      deliveryId: z.string().uuid().nullable().optional(),
-      lectureHallId: z.string().uuid().nullable().optional(),
+      deliveryId: zUuid.nullable().optional(),
+      lectureHallId: zUuid.nullable().optional(),
       title: academicNameSchema.optional(),
       description: z
         .string()

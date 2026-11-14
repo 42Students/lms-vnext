@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoApplicantDetailQuerySchema=z.object({
- jobId:z.string().uuid(),applicationId:z.string().uuid(),
+ jobId:zUuid,applicationId:zUuid,
 }).strict();
 export type ApplicantRoundEvidence={
  roundId:string;roundName:string;kind:string;version:number;outcome:string;

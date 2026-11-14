@@ -8,6 +8,7 @@ import {
 } from "@/modules/placements/company-service";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -15,7 +16,7 @@ export const GET = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     const collegeId = new URL(request.url).searchParams.get("collegeId");
-    if(!z.string().uuid().safeParse(collegeId).success)
+    if(!zUuid.safeParse(collegeId).success)
       return NextResponse.json({error:"INVALID_COLLEGE_ID",message:"Select a valid college."},{status:400});
     const companies = await listPlacementCompanies(
       context,

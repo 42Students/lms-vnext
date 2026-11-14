@@ -3,9 +3,10 @@ import {parseFacultyContactsQuery} from "./faculty-contacts-filter-model";
 import {CoursesServiceError} from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyContactDetailParamsSchema = z.object({
   contactsTab: z.enum(["allContacts", "teachers", "students"]),
-  membershipId: z.string().uuid(),
+  membershipId: zUuid,
 }).strict();
 
 export function facultyContactRoleLabel(role: string) {

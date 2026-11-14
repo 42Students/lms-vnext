@@ -8,7 +8,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 
 import {ElectivesServiceError,listElectiveOfferings} from "./service";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 /** Existing elective groups/deliveries only: creating a group/delivery is a separate
  * prerequisite, never an invented insert or a cross-tenant lookup. */
 export async function listCollegeOfferingChoices(ctx:RequestContext,rawSlotId:string){

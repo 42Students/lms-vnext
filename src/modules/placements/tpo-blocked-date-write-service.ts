@@ -9,6 +9,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoIndiaCalendarDay} from "./tpo-local-date-model";
+import { zUuid } from "@/lib/schema-primitives";
 const inputSchema=z.object({
  day:z.iso.date().optional(),startDay:z.iso.date().optional(),endDay:z.iso.date().optional(),
  reason:z.string().trim().min(3).max(500).optional(),
@@ -54,7 +55,7 @@ export async function createBlockedDate(ctx:RequestContext,raw:unknown){
  });
 }
 
-const deleteSchema=z.object({id:z.string().uuid(),expectedVersion:z.iso.datetime({offset:true})}).strict();
+const deleteSchema=z.object({id:zUuid,expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function deleteBlockedDate(ctx:RequestContext,raw:unknown){
  const input=deleteSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
  if(!await placementTableExists("placement_tpo_blocked_dates"))throw new BlockedDateError("DATE_PENDING");
@@ -83,7 +84,7 @@ export async function deleteBlockedDate(ctx:RequestContext,raw:unknown){
 
 const removeRangeSchema=z.object({
  startDay:z.iso.date(),endDay:z.iso.date(),
- versions:z.array(z.object({id:z.string().uuid(),expectedVersion:z.iso.datetime({offset:true})}).strict()).min(1).max(90),
+ versions:z.array(z.object({id:zUuid,expectedVersion:z.iso.datetime({offset:true})}).strict()).min(1).max(90),
 }).strict();
 export async function removeBlockedRange(ctx:RequestContext,raw:unknown){
  const input=removeRangeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);

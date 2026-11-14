@@ -46,6 +46,7 @@ import {
 } from "./scope";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const cohortDepartments=alias(departments,"faculty_cohort_departments");
 
 /** UUID memberships replace legacy faculty/class integer grants. Semester/year
@@ -53,9 +54,9 @@ const cohortDepartments=alias(departments,"faculty_cohort_departments");
  * is the retired/soft-deleted grant marker. There is no faculty ADMIN subtype:
  * the membership role switcher selects COLLEGE_ADMIN separately. */
 const facultyDeliveryFilterSchema=z.strictObject({
-  sectionId:z.string().uuid().optional(),
-  cohortId:z.string().uuid().optional(),
-  academicPeriodId:z.string().uuid().optional(),
+  sectionId:zUuid.optional(),
+  cohortId:zUuid.optional(),
+  academicPeriodId:zUuid.optional(),
 });
 export type FacultyDeliveryFilter=z.infer<typeof facultyDeliveryFilterSchema>;
 

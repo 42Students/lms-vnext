@@ -3,8 +3,9 @@ import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_LABELS, resolveLegacyAccountRole,
  type MembershipRole } from "@/modules/identity/constants";
 
 import { ROLE } from "@/modules/identity/roles";
-export const personCollegeIdSchema = z.string().uuid();
-export const personMembershipIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const personCollegeIdSchema = zUuid;
+export const personMembershipIdSchema = zUuid;
 
 export const phoneE164Schema = z
   .string()

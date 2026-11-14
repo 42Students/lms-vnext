@@ -6,9 +6,10 @@ import {courseLessons,courseLearningPaths,courseOfferings,courses,departments} f
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** SA-academics-people-74: dependency counts are scoped to one selected college. */
 export async function getSuperAdminCourseDependencyCounts(context:RequestContext,visibleCourseIds:readonly string[]){
- const courseIds=z.array(z.uuid()).max(100).parse(visibleCourseIds);
+ const courseIds=z.array(zUuid).max(100).parse(visibleCourseIds);
  const selected=requireSuperAdminSelectedCollege(context,"courses.read");
  if(courseIds.length===0){
   const emptyCounts:Record<string,number>={};

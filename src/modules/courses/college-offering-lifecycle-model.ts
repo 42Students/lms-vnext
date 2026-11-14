@@ -1,5 +1,6 @@
 import { z } from "zod";
-export const collegeOfferingLifecycleIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const collegeOfferingLifecycleIdSchema = zUuid;
 export const collegeOfferingLifecycleSchema = z.discriminatedUnion("action", [
   z.strictObject({ action: z.literal("ARCHIVE"), expectedStatus: z.literal("ACTIVE"), confirm: z.literal(true) }),
   z.strictObject({ action: z.literal("RESTORE"), expectedStatus: z.literal("ARCHIVED"), confirm: z.literal(true) }),

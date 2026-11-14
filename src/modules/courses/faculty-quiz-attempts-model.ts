@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyQuizAttemptsQuerySchema = z.object({
-  quizId:z.string().uuid(),deliveryId:z.string().uuid(),
+  quizId:zUuid,deliveryId:zUuid,
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   q:z.string().trim().max(120).default(""),
   view:z.enum(["ALL","LATEST"]).default("ALL"),

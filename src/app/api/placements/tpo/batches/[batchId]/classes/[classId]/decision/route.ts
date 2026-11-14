@@ -10,6 +10,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {decidePlacementParticipation} from "@/modules/placements/batch-participation-service";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const command=z.discriminatedUnion("decision",[
  z.strictObject({decision:z.literal("ELIGIBLE"),expectedVersion:z.string().min(1)}),
@@ -21,7 +22,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     const {batchId,classId}=params;
-    z.uuid().parse(classId);
+    zUuid.parse(classId);
     const {collegeId,ready,lifecycle}=await getTpoBatch(ctx,batchId);
     if(!ready)return Response.json({error:"BATCH_STORAGE_UNAVAILABLE"},{status:503});
     if(lifecycle?.finishedAt)return Response.json({error:"BATCH_FINISHED"},{status:409});

@@ -12,9 +12,10 @@ import { listPrograms } from "@/modules/academics/program-service";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type Context = { params: Promise<{ action: string[] }> };
-const uuid = z.string().uuid();
+const uuid = zUuid;
 
 /** Translation boundary for old v1 program CRUD. Historical integer IDs are
  * not authorization identifiers; old clients must supply verified UUIDs

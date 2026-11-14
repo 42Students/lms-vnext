@@ -12,6 +12,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const TEMPLATE_MAX_BYTES=8 * 1024 * 1024;
 const privateHeaders={"Cache-Control":CACHE.PRIVATE};
@@ -22,7 +23,7 @@ async function handleGET(request: Request) {
     const collegeIds=new URL(request.url).searchParams.getAll("collegeId");
     // Empty/duplicate tenant hints must never degrade into an unscoped list.
     if(collegeIds.length>1||(collegeIds.length===1 &&
-      !z.string().uuid().safeParse(collegeIds[0]).success))
+      !zUuid.safeParse(collegeIds[0]).success))
       return NextResponse.json({error:"INVALID_COLLEGE_SCOPE"},
         {status:400,headers:privateHeaders});
     const collegeId=collegeIds[0]??null;

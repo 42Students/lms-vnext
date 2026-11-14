@@ -5,13 +5,14 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { listStandaloneProjectLearnerCandidates } from "@/modules/projects/class-team-roster-service";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const input=z.strictObject({
-      collegeId:z.string().uuid(),q:z.string().max(120).optional(),
+      collegeId:zUuid,q:z.string().max(120).optional(),
       page:z.coerce.number().int().min(0).max(100).optional(),
     }).parse(Object.fromEntries(new URL(request.url).searchParams));
     const result=await listStandaloneProjectLearnerCandidates(__ctx,

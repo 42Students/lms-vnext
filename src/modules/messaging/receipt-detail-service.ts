@@ -10,9 +10,10 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {logInfo} from "@/observability/logger";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Aggregates ONLY, never receipt recipient_key, addresses, or template variables. */
 export async function getTpoMessagingBatch(context:RequestContext,rawId:unknown){
- const batchId=z.string().uuid().parse(rawId);
+ const batchId=zUuid.parse(rawId);
  const own=context.membership;
  if(!own||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,own.collegeId);
@@ -52,7 +53,7 @@ export async function listSuperAdminSmsDeliveryAttempts(context:RequestContext,r
  if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
   throw new AuthorizationError("activity.read");
  const input=z.strictObject({
-  collegeId:z.string().uuid().optional(),
+  collegeId:zUuid.optional(),
   before:z.iso.datetime({offset:true}).optional(),
   limit:z.number().int().min(1).max(50).default(25),
  }).parse(raw);

@@ -1,5 +1,6 @@
 import { z } from "zod";
-export const recruiterCompanyOverviewQuerySchema = z.object({collegeId:z.string().uuid().optional()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const recruiterCompanyOverviewQuerySchema = z.object({collegeId:zUuid.optional()}).strict();
 export type RecruiterCompanyJob = {
   collegeId: string; relationshipId: string;
   job: { id:string; title:string; status:string; archivedAt:Date|null };

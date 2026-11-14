@@ -1,7 +1,8 @@
 import { z } from "zod";
 import {SUSPENSION_REASON_POLICY} from "./validation";
 
-export const collegeFacultyIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const collegeFacultyIdSchema = zUuid;
 export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("DEACTIVATE"),

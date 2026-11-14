@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-export const offerRegisterQueryObject=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+import { zUuid } from "@/lib/schema-primitives";
+export const offerRegisterQueryObject=z.object({jobId:zUuid,status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  // Direct GET/CSV requests may include blank HTML or nullable JSON
  // numeric fields; absent means unbounded, not a zero-package filter.
  minCtcLpa:z.preprocess(value=>value==null||

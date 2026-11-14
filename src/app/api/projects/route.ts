@@ -9,6 +9,7 @@ import {
 } from "@/modules/projects/instance-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -50,13 +51,13 @@ export const POST = route(
     const context = actor!;
     const raw:unknown=await boundedRequestJson(request);
     const legacy=z.object({
-      collegeId:z.string().uuid(),templateId:z.string().uuid().optional(),
+      collegeId:zUuid,templateId:zUuid.optional(),
       title:z.string().trim().min(1).max(160),
-      classId:z.string().uuid().optional(),sectionId:z.string().uuid().optional(),
-      mentorMembershipId:z.string().uuid().optional(),
-      primaryMentorMembershipId:z.string().uuid().optional(),
-      studentMembershipIds:z.array(z.string().uuid()).max(500).optional(),
-      learnerMembershipIds:z.array(z.string().uuid()).max(500).optional(),
+      classId:zUuid.optional(),sectionId:zUuid.optional(),
+      mentorMembershipId:zUuid.optional(),
+      primaryMentorMembershipId:zUuid.optional(),
+      studentMembershipIds:z.array(zUuid).max(500).optional(),
+      learnerMembershipIds:z.array(zUuid).max(500).optional(),
       status:z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"]).optional(),
       initialStatus:z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"]).optional(),
       slug:z.string().optional(),

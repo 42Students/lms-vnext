@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
+import { zUuid } from "@/lib/schema-primitives";
 const schema=z.object({
-  applicationId:z.string().uuid().optional(),
-  roundId:z.string().uuid().optional(),
+  applicationId:zUuid.optional(),
+  roundId:zUuid.optional(),
 }).strict().refine(
   input=>Boolean(input.applicationId)===Boolean(input.roundId),
   {message:"Provide both application and assessment round identifiers"},

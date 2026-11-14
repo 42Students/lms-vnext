@@ -2,6 +2,7 @@ import { z } from "zod";
 import { courseSectionDeliveryIdSchema } from "./validation";
 import { MAX_ASSIGNMENT_FILES_PER_SUBMISSION } from "@/modules/storage/file-policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const MAX_ASSIGNMENT_FILE_BYTES =
   50 * 1024 * 1024;
 
@@ -82,7 +83,7 @@ export const assignmentFileSubmissionSchema =
     submissionType:
       z.literal("FILE"),
     uploadReceiptId:
-      z.string().uuid(),
+      zUuid,
   });
 
 /** Multi-asset receipt contract. Each attachment has its own verified
@@ -94,7 +95,7 @@ export const assignmentMultipartFileSubmissionSchema=z.strictObject({
  deliveryId:courseSectionDeliveryIdSchema,
  submissionType:z.literal("FILE"),
  files:z.array(z.strictObject({
-  uploadReceiptId:z.uuid(),
+  uploadReceiptId:zUuid,
   position:z.number().int().nonnegative(),
  })).min(1).max(MAX_ASSIGNMENT_FILES_PER_SUBMISSION),
 }).superRefine((data,ctx)=>{

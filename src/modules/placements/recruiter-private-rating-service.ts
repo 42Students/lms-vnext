@@ -13,6 +13,7 @@ import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {placementRecruiterApplicantNotes} from "@/db/schema/tpo-collaboration";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const privateRecruiterRatingSchema=z.strictObject({
  rating:z.number().int().min(1).max(5).nullable(),
  note:z.string().trim().max(1000),
@@ -108,7 +109,7 @@ async function lockPrivateReviewScope(tx:PrivateReviewTx,ctx:RequestContext,
  if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
 }
 export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,rawApplicationId:string){
- const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
+ const jobId=zUuid.parse(rawJobId),applicationId=zUuid.parse(rawApplicationId);
  const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
  return getDb().transaction(async tx=>{
  await lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"share");
@@ -135,7 +136,7 @@ export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:str
 }
 export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,
  rawApplicationId:string,raw:unknown){
- const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
+ const jobId=zUuid.parse(rawJobId),applicationId=zUuid.parse(rawApplicationId);
  const input=privateRecruiterRatingSchema.parse(raw);
  const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
  return getDb().transaction(async tx=>{

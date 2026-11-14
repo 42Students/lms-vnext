@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const recordSelectionsSchema = z.object({
   action: z.literal("RECORD"),
   entries: z.array(z.object({
-    applicationId: z.string().uuid(),
+    applicationId: zUuid,
     roleTitle: z.string().trim().min(2).max(200),
     annualCtcInr: z.number().int().min(0).max(100_000_000).nullable(),
   }).strict()).min(1).max(100).refine(rows =>
@@ -14,8 +15,8 @@ export const recordSelectionsSchema = z.object({
 export const releaseSelectionsSchema = z.object({
   action: z.literal("VERIFY_AND_RELEASE"),
   confirmed: z.literal(true),
-  selectionIds: z.array(z.string().uuid()).min(1).max(100),
-  expectedRecordedAt: z.record(z.string().uuid(), z.string().datetime({offset:true})),
+  selectionIds: z.array(zUuid).min(1).max(100),
+  expectedRecordedAt: z.record(zUuid, z.string().datetime({offset:true})),
 }).strict().refine(input =>
   new Set(input.selectionIds).size === input.selectionIds.length &&
   Object.keys(input.expectedRecordedAt).length === input.selectionIds.length &&

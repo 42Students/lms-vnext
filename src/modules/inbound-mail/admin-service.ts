@@ -10,6 +10,7 @@ import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
 import {safeInboundPreview,inboundMailRoutingStatuses,type InboundMailRoutingStatus} from "./message-model";
 import {activityEvents} from "@/db/schema";
 
+import { zUuid } from "@/lib/schema-primitives";
 export type InboundMailItem={
  id:string;receivedAt:Date;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
@@ -117,7 +118,7 @@ export async function changeInboundMailStatusForAdmin(
  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
   throw new AuthorizationError("admin-scope.select");
  const input=z.strictObject({
-  id:z.uuid(),
+  id:zUuid,
   expectedStatus:z.enum(["NEW","TRIAGED","RESOLVED"]),
   expectedVersion:z.number().int().min(0),
   status:z.enum(["NEW","TRIAGED","RESOLVED"]),
@@ -180,7 +181,7 @@ export async function getInboundMailDetailForAdmin(
  requirePermission(context,"admin-scope.select");
  if(!isSuperAdmin(context)||context.adminScope?.collegeId||
     context.adminScope?.organizationId)throw new AuthorizationError("admin-scope.select");
- const id=z.uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  if(!await drizzleInboundMailAdminRepository.tableExists())return null;
  const t=inboundMailMessagesStaged;
  const [row]=await getDb().select({

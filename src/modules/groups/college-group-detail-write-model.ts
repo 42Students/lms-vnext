@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {groupRuleCriteriaSchema} from "./rule-evaluator";
 import { ROLE } from "@/modules/identity/roles";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const collegeGroupDetailWriteSchema=z.discriminatedUnion("action",[
   z.strictObject({
     action:z.literal("PROMOTE_WAITLIST"),memberId:uuid,

@@ -8,6 +8,7 @@ import {collegeMemberships,departments,placementApplications,
 import {placementRoundCandidateSlots as interviews} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import { zUuid } from "@/lib/schema-primitives";
 /** Exact legacy interview states and subtype captions. The underlying slot
  * status remains a separate scheduling/booking authority; historic completed
  * or cancelled appointments are read from their persisted outcome. */
@@ -26,10 +27,10 @@ export const collegeInterviewFilters=z.object({
  status:z.enum(["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED","COMPLETED","NO_SHOW","CANCELLED"]).default("ALL"),
  mode:z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).default("ALL"),
  type:z.enum(["ALL","INTERVIEW","GD","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"]).default("ALL"),
- companyId:z.uuid().optional(),
+ companyId:zUuid.optional(),
  /** A scoped single-interview ICS export retains the same college authorization. */
- interviewId:z.uuid().optional(),
- departmentId:z.uuid().optional(),
+ interviewId:zUuid.optional(),
+ departmentId:zUuid.optional(),
  // Retain URL compatibility with newer sort labels and offer legacy choices.
  sort:z.enum(["UPCOMING","RECENT","STUDENT","EARLIEST","LATEST","JOB","STATUS"]).default("EARLIEST"),
  pageSize:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value),

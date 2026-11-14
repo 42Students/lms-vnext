@@ -12,6 +12,7 @@ import {
   markOwnNotificationRead,
 } from "./notification-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * A human can belong to multiple colleges. The Faculty inbox is one college
  * at a time, not an implicit cross-college staff inbox. Only a persisted event
@@ -22,7 +23,7 @@ export async function markOwnFacultyNotificationRead(
   notificationIdInput: unknown,
 ) {
   const membership = requireFacultyNotificationsAccess(context);
-  const notificationId = z.string().uuid().parse(notificationIdInput);
+  const notificationId = zUuid.parse(notificationIdInput);
   const [owned] = await getDb().select({ id: inAppNotifications.id })
     .from(inAppNotifications)
     .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))

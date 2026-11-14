@@ -10,6 +10,7 @@ import {placementJobIdSchema} from "./validation";
 import {PlacementsServiceError} from "./errors";
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Authenticated read projection for legacy interview status chips.
  * A BOOKED inventory slot is not a learner confirmation or a completed
  * interview. Staff-only feedback never appears in a learner DTO here.
@@ -19,7 +20,7 @@ export async function getTpoInterviewLegacyStatus(
 ){
  const collegeId=await requireTpoJobCollege(context);
  const jobId=placementJobIdSchema.parse(rawJobId);
- const slotId=z.string().uuid().parse(rawSlotId),db=getDb();
+ const slotId=zUuid.parse(rawSlotId),db=getDb();
  const [row]=await db.select({
   slot:slots,roundKind:placementJobRounds.kind,
   roundStatus:placementJobRounds.status,

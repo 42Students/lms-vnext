@@ -15,6 +15,7 @@ import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 import { rawEnv } from "@/config/env";
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Migration-only historical campaign marker. Importing an already-sent
  * legacy header is never a SEND command: no provider API, recipient tokens,
  * or new outbound queue may be created from this projection.
@@ -147,7 +148,7 @@ export async function listTpoCampaignDrafts(context:RequestContext){
 
 /** Read-only detail; no recipient contact data is returned. */
 export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
- const parsed=z.string().uuid().safeParse(rawId);
+ const parsed=zUuid.safeParse(rawId);
  if(!parsed.success)return null;
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return null;
@@ -178,7 +179,7 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
  * recipient HMACs, token values, body variables or provider credentials.
  */
 export async function listTpoCampaignRecipientStatuses(context:RequestContext,rawId:unknown){
- const id=z.string().uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return {ready:false as const,rows:[]};
  return getDb().transaction(async tx=>{

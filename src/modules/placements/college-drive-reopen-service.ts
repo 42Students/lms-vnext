@@ -9,8 +9,9 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export async function reopenCollegeDrive(context:RequestContext,rawJobId:unknown,raw:unknown){
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  z.strictObject({confirmed:z.literal(true)}).parse(raw);
  const collegeId=await requireCollegePlacementAdmin(context);
  const acting=await resolveActingCollege(context,"placements.manage");

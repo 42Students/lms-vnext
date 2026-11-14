@@ -25,7 +25,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const fieldStyle = "min-h-11 min-w-0 md:min-h-9";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 

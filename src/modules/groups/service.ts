@@ -16,7 +16,8 @@ import { hasElectiveAcademicEligibility } from "./elective-eligibility";
 import { assertPersistedGroupActor } from "./actor-access";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const groupCreate = z.object({
   collegeId: uuid.nullable(),
   kind: z.string().trim().regex(/^[A-Z][A-Z0-9_]{0,39}$/),

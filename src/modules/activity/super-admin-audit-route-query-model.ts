@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 
+import { zUuid } from "@/lib/schema-primitives";
 const optional = <T extends z.ZodType>(schema: T) =>
   z.preprocess(value => value === "" ? undefined : value, schema.optional());
 const date = (side: "from" | "to") => optional(z.string().refine(value => {
@@ -25,9 +26,9 @@ export const superAdminAuditRouteQuerySchema = z.strictObject({
   smsSize: optional(z.enum(["50","100","200"])),
   allowGlobal: optional(z.enum(["true","false"])),
   embedded: optional(z.enum(["true","false"])),
-  collegeId: optional(z.uuid()),
-  organizationId: optional(z.uuid()),
-  actorUserId: optional(z.uuid()),
+  collegeId: optional(zUuid),
+  organizationId: optional(zUuid),
+  actorUserId: optional(zUuid),
   eventType: optional(z.string().trim().min(1).max(120)),
   subjectType: optional(z.string().trim().min(1).max(80)),
   subjectId: optional(z.string().trim().min(1).max(500)),
@@ -36,7 +37,7 @@ export const superAdminAuditRouteQuerySchema = z.strictObject({
   from: date("from"),
   to: date("to"),
   beforeOccurredAt: optional(z.string().datetime({ offset: true })),
-  beforeId: optional(z.uuid()),
+  beforeId: optional(zUuid),
 }).superRefine((value, ctx) => {
   if (Boolean(value.beforeId) !== Boolean(value.beforeOccurredAt))
     ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Cursor fields must be supplied together" });

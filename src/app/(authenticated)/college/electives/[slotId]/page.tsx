@@ -12,13 +12,14 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeElectiveSlotDetail({params}:{
   params: Promise<{slotId: string}>;
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const {slotId} = await params;
-  if (!z.string().uuid().safeParse(slotId).success) notFound();
+  if (!zUuid.safeParse(slotId).success) notFound();
   const member = await resolveActingCollege(context, "academics.read");
   const back = <TextLink href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9">Back to electives</TextLink>;
   let slot: {

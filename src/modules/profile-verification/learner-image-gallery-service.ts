@@ -19,7 +19,8 @@ import {
 
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: boolean; canUpload: boolean };
 export class LearnerGalleryError extends Error {
   constructor(public readonly code:

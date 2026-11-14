@@ -16,6 +16,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /**
@@ -165,7 +166,7 @@ export const POST = route(
       );
     }
     if(new URL(request.url).searchParams.get("mode")==="usage"){
-      const parsed=z.strictObject({collegeId:z.string().uuid()}).safeParse(body);
+      const parsed=z.strictObject({collegeId:zUuid}).safeParse(body);
       if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
       // Re-use persisted college listing authorization. An arbitrary UUID
       // cannot request another organization's headcount or tenant metrics.

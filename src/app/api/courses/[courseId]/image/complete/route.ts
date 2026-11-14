@@ -8,8 +8,9 @@ import { CourseImageError, completeCourseImage } from "@/modules/courses/course-
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
-const schema = z.object({ receiptId: z.string().uuid() }).strict();
+const schema = z.object({ receiptId: zUuid }).strict();
 type RouteContext = { params: Promise<{ courseId: string }> };
 
 async function handlePOST(request: Request, { params }: RouteContext) {

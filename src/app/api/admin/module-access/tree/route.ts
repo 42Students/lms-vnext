@@ -6,10 +6,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readCompleteCollegeModuleTree} from "@/modules/module-access/admin-full-tree-read";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const query=z.strictObject({
- collegeId:z.uuid(),
+ collegeId:zUuid,
  page:z.coerce.number().int().min(1).max(10000).default(1),
 });
 

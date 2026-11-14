@@ -1,10 +1,11 @@
 import {z} from "zod";
 import {CoursesServiceError} from "./errors";
 
-const query=z.object({deliveryId:z.string().uuid().optional()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+const query=z.object({deliveryId:zUuid.optional()}).strict();
 export function parseFacultyAssessmentReportRoute(id:unknown,search:unknown) {
  const parsed=query.safeParse(search);
- return parsed.success && z.string().uuid().safeParse(id).success
+ return parsed.success && zUuid.safeParse(id).success
    ? {assessmentId:id as string,deliveryId:parsed.data.deliveryId??null}
    : null;
 }
@@ -31,8 +32,8 @@ export function facultyAssessmentReportErrorCopy(kind:"assignment"|"quiz",error:
 }
 
 export function facultyReportRouteRecovery(assessmentId:unknown,deliveryId:unknown){
- const idIsValid=z.string().uuid().safeParse(assessmentId).success;
- const deliveryIsValid=z.string().uuid().safeParse(deliveryId).success;
+ const idIsValid=zUuid.safeParse(assessmentId).success;
+ const deliveryIsValid=zUuid.safeParse(deliveryId).success;
  return {title:idIsValid&&!deliveryIsValid?"Select a Section to view this report.":"Report not found.",
    selectSection:idIsValid&&!deliveryIsValid,
    href:"/teacher/courses"};

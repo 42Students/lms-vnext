@@ -10,8 +10,9 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requireLearnerPlacementAccess} from "./learner-participation-guard";
 import {learnerRoundConfirmationReady} from "./learner-round-confirmation-readiness";
+import { zUuid } from "@/lib/schema-primitives";
 const inputSchema=z.strictObject({
- applicationId:z.uuid(),roundId:z.uuid(),confirmed:z.literal(true),
+ applicationId:zUuid,roundId:zUuid,confirmed:z.literal(true),
 });
 /** Legacy Interview stores booking/learner response/outcome in one status.
  * In vNext these are distinct persisted facts; the projection never changes

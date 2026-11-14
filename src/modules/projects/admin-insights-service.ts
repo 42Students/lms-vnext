@@ -46,6 +46,7 @@ import {latestReviewedProjectSubmissionSql} from "./admin-submission-kpi-model";
 import {isCurrentProjectSubmissionSql} from "./admin-submission-current-version-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 // Service inputs also arrive from internal callers, not only from the URL
 // parser. Never admit JS numeric coercions (hex, exponent, blanks, NaN)
 // or extra, caller-injected filters into the selected-college query.
@@ -897,7 +898,7 @@ export async function listProjectAdminSubmissionQueue(
   const instanceId = sql.raw('"project_instances"."id"');
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const focus=query.focusedProjectId;
-  const focusUuid=focus&&z.string().uuid().safeParse(focus).success?focus:null;
+  const focusUuid=focus&&zUuid.safeParse(focus).success?focus:null;
   const focusLegacy=focus&&/^[0-9]+$/.test(focus)&&Number.isSafeInteger(Number(focus))&&Number(focus)>0?Number(focus):null;
   const focusCondition=focus?or(
     focusUuid?eq(projectInstances.id,focusUuid):undefined,

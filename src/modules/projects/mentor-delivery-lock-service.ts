@@ -12,9 +12,10 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {projectDeliveryActivity} from "./delivery-activity-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const body=z.strictObject({reason:z.string().trim().min(1).max(4000),expectedUpdatedAt:z.iso.datetime({offset:true})});
 export async function lockMentorFinalDelivery(context:RequestContext,projectIdInput:string,submissionIdInput:string,raw:unknown){
- const projectId=z.string().uuid().parse(projectIdInput),submissionId=z.string().uuid().parse(submissionIdInput);
+ const projectId=zUuid.parse(projectIdInput),submissionId=zUuid.parse(submissionIdInput);
  const input=body.parse(raw),scope=await requireProjectLifecycleMutationAccess(context,projectId);
  if(scope.access!==ROLE.MENTOR||!context.membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const membership=context.membership;

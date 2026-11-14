@@ -24,7 +24,8 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx);
  const jobId=collegeDriveIdSchema.parse(rawJobId),id=uuid.parse(rawId);
@@ -263,7 +264,7 @@ export async function getCollegeApplicationDetail(
 }
 export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
  const input=z.strictObject({body:z.string().trim().min(1).max(2000),
-  amendsNoteId:z.uuid().optional()}).parse(raw);
+  amendsNoteId:zUuid.optional()}).parse(raw);
  const {collegeId,application}=await scoped(ctx,job,id);
  const acting=await resolveActingCollege(ctx,"placements.manage");
  return getDb().transaction(async tx=>{
@@ -300,7 +301,7 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
 
 export async function attachCollegeApplicationOfferLetter(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
  const input=z.strictObject({
-  offerId:z.uuid(),url:z.url().refine(v=>v.startsWith("https://"),"Use an HTTPS offer-letter link."),
+  offerId:zUuid,url:z.url().refine(v=>v.startsWith("https://"),"Use an HTTPS offer-letter link."),
   confirmed:z.literal(true),
  }).parse(raw);
  const {collegeId,application}=await scoped(ctx,job,id);
@@ -372,7 +373,7 @@ export async function rescreenCollegeApplication(ctx:RequestContext,job:unknown,
  * and a job in the signed acting college. A missing/foreign ID yields no row,
  * not a cross-tenant existence oracle. Sorting is application, time, UUID. */
 const batchHistoryInput=z.strictObject({
- applicationIds:z.array(z.string().uuid()).min(1).max(100)
+ applicationIds:z.array(zUuid).min(1).max(100)
   .refine(ids=>new Set(ids).size===ids.length),
  newStatus:z.string().trim().min(1).max(24).optional(),
  page:z.number().int().min(0).max(100000).default(0),

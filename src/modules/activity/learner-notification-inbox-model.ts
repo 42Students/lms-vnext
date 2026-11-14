@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { safeNotificationActionHref, safeExternalAssessmentUrl } from "./notification-action";
 import { learnerNotificationCategory } from "./learner-notification-category";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerNotificationInboxQuerySchema = z.object({
   category:z.enum(["all","course","project","general","job"]).optional().default("all"),
   unread:z.enum(["all","unread"]).optional().default("all"),
   q:z.string().trim().max(100).optional().default(""),
   // Legacy class/course inbox links filter recipient-owned notifications.
-  classId:z.string().uuid().optional(),
-  courseId:z.string().uuid().optional(),
+  classId:zUuid.optional(),
+  courseId:zUuid.optional(),
   courseSlug:z.string().trim().min(1).max(64).regex(/^[a-zA-Z0-9._-]+$/).optional(),
 }).strict();
 export type LearnerInboxQuery = z.infer<typeof learnerNotificationInboxQuerySchema>;

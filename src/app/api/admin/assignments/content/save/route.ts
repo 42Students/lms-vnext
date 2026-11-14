@@ -12,6 +12,7 @@ import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings} from "@/db/schema";
 import {readBoundedJsonRequest} from "@/lib/request-body";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 /** Compatibility adapter for retired /api/v1/admin/assignments/content/save.
  * Uses the one registered vNext authoring transaction; no opaque historical
@@ -29,7 +30,7 @@ export const POST = route(
    collegeId:lesson.collegeId,organizationId:lesson.organizationId,
   });
     if(raw&&typeof raw==="object"&&"courseId" in raw&&raw.courseId!==undefined){
-   const courseId=z.uuid().parse(raw.courseId);
+   const courseId=zUuid.parse(raw.courseId);
    // Legacy had a raw courseId; the vNext lesson owns its offering, not
    // an independently trusted course/college selector. Callers must use
    // the authorized lesson UUID and cannot assert a different course.

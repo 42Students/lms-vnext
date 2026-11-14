@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Old user-input contract is precisely seven ASCII characters, with the
  * suffix equal to the next calendar year, including 2099-00 rollover.
  * Persist only the start integer after this input-layer validation.
@@ -20,8 +21,8 @@ export function formatPromotionAcademicYear(yearStart: number): string {
 export const promotionAcademicYearError = "Use consecutive years, e.g. 2026-27";
 
 export const collegePromotionQuerySchema = z.object({
-  programId: z.string().uuid().optional(),
-  cohortId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
+  cohortId: zUuid.optional(),
   yearStart: z.preprocess(value => {
     if (value === "" || value === null) return undefined;
     if (typeof value !== "string") return value;
@@ -143,8 +144,8 @@ export function promotionSuccessLabel(term:number) {
 }
 
 export const collegePromotionExecuteSchema = z.object({
-  cohortId: z.string().uuid(),
-  programId: z.string().uuid(),
+  cohortId: zUuid,
+  programId: zUuid,
   expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
   expectedCheckedLearners: z.number().int().min(1).max(2000),
   expectedTargetTerm: z.number().int().min(1).max(100),

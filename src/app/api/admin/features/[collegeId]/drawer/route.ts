@@ -8,10 +8,11 @@ import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const query=z.strictObject({
  q:z.string().trim().min(2).max(100).optional(),
- membershipId:z.uuid().optional(),
+ membershipId:zUuid.optional(),
  view:z.enum(["suggestions","overrides","locked"]).default("suggestions"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 });

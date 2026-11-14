@@ -24,6 +24,7 @@ import { listOwnNotificationPage, releasedNotificationEvent, releasedNotificatio
 import { resolveTpoInboxQuery,tpoInboxPageHref } from "./tpo-notifications-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Personal TPO inbox: centrally authorized and verified against the live
  * persisted membership + TPO role, not only a caller-provided context.
@@ -106,7 +107,7 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
 
 /** Recipient and persisted current college are both required. Repeats are idempotent. */
 export async function markOwnTpoNotificationRead(context: RequestContext, rawId: unknown) {
-  const id = z.string().uuid().parse(rawId);
+  const id = zUuid.parse(rawId);
   const membership = await requirePersistedTpoInboxMembership(context);
   return getDb().transaction(async (tx) => {
     const eventIds = tx

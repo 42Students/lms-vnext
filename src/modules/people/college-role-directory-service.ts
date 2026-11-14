@@ -37,6 +37,7 @@ import {
 } from "./college-role-directory-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function escapedSearch(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
@@ -532,7 +533,7 @@ export async function listFacultyAssignedClassLearners(
   raw: unknown,
 ) {
   const input = z.strictObject({
-    deliveryId: z.string().uuid(),
+    deliveryId: zUuid,
     query: z.string().trim().max(120).default(""),
     limit: z.number().int().min(1).max(100).default(25),
   }).parse(raw);
@@ -686,9 +687,9 @@ export async function listCollegeLearnerDepartmentCategories(context:RequestCont
 export async function listLegacyCollegeLearnerPage(context:RequestContext,raw:unknown){
  const input=z.strictObject({
   query:z.string().trim().max(100).default(""),
-  programId:z.string().uuid().optional(),
-  batchId:z.string().uuid().optional(),
-  classId:z.string().uuid().optional(),
+  programId:zUuid.optional(),
+  batchId:zUuid.optional(),
+  classId:zUuid.optional(),
   page:z.number().int().min(0).max(9999).default(0),
   size:z.union([z.literal(10),z.literal(25),z.literal(50),
     z.literal(100),z.literal(200)]).default(25),

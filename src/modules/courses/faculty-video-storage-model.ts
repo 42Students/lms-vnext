@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { isSafeSignedUrl, videoCanPublish, videoProcessingDescriptor, type VideoProcessingStatus, type VideoPublishStatus } from "@/modules/storage/ui-models";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const managedVideoSchema=z.object({
   id:uuid, lessonId:uuid, deliveryId:uuid.nullable(), lessonContentId:uuid.nullable(),
   title:z.string().min(1), sequence:z.number().int().nonnegative(),

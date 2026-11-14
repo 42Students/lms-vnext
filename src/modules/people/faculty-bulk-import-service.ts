@@ -10,9 +10,10 @@ import { onboardPersonWithRuntime, upsertFacultyProfileWithRuntime } from "./run
 import { parseFacultyBulkCsv } from "./faculty-bulk-import-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const schema = z.object({
-  collegeId: z.string().uuid(),
-  departmentId: z.string().uuid(),
+  collegeId: zUuid,
+  departmentId: zUuid,
   csv: z.string().min(1).max(1_500_000),
   confirmed: z.literal(true),
 }).strict();

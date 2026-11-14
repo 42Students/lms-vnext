@@ -2,6 +2,7 @@ import {z} from "zod";
 import {indiaDayStart,indiaDayEndExclusive} from "./audit-findings-day-model";
 import {BUG_SEVERITIES,BUG_ACCOUNT_ROLES} from "./admin-validation";
 import {BUG_STATUSES,BUG_RESOLUTIONS} from "./workflow";
+import { zUuid } from "@/lib/schema-primitives";
 const findingStatusOptions=["ALL",...BUG_STATUSES] as const;
 const findingSeverityOptions=["ALL",...BUG_SEVERITIES] as const;
 export const auditFindingsQuerySchema=z.strictObject({
@@ -18,7 +19,7 @@ export const auditFindingsQuerySchema=z.strictObject({
  toDate:z.iso.date().optional(),
  sort:z.enum(["newest","oldest"]).default("newest"),
  beforeCreatedAt:z.iso.datetime({offset:true}).optional(),
- beforeId:z.uuid().optional(),
+ beforeId:zUuid.optional(),
 }).superRefine((x,ctx)=>{
  if(x.fromDate && x.toDate && x.fromDate > x.toDate)
   ctx.addIssue({code:"custom",path:["toDate"],message:"End date must not precede start date"});

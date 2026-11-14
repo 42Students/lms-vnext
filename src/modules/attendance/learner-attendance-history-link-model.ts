@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerAttendanceMonthSchema} from "./learner-attendance-filter-model";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 /** Never produce an arbitrary course URL from unvalidated selection. */
 export function learnerAttendanceCourseHistoryHref(
  deliveryId:unknown,month:unknown,

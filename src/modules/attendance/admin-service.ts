@@ -49,6 +49,7 @@ import {appendAttendanceHistoryEvent} from "./history-event";
 
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Options are independent reads. A failed class-offering query must never
  * be rendered as a verified empty course list. */
 export class AdminAttendanceOptionsLookupError extends Error {
@@ -69,7 +70,7 @@ export const adminAttendanceActionErrorCopy = {
   ATTENDANCE_STALE_VERSION: "Attendance changed. Please refresh and try again.",
 } as const;
 
-const uuid = z.string().uuid();
+const uuid = zUuid;
 const correctionSchema = z.strictObject({
   collegeId: uuid,
   deliveryId: uuid,

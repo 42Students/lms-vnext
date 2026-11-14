@@ -12,6 +12,7 @@ import {
  superAdminReadQuerySchema,superAdminReadPages,scopedSearchLike,
  type SuperAdminReadResult,
 } from "./super-admin-read-directory-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function listAdminSemesters(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult> {
  const query=superAdminReadQuerySchema.parse(raw),selected=requireSuperAdminSelectedCollege(context,"academics.read");
  const db=getDb();
@@ -49,7 +50,7 @@ export async function listAdminSemesters(context:RequestContext,raw:unknown):Pro
  * select an arbitrary tenant by passing a program ID.
  */
 const accessibleSemestersQuery=z.strictObject({
- programId:z.string().uuid().optional(),
+ programId:zUuid.optional(),
  activeOnly:z.boolean().default(false),
 });
 export type AccessibleSemester={

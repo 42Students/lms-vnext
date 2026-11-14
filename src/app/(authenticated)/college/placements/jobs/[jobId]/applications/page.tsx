@@ -26,6 +26,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -37,7 +38,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       description="Your account has no current college assignment. Contact your Super Admin to restore College Admin access." />
   </div>;
   const {jobId} = await params;
-  if (!z.uuid().safeParse(jobId).success) return <div className="min-w-0 space-y-5">
+  if (!zUuid.safeParse(jobId).success) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid job ID"
       description="This placement drive link is invalid. Return to the college drive list and choose a valid drive."
@@ -46,7 +47,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   const rawParams=await searchParams;
   const query = driveApplicationsParams(rawParams);
   const initialDetailId=typeof rawParams["applicationId"]==="string" &&
-   z.uuid().safeParse(rawParams["applicationId"]).success?rawParams["applicationId"]:null;
+   zUuid.safeParse(rawParams["applicationId"]).success?rawParams["applicationId"]:null;
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."

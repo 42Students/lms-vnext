@@ -32,6 +32,7 @@ import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 
+import { zUuid } from "@/lib/schema-primitives";
 type PageProps = {
   searchParams: Promise<{
     collegeId?: string | string[];
@@ -53,7 +54,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // A repeated filter cannot be treated as the first college or first search
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
-  const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
+  const collegeQuery = zUuid.optional().safeParse(repeated?null:one(query.collegeId));
   if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<TextLink href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center">Choose college</TextLink>} /></div>;

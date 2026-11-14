@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const recordedOutsideParticipantSchema=z.strictObject({
- recordId:z.string().uuid(),membershipId:z.string().uuid(),
+ recordId:zUuid,membershipId:zUuid,
  result:z.enum(["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"]),
  notes:z.string().trim().max(500).optional(),
 });

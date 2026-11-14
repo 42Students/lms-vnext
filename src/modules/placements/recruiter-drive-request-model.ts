@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { hrDriveDraftSchema, emptyHrDriveDraft } from "./hr-drive-draft-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Recruiter submission contract, not the existing discussion-message endpoint. */
 export const recruiterDriveRequestInputSchema = z.strictObject({
- collegeId:z.string().uuid(),
- submissionId:z.string().uuid(),
- sourceJobId:z.string().uuid().optional(),
+ collegeId:zUuid,
+ submissionId:zUuid,
+ sourceJobId:zUuid.optional(),
  draft:hrDriveDraftSchema,
 });
 export type RecruiterDriveRequestInput=z.infer<typeof recruiterDriveRequestInputSchema>;
@@ -40,8 +41,8 @@ export function recruiterRequestLegacyLabel(status:string,
 
 /** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */
 export const recruiterRequestUpdateSchema=z.strictObject({
- requestId:z.string().uuid(),
- collegeId:z.string().uuid(),
+ requestId:zUuid,
+ collegeId:zUuid,
  action:z.enum(["EDIT","RESUBMIT","CANCEL"]),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  draft:hrDriveDraftSchema.optional(),

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -24,7 +25,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
   try {
     const rawParams = await params;
     const parsedIds = z.object({
-      contentId: z.string().uuid(),
+      contentId: zUuid,
       materialId: z.string().min(1),
     }).safeParse(rawParams);
     if (!parsedIds.success) {
@@ -45,7 +46,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     }
     const parsedDelivery = values[0] === undefined
       ? null
-      : z.string().uuid().safeParse(values[0]);
+      : zUuid.safeParse(values[0]);
     if (parsedDelivery && !parsedDelivery.success) {
       return Response.json(
         { error: "INVALID_REQUEST", message: "Invalid Resource material" },
@@ -53,7 +54,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
       );
     }
     const deliveryId = parsedDelivery?.data ?? null;
-    const isUuid = z.string().uuid().safeParse(ids.materialId).success;
+    const isUuid = zUuid.safeParse(ids.materialId).success;
     const isLegacyIndex = /^[0-9]{1,9}$/.test(ids.materialId);
     if (!isUuid && !isLegacyIndex) {
       return Response.json(

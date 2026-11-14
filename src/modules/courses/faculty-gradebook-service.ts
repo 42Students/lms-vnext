@@ -13,6 +13,7 @@ import {facultyGradebookParamsSchema,facultyPublishedGradeRows,
 import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Published gradebook: exact current Section roster, only scores made visible
  * by persisted publication controls. Incomplete grading never becomes zero.
@@ -80,7 +81,7 @@ export async function getFacultyPublishedGradebook(context:RequestContext,raw:un
     publishedAssessments:data.publishedAssessments,rosterSize:data.rosterSize};
 }
 const learnerParamsSchema=facultyGradebookParamsSchema.extend({
-  learnerMembershipId:z.string().uuid(),
+  learnerMembershipId:zUuid,
 }).strict();
 /** Exact live teaching Section AND current enrolled roster required. */
 export async function getFacultyPublishedGradebookLearner(

@@ -35,10 +35,11 @@ import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-
 import {formatHrDriveProposal,hrDriveProposalSchema} from "./hr-drive-proposal-model";
 
 import { ROLE } from "@/modules/identity/roles";
-const collegeIdSchema = z.string().uuid();
-const userIdSchema = z.string().uuid();
-const jobIdSchema = z.string().uuid();
-const threadIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const collegeIdSchema = zUuid;
+const userIdSchema = zUuid;
+const jobIdSchema = zUuid;
+const threadIdSchema = zUuid;
 const bodySchema = z.string().trim()
   .min(1, "Write a message first")
   .max(4000, "Keep a message under 4000 characters");
@@ -607,7 +608,7 @@ export async function sendRecruiterThreadMessage(
 ) {
  const id = threadIdSchema.parse(rawThreadId);
  const body = bodySchema.parse(rawBody);
- const quoteId=z.string().uuid().nullable().parse(rawQuoteId??null);
+ const quoteId=zUuid.nullable().parse(rawQuoteId??null);
  if (context.recruiter?.status !== "ACTIVE" ||
      context.recruiter.userId !== context.user.id)
    throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");

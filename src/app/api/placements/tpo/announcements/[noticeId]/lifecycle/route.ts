@@ -8,13 +8,14 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {mutateTpoNotice} from "@/modules/announcements/tpo-placement-notice-lifecycle";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  const {noticeId}=await params;
  const parsed=z.object({
-  noticeId:z.string().uuid(),action:z.enum(["DELETE","RESTORE","UNDO_SEND"]),
+  noticeId:zUuid,action:z.enum(["DELETE","RESTORE","UNDO_SEND"]),
   expectedVersion:z.coerce.number().int().nonnegative(),
  }).strict().safeParse({
   noticeId,action:form?.get("action"),expectedVersion:form?.get("expectedVersion"),
@@ -68,7 +69,7 @@ async function handleDELETE(request:Request,{params}:{params:Promise<{noticeId:s
   if(raw&&typeof raw==="object"&&!Array.isArray(raw))
    version=(raw as {expectedVersion?:unknown}).expectedVersion;
  }
- const parsed=z.object({noticeId:z.string().uuid(),
+ const parsed=z.object({noticeId:zUuid,
   expectedVersion:z.coerce.number().int().nonnegative()}).strict()
   .safeParse({noticeId,expectedVersion:version});
  if(!parsed.success)return NextResponse.json({error:"VERSION_REQUIRED",

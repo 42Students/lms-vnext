@@ -15,10 +15,11 @@ import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidat
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
+import { zUuid } from "@/lib/schema-primitives";
 const inputSchema = z.strictObject({
   action: z.enum(["OPEN", "CLOSE"]),
   // A legacy page can select up to 100 drives; each write is still scoped, audited and atomic.
-  jobIds: z.array(z.uuid()).min(1).max(100).refine(ids => new Set(ids).size === ids.length),
+  jobIds: z.array(zUuid).min(1).max(100).refine(ids => new Set(ids).size === ids.length),
 });
 const commitSchema = inputSchema.extend({confirmed: z.literal(true)});
 

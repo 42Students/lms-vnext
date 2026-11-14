@@ -20,6 +20,7 @@ import {
   termCourseEditFields,
 } from "./college-term-mapping-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const courseDepartment = alias(departments, "college_term_course_department");
 
 export class CollegeTermMappingError extends Error {
@@ -197,7 +198,7 @@ export async function listCollegeTermMappings(context: RequestContext) {
 export async function getCollegeTermMappingDetails(
   context: RequestContext, rawTermId: unknown,
 ) {
-  const termId=z.uuid().parse(rawTermId);
+  const termId=zUuid.parse(rawTermId);
   const member=await resolveActingCollege(context,"academics.read");
   const db=getDb();
   const [term]=await db.select({
@@ -305,8 +306,8 @@ export async function reorderCollegeTermMappings(
   context: RequestContext, raw: unknown,
 ) {
   const input=z.strictObject({
-    programTermId:z.uuid(),
-    mappingIds:z.array(z.uuid()).max(100),
+    programTermId:zUuid,
+    mappingIds:z.array(zUuid).max(100),
   }).parse(raw);
   if(new Set(input.mappingIds).size!==input.mappingIds.length)
     throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
@@ -621,7 +622,7 @@ export async function listScopedLegacyProgramStructures(
   context: RequestContext, raw: unknown,
 ) {
   const input = z.strictObject({
-    programId: z.uuid().optional(),
+    programId: zUuid.optional(),
     activeOnly: z.boolean().default(false),
   }).parse(raw);
   const member = await resolveActingCollege(context,"academics.read");

@@ -5,6 +5,7 @@ import { listOrganizations } from "@/modules/organizations/service";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { tenantPage, tenantReadQuerySchema } from "./super-admin-tenant-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function getAdminTenantDirectory(context:RequestContext,raw:unknown) {
  if(!isSuperAdmin(context)) throw new AuthorizationError("college.read");
  const query=tenantReadQuerySchema.parse(raw);
@@ -15,7 +16,7 @@ export async function getAdminTenantDirectory(context:RequestContext,raw:unknown
 }
 export async function getAdminTenantDetail(context:RequestContext,rawId:unknown) {
  if(!isSuperAdmin(context)) throw new AuthorizationError("college.read");
- const id=z.string().uuid().safeParse(rawId);
+ const id=zUuid.safeParse(rawId);
  if(!id.success) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
  // Membership is never substituted for selected admin scope.
  const [colleges,organizations]=await Promise.all([listColleges(context),listOrganizations(context)]);

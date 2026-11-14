@@ -6,12 +6,13 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** Counts only recorded active members and in-college content. Unknown is
  * represented by a failed read, never silently reported as 0. */
 export async function getSuperAdminCollegeAtGlance(ctx:RequestContext,collegeRaw:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
- const collegeId=z.uuid().parse(collegeRaw);
+ const collegeId=zUuid.parse(collegeRaw);
  const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId})
   .from(colleges).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-export const collegeIdSchema = z.string().uuid();
-export const collegeOrganizationIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const collegeIdSchema = zUuid;
+export const collegeOrganizationIdSchema = zUuid;
 
 /** Legacy CollegeDTO accepted up to 255 characters for location and
  * postal fields. PostgreSQL stores city/state/country at 128 and postal code
@@ -63,8 +64,8 @@ export const updateCollegeInputSchema = z
     postalCode: optionalText(32,"Pin Code"),
     // Post-creation appointments: both IDs must be current membership UUIDs
     // of this college (the DB enforces composite college scope).
-    chairMembershipId: z.string().uuid().nullable().optional(),
-    viceChairMembershipId: z.string().uuid().nullable().optional(),
+    chairMembershipId: zUuid.nullable().optional(),
+    viceChairMembershipId: zUuid.nullable().optional(),
   })
   .refine(
     (value) => Object.values(value).some((item) => item !== undefined),

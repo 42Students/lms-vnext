@@ -12,6 +12,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {electiveLifecycleSchema} from "./college-elective-lifecycle-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export class ElectiveLifecycleError extends Error {
   constructor(public readonly code:"ELECTIVE_SLOT_NOT_FOUND"|"ELECTIVE_SLOT_STALE"|
     "ELECTIVE_ACTIVE_OFFERINGS"|"ELECTIVE_SELECTION_LOCKED"|"ELECTIVE_PARENT_UNAVAILABLE") {
@@ -23,7 +24,7 @@ type TxRunner=<T>(cb:(tx:Tx)=>Promise<T>)=>Promise<T>;
 
 export async function changeCollegeElectiveLifecycle(context:RequestContext,rawId:unknown,raw:unknown,
   transaction:TxRunner=(fn)=>getDb().transaction(fn)) {
-  const id=z.string().uuid().parse(rawId),input=electiveLifecycleSchema.parse(raw);
+  const id=zUuid.parse(rawId),input=electiveLifecycleSchema.parse(raw);
   const actor=await resolveActingCollege(context,"academics.manage");
   await assertCollegeElectivesEnabled(context);
   return transaction(async tx=>{

@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const decimalPage=z.union([
  z.number().int().min(1).max(10000),
  z.string().regex(/^[1-9][0-9]*$/)
@@ -14,7 +15,7 @@ export const adminModuleDetailQuerySchema=z.strictObject({
  scope:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"]).optional(),
  locks:z.enum(["ALL","LOCKED"]).default("ALL"),
  storedState:z.enum(["ALL","ON","OFF"]).default("ALL"),
- scopeId:z.uuid().optional(),
+ scopeId:zUuid.optional(),
  page:decimalPage.default(1),
 }).superRefine((input,ctx)=>{
  if(input.scopeId&&!input.scope)

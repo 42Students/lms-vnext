@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminFacultyScheduleReassignSchema=z.object({
-  sourceMembershipId:z.string().uuid(),
-  replacementMembershipId:z.string().uuid(),
+  sourceMembershipId:zUuid,
+  replacementMembershipId:zUuid,
   confirmed:z.literal(true),
 }).strict().refine(value=>value.sourceMembershipId!==value.replacementMembershipId,{
   message:"Choose a different replacement faculty member",

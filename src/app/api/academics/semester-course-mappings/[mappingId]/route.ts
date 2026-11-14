@@ -12,6 +12,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { updateCollegeTermMapping, removeCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 /** Legacy semester courses endpoint map (numeric term/course identifiers must
  * be mapped within the acting college, never trusted from a client request):
@@ -33,7 +34,7 @@ export const GET = route(
   async ({ context: __actor, params }) => {
     const context = __actor!;
     const { mappingId: raw } = params;
-    const mappingId = z.string().uuid().parse(raw);
+    const mappingId = zUuid.parse(raw);
     const member = await resolveActingCollege(context, "academics.read");
     const [row] = await getDb().select({
       id: programTermCourses.id,

@@ -1,23 +1,24 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeStudyMemberSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("ADD"),
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
   }).strict(),
   z.object({
     action: z.literal("REMOVE"),
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
   }).strict(),
   z.object({
     action: z.literal("REMOVE_AND_LOCK"),
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     expectedVersion: z.number().int().min(0),
     confirm: z.literal(true),
   }).strict(),
   z.object({
     action: z.literal("LOCK"),
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     locked: z.boolean(),
   }).strict(),
 ]);

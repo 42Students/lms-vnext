@@ -8,10 +8,11 @@ import {openCollegeVerificationDocument} from "@/modules/verification/staff-priv
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{membershipId:string;section:string;receiptId:string}>}){
  try{
-  const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"]),receiptId:z.string().uuid()}).parse(await params);
+  const input=z.strictObject({membershipId:zUuid,section:z.enum(["EDUCATION","IDENTITY"]),receiptId:zUuid}).parse(await params);
   const context=await getCurrentRequestContext();
   await requireTpoVerificationActor(context);
   const grant=await openCollegeVerificationDocument(context,input.membershipId,input.section,input.receiptId,undefined,true);

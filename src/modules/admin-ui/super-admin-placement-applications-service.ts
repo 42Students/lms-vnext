@@ -11,6 +11,7 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export async function listAdminPlacementApplications(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),selected=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
  const source=db.select({
@@ -137,7 +138,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
 const legacySearchOptions=z.strictObject({
  query:z.string().trim().max(100).default(""),
  limit:z.coerce.number().int().min(1).max(200).default(15),
- organizationId:z.string().uuid().optional(),
+ organizationId:zUuid.optional(),
 });
 export async function searchSuperAdminPlacementApplicationsLegacy(
  context:RequestContext,raw:unknown,
@@ -193,7 +194,7 @@ export async function searchSuperAdminPlacementApplicationsLegacy(
 export async function getSuperAdminOrganizationApplicationStats(
  context:RequestContext,raw?:unknown,
 ){
- const input=z.strictObject({organizationId:z.string().uuid().optional()})
+ const input=z.strictObject({organizationId:zUuid.optional()})
   .parse(raw??{});
  const scope=context.adminScope;
  if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE"||

@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** An admin task-plan request contains changed rows only, never a replacement workspace. */
 export const projectTaskPlanRowSchema = z.strictObject({
-  id: z.string().uuid(),
+  id: zUuid,
   key: z.string().trim().min(1).max(120),
   title: z.string().trim().min(1).max(200),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
-  sprintId: z.string().uuid().nullable(),
+  sprintId: zUuid.nullable(),
   estimatePoints: z.number().int().min(0).max(1000).nullable(),
   taskType: z.enum(["STORY", "BUG", "CHORE", "SPIKE"]).nullable(),
   dueLabel: z.string().trim().max(160).nullable(),

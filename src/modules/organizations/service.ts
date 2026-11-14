@@ -21,6 +21,7 @@ import {
 
 import { ROLE } from "@/modules/identity/roles";
 import { isUniqueViolation } from "@/lib/shared";
+import { zUuid } from "@/lib/schema-primitives";
 /** DTO adapter: preserve the old soft-delete flag without exposing a
  * fabricated numeric primary key. Consumers must treat id as a UUID.
  */
@@ -387,7 +388,7 @@ export async function listArchivedOrganizations(context:RequestContext){
  * restored here; academic objects keep their own specialized guarded routes. */
 export async function restoreArchivedEntity(context:RequestContext,raw:unknown){
  const input=z.strictObject({
-  entityType:z.enum(["ORGANIZATION","COLLEGE"]),id:z.string().uuid(),
+  entityType:z.enum(["ORGANIZATION","COLLEGE"]),id:zUuid,
  }).parse(raw);
  if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
  if(input.entityType==="ORGANIZATION"){

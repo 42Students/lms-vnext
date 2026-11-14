@@ -16,13 +16,14 @@ import {evaluatePlacementEligibility} from "./eligibility-service";
 import {tpoAcademicImportNewlyIneligible} from "./tpo-academic-import-recheck-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 // Bulk CSVs retain the legacy two-field contract. An individual verified
 // correction can submit only the fields that changed; absent fields are never
 // zeroed or replaced by self-reported values.
 const correctionRowSchema=tpoAcademicPreviewRowSchema.partial({
  cgpa:true,activeBacklogs:true,
 }).extend({
- studentCode:z.string().uuid(),
+ studentCode:zUuid,
  pastBacklogs:z.number().int().min(0).max(100).optional(),
  tenthPercentage:z.number().min(0).max(100).optional(),
  twelfthPercentage:z.number().min(0).max(100).optional(),
@@ -302,7 +303,7 @@ export async function previewTpoLegacyAcademicImport(
  const college=await scope(context);
  const db=getDb();
  const ids=[...new Set(rows.map(row=>row.studentCode).filter(
-  (v):v is string=>v!==null&&z.uuid().safeParse(v).success))];
+  (v):v is string=>v!==null&&zUuid.safeParse(v).success))];
  const rolls=[...new Set(rows.map(row=>row.rollNumber.trim()).filter(Boolean))];
  const found: {id:string;roll:string|null;name:string|null;cgpa:number|null;backlogs:number|null}[]=[];
  for(let i=0;i<Math.max(ids.length,rolls.length);i+=500){
@@ -338,7 +339,7 @@ export async function previewTpoLegacyAcademicImport(
   const rollMatches=row.rollNumber?byRoll.get(row.rollNumber.trim().toLowerCase())??[]:[];
   const match=idMatch??(rollMatches.length===1?rollMatches[0]:null);
   const problem=row.issue??
-   (row.studentCode&&!z.uuid().safeParse(row.studentCode).success?"Invalid learner ID":null)??
+   (row.studentCode&&!zUuid.safeParse(row.studentCode).success?"Invalid learner ID":null)??
    (rollMatches.length>1?"Duplicate roll number in this college":null)??
    (row.studentCode&&row.rollNumber&&
       (!idMatch||idMatch.roll?.trim().toLowerCase()!==row.rollNumber.trim().toLowerCase())

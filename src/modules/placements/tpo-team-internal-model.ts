@@ -1,10 +1,11 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const internalThreadSchema=z.object({
- recipientMembershipId:z.string().uuid(),
+ recipientMembershipId:zUuid,
  kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT"),
- contextId:z.string().uuid().optional(),
- participantMembershipIds:z.array(z.string().uuid()).max(20).default([]),
- idempotencyKey:z.string().uuid().optional(),
+ contextId:zUuid.optional(),
+ participantMembershipIds:z.array(zUuid).max(20).default([]),
+ idempotencyKey:zUuid.optional(),
  topic:z.string().trim().min(1).max(200),
  firstMessage:z.string().trim().min(1).max(4000).optional(),
 }).strict().superRefine((input,ctx)=>{
@@ -18,10 +19,10 @@ export const internalThreadSchema=z.object({
    ctx.addIssue({code:"custom",path:["participantMembershipIds"],message:"Primary recipient is already selected"});
 });
 export const internalMessageSchema=z.object({
- threadId:z.string().uuid(),body:z.string().trim().min(1).max(4000),
- idempotencyKey:z.string().uuid().optional(),
+ threadId:zUuid,body:z.string().trim().min(1).max(4000),
+ idempotencyKey:zUuid.optional(),
  markDecision:z.boolean().optional(),
- mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ mentionMembershipIds:z.array(zUuid).max(20).default([]),
  addMentionedMembers:z.boolean().default(false),
 }).strict().superRefine((data,ctx)=>{
  if(new Set(data.mentionMembershipIds).size!==data.mentionMembershipIds.length)

@@ -15,6 +15,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -110,16 +111,16 @@ export const PUT = route(
  * fresh attempts for that exact Course Offering, preserving historic scores. */
 const batchInput=z.strictObject({
  action:z.literal("READ_BATCH"),
- deliveryId:z.uuid(),
- contentIds:z.array(z.uuid()).min(1).max(500),
+ deliveryId:zUuid,
+ contentIds:z.array(zUuid).min(1).max(500),
 });
 
 const retakeInput=z.strictObject({
  action:z.literal("RETAKE_COURSE"),
- membershipId:z.uuid().optional(),
- learnerId:z.uuid().optional(),
- offeringId:z.uuid().optional(),
- courseId:z.uuid().optional(),
+ membershipId:zUuid.optional(),
+ learnerId:zUuid.optional(),
+ offeringId:zUuid.optional(),
+ courseId:zUuid.optional(),
  expectedAttempt:z.number().int().min(0),
  confirmed:z.literal(true),
 }).superRefine((value,ctx)=>{
@@ -135,7 +136,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
  try{
   const context=await getCurrentRequestContext();
   const {contentId}=await params;
-  if(!z.uuid().safeParse(contentId).success)
+  if(!zUuid.safeParse(contentId).success)
    return NextResponse.json({error:"INVALID_CONTENT_ID",message:"Content ID must be a valid UUID"},{status:400});
   const raw:unknown=await boundedRequestJson(request).catch(()=>null);
   if(raw===null || typeof raw!=="object" || Array.isArray(raw))

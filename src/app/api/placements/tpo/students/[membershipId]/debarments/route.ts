@@ -8,13 +8,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {createPlacementDebarment,liftPlacementDebarment,listTpoMemberDebarments,PlacementDebarmentError} from "@/modules/placements/debarment-service";
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type Context={params:Promise<{membershipId:string}>};
 const input=z.discriminatedUnion("action",[
  z.object({action:z.literal("DEBAR"),reason:z.string().trim().min(1).max(500),
   untilDate:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   untilDrives:z.number().int().min(1).max(10000).nullable().optional()}).strict(),
- z.object({action:z.literal("LIFT"),debarmentId:z.string().uuid(),
+ z.object({action:z.literal("LIFT"),debarmentId:zUuid,
   reason:z.string().trim().min(1).max(500)}).strict(),
 ]);
 export const GET = route(

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoCompanyLifecycleSchema = z.object({
-  companyId: z.string().uuid(),
+  companyId: zUuid,
   expectedUpdatedAt: z.string().datetime({ offset: true }),
   action: z.enum(["ARCHIVE", "RESTORE", "EDIT_TRUST"]),
   nextTrusted: z.boolean().optional(),

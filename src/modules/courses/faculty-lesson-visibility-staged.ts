@@ -3,13 +3,14 @@ import { z } from "zod";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Migration-aware learner filter. No unregistered Drizzle schema imports. */
 export async function filterStagedStudentVisibleLessonContents<T extends { id: string }>(
   lessonId: string, rows: readonly T[],
 ): Promise<T[]> {
   if (rows.length === 0) return [];
   // Validate before the migration fallback: malformed URLs must never skip scope checks.
-  const normalizedLessonId = z.string().uuid().parse(lessonId);
+  const normalizedLessonId = zUuid.parse(lessonId);
   const ready = await getDb().execute<{ available: boolean }>(sql`
     select exists (
       select 1 from pg_catalog.pg_attribute

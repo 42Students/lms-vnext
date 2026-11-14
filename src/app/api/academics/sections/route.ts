@@ -16,6 +16,7 @@ import { createSectionInputSchema } from "@/modules/academics/validation";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /**
@@ -122,8 +123,8 @@ async function handlePOST(request: Request) {
     if(body&&typeof body==="object"&&!Array.isArray(body)&&
       "action" in body&&body.action==="SELECT"){
       const selected=z.strictObject({
-        action:z.literal("SELECT"),sectionId:z.uuid(),
-        idempotencyKey:z.uuid(),
+        action:z.literal("SELECT"),sectionId:zUuid,
+        idempotencyKey:zUuid,
       }).parse(body);
       const result=await recordClassSearchSelection(context,
         selected.sectionId,selected.idempotencyKey);

@@ -10,13 +10,14 @@ import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/priva
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Authorized, short-lived read of the learner's explicitly selected resume.
  * No raw storage path, unverified legacy URL or unselected older upload is used.
  */
 export async function grantCollegeStudentPlacementResume(
  context:RequestContext,rawMembershipId:unknown,
 ){
- const membershipId=z.string().uuid().parse(rawMembershipId);
+ const membershipId=zUuid.parse(rawMembershipId);
  const collegeId=await requireCollegePlacementAdmin(context);
  const db=getDb();
  const [student]=await db.select({objectPath:learnerProfiles.resumeObjectPath,

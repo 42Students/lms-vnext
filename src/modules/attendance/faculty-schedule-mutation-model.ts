@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 const timestamp=z.iso.datetime({offset:true});
 const details=z.object({
   // Old ClassScheduleDTO permitted no title at all. Optional enhanced
@@ -8,13 +9,13 @@ const details=z.object({
   location:z.string().trim().max(240).nullable().default(null),
   // A selected hall reserves a real, college-scoped resource. Free-text
   // location is display-only and never grants hall scheduling rights.
-  lectureHallId:z.string().uuid().nullable().optional(),
+  lectureHallId:zUuid.nullable().optional(),
   startsAt:timestamp,endsAt:timestamp,
 }).strict();
 export const facultyAttendanceScheduleSchema=z.discriminatedUnion("action",[
   details.extend({action:z.literal("CREATE"),confirm:z.literal(true)}),
   details.extend({
-    action:z.literal("RESCHEDULE"),sessionId:z.string().uuid(),
+    action:z.literal("RESCHEDULE"),sessionId:zUuid,
     expectedUpdatedAt:timestamp,confirm:z.literal(true),
   }),
 ]).superRefine((v,ctx)=>{
@@ -25,7 +26,7 @@ export const facultyAttendanceScheduleSchema=z.discriminatedUnion("action",[
     ctx.addIssue({code:"custom",path:["endsAt"],message:"A class cannot last longer than 12 hours"});
 });
 export const facultyAttendanceScheduleParamsSchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
 }).strict();
 
 /** Canonical metadata/instant equality prevents needless versions and audits. */

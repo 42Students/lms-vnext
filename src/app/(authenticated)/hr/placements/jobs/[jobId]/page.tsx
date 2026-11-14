@@ -67,6 +67,7 @@ import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { currentTimeMs } from "@/lib/clock";
+import { zUuid } from "@/lib/schema-primitives";
 function safeDriveReturnTo(raw:string|undefined){
  if(!raw)return "/recruiter/drives";
  try{
@@ -139,7 +140,7 @@ export default async function HrPlacementJobPage({
       notFound();
     }
     if (error instanceof z.ZodError) {
-      if (!z.string().uuid().safeParse(jobId).success) notFound();
+      if (!zUuid.safeParse(jobId).success) notFound();
       // Malformed tab, page, stage or applicant selectors are recoverable URL
       // mistakes. Never let an invalid deep link crash the recruiter job page.
       return <div className="min-w-0 max-w-full space-y-6">
@@ -192,7 +193,7 @@ export default async function HrPlacementJobPage({
   if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
     const destination=query.tab==="selections"?"offers":"rounds";
     const search=new URLSearchParams({tab:destination,returnTo});
-    if(query.roundId&&z.string().uuid().safeParse(query.roundId).success)search.set("roundId",query.roundId);
+    if(query.roundId&&zUuid.safeParse(query.roundId).success)search.set("roundId",query.roundId);
     redirect("/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?"+search.toString());
   }
   const reviewMode = z.enum(["1"]).optional().safeParse(query.review);

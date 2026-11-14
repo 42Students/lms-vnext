@@ -1,10 +1,11 @@
 import { z } from "zod";
 import type { ProjectTeam } from "./class-team-split-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** The server must never trust a client-edited team preview. */
 export const classTeamPreviewSchema = z.array(z.object({
   name: z.string().trim().min(1).max(120),
-  membershipIds: z.array(z.string().uuid()).min(1).max(2000),
+  membershipIds: z.array(zUuid).min(1).max(2000),
 }).strict()).min(1).max(2000);
 
 export function verifyClassTeamPreview(

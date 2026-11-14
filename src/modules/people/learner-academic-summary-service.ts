@@ -18,6 +18,7 @@ import { buildOwnLearnerAcademicSummary } from "./learner-academic-summary-model
 import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Profile academic identity comes from a live enrollment, never client profile
  * JSON or a caller-supplied membership ID. A missing enrollment stays unknown.
@@ -28,7 +29,7 @@ export async function getOwnLearnerAcademicSummary(context: RequestContext) {
       membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("academics.read");
   }
-  const membershipId = z.string().uuid().parse(membership.id);
+  const membershipId = zUuid.parse(membership.id);
   requirePermission(context, "academics.read", {
     collegeId: membership.collegeId,
     organizationId: membership.organizationId,

@@ -1,10 +1,11 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerQuizHistoryQuerySchema = z.object({
-  quizId: z.string().uuid(),
-  deliveryId: z.string().uuid(),
-  attemptId: z.string().uuid().optional(),
+  quizId: zUuid,
+  deliveryId: zUuid,
+  attemptId: zUuid.optional(),
 }).strict();
 
 /** Only select a quiz from a learner's server-authorized Course deliveries. */

@@ -2,11 +2,12 @@ import "server-only";
 import { z } from "zod";
 
 import { rawEnv } from "@/config/env";
+import { zUuid } from "@/lib/schema-primitives";
 /** External dev fixture provisioning runs in a single DB transaction before
  * publishing this manifest. This module NEVER creates accounts or objects.
  * It replaces the legacy unaudited seed endpoint with a read-only, gated
  * manifest for pre-provisioned, deterministic sandbox fixtures. */
-const id = z.uuid();
+const id = zUuid;
 const tenant = z.strictObject({
   organization: id,
   college: id,

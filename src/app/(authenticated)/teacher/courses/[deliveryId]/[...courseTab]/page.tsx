@@ -10,6 +10,7 @@ import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigatio
 import {facultyBlueprintCreateMode} from "@/modules/courses/faculty-blueprint-add-target";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function FacultyCourseTabPage({
   params,searchParams,
 }: {
@@ -26,7 +27,7 @@ export default async function FacultyCourseTabPage({
   // Resolve legacy slug/class deep links against persisted, authorized Faculty
   // assignments only. A class hint is never accepted as an authorization grant.
   const legacyClass=typeof query.cls==="string"?query.cls:null;
-  if(!z.string().uuid().safeParse(deliveryId).success || legacyClass){
+  if(!zUuid.safeParse(deliveryId).success || legacyClass){
     const canonical=await resolveFacultyCourseDeliveryForLink(context,deliveryId,legacyClass);
     if(!canonical)notFound();
     if(canonical!==deliveryId){
@@ -45,8 +46,8 @@ export default async function FacultyCourseTabPage({
   const workspace = await getFacultyCourseWorkspace(context, deliveryId);
   const requestedLesson=typeof query.lesson==="string"?query.lesson:null;
   const requestedContent=typeof query.content==="string"?query.content:null;
-  if(requestedLesson&&!z.string().uuid().safeParse(requestedLesson).success)notFound();
-  if(requestedContent&&!z.string().uuid().safeParse(requestedContent).success)notFound();
+  if(requestedLesson&&!zUuid.safeParse(requestedLesson).success)notFound();
+  if(requestedContent&&!zUuid.safeParse(requestedContent).success)notFound();
   const owningLesson=requestedContent?workspace.lessons.find(lesson=>
     lesson.contents.some(content=>content.id===requestedContent)||
     lesson.assignments.some(item=>item.id===requestedContent)||

@@ -35,6 +35,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 
+import { zUuid } from "@/lib/schema-primitives";
 type SearchParams = Record<
   string,
   string | string[] | undefined
@@ -86,7 +87,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   if (
     membershipId &&
-    !z.string().uuid()
+    !zUuid
       .safeParse(membershipId).success
   ) {
     notFound();

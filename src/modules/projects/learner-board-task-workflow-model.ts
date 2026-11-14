@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "./learner-board-task-detail-model";
-const idSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const idSchema=zUuid;
 export function learnerBoardTaskWorkspaceHref(
  projectId:string, filters:LearnerTaskBoardUrlFilters, taskId:string,
 ):string {

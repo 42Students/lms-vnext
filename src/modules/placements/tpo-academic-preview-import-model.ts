@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {mapTpoImportHeaders} from "./tpo-import-header-aliases";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoAcademicPreviewRowSchema=z.object({
- studentCode:z.string().uuid(),
+ studentCode:zUuid,
  cgpa:z.coerce.number().min(0).max(10),
  activeBacklogs:z.coerce.number().int().min(0).max(100),
 }).strict();

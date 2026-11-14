@@ -1,14 +1,15 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Session-local drafts are never authoritative Company Team commands. */
 export const tpoCompanyTeamDraftSchema=z.strictObject({
  body:z.string().max(4000),
  decision:z.boolean(),
- assignee:z.union([z.literal(""),z.string().uuid()]),
+ assignee:z.union([z.literal(""),zUuid]),
  dueAt:z.string().max(40),
  pending:z.nullable(z.strictObject({
   fingerprint:z.string().max(20000),
-  key:z.string().uuid(),
+  key:zUuid,
  })),
 });
 export type TpoCompanyTeamDraft=z.infer<typeof tpoCompanyTeamDraftSchema>;

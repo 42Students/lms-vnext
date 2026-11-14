@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Persisted program_term_courses.credits and the legacy backend both accept
  * 0..30. The old interactive editor used 1..10, but historical zero-credit
@@ -41,15 +42,15 @@ export const collegeTermCourseTypeOptions=[
 ] as const;
 
 export const collegeTermCourseFullOrderSchema=z.strictObject({
-  programTermId:z.uuid(),
-  mappingIds:z.array(z.uuid()).max(100),
+  programTermId:zUuid,
+  mappingIds:z.array(zUuid).max(100),
 }).refine(value=>new Set(value.mappingIds).size===value.mappingIds.length,{
   path:["mappingIds"],message:"Select each mapped course only once",
 });
 
 export const collegeTermCourseAddSchema = z.object({
-  programTermId: z.string().uuid(),
-  courseId: z.string().uuid(),
+  programTermId: zUuid,
+  courseId: zUuid,
   type: z.enum(["CORE", "ELECTIVE"]),
   credits: newTermCourseCreditsSchema,
 }).strict();
@@ -90,7 +91,7 @@ export function reorderTermCourseIds(ids: readonly string[], movingId: string, p
 }
 
 export const collegeTermCourseUnmapSchema = z.object({ confirm: z.literal(true) }).strict();
-export const collegeTermCourseIdSchema = z.string().uuid();
+export const collegeTermCourseIdSchema = zUuid;
 
 export function nextTermCourseOrder(orders: readonly number[]) {
   return Math.max(0, ...orders) + 1;

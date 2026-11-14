@@ -18,6 +18,7 @@ import {
 } from "./college-student-csv-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export function requireCollegeStudentImporter(context: RequestContext) {
   const member = context.membership;
   if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
@@ -78,8 +79,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
       receipts: z.array(z.object({
         row: z.number().int().positive(),
         status: z.enum(["VALID", "INVALID", "IMPORTED", "FAILED", "PARTIAL"]),
-        membershipId: z.string().uuid().nullable(),
-        enrollmentId: z.string().uuid().nullable(),
+        membershipId: zUuid.nullable(),
+        enrollmentId: zUuid.nullable(),
       })),
     });
     const previous = receiptSchema.safeParse(prior?.metadata);

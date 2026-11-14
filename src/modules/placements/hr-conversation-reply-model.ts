@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrRecruiterReplySchema=z.object({
- threadId:z.string().uuid(),
- quoteId:z.string().uuid().optional(),
+ threadId:zUuid,
+ quoteId:zUuid.optional(),
  body:z.string().trim().min(1).max(4000)
   .refine(value=>!/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(value),
    {message:"Message contains unsupported characters"}),

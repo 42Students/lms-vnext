@@ -43,6 +43,7 @@ import {
 } from "./taxonomy";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 type ActivityWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
@@ -64,9 +65,9 @@ function activityDateSchema(boundary: ActivityDateBoundary) {
 
 const activityFilterSchema = z
   .object({
-    collegeId: z.string().uuid().optional(),
+    collegeId: zUuid.optional(),
     organizationId:
-      z.string().uuid().optional(),
+      zUuid.optional(),
     module: z
       .enum(ACTIVITY_MODULES)
       .optional(),
@@ -79,7 +80,7 @@ const activityFilterSchema = z
     page:z.coerce.number().int().min(0).max(10000).optional(),
     actionKey:z.string().trim().min(1).max(120).optional(),
     actorUserId:
-      z.string().uuid().optional(),
+      zUuid.optional(),
     eventType: z
       .string()
       .trim()
@@ -99,7 +100,7 @@ const activityFilterSchema = z
     to: activityDateSchema("to").optional(),
     beforeOccurredAt:
       z.coerce.date().optional(),
-    beforeId: z.string().uuid().optional(),
+    beforeId: zUuid.optional(),
     limit: z.coerce
       .number()
       .int()
@@ -849,7 +850,7 @@ export async function getActivityEventDetail(
   context: RequestContext,
   eventIdInput: string,
 ) {
-  const eventId = z.string().uuid().parse(eventIdInput);
+  const eventId = zUuid.parse(eventIdInput);
   const [row] = await getDb()
     .select({
       event: activityEvents,

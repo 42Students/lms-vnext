@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { LEARNER_PROGRAM_ENROLLMENT_STATUSES } from "@/modules/academics/constants";
 
-export const collegePersonIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const collegePersonIdSchema = zUuid;
 export const collegePersonDetailQuerySchema = z.strictObject({});
 export const collegeStudentEnrollmentQuerySchema = z.strictObject({
   status: z.union([z.literal("ALL"),z.enum(LEARNER_PROGRAM_ENROLLMENT_STATUSES)]).default("ALL"),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const daySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((s) => {
   const d = new Date(s + "T00:00:00.000Z");
   return !Number.isNaN(d.getTime()) && d.toISOString().startsWith(s);
@@ -7,15 +8,15 @@ const daySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((s) => {
 
 const timeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 export const recurringPreviewSchema = z.object({
-  sectionId: z.string().uuid(),
+  sectionId: zUuid,
   from: daySchema,
   to: daySchema,
   weekdays: z.array(z.number().int().min(0).max(6)).max(7),
   startTime: timeSchema,
   endTime: timeSchema,
-  facultyMembershipId: z.string().uuid().nullable().optional(),
-  lectureHallId: z.string().uuid().nullable().optional(),
-  deliveryId: z.string().uuid().nullable().optional(),
+  facultyMembershipId: zUuid.nullable().optional(),
+  lectureHallId: zUuid.nullable().optional(),
+  deliveryId: zUuid.nullable().optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.from > v.to) ctx.addIssue({ code: "custom", path: ["to"], message: "End date precedes start" });
   // The old LMS caps occurrences, not the number of calendar days. An

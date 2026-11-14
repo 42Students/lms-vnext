@@ -1,5 +1,6 @@
 import {z} from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export function learnerCourseNextItemHref(row:{
   readOnly:boolean;learningPathReady:boolean;
   course:{deliveryId:string};

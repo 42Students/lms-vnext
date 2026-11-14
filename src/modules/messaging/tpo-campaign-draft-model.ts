@@ -1,11 +1,12 @@
 import {z} from "zod";
 import {isCampaignTemplateKey} from "./template-boundary-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoCampaignDraftSchema=z.strictObject({
  title:z.string().trim().min(2,"Give this campaign a title").max(160,"Keep the title within 160 characters."),
  subject:z.string().trim().min(2,"Give the email a subject").max(200,"Keep the subject within 200 characters."),
  body:z.string().trim().min(2,"Write the email").max(10000,"Keep the email within 10000 characters."),
  segment:z.enum(["ALL_ELIGIBLE","UNASSIGNED","NEW"],{error:"Choose who gets it"}),
- selectedLeadIds:z.array(z.string().uuid()).min(1,"Choose who gets it").max(100,"Choose no more than 100 recruiters")
+ selectedLeadIds:z.array(zUuid).min(1,"Choose who gets it").max(100,"Choose no more than 100 recruiters")
   .refine(value=>new Set(value).size===value.length,"Select distinct recruiters").optional(),
  templateKey:z.string().trim().min(2).max(160)
   .refine(isCampaignTemplateKey,"Use a provisioned, non-OTP campaign template"),

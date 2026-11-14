@@ -9,7 +9,8 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {markOwnNotificationRead} from "@/modules/activity/notification-service";
 import { ROLE } from "@/modules/identity/roles";
-const noticeId=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const noticeId=zUuid;
 export async function getTpoNoticeReadSummary(context:RequestContext,rawId:unknown){
  const id=noticeId.parse(rawId),member=context.membership;
  if(!member||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");

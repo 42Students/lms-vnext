@@ -12,11 +12,12 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type RouteContext = { params: Promise<{ slug: string }> };
-const uuid = z.string().uuid();
+const uuid = zUuid;
 const slugSchema = z.string().min(1).max(64)
   .regex(/^[a-z0-9][a-z0-9._-]*$/);
 

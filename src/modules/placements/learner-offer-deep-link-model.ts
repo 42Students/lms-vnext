@@ -1,5 +1,6 @@
 import { z } from "zod";
-const offerIdSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const offerIdSchema=zUuid;
 /** Old LMS offer IDs are signed 32-bit positive integers. Resolve them only
  * against the already authorized own-offer result, never by unscoped numeric
  * DB lookup or coercion to a UUID. */

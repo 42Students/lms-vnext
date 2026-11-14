@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_CONTACTS_PAGE_SIZE=10;
 // URL pagination must be decimal digits; z.coerce.number also accepts
 // hexadecimal, exponent notation and whitespace supplied by a forged URL.
@@ -13,17 +14,17 @@ export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
   initial:z.string().regex(/^[A-Z]$/).optional(),
-  membershipId:z.string().uuid().optional(),
+  membershipId:zUuid.optional(),
   joinedFrom:z.iso.date().optional(),
   joinedThrough:z.iso.date().optional(),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
   profile:z.enum(["ALL","PROFILED","UNPROFILED"]).default("ALL"),
-  cohortId:z.string().uuid().optional(),
-  programId:z.string().uuid().optional(),
-  sectionId:z.string().uuid().optional(),
-  facultyDepartmentId:z.string().uuid().optional(),
+  cohortId:zUuid.optional(),
+  programId:zUuid.optional(),
+  sectionId:zUuid.optional(),
+  facultyDepartmentId:zUuid.optional(),
   employmentType:z.string().trim().min(1).max(128).optional(),
   facultyTitleQ:z.string().trim().min(1).max(80).optional(),
   classPresence:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),

@@ -27,6 +27,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter } from "@/lib/format-date";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=istDateFormatter;
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -70,7 +71,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     ["sectionId","Class"],["cohortId","Cohort / batch"],
   ] as const;
   const invalid=identifiers.find(([field])=>
-    typeof raw[field]==="string"&&raw[field]!==""&&!z.string().uuid().safeParse(raw[field]).success);
+    typeof raw[field]==="string"&&raw[field]!==""&&!zUuid.safeParse(raw[field]).success);
   const description=invalid
     ? invalid[1]+" identifier must be a valid UUID. Choose an existing "+invalid[1].toLowerCase()+" from the filter list."
     : collegeContactFilterMessage(error);

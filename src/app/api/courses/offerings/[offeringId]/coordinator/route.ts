@@ -10,9 +10,10 @@ import {
   revokeOfferingCoordinator,
 } from "@/modules/courses/coordinator-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
-const grantBodySchema = z.object({ membershipId: z.string().uuid() }).strict();
+const grantBodySchema = z.object({ membershipId: zUuid }).strict();
 
 /** College admin: who coordinates this course now, who could, and what changed before. */
 // @security-reviewed GET auth=session tenant=college permission=courses.manage csrf=route-wrapper test=tests/unit/course-coordinator-policy.test.ts

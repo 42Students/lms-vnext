@@ -10,6 +10,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": CACHE.PRIVATE };
 
@@ -35,9 +36,9 @@ async function handlePOST(request: Request) {
   try {
     const body = await readRecruiterJsonBody(request, 4096);
     const input = z.discriminatedUnion("action", [
-      z.strictObject({ action: z.literal("INITIATE"), collegeId: z.string().uuid(),
+      z.strictObject({ action: z.literal("INITIATE"), collegeId: zUuid,
         originalName: z.string(), contentType: z.string(), sizeBytes: z.number() }),
-      z.strictObject({ action: z.literal("CONFIRM"), collegeId: z.string().uuid(),
+      z.strictObject({ action: z.literal("CONFIRM"), collegeId: zUuid,
         objectKey: z.string() }),
     ]).parse(body);
     const context = await getCurrentRequestContext();
@@ -59,7 +60,7 @@ async function handleGET(request: Request) {
   try {
     const url = new URL(request.url);
     const params = z.strictObject({
-      collegeId: z.string().uuid(), objectKey: z.string(),
+      collegeId: zUuid, objectKey: z.string(),
     }).parse(Object.fromEntries(url.searchParams.entries()));
     if ([...url.searchParams.keys()].some(key => url.searchParams.getAll(key).length !== 1))
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400, headers: noStore });

@@ -12,6 +12,7 @@ import {classifyMentorProjectEmailSource,mentorProjectEmailSubmissionIsNotifiabl
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailDispatch} from "./mentor-project-email-provider";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** An internal, read-only pre-send security boundary for a future claimed
  * email worker. NOT an HTTP endpoint and NOT an outbox/dispatch side effect.
  * Identity, recipient address, event, tenant and saved consent all come
@@ -21,8 +22,8 @@ import type {MentorProjectEmailDispatch} from "./mentor-project-email-provider";
 export async function resolveMentorProjectEmailPreflight(
  sourceEventId:string,recipientUserId:string,queuedScope:MentorQueuedEmailScope,
 ):Promise<MentorProjectEmailDispatch|null>{
- if(!z.uuid().safeParse(sourceEventId).success||
-    !z.uuid().safeParse(recipientUserId).success)return null;
+ if(!zUuid.safeParse(sourceEventId).success||
+    !zUuid.safeParse(recipientUserId).success)return null;
  const db=getDb();
  const [event]=await db.select({
   id:activityEvents.id,module:activityEvents.module,

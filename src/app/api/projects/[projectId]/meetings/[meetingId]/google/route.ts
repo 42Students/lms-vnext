@@ -8,11 +8,12 @@ import {checkMentorGoogleMeeting,syncMentorGoogleMeeting,
  removeCancelledMentorGoogleMeeting}
  from "@/modules/projects/mentor-google-meeting-sync-service";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 const inputSchema=z.strictObject({
  weeklyCount:z.number().int().min(2).max(52).optional(),
- inviteeMembershipIds:z.array(z.uuid()).min(1).max(100).optional(),
+ inviteeMembershipIds:z.array(zUuid).min(1).max(100).optional(),
 });
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoShareableShortlistQuerySchema = z.object({
-  jobId: z.string().uuid(),
+  jobId: zUuid,
   page: z.coerce.number().int().min(1).max(10000).default(1),
   q: z.string().trim().max(80).default(""),
 }).strict();

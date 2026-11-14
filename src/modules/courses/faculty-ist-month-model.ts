@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyMonthQuerySchema=z.object({
   month:z.string().regex(/^(19|20)\d{2}-(0[1-9]|1[0-2])$/),
-  deliveryId:z.string().uuid().optional(),
+  deliveryId:zUuid.optional(),
 }).strict();
 export type FacultyMonthQuery=z.infer<typeof facultyMonthQuerySchema>;
 

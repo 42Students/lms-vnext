@@ -11,10 +11,11 @@ import {companyDomainSchema} from "./company-curation-domain-model";
 import {companyDomainAcceptsMail} from "./company-mail-domain-resolver";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const addCompanyDomainSchema=z.strictObject({
  // Legacy accepts bare domain, @domain, work email and http(s) company URLs.
  // Use the same canonicalizer as the global company-domain editor.
- companyId:z.string().uuid(),domain:companyDomainSchema,
+ companyId:zUuid,domain:companyDomainSchema,
 });
 export class CompanyDomainError extends Error{
  constructor(readonly code:"COMPANY_NOT_FOUND"|"ALREADY_SET"|"DOMAIN_IN_USE"){super(code);}

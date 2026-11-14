@@ -18,6 +18,7 @@ import {
   normalizeSlotYear, slotSelectionChanged,
 } from "./college-slot-mutation-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type TxRunner = <T>(cb: (tx: Tx) => Promise<T>) => Promise<T>;
 
@@ -123,7 +124,7 @@ export async function updateCollegeElectiveSlot(
   raw: unknown,
   transaction: TxRunner = (fn) => getDb().transaction(fn),
 ) {
-  const slotId = z.string().uuid().parse(slotIdInput);
+  const slotId = zUuid.parse(slotIdInput);
   const input = editCollegeElectiveSlotSchema.parse(raw);
   const member = await currentCollege(context);
   return transaction(async tx => {

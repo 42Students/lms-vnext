@@ -12,6 +12,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyProjectMemberships} from "./project-notification-service";
 import {planMentorNextSprintAssignments} from "./mentor-next-sprint-assignment-model";
 import {nextMentorAllocatableSprint} from "./mentor-next-allocatable-sprint-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function autoAssignProjectTasks(context:RequestContext,projectId:string){
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
@@ -85,7 +86,7 @@ export async function autoAssignProjectTasks(context:RequestContext,projectId:st
 }
 
 const nextSprintAssignmentInput=z.strictObject({
- sprintId:z.string().uuid(),
+ sprintId:zUuid,
  expectedSprintUpdatedAt:z.iso.datetime({offset:true}),
 });
 

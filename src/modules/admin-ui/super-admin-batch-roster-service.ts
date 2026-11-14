@@ -7,9 +7,10 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** One selected academic cohort, with per-class occupancy from persisted active enrollment. */
 export async function getSuperAdminBatchRosterOverview(context:RequestContext,rawId:unknown){
- const batchId=z.uuid().parse(rawId);
+ const batchId=zUuid.parse(rawId);
  if(!isSuperAdmin(context))throw new AuthorizationError("academics.read");
  const scope=await resolveActingCollege(context,"academics.read");
  const db=getDb();

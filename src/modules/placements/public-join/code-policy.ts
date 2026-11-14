@@ -4,6 +4,7 @@ import {
   publicCollegeJoinTokenSchema, publicRecruiterWorkEmailSchema,
 } from "../public-college-join-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const PUBLIC_JOIN_CODE_TTL_MS = 10 * 60_000;
 export const PUBLIC_JOIN_PER_EMAIL_HOUR = 5;
 export const PUBLIC_JOIN_PER_LINK_HOUR = 300;
@@ -35,7 +36,7 @@ export function publicJoinCodeDigest(
   linkId: string, email: string, code: string, secret: string,
 ) {
   if (Buffer.byteLength(secret, "utf8") < 32 ||
-      !/^[0-9]{6}$/.test(code) || !z.string().uuid().safeParse(linkId).success) {
+      !/^[0-9]{6}$/.test(code) || !zUuid.safeParse(linkId).success) {
     throw new Error("PUBLIC_JOIN_CODE_CONFIG_INVALID");
   }
   return createHmac("sha256", secret)

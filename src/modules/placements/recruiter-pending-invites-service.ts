@@ -7,7 +7,8 @@ import {colleges,placementCompanies,placementCompanyRelationships,
  placementTpoLeads,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 const action=z.strictObject({
  action:z.enum(["ACCEPT","DECLINE"]),
  expectedVersion:z.number().int().min(1),

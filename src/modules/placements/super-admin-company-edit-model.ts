@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const globalCompanyEditSchema=z.strictObject({
- companyId:z.uuid(),
+ companyId:zUuid,
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  name:z.string().trim().min(2).max(150),
  website:z.union([z.string().trim().url().refine(v=>v.startsWith("https://"),"Use HTTPS"),z.literal("")]).transform(v=>v||null),

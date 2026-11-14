@@ -1,5 +1,6 @@
 import {z} from "zod";
-export const tpoOfferEvidenceQuery=z.object({jobId:z.string().uuid(),offerId:z.string().uuid()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const tpoOfferEvidenceQuery=z.object({jobId:zUuid,offerId:zUuid}).strict();
 export type OfferEvidenceEvent={id:string;fromStatus:string|null;toStatus:string;reason:string|null;createdAt:Date};
 export function projectOfferEvidence(offer:readonly OfferEvidenceEvent[],joining:readonly OfferEvidenceEvent[]){
  const events=[...offer.map(e=>({id:"offer:"+e.id,kind:"Offer" as const,from:e.fromStatus,to:e.toStatus,reason:e.reason,when:e.createdAt.toISOString()})),

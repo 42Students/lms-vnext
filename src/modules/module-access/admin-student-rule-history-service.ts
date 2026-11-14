@@ -5,10 +5,11 @@ import {listActivityEvents} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {safeStudentRuleHistory,studentRuleHistoryCursorSchema} from "./admin-student-rule-history-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function listSuperAdminStudentRuleHistory(context:RequestContext,collegeInput:string,memberInput:string,rawCursor:unknown={}){
  const cursor=studentRuleHistoryCursorSchema.parse(rawCursor);
- const collegeId=z.uuid().parse(collegeInput);
- const membershipId=z.uuid().parse(memberInput);
+ const collegeId=zUuid.parse(collegeInput);
+ const membershipId=zUuid.parse(memberInput);
  const verified=await getSuperAdminLearnerAccessTrace(context,collegeId,{membershipId});
  if(!verified?.selected)return null;
  const events=await listActivityEvents(context,{

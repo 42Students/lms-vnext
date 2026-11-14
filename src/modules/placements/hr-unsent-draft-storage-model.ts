@@ -1,9 +1,10 @@
 import {z} from "zod";
 import {hrDriveDraftSchema,emptyHrDriveDraft,type HrDriveDraft} from "./hr-drive-draft-model";
 import {hrDraftContainsWork} from "./hr-draft-reset-model";
+import { zUuid } from "@/lib/schema-primitives";
 const lifetime=24*60*60*1000;
 export function hrDriveSessionStorageKey(userId:string,collegeId:string,fromJobId?:string|null){
- const id=z.string().uuid();
+ const id=zUuid;
  return ["hr-request-drive-v1",id.parse(userId),id.parse(collegeId),
   fromJobId?id.parse(fromJobId):"new"].join(":");
 }
@@ -15,7 +16,7 @@ export function legacyRecruiterDraftStorageKey(
  userId:string,collegeId:string,sourceId?:string|null,
 ):string|null{
  if(sourceId)return null;
- const uuid=z.string().uuid();
+ const uuid=zUuid;
  return "recruiter-drive-draft:"+uuid.parse(userId)+":"+uuid.parse(collegeId);
 }
 export type LegacyHrDraftRecovery={

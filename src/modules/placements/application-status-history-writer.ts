@@ -3,16 +3,17 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import { placementApplicationStatusHistory } from "@/db/schema";
 
+import { zUuid } from "@/lib/schema-primitives";
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 
 const transitionSchema=z.strictObject({
- applicationId:z.string().uuid(),
+ applicationId:zUuid,
  fromStatus:z.enum(["SUBMITTED","WITHDRAWN"]).nullable(),
  toStatus:z.enum(["SUBMITTED","WITHDRAWN"]),
- actorUserId:z.string().uuid(),
+ actorUserId:zUuid,
  reason:z.string().trim().max(500).nullable().optional(),
- cascadeId:z.string().uuid().nullable().optional(),
+ cascadeId:zUuid.nullable().optional(),
 });
 
 /** Reusable V1 JobApplicationStatusHistoryService recorder. The enclosing

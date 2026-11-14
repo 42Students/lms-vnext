@@ -1,5 +1,6 @@
 import {z} from "zod";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 /** Storage accepts the legacy InterviewForm's 255-character interviewer and
  * 500-character venue. Notes use the versioned outcome reason (up to 1000).
  * College-configured duration bounds may be narrower than the legacy 15–480

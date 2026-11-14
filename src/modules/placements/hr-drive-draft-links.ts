@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const idSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const idSchema = zUuid;
 
 export function recruiterDriveDraftHref(input: {
   collegeId: string;

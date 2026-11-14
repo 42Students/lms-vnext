@@ -9,20 +9,21 @@ import {AuthorizationError,can,requirePermission} from "@/modules/permissions/po
 import {requirePlacementManageScope} from "./scope";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const requestSchema=z.strictObject({
  confirmed:z.literal(true),
- runAuditId:z.string().uuid(),
+ runAuditId:zUuid,
 });
 const stage=z.enum(["NEW","CONTACTED","NOT_NOW"]);
 const stageSnapshot=z.strictObject({
- leadId:z.string().uuid(),beforeStage:stage,afterStage:stage,
+ leadId:zUuid,beforeStage:stage,afterStage:stage,
  beforeReason:z.string().nullable(),afterReason:z.string().nullable(),
  beforeUntil:z.string().nullable(),afterUntil:z.string().nullable(),
  afterUpdatedAt:z.iso.datetime({offset:true}),
 });
 const ownerSnapshot=z.strictObject({
- leadId:z.string().uuid(),beforeOwnerId:z.string().uuid().nullable(),
- afterOwnerId:z.string().uuid(),afterUpdatedAt:z.iso.datetime({offset:true}),
+ leadId:zUuid,beforeOwnerId:zUuid.nullable(),
+ afterOwnerId:zUuid,afterUpdatedAt:z.iso.datetime({offset:true}),
 });
 const undoWindowMs=5*60*1000;
 

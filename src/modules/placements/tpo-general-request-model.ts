@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const reason=z.string().trim().min(3).max(900,"Keep the reason to 900 characters or fewer.");
-const uuid=z.string().uuid();
+const uuid=zUuid;
 const nonempty=z.string().trim().min(1).max(1000);
 const proofUrl=z.union([
  z.literal(""),

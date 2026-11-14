@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeDriveListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
@@ -7,8 +8,8 @@ export const collegeDriveListQuerySchema = z.object({
   deadlineAfter: z.iso.date().optional(),
   sort:z.enum(["TITLE","DEADLINE","NEWEST","APPLICANTS"]).default("NEWEST"),
   minimumApplicants: z.coerce.number().int().min(0).max(100000).optional(),
-  seasonId: z.string().uuid().optional(),
-  relationshipId: z.string().uuid().optional(),
+  seasonId: zUuid.optional(),
+  relationshipId: zUuid.optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
   pageSize:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value)).default(20),
 }).strict().superRefine((query,ctx)=>{
@@ -16,7 +17,7 @@ export const collegeDriveListQuerySchema = z.object({
    ctx.addIssue({code:"custom",path:["deadlineBefore"],message:"Deadline end must be on or after start."});
 });
 
-export const collegeDriveIdSchema = z.string().uuid();
+export const collegeDriveIdSchema = zUuid;
 export type CollegeDriveQuery = z.infer<typeof collegeDriveListQuerySchema>;
 export const COLLEGE_DRIVE_PAGE_SIZE = 20;
 

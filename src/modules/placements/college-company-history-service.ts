@@ -18,6 +18,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * College-only relationship history; a shared canonical company ID is never
  * sufficient authorization to retrieve another college's recruiting history.
@@ -27,7 +28,7 @@ export async function getCollegeCompanyHistory(
   context: RequestContext,
   rawRelationshipId: string,
 ) {
-  const relationshipId = z.string().uuid().parse(rawRelationshipId);
+  const relationshipId = zUuid.parse(rawRelationshipId);
   const db = getDb();
   const [relationship] = await db
     .select({
@@ -167,7 +168,7 @@ export async function updateCollegeCompanyPrivateDetails(
   rawRelationshipId: string,
   rawInput: unknown,
 ) {
-  const relationshipId = z.string().uuid().parse(rawRelationshipId);
+  const relationshipId = zUuid.parse(rawRelationshipId);
   const input = updateCollegeCompanyPrivateDetailsSchema.parse(rawInput);
   const db = getDb();
   const [existing] = await db.select({

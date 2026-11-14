@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerBoardSearchSchema = z.string().trim().max(100).catch("");
-export const learnerBoardSprintSchema = z.string().uuid();
-export const learnerBoardReleaseSchema = z.string().uuid();
+export const learnerBoardSprintSchema = zUuid;
+export const learnerBoardReleaseSchema = zUuid;
 export const learnerBoardPrioritySchema = z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]);
 export const learnerBoardStatusSchema = z.enum(["TODO", "IN_PROGRESS", "BLOCKED", "IN_REVIEW", "DONE"]);
 export type LearnerBoardTask = { id: string; title: string; description: string | null; acceptanceCriteria?: string | null; priority?: string; sprintId?: string | null; assigneeMembershipId?: string | null };

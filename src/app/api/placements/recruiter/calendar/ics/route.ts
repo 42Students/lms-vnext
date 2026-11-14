@@ -10,9 +10,10 @@ import {recruiterCalendarIcs} from "@/modules/placements/recruiter-calendar-ics-
 
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const querySchema=z.strictObject({
- from:z.iso.date(),to:z.iso.date(),collegeId:z.string().uuid().optional(),
+ from:z.iso.date(),to:z.iso.date(),collegeId:zUuid.optional(),
 });
 
 export const GET = route(

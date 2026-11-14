@@ -18,6 +18,7 @@ import {
 import { route } from "@/security/route";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -36,7 +37,7 @@ type RouteContext = {
  *   preserve the archived course's college scope and history.
  * No unverified image upload or object cleanup is performed by metadata PATCH.
  */
-const courseUuid=z.string().uuid();
+const courseUuid=zUuid;
 const validSlug=/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 function slugError(message:string){
  return privateJson({error:"INVALID_SLUG",message}, { status: 400 });

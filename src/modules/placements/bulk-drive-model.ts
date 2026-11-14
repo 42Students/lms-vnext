@@ -1,16 +1,17 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const bulkDriveAddSchema = z.object({
-  roleOptionId: z.string().uuid(),
-  membershipIds: z.array(z.string().uuid()).min(1).max(200)
+  roleOptionId: zUuid,
+  membershipIds: z.array(zUuid).min(1).max(200)
     .refine((ids) => new Set(ids).size === ids.length, "Duplicate learners are not allowed"),
   confirmed: z.literal(true),
   includeIneligible:z.object({reason:z.string().trim().min(3).max(500)}).strict().optional(),
 }).strict();
 
 export const bulkDrivePreflightSchema=z.strictObject({
- roleOptionId:z.string().uuid(),
- membershipIds:z.array(z.string().uuid()).min(1).max(200)
+ roleOptionId:zUuid,
+ membershipIds:z.array(zUuid).min(1).max(200)
   .refine(ids=>new Set(ids).size===ids.length,"Duplicate learners are not allowed"),
 });
 

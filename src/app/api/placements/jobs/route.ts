@@ -16,6 +16,7 @@ import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /** The old /api/v2/jobs/search reader was a global cache. This replacement
@@ -46,9 +47,9 @@ const searchInput=z.object({
  sort:z.enum(["POSTED_DESC","POSTED_ASC","DEADLINE_ASC","DEADLINE_DESC","TITLE_ASC"]).default("POSTED_DESC"),
  applicationMode:z.enum(["ALL","INTERNAL","HYBRID","EXTERNAL_ONLY"]).default("ALL"),
  jobType:z.string().trim().max(100).default(""),
- programId:z.string().uuid().optional(),
- deptId:z.string().uuid().optional(),
- learnerId:z.string().uuid().optional(),
+ programId:zUuid.optional(),
+ deptId:zUuid.optional(),
+ learnerId:zUuid.optional(),
  page:z.coerce.number().int().min(0).max(9999).default(0),
  size:z.coerce.number().int().min(1).max(100).default(50),
 }).strict();

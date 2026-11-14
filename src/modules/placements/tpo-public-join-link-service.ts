@@ -22,6 +22,7 @@ import {
 } from "./tpo-public-join-link-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type Scope = "COMPANY" | "COLLEGE";
 type LinkState="STORAGE_UNAVAILABLE"|"NOT_CREATED"|"ACTIVE"|"EXPIRED"|"REVOKED";
 /** Legacy CompanyJoin engagement names are presentation aliases, not
@@ -295,7 +296,7 @@ export async function setTpoPublicJoinPostingPolicy(context:RequestContext,raw:u
 
 /** A public job application link is not a recruiter onboarding invitation.
  * The same link is valid only while the scoped job is published and external. */
-const publicJobIdSchema=z.string().uuid();
+const publicJobIdSchema=zUuid;
 /** New public external job links are separate 20-character 'smr-' slugs,
  * distinct from the old Java 20-character alphabet and from the 43-character
  * onboarding invite token. Old bookmarks require explicit checked migration. */

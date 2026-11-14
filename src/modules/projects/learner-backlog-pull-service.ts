@@ -12,8 +12,9 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerBacklogPullInputSchema=z.strictObject({
- taskId:z.string().uuid(),sprintId:z.string().uuid(),
+ taskId:zUuid,sprintId:zUuid,
  expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 /** LEARNER-projects-29: learners may pull only their own queued task into an active sprint. */

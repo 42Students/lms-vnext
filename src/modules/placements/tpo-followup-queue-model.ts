@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM"),window:z.enum(["DUE","NEXT_7_DAYS"]).default("DUE"),q:z.string().trim().max(100).default(""),page:z.coerce.number().int().min(1).max(10000).default(1)}).strict();
 export const confirmedTpoFollowupCreateSchema = z.object({
   confirmed: z.literal(true),

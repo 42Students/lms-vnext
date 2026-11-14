@@ -32,6 +32,7 @@ import {readGlobalRuntimeNumber} from "@/modules/platform-settings/runtime-numer
 import { requireCurrentAnnouncementVersion } from "./announcement-version-guard";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
 async function activeCollegeScope(collegeId: string) {
@@ -820,8 +821,8 @@ export async function listAnnouncementTargetOptions(context: RequestContext) {
  * It is not an in-app read receipt replay. The source version CAS prevents
  * repeated POST retries from duplicating a delivered notification. */
 const announcementResendSchema=z.strictObject({
- announcementId:z.string().uuid(),
- collegeId:z.string().uuid(),
+ announcementId:zUuid,
+ collegeId:zUuid,
  expectedVersion:z.number().int().min(0),
  publishConsent:z.literal(true).optional(),
 });

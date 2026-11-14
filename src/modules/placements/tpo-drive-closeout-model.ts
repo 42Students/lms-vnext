@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
-export const tpoCloseoutJobSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const tpoCloseoutJobSchema = zUuid;
 export type TpoCloseoutApplication = {
   id: string; membershipId: string; status: string; screeningStatus: string | null;
 };

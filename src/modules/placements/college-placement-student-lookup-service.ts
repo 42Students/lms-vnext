@@ -11,6 +11,7 @@ import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation"
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {capStudentLookupRows,relevantStudentApplicationOffers,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy first/last name is represented by one persisted displayName
  * in vNext. Never fabricate a name component or client supplied learner ID. */
 export function collegeStudentLookupLabel(row:{
@@ -139,7 +140,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
  * college membership UUID. It never materializes the other 9 suggestions'
  * private resumes/preferences or eagerly reads their full history. */
 export const collegeStudentPlacementDetailSchema=z.strictObject({
- membershipId:z.string().uuid(),
+ membershipId:zUuid,
  page:z.number().int().min(1).max(100000).default(1),
 });
 export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:unknown,now=new Date()){

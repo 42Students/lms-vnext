@@ -12,6 +12,7 @@ import {facultyProfileDocumentSchema,type FacultyProfileDocument} from "./facult
 import {facultyProfileDocumentStorageReady} from "./faculty-profile-readiness";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const purposes={
  EDUCATION_CERTIFICATE:{collection:"education",field:"certificateDocumentId"},
  CERTIFICATION:{collection:"certifications",field:"certificateDocumentId"},
@@ -22,12 +23,12 @@ type Purpose=keyof typeof purposes;
 const purpose=z.enum(["EDUCATION_CERTIFICATE","CERTIFICATION",
  "EXPERIENCE_CERTIFICATE","OFFER_LETTER"]);
 const mimes=["application/pdf","image/jpeg","image/png","image/webp"] as const;
-const key=z.strictObject({purpose,entryId:z.uuid()});
+const key=z.strictObject({purpose,entryId:zUuid});
 const begin=key.extend({contentType:z.enum(mimes),
  sizeBytes:z.number().int().min(1).max(10*1024*1024)});
 const complete=key.extend({objectKey:z.string().min(20).max(1024),
  expectedVersion:z.number().int().nonnegative()});
-const read=key.extend({receiptId:z.uuid()});
+const read=key.extend({receiptId:zUuid});
 const remove=key.extend({expectedVersion:z.number().int().nonnegative()});
 function memberFor(context:RequestContext){
  const member=context.membership;

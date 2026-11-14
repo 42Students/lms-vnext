@@ -5,10 +5,11 @@ import {getDb} from "@/db/client";
 import {projectInstances,projectMembers} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {loadClassTeamRoster,requireTeamCreationAuthority} from "./class-team-roster-service";
+import { zUuid } from "@/lib/schema-primitives";
 /** COL-projects-06: count the full persisted cohort, never a paged browser roster. */
 export async function getCohortCreationPreflight(context:RequestContext,raw:unknown){
- const input=z.strictObject({collegeId:z.string().uuid(),classId:z.string().uuid(),
-   templateId:z.string().uuid()}).parse(raw);
+ const input=z.strictObject({collegeId:zUuid,classId:zUuid,
+   templateId:zUuid}).parse(raw);
  const college=await requireTeamCreationAuthority(context,input.collegeId);
  const roster=await loadClassTeamRoster(context,college.id,input.classId);
  const ids=roster.members.map(member=>member.membershipId);

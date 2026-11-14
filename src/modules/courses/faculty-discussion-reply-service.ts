@@ -8,8 +8,9 @@ import {facultyDiscussionReplySchema} from "./faculty-discussion-reply-model";
 import {createCourseDiscussionMessage} from "./discussion-service";
 import {z} from "zod";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function postFacultyDiscussionReply(context:RequestContext,rawDeliveryId:unknown,raw:unknown){
- const deliveryId=z.string().uuid().parse(rawDeliveryId);
+ const deliveryId=zUuid.parse(rawDeliveryId);
  const input=facultyDiscussionReplySchema.parse(raw);
  const member=context.membership;
  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))

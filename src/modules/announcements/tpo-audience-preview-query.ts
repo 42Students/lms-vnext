@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {tpoPlacementAudienceSchema} from "./tpo-placement-audience-model";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const tpoAudiencePreviewQuery=z.object({
   audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
   targetId:uuid.optional(),

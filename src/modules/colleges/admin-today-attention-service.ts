@@ -12,10 +12,11 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {z} from "zod";
 import {istDayBounds,formatSuperAdminAttentionWhen,pendingAttendanceWindowStart} from "./admin-today-attention-model";
 import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
+import { zUuid } from "@/lib/schema-primitives";
 export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:string,now=new Date()){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
- const id=z.uuid().parse(rawCollegeId);
+ const id=zUuid.parse(rawCollegeId);
  const [college]=await getDb().select({organizationId:colleges.organizationId}).from(colleges)
   .where(and(eq(colleges.id,id),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");

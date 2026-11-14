@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerInterviewWithdrawalInputSchema=z.object({
-  applicationId:z.uuid(),roundId:z.uuid(),
+  applicationId:zUuid,roundId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   reason:z.string().trim().min(3).max(2000),confirmed:z.literal(true),
 }).strict();

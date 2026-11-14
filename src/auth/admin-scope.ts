@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { AdminScope } from "@/modules/identity/context";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const ADMIN_SCOPE_COOKIE_NAME = "lms_admin_scope";
 /** Companion cookie holding the epoch-seconds expiry of the selected scope. The server enforces it on every request,
  * so a copied or replayed scope cookie stops working after the window (SEC-05-022). */
@@ -16,7 +17,7 @@ export function adminScopeExpired(expiryValue: string | null | undefined, nowMs:
   return !(expiresAtMs > nowMs && expiresAtMs <= nowMs + (ADMIN_SCOPE_MAX_AGE_SECONDS + 60) * 1000);
 }
 
-const uuidSchema = z.string().uuid();
+const uuidSchema = zUuid;
 
 export function encodeAdminScopeCookie(scope: AdminScope) {
   if (scope.collegeId && scope.organizationId) {

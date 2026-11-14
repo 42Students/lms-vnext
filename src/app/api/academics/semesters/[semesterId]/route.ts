@@ -16,6 +16,7 @@ import {
 } from "@/modules/academics/semester-mutation-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ semesterId: string }> };
 /** Legacy GET /programStructures/{id} -> GET here;
@@ -26,7 +27,7 @@ type RouteContext = { params: Promise<{ semesterId: string }> };
  */
 
 async function scopedSemester(requestContext: Awaited<ReturnType<typeof getCurrentRequestContext>>, semesterId: string) {
-  if (!z.string().uuid().safeParse(semesterId).success) return null;
+  if (!zUuid.safeParse(semesterId).success) return null;
   const college = await resolveActingCollege(requestContext, "academics.read");
   const [term] = await getDb().select({
     id: programTerms.id, programId: programTerms.programId, name: programTerms.name,

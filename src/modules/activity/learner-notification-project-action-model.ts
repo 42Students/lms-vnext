@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerNotificationTarget} from "./learner-notification-inbox-model";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 const tab=z.enum(["overview","team","sprints","board","tasks","resources","meetings","activity","delivery"]);
 /** A project instance ID is navigation, never authorization; the page validates membership. */
 export function learnerNotificationProjectAction(raw:string|null|undefined){

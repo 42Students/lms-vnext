@@ -14,10 +14,11 @@ import {CoursesServiceError} from "./errors";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 // Registered in migration 0129. Do not use this writer with an unregistered schema.
 // Metadata edits also require updatedAt millisecond CAS.
 const lessonTarget=z.strictObject({
- lessonId:z.uuid(),
+ lessonId:zUuid,
  expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 const command=lessonTarget.extend({

@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const MAX_STAFF_BULK_REVIEWS=20;
 const candidate=z.strictObject({
- learnerMembershipId:z.uuid(),section:z.enum(["EDUCATION","IDENTITY"]),
+ learnerMembershipId:zUuid,section:z.enum(["EDUCATION","IDENTITY"]),
  expectedVersion:z.number().int().min(1),
 });
 export const bulkVerificationInput=z.strictObject({

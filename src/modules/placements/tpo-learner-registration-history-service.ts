@@ -9,7 +9,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 /** The subject must be an active learner enrolled in this TPO's verified college+cohort. */
 export async function getTpoLearnerRegistrationHistory(context:RequestContext,batchId:string,rawMembershipId:string){
  const {batch,collegeId}=await getTpoBatch(context,batchId);

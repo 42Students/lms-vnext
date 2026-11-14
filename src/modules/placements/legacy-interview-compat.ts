@@ -2,6 +2,7 @@ import {z} from "zod";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy InterviewController mapping to the college-scoped placements model.
  * Historical integer IDs MUST be resolved under the acting college before
  * this adapter runs; never identify a tenant from supplied legacy IDs. */
@@ -41,7 +42,7 @@ export function legacyInterviewPage(raw:{page?:unknown;size?:unknown;sort?:unkno
  * still validates the complete proposed appointment and its expectedVersion;
  * it never loses an update to a concurrent reschedule. */
 const interviewFields=z.object({
- roundId:z.uuid(),applicationId:z.uuid(),scheduledAt:z.iso.datetime({offset:true}),
+ roundId:zUuid,applicationId:zUuid,scheduledAt:z.iso.datetime({offset:true}),
  durationMinutes:z.number().int().min(5).max(480),
  interviewType:z.enum(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"]).optional(),
  roundDescription:z.string().trim().min(10).max(500).optional(),

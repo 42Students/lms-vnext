@@ -12,10 +12,11 @@ import {learnerProfileDocumentSchema} from "./profile-validation";
 import {projectLearnerAdminProfileSections} from "./learner-admin-profile-sections";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** COL-people-10: a sanctioned, read-only projection. Never send raw learner PAN/Aadhaar
  * values, private file receipt IDs, or undocumented profile metadata to roster UI. */
 export async function getCollegePersonProfileOverview(ctx:RequestContext,rawId:unknown,rawKind:unknown){
- const id=z.uuid().parse(rawId),kind=z.enum(["FACULTY","LEARNER"]).parse(rawKind);
+ const id=zUuid.parse(rawId),kind=z.enum(["FACULTY","LEARNER"]).parse(rawKind);
  const scope=await resolveActingCollege(ctx,"people.manage");
  const person=await getCollegePersonEditor(ctx,id,kind);
  // A private profile must never be read using a College Admin session

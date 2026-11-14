@@ -31,7 +31,8 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
 import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const ROSTER_PAGE_SIZE = 50;
 const href = (slotId: string, offeringId: string) =>
   "/college/electives/" + slotId + "/offerings/" + offeringId + "/roster";

@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const recruiterResultTableQuerySchema = z.object({
-  jobId: z.string().uuid().optional(),
-  roundId: z.string().uuid().optional(),
+  jobId: zUuid.optional(),
+  roundId: zUuid.optional(),
   outcome: z.enum(["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"]).default("ALL"),
 }).strict();
 

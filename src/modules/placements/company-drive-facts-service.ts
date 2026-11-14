@@ -13,13 +13,14 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { deriveCompanyDriveFacts } from "./company-drive-facts-policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** One scoped aggregate for an entire visible page of company relationships.
  * Avoids joining every candidate/offer in memory, and preserves the old
  * "No drives yet" vs recorded-last-posting distinction. No name fuzzy joins. */
 export async function getManagedCompanyDriveUsageBatch(context:RequestContext,
  collegeIdInput:unknown,relationshipIdsInput:unknown){
- const collegeId=z.string().uuid().parse(collegeIdInput);
- const relationshipIds=[...new Set(z.array(z.string().uuid()).max(200).parse(relationshipIdsInput))];
+ const collegeId=zUuid.parse(collegeIdInput);
+ const relationshipIds=[...new Set(z.array(zUuid).max(200).parse(relationshipIdsInput))];
  await requirePlacementManageScope(context,collegeId);
  if(relationshipIds.length===0)return new Map<string,{driveCount:number;lastPostedAt:Date|null}>();
  const rows=await getDb().select({
@@ -54,8 +55,8 @@ export async function getManagedCompanyDriveFacts(
   collegeIdInput: unknown,
   relationshipIdInput: unknown,
 ) {
-  const collegeId = z.string().uuid().parse(collegeIdInput);
-  const relationshipId = z.string().uuid().parse(relationshipIdInput);
+  const collegeId = zUuid.parse(collegeIdInput);
+  const relationshipId = zUuid.parse(relationshipIdInput);
   await requirePlacementManageScope(context, collegeId);
 
   const db = getDb();
@@ -119,7 +120,7 @@ export const COMPANY_DRIVE_FACTS_LEGACY_FALLBACK_POLICY={
 export async function getSuperAdminCompanyDriveFacts(
  context:RequestContext,companyIdInput:unknown,
 ){
- const companyId=z.string().uuid().parse(companyIdInput);
+ const companyId=zUuid.parse(companyIdInput);
  if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE" ||
     context.adminScope?.collegeId || context.adminScope?.organizationId)
   throw new AuthorizationError("placements.manage");

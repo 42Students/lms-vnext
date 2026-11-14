@@ -1,5 +1,6 @@
 import {z} from "zod";
-export const facultySessionCoverageSchema=z.object({deliveryId:z.string().uuid()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const facultySessionCoverageSchema=z.object({deliveryId:zUuid}).strict();
 export type FacultySessionRow={
   id:string;title:string;startsAt:string;endsAt:string;
   attendanceStatus:string|null;

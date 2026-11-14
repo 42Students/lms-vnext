@@ -9,6 +9,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeSectionLifecycleSchema} from "./college-section-lifecycle-model";
+import { zUuid } from "@/lib/schema-primitives";
 export class CollegeSectionLifecycleError extends Error{
   constructor(public readonly code:"CLASS_NOT_FOUND"|"CLASS_STALE"|
     "CLASS_HAS_DEPENDENCIES"|"CLASS_HAS_LEARNERS"|"CLASS_HAS_SCHEDULE"|
@@ -17,7 +18,7 @@ export class CollegeSectionLifecycleError extends Error{
   }
 }
 export async function changeCollegeSectionLifecycle(context:RequestContext,rawId:unknown,raw:unknown){
-  const id=z.string().uuid().parse(rawId),input=collegeSectionLifecycleSchema.parse(raw);
+  const id=zUuid.parse(rawId),input=collegeSectionLifecycleSchema.parse(raw);
   const actor = await resolveActingCollege(context, "academics.manage");
   return getDb().transaction(async tx=>{
     const [section]=await tx.select({
@@ -87,7 +88,7 @@ export async function changeCollegeSectionLifecycle(context:RequestContext,rawId
  * Keep the optimistic token and audit event in the same transaction.
  */
 export async function deleteCollegeSection(context: RequestContext, rawId: unknown, raw: unknown) {
-  const id = z.string().uuid().parse(rawId);
+  const id = zUuid.parse(rawId);
   const input = z.object({
     expectedUpdatedAt: z.iso.datetime({ offset: true }),
     confirm: z.literal(true),

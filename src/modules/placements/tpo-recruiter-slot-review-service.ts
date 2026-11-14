@@ -8,10 +8,11 @@ import {PlacementsServiceError} from "./errors";
 import type {RequestContext} from "@/modules/identity/context";
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** REC-home-drives-48 / R01: the TPO can inspect employer-proposed slots;
  * internal BOOKED is not a placement-cell confirmation of students or rooms. */
 export async function listTpoRecruiterProposedSlots(context:RequestContext,rawJobId:unknown){
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const collegeId=await requireTpoJobCollege(context);
  const [job]=await getDb().select({id:placementJobs.id,status:placementJobs.status,
   title:placementJobs.title}).from(placementJobs).where(and(

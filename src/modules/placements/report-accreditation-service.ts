@@ -24,12 +24,13 @@ import {
   type AccreditationFacts,
 } from "./report-accreditation-model";
 const accreditationQuerySchema = z.object({
-  collegeId: z.string().uuid(),
-  seasonId: z.string().uuid().optional(),
-  jobId: z.string().uuid().optional(),
+  collegeId: zUuid,
+  seasonId: zUuid.optional(),
+  jobId: zUuid.optional(),
 }).strict();
 import { requirePlacementManageScope } from "./scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Accreditation working export: queries ONLY registered Drizzle tables.
  * Does not access staged placement_batch_registrations or external offers.

@@ -16,7 +16,8 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 
-export const tpoThreadIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const tpoThreadIdSchema = zUuid;
 export const tpoMessagePageSchema = z.coerce.number().int().min(1).max(10000).default(1);
 const PAGE_SIZE = 500;
 
@@ -27,22 +28,22 @@ const PAGE_SIZE = 500;
  * unsuccessful ask is reported as PARTIAL, not rolled back or marked delivered.
  */
 const legacyTeamSendSchema=z.strictObject({
- threadId:z.string().uuid().optional(),
- recipientMembershipId:z.string().uuid().optional(),
+ threadId:zUuid.optional(),
+ recipientMembershipId:zUuid.optional(),
  topic:z.string().trim().min(1).max(200).optional(),
  kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT"),
- contextId:z.string().uuid().optional(),
- participantMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ contextId:zUuid.optional(),
+ participantMembershipIds:z.array(zUuid).max(20).default([]),
  body:z.string().trim().min(1).max(4000),
- mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ mentionMembershipIds:z.array(zUuid).max(20).default([]),
  addMentionedMembers:z.boolean().default(false),
  markDecision:z.boolean().default(false),
- idempotencyKey:z.string().uuid().optional(),
+ idempotencyKey:zUuid.optional(),
  ask:z.object({
-  assigneeMembershipId:z.string().uuid(),
+  assigneeMembershipId:zUuid,
   title:z.string().trim().min(1).max(200),
   dueAt:z.string().datetime({offset:true}).nullable().default(null),
-  requestKey:z.string().uuid(),
+  requestKey:zUuid,
  }).strict().optional(),
 }).superRefine((input,ctx)=>{
  if(!input.threadId&&(!input.recipientMembershipId||!input.topic))ctx.addIssue({

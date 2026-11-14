@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Only scoped administrators can alter the student-visible state of shared lesson content. */
 export const lessonVisibilityCommandSchema = z.object({
-  lessonContentId: z.string().uuid(),
+  lessonContentId: zUuid,
   visibleToStudents: z.boolean(),
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
   confirmed: z.literal(true),

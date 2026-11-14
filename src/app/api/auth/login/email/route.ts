@@ -11,6 +11,7 @@ import { route } from "@/security/route";
 import { LOGIN_EMAIL_PER_IP_PER_MINUTE } from "@/modules/auth/ip-limits";
 
 import { RATE_LIMITS } from "@/security/limits";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /** Migration contract:
@@ -23,7 +24,7 @@ export const runtime = "nodejs";
  * Old opaque attempt IDs must restart at /api/auth/login/start.
  */
 const schema = z.strictObject({ attemptId: z.string().trim().nullish() });
-const challengeIdSchema = z.string().uuid();
+const challengeIdSchema = zUuid;
 
 async function handlePOST(request: Request) {
   const startedAt=Date.now();

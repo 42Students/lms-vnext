@@ -16,12 +16,13 @@ import {
   changeCourseTeachingAssignmentRole,
 } from "@/modules/courses/teaching-assignment-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /** Old FacultyCourseAssociation.mappingId numeric IDs are not assignment
  * UUIDs. Only a verified same-college import crosswalk can resolve one. */
 async function scopedTeachingAssignmentId(context:RequestContext,raw:string){
- if(z.uuid().safeParse(raw).success)return raw;
+ if(zUuid.safeParse(raw).success)return raw;
  const collegeId=context.membership?.collegeId??context.adminScope?.collegeId;
  if(!collegeId||!/^[0-9]{1,18}$/.test(raw))
   throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");

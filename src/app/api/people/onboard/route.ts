@@ -10,6 +10,7 @@ import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
 import { noStoreJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -27,7 +28,7 @@ export const POST = route(
       );
     }
     const facultyProfileSchema=z.strictObject({
-      kind:z.literal("FACULTY"),primaryDepartmentId:z.string().uuid(),
+      kind:z.literal("FACULTY"),primaryDepartmentId:zUuid,
       // Administrative role grants must use membership roles, never a
       // string designation that appears to confer protected authorization.
       employmentType:z.string().trim().min(1).max(128).refine(

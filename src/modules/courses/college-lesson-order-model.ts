@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const lessonMoveSchema = z.object({
-  learningPathId: z.string().uuid(),
-  lessonId: z.string().uuid(),
+  learningPathId: zUuid,
+  lessonId: zUuid,
   expectedSequence: z.number().int().nonnegative(),
   direction: z.enum(["UP", "DOWN"]),
 }).strict();
@@ -32,9 +33,9 @@ export function planLessonMove(
 
 /** COL-course-tabs-14: optimistic compare-and-swap for one whole lesson order. */
 export const collegeLessonBulkOrderSchema=z.strictObject({
- learningPathId:z.string().uuid(),
- expected:z.array(z.strictObject({id:z.string().uuid(),sequence:z.number().int().nonnegative()})).min(1).max(1000),
- orderedIds:z.array(z.string().uuid()).min(1).max(1000),
+ learningPathId:zUuid,
+ expected:z.array(z.strictObject({id:zUuid,sequence:z.number().int().nonnegative()})).min(1).max(1000),
+ orderedIds:z.array(zUuid).min(1).max(1000),
 }).superRefine((input,ctx)=>{
  const original=input.expected.map(row=>row.id);
  if(new Set(original).size!==original.length||

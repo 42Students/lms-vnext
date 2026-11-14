@@ -15,6 +15,7 @@ import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoNoticeCreateSchema=z.object({
  title:z.string().trim().min(1,"Give the announcement a title").max(200),
  message:z.string().trim().min(1,"Write an announcement").max(8000,"Keep it under 8000 characters."),
@@ -25,8 +26,8 @@ export const tpoNoticeCreateSchema=z.object({
   raw=>raw==="ALL"?"PLACEMENTS":raw,
   z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("PLACEMENTS")
  ),
- targetId:z.string().uuid().optional(),
- targetIds:z.array(z.string().uuid()).max(50).optional(),
+ targetId:zUuid.optional(),
+ targetIds:z.array(zUuid).max(50).optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().superRefine((data,ctx)=>{
  if(Boolean(data.buttonLabel)!==Boolean(data.buttonUrl))

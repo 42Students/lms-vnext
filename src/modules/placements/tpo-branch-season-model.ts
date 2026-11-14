@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoBranchSeasonQuerySchema = z.object({
-  seasonId: z.string().uuid().optional(),
+  seasonId: zUuid.optional(),
 }).strict();
 
 export type BranchMembershipFact = {

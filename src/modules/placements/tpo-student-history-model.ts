@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoStudentHistoryQuerySchema = z.object({
-  membershipId: z.string().uuid(),
+  membershipId: zUuid,
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import {canLearnerMoveOwnTask} from "./learner-task-status-policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerTaskProgressParamsSchema = z.strictObject({
-  projectId: z.string().uuid(), taskId: z.string().uuid(),
+  projectId: zUuid, taskId: zUuid,
 });
 const stamp = z.iso.datetime({ offset: true });
 export const learnerTaskProgressInputSchema = z.discriminatedUnion("action", [

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyCourseHealthParamsSchema = z.object({
-  deliveryId: z.string().uuid(),
+  deliveryId: zUuid,
   kind: z.enum(["ALL","QUIZ","ASSIGNMENT"]).default("ALL"),
   page: z.union([
     z.number().int(),

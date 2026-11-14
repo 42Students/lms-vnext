@@ -1,10 +1,11 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** First-step draft fields only. Deadline is ISO with explicit zone offset. */
 export const tpoDraftDriveStepOneSchema = z.object({
   confirmed: z.literal(true),
-  companyRelationshipId: z.string().uuid(),
-  seasonId: z.string().uuid(),
+  companyRelationshipId: zUuid,
+  seasonId: zUuid,
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().min(1).max(20000),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),

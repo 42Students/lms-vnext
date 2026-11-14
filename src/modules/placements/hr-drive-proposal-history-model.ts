@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrDriveProposalHistoryQuerySchema=z.strictObject({
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
  page:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().min(1).max(10000)).default(1),
  q:z.string().trim().max(100).default(""),
@@ -14,7 +15,7 @@ export function previewHrDriveProposalMessage(body:string):HrDriveProposalPrevie
  const id=lines[1]?.startsWith("Proposal reference: ")?
   lines[1].slice("Proposal reference: ".length):"";
  const title=lines[2]?.startsWith("Role: ")?lines[2].slice("Role: ".length).trim():"";
- if(!z.string().uuid().safeParse(id).success||!title||title.length>200)return null;
+ if(!zUuid.safeParse(id).success||!title||title.length>200)return null;
  return {referenceId:id,title};
 }
 

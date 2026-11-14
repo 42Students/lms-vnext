@@ -6,6 +6,7 @@ import {activityEvents,inAppNotifications} from "@/db/schema/activity";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePersistedLearnerNotificationMembership} from "@/modules/activity/learner-notification-membership-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** An announcement is unread only if a notification was actually delivered
  * to this authenticated learner. Missing or pending deliveries have UNKNOWN
  * read state, never a fabricated New badge or an inferred zero count.
@@ -15,7 +16,7 @@ export async function listOwnLearnerAnnouncementReceipts(
  context:RequestContext,rawIds:readonly string[],
 ):Promise<Array<{announcementId:string;notificationId:string;readAt:Date|null}>> {
  const membership=await requirePersistedLearnerNotificationMembership(context);
- const ids=z.array(z.uuid()).max(101).parse([...new Set(rawIds)]);
+ const ids=z.array(zUuid).max(101).parse([...new Set(rawIds)]);
  if(!ids.length)return [];
  const rows=await getDb().select({
   announcementId:activityEvents.subjectId,

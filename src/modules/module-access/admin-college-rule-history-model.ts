@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const collegePolicyHistoryQuery=z.strictObject({
  beforeOccurredAt:z.iso.datetime({offset:true}).optional(),
- beforeId:z.uuid().optional(),
+ beforeId:zUuid.optional(),
 }).refine(x=>Boolean(x.beforeOccurredAt)===Boolean(x.beforeId),{message:"Both cursor fields required"});
 export type CollegePolicyHistoryCursor=z.infer<typeof collegePolicyHistoryQuery>;
 type AuditRow={id:string;occurredAt:Date;actorName:string|null;metadata:Record<string,unknown>};

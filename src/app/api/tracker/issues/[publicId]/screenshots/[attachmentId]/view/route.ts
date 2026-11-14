@@ -16,6 +16,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {canSignBugScreenshotDownload} from "@/modules/bug-tracker/access-and-attachments";
 import { env } from "@/config/env";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -24,7 +25,7 @@ export const GET = route(
     const context = actor!;
     const {publicId:rawId,attachmentId:rawAttachment}=params;
     const publicId=trackerPublicIdSchema.parse(rawId);
-    const attachmentId=z.string().uuid().parse(rawAttachment);
+    const attachmentId=zUuid.parse(rawAttachment);
     const superAdmin=isSuperAdmin(context);
     if(superAdmin)await getBugTrackerIssueForAdmin(context,publicId);
   else await getMyTrackerReport(context,publicId);

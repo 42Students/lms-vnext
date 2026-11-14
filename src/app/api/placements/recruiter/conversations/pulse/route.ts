@@ -10,6 +10,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { route } from "@/security/route";
 
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 /** Scoped lightweight recruiter inbox pulse. No message bodies or foreign
@@ -24,8 +25,8 @@ async function handleGET(request:Request) {
      parameters.getAll("collegeId").length>1||parameters.getAll("threadId").length>1)
    return NextResponse.json({error:"INVALID_PULSE_SCOPE"},{status:400});
   const parsed=z.strictObject({
-    collegeId:z.string().uuid().optional(),
-    threadId:z.string().uuid().optional(),
+    collegeId:zUuid.optional(),
+    threadId:zUuid.optional(),
   }).safeParse({
     ...(parameters.has("collegeId")?{collegeId:parameters.get("collegeId")}:{}),
     ...(parameters.has("threadId")?{threadId:parameters.get("threadId")}:{}),

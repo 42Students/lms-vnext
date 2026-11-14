@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { learnerScheduleIstDay } from "./learner-ist-schedule-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerCalendarQuerySchema=z.object({
   view:z.enum(["week","month","day"]).optional(),
   month:z.string().regex(/^(20\d{2}|21\d{2})-(0[1-9]|1[0-2])$/).optional(),
-  deliveryId:z.string().uuid().optional(),
+  deliveryId:zUuid.optional(),
 }).strict();
 
 /** Route filters may choose only persisted, already-authorized learner deliveries. */

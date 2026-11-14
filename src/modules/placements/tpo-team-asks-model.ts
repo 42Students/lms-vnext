@@ -1,5 +1,6 @@
 import {z} from "zod";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 export const tpoTeamAskCreateSchema=z.strictObject({
  threadId:id,assigneeMembershipId:id,requestKey:id,
  title:z.string().trim().min(1).max(200),

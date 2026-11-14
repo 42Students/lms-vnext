@@ -15,6 +15,7 @@ import {placementCollegeApplicationStages,placementCollegeApplicationStageHistor
  from "@/db/schema/placement-college-application-stages";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** A persisted interview instant is displayed in the college's IST zone. */
 function roundInterviewInstantIst(value: Date): string {
  return new Intl.DateTimeFormat("en-IN",{
@@ -541,7 +542,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
 /** Feedback is an immutable staff-authored interview event. Private scores
  * stay in the college-scoped audit metadata; learner notification is generic. */
 const collegeInterviewFeedbackSchema=z.object({
- interviewId:z.string().uuid(),expectedVersion:z.number().int().positive(),
+ interviewId:zUuid,expectedVersion:z.number().int().positive(),
  score:z.number().int().min(1).max(5),
  feedback:z.string().trim().min(3).max(2000),
  confirmed:z.literal(true),

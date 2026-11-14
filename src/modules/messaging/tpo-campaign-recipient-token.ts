@@ -1,6 +1,7 @@
 import {createHmac,createHash,timingSafeEqual} from "node:crypto";
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Use one purpose-specific signing secret for issue, preview and unsubscribe. */
 export function resolveTpoCampaignRecipientSecret(config:Readonly<Record<string,string|undefined>>|NodeJS.ProcessEnv):string{
  // Existing TOKEN_SECRET deployments remain valid; support the old HMAC alias
@@ -12,9 +13,9 @@ export function resolveTpoCampaignRecipientSecret(config:Readonly<Record<string,
 
 const payload=z.object({
   v:z.literal(1),
-  collegeId:z.string().uuid(),
-  campaignId:z.string().uuid(),
-  recipientId:z.string().uuid(),
+  collegeId:zUuid,
+  campaignId:zUuid,
+  recipientId:zUuid,
   expiresAt:z.number().int().positive(),
 }).strict();
 export type TpoCampaignRecipientClaim=z.infer<typeof payload>;

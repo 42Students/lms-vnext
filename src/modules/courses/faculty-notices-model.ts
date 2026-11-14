@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** No promoted Section notice table exists. Never accept a client college ID. */
 export const facultyNoticeParamsSchema = z.object({
-  deliveryId: z.string().uuid(),
+  deliveryId: zUuid,
 }).strict();
 
 export const FACULTY_SECTION_NOTICES_BLOCKER =

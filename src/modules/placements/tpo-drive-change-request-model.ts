@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** The ten old-LMS change fields remain individually selectable. The database
  * still stores PAY/ELIGIBILITY as broad categories; legacyField keeps the
  * requested specific field on every new row. */
@@ -142,18 +143,18 @@ export const driveChangeCommandSchema=z.discriminatedUnion("action",[
   if(value.field==="BRANCHES"&&!proposed.split(",").some(v=>v.trim()))
    ctx.addIssue({code:"custom",path:["proposedValue"],message:"Select at least one branch"});
  }),
- z.strictObject({action:z.literal("ACCEPT"),requestId:z.string().uuid(),
+ z.strictObject({action:z.literal("ACCEPT"),requestId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   note:z.string().trim().max(2000).optional().default("")}),
- z.strictObject({action:z.literal("ANSWER"),requestId:z.string().uuid(),
+ z.strictObject({action:z.literal("ANSWER"),requestId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   note:z.string().trim().min(1,"Type the answer").max(2000)}),
- z.strictObject({action:z.literal("DECLINE"),requestId:z.string().uuid(),
+ z.strictObject({action:z.literal("DECLINE"),requestId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   note:z.string().trim().min(1,"Type a reason").max(1000)}),
- z.strictObject({action:z.literal("WITHDRAW"),requestId:z.string().uuid(),
+ z.strictObject({action:z.literal("WITHDRAW"),requestId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   note:z.string().trim().max(2000).optional().default("")}),
- z.strictObject({action:z.literal("COMMENT"),requestId:z.string().uuid(),
+ z.strictObject({action:z.literal("COMMENT"),requestId:zUuid,
   body:z.string().trim().min(1).max(2000)}),
 ]);

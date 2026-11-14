@@ -2,6 +2,7 @@ import {parseActivityDateBoundary} from "@/modules/activity/date-boundary";
 import {z} from "zod";
 import {AFTER_COLLEGE_OUTCOMES} from "./tpo-after-college-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
 export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED","ALL"]).default("PENDING"),
@@ -10,9 +11,9 @@ export const globalTpoRequestsQuerySchema = z.object({
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   urgentOnly: z.union([z.literal("true"),z.literal(true)]).transform(()=>true).optional(),
-  jobId: z.string().uuid().optional(),
+  jobId: zUuid.optional(),
   proof:z.enum(["ALL","ATTACHED","MISSING"]).default("ALL"),
-  branchId:z.string().uuid().optional(),
+  branchId:zUuid.optional(),
   registration:z.enum(["ALL","PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","NOT_REGISTERED"]).default("ALL"),
   afterCollege:z.enum(["ALL","NOT_RECORDED",...AFTER_COLLEGE_OUTCOMES]).default("ALL"),
   page: z.coerce.number().int().min(1).max(100000).default(1),

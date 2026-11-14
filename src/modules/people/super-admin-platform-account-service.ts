@@ -10,6 +10,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertAnotherActiveCollegeAdmin} from "./last-college-admin-guard";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminPlatformAccountCommandSchema=z.strictObject({
  status:z.enum(["ACTIVE","DISABLED"]),
  reason:z.string().trim().min(4).max(1000),
@@ -17,7 +18,7 @@ export const superAdminPlatformAccountCommandSchema=z.strictObject({
 });
 /** OD-23: reversible block is platform-wide, never a membership suspension. */
 export async function changePlatformAccountStatus(context:RequestContext,rawUserId:unknown,rawInput:unknown){
- const userId=z.uuid().parse(rawUserId);
+ const userId=zUuid.parse(rawUserId);
  const input=superAdminPlatformAccountCommandSchema.parse(rawInput);
  if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
   throw new AuthorizationError("system-role.manage");

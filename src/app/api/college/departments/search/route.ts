@@ -10,6 +10,7 @@ import {z} from "zod";
 import { route } from "@/security/route";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 /** Modern scoped equivalent of legacy GET department search. Non-global
  * callers must have a persisted active college or supply that same college;
@@ -24,7 +25,7 @@ async function handleGET(request:Request){
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const parsed=z.object({
    q:z.string().trim().max(120),
-   collegeId:z.string().uuid().optional(),
+   collegeId:zUuid.optional(),
   }).safeParse({q:params.get("q")??"",collegeId:params.get("collegeId")??undefined});
   if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const given=parsed.data.collegeId;

@@ -11,6 +11,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
 
+import { zUuid } from "@/lib/schema-primitives";
 // The job-type column belongs to the schema/migration lane. Until that
 // migration lands, block cross-drive writes instead of half-saving config.
 const jobTypeColumnReady = sql`select exists (
@@ -76,7 +77,7 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
 }
 
 const statusSchema=z.object({
- jobTypeId:z.string().uuid(),active:z.boolean(),
+ jobTypeId:zUuid,active:z.boolean(),
  expectedVersion:z.iso.datetime({offset:true}),
 }).strict();
 export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
@@ -122,7 +123,7 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
  });
 }
 
-const renameSchema=z.object({jobTypeId:z.string().uuid(),label:legacyLabelSchema,
+const renameSchema=z.object({jobTypeId:zUuid,label:legacyLabelSchema,
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
  const input=renameSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
@@ -221,7 +222,7 @@ export async function setTpoBuiltinJobTypeActive(ctx:RequestContext,raw:unknown)
  });
 }
 
-const placedSchema=z.object({jobTypeId:z.string().uuid(),countsAsPlaced:z.boolean(),
+const placedSchema=z.object({jobTypeId:zUuid,countsAsPlaced:z.boolean(),
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown){
  const input=placedSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
@@ -265,7 +266,7 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
  });
 }
 
-const removeSchema=z.object({jobTypeId:z.string().uuid(),
+const removeSchema=z.object({jobTypeId:zUuid,
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 /** Delete only unused college custom types; existing drives always retain their historical label. */
 export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
@@ -307,7 +308,7 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
 }
 
 const bulkJobTypeSchema=z.array(z.object({
- id:z.string().uuid().nullable(),
+ id:zUuid.nullable(),
  label:legacyLabelSchema,
  isBuiltin:z.boolean(),
  active:z.boolean(),

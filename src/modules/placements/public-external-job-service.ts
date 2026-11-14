@@ -10,7 +10,8 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
 import { ROLE } from "@/modules/identity/roles";
-const jobIdSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const jobIdSchema=zUuid;
 const slugSchema=z.string().regex(/^smr-[0-9a-f]{16}$/);
 function publicExternalHref(raw:string|null){
  if(!raw)return null;

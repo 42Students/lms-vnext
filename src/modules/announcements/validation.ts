@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const ANNOUNCEMENT_SENDER_TYPES = [
   "SUPER_ADMIN","COLLEGE_ADMIN","FACULTY","LEARNER","TPO","SYSTEM",
 ] as const;
@@ -56,7 +57,7 @@ export const announcementCreateSchema = z.object({
 export const announcementUpdateSchema = z.object({
   expectedVersion: z.number().int().min(0),
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
-  receiverId: z.string().uuid().optional(),
+  receiverId: zUuid.optional(),
   title: z.string({error:"Title is required"}).trim().min(1,{message:"Title is required"}).max(ANNOUNCEMENT_LIMITS.titleCharacters,{message:"Title must not exceed 255 characters"}).optional(),
   message: z.string({error:"Message is required"}).trim().min(1,{message:"Message is required"}).max(ANNOUNCEMENT_LIMITS.messageCharacters,{message:"Message must not exceed 10000 characters"}).optional(),
   scheduledAt: instant.nullable().optional(),
@@ -72,7 +73,7 @@ export const announcementUpdateSchema = z.object({
   }
 });
 
-export const announcementIdSchema = z.string().uuid();
+export const announcementIdSchema = zUuid;
 export const announcementVersionSchema = z.object({
   expectedVersion: z.number().int().min(0),
 }).strict();
@@ -91,7 +92,7 @@ export const announcementAdminListSchema = z.object({
   includeDeleted: booleanQuery.default(false),
   limit: z.coerce.number().int().min(1).max(ANNOUNCEMENT_LIMITS.maximumPageSize).default(ANNOUNCEMENT_LIMITS.defaultPageSize),
   beforeCreatedAt: instant.optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
 }).strict().superRefine((v, ctx) => {
   if (Boolean(v.beforeCreatedAt) !== Boolean(v.beforeId)) {
     ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Cursor requires timestamp and ID" });
@@ -112,7 +113,7 @@ export const announcementRecipientFeedSchema = z.object({
   limit: z.coerce.number().int().min(1).max(ANNOUNCEMENT_LIMITS.maximumPageSize)
     .default(ANNOUNCEMENT_LIMITS.recipientPageSize),
   beforeCreatedAt: instant.optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
 }).strict().superRefine((value, context) => {
   if (Boolean(value.beforeCreatedAt) !== Boolean(value.beforeId)) {
     context.addIssue({ code: "custom", path: ["beforeId"], message: "Cursor requires timestamp and ID" });

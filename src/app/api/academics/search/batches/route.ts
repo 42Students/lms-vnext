@@ -8,6 +8,7 @@ import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const schema = z.object({
   q: z.string().trim().max(100).default(""),
@@ -49,7 +50,7 @@ async function handlePOST(request:Request){
     headers: { "Cache-Control": CACHE.PRIVATE },
   });
   const raw: unknown = bounded.value;
-  const parsed=z.strictObject({batchId:z.string().uuid()}).safeParse(raw);
+  const parsed=z.strictObject({batchId:zUuid}).safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   return NextResponse.json(await recordCollegeBatchSearchSelection(
     await getCurrentRequestContext(),parsed.data.batchId),{

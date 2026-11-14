@@ -10,7 +10,8 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {normalizeTpoAfterCollegeDetails,AfterCollegeDetailValidationError} from "./tpo-after-college-details-model";
 import {afterCollegeManualSchema} from "./tpo-after-college-model";
 import {z} from "zod";
-const inputSchema=z.object({learnerMembershipId:z.string().uuid(),outcome:afterCollegeManualSchema,
+import { zUuid } from "@/lib/schema-primitives";
+const inputSchema=z.object({learnerMembershipId:zUuid,outcome:afterCollegeManualSchema,
  outcomeLabel:z.string().trim().max(60).nullable().optional(),
  outcomeDetail:z.string().trim().max(200).nullable().optional(),
  expectedVersion:z.union([z.literal("none"),z.iso.datetime({offset:true})])}).strict();

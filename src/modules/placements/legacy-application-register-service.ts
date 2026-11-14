@@ -9,6 +9,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Applications remain unique per role+member (not job+member) because
  * multi-role drives exist. Never collapse legitimate role applications. */
 const querySchema=z.strictObject({
@@ -21,7 +22,7 @@ export async function listTpoLegacyApplicationRegister(
  context:RequestContext,rawJobId:unknown,raw:unknown,
 ){
  const collegeId=await requireTpoJobCollege(context);
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const query=querySchema.parse(raw),db=getDb();
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),

@@ -6,9 +6,10 @@ import {activityEvents,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {getCollegePersonEditor} from "./college-directory-person-editor-service";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import { zUuid } from "@/lib/schema-primitives";
 /** COL-people-10: strictly member-scoped history, no cross-tenant actor search. */
 export async function getCollegePersonAudit(ctx:RequestContext,rawId:unknown,rawKind:unknown){
- const id=z.uuid().parse(rawId),kind=z.enum(["FACULTY","LEARNER"]).parse(rawKind);
+ const id=zUuid.parse(rawId),kind=z.enum(["FACULTY","LEARNER"]).parse(rawKind);
  const profile=await getCollegePersonEditor(ctx,id,kind);
  const {collegeId}=await resolveActingCollege(ctx,"people.manage");
  const events=await getDb().select({id:activityEvents.id,summary:activityEvents.summary,

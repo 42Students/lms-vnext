@@ -17,6 +17,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
+import { zUuid } from "@/lib/schema-primitives";
 type AttendanceParams={month?:string|string[];deliveryId?:string|string[]};
 function AttendanceLoading() {
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading attendance">
@@ -41,7 +42,7 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
   const defaultMonth=learnerAttendanceIstMonth(new Date());
   const selected=learnerAttendanceMonthSchema.safeParse(raw.month).data??defaultMonth;
   const deliveryId=typeof raw.deliveryId==="string"?raw.deliveryId:undefined;
-  if(raw.deliveryId!==undefined&&(!deliveryId||!z.uuid().safeParse(deliveryId).success)){
+  if(raw.deliveryId!==undefined&&(!deliveryId||!zUuid.safeParse(deliveryId).success)){
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Attendance" />
       <ErrorState title="Invalid course attendance link"

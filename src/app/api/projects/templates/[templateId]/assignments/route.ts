@@ -15,6 +15,7 @@ import {
 } from "@/modules/projects/template-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -22,8 +23,8 @@ type RouteContext = {
 };
 
 const bulkSchema=z.strictObject({
- collegeIds:z.array(z.string().uuid()).max(500),
- expectedCollegeIds:z.array(z.string().uuid()).max(500),
+ collegeIds:z.array(zUuid).max(500),
+ expectedCollegeIds:z.array(zUuid).max(500),
 }).superRefine((value,ctx)=>{
  if(new Set(value.collegeIds).size!==value.collegeIds.length||
     new Set(value.expectedCollegeIds).size!==value.expectedCollegeIds.length){
@@ -32,7 +33,7 @@ const bulkSchema=z.strictObject({
 });
 const bodySchema = z
   .object({
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
   })
   .strict();
 

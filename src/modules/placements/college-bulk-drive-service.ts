@@ -9,6 +9,7 @@ import {closePlacementJob} from "./job-service";
 import {reopenCollegeDrive} from "./college-drive-reopen-service";
 import {PlacementsServiceError} from "./errors";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Compatibility for the old isActive boolean. Legacy activation is not
  * equivalent to publishing an unreviewed draft; never publish a DRAFT via
  * an unversioned toggle. vNext still requires confirmed lifecycle actions. */
@@ -28,7 +29,7 @@ export function legacyCollegeDriveActivation(
 
 export const collegeBulkDriveInput=z.strictObject({
  action:z.enum(["OPEN","CLOSE"]),
- jobIds:z.array(z.uuid()).min(1,"Select at least one drive").max(25,"Select 25 drives or fewer per batch").refine(ids=>new Set(ids).size===ids.length,
+ jobIds:z.array(zUuid).min(1,"Select at least one drive").max(25,"Select 25 drives or fewer per batch").refine(ids=>new Set(ids).size===ids.length,
   "Duplicate drive IDs are not allowed"),
  confirmed:z.literal(true,{error:"Confirm these drive changes before continuing"}),
 });

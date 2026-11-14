@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const semesterName = z.string().trim()
   .min(1, "Please enter semester name")
   .max(255, "Name must be 255 characters or less");
@@ -49,7 +50,7 @@ export const deleteCollegeSemesterSchema = z.object({
   confirm: z.literal(true),
 }).strict();
 
-export const semesterIdSchema = z.string().uuid();
+export const semesterIdSchema = zUuid;
 
 export function canCreateSemesterTerm(termNumber: number, durationTerms: number) {
   return Number.isInteger(termNumber) && termNumber >= 1 &&
@@ -117,7 +118,7 @@ export function adaptLegacyProgramStructureCreate(
   const courseIds = sourceCourseIds.map(legacyId => {
     const mapped = mapping.courseIdsByLegacyId.get(legacyId);
     if (!mapped) throw new Error("LEGACY_COURSE_ID_UNMAPPED");
-    return z.string().uuid().parse(mapped);
+    return zUuid.parse(mapped);
   });
   if (new Set(courseIds).size !== courseIds.length) {
     throw new Error("LEGACY_COURSE_ID_DUPLICATE");

@@ -1,9 +1,10 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Require an explicit, unambiguous, non-self merge. */
 export const companyMergeInputSchema = z.strictObject({
-  keepCompanyId: z.uuid(),
-  mergeCompanyId: z.uuid(),
+  keepCompanyId: zUuid,
+  mergeCompanyId: zUuid,
   confirm: z.literal(true),
 }).refine(value=>value.keepCompanyId!==value.mergeCompanyId,{
   message:"Choose two different companies.",

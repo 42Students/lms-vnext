@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ProjectTeam } from "./class-team-split-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function planClassTeamWorkspaceNames(baseTitle: string, baseSlug: string, teams: readonly ProjectTeam[]) {
   const title = z.string().trim().min(1).max(170).parse(baseTitle);
@@ -17,7 +18,7 @@ export function planClassTeamWorkspaceNames(baseTitle: string, baseSlug: string,
     if (seenNames.has(normalizedName)) throw new Error("Duplicate team name");
     seenNames.add(normalizedName);
     for (const memberId of team.membershipIds) {
-      z.string().uuid().parse(memberId);
+      zUuid.parse(memberId);
       if (seenMembers.has(memberId)) throw new Error("Learner appears in multiple teams");
       seenMembers.add(memberId);
     }

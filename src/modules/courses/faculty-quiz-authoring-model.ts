@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {createCourseQuizInputSchema, updateCourseQuizInputSchema} from "./quiz-validation";
 
-export const facultyQuizParamsSchema=z.object({deliveryId:z.string().uuid()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const facultyQuizParamsSchema=z.object({deliveryId:zUuid}).strict();
 const fields=z.object({
  title:z.string().trim().min(1).max(255),
  description:z.string().trim().max(10000).nullable(),
@@ -14,17 +15,17 @@ const fields=z.object({
 export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
  fields.extend({
   action:z.literal("CREATE"),
-  lessonId:z.string().uuid(),sequence:z.number().int().min(0).max(10000),
+  lessonId:zUuid,sequence:z.number().int().min(0).max(10000),
   confirmed:z.literal(true),
  }),
  fields.omit({questions:true}).extend({
   questions:fields.shape.questions.optional(),
   action:z.literal("EDIT"),
-  quizId:z.string().uuid(),expectedUpdatedAt:z.iso.datetime({offset:true}),
+  quizId:zUuid,expectedUpdatedAt:z.iso.datetime({offset:true}),
   confirmed:z.literal(true),
  }),
  z.object({
-  action:z.enum(["PUBLISH","UNPUBLISH","CLOSE","ARCHIVE"]),quizId:z.string().uuid(),
+  action:z.enum(["PUBLISH","UNPUBLISH","CLOSE","ARCHIVE"]),quizId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),confirmed:z.literal(true),
  }).strict(),
 ]);

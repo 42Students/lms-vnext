@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {TPO_AUDIT_KINDS} from "./tpo-audit-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** AUDIT saved views are owner/college private; URLs never provide either ID. */
 export const tpoAuditSavedFiltersSchema=z.strictObject({
  kind:z.enum(["ALL",...TPO_AUDIT_KINDS]).default("ALL"),
@@ -19,8 +20,8 @@ export const tpoAuditSavedFiltersSchema=z.strictObject({
   ctx.addIssue({code:"custom",path:["to"],message:"End day precedes start day"});
 });
 const name=z.string().trim().min(1).max(50);
-const id=z.uuid();
-const expectedRevision=z.uuid().nullable();
+const id=zUuid;
+const expectedRevision=zUuid.nullable();
 export const tpoAuditSavedViewCommandSchema=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("CREATE"),name,filters:tpoAuditSavedFiltersSchema}),
  z.strictObject({action:z.literal("RENAME"),id,name,expectedRevision}),
@@ -41,7 +42,7 @@ export function tpoAuditStoredView(raw:unknown):TpoAuditStoredView|null{
  const query=tpoAuditSavedFiltersSchema.safeParse(data["query"]);
  if(!query.success)return null;
  return {query:query.data,pinned:data["pinned"]===true,
-  revision:typeof data["revision"]==="string"&&z.uuid().safeParse(data["revision"]).success?data["revision"]:null,
+  revision:typeof data["revision"]==="string"&&zUuid.safeParse(data["revision"]).success?data["revision"]:null,
   usedAt:typeof data["usedAt"]==="string"&&Number.isFinite(Date.parse(data["usedAt"]))
    ?data["usedAt"]:null};
 }

@@ -1,11 +1,12 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultySubmissionFilterSchema=z.enum(["ALL","GRADED","UNGRADED","LATE"]);
 export type FacultySubmissionFilter=z.infer<typeof facultySubmissionFilterSchema>;
 
 export const facultySubmissionListQuerySchema=z.object({
-  assignmentId:z.string().uuid(),
-  deliveryId:z.string().uuid(),
+  assignmentId:zUuid,
+  deliveryId:zUuid,
   filter:facultySubmissionFilterSchema.default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();

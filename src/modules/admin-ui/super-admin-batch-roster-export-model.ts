@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {spreadsheetCsvCell} from "@/security/csv-cell";
-export const superAdminBatchRosterExportId=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const superAdminBatchRosterExportId=zUuid;
 const csvCell = spreadsheetCsvCell;
 export function superAdminBatchRosterCsv(rows:readonly {
  name:string|null;roll:string|null;email:string|null;classId:string|null;

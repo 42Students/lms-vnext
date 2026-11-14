@@ -10,6 +10,7 @@ import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/priva
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {learnerProfiles} from "@/db/schema";
 
+import { zUuid } from "@/lib/schema-primitives";
 export class RecruiterResumeUnavailable extends Error{
  constructor(){super("RECRUITER_RESUME_NOT_AVAILABLE");}
 }
@@ -21,8 +22,8 @@ export class RecruiterResumeUnavailable extends Error{
 export async function grantRecruiterSharedResume(
  context:RequestContext,rawJobId:unknown,rawApplicationId:unknown,
 ){
- const jobId=z.string().uuid().parse(rawJobId);
- const applicationId=z.string().uuid().parse(rawApplicationId);
+ const jobId=zUuid.parse(rawJobId);
+ const applicationId=zUuid.parse(rawApplicationId);
  const workspace=await getRecruiterPlacementWorkspace(context,jobId);
  const db=getDb();
  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id &&

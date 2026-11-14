@@ -7,11 +7,12 @@ import {buildSuperAdminReadinessCsv} from "@/modules/colleges/admin-readiness-ex
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try {
   const {collegeId}=await params;
-  const id=z.uuid().parse(collegeId);
+  const id=zUuid.parse(collegeId);
   const data=await getSuperAdminCollegeReadiness(await getCurrentRequestContext(),id);
   if(!data)return NextResponse.json({error:"NOT_FOUND",message:"College readiness evidence was not found."},{
    status:404,headers:{"Cache-Control":CACHE.PRIVATE,Vary:"Cookie"},

@@ -47,6 +47,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function mapLessonConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "course_lessons_active_name_uq":
@@ -81,7 +82,7 @@ export async function resolveLegacyLessonLearningPath(
  const criterion=slug?eq(courses.slug,slug):
   typeof legacyId==="number"||typeof legacyId==="string"&&/^\\d+$/.test(legacyId)
    ?eq(courses.legacyCourseId,Number(legacyId)):
-    eq(courses.id,z.uuid().parse(legacyId));
+    eq(courses.id,zUuid.parse(legacyId));
  const found=await getDb().selectDistinct({pathId:courseLearningPaths.id})
   .from(courseLearningPaths)
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))

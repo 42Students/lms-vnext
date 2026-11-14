@@ -1,16 +1,17 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** An exact reversible task state from one immutable sign-off transaction.
  * The receipt carries no file URLs, task descriptions or learner identities.
  * A missing or stale receipt is NOT permission to guess where a task belonged.
  */
 export const mentorSprintCarryUndoReceiptSchema=z.strictObject({
- version:z.literal(1),signOffToken:z.string().uuid(),sprintId:z.string().uuid(),
+ version:z.literal(1),signOffToken:zUuid,sprintId:zUuid,
  tasks:z.array(z.strictObject({
-   taskId:z.string().uuid(),beforeSequence:z.number().int().nonnegative(),
-   beforeCarriedFromSprintId:z.string().uuid().nullable(),
+   taskId:zUuid,beforeSequence:z.number().int().nonnegative(),
+   beforeCarriedFromSprintId:zUuid.nullable(),
    beforeCarriedOverAt:z.iso.datetime({offset:true}).nullable(),
-   afterSprintId:z.string().uuid().nullable(),
+   afterSprintId:zUuid.nullable(),
    afterSequence:z.number().int().nonnegative(),
    afterDeletedAt:z.iso.datetime({offset:true}).nullable(),
    afterUpdatedAt:z.iso.datetime({offset:true}),

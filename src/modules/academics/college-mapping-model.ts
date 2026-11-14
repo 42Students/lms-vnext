@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { COURSE_OFFERING_STATUSES, COURSE_OFFERING_TYPES, COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_MAPPING_PAGE_SIZE = 25;
 
 export const semesterCourseQuerySchema = z.object({
@@ -8,8 +9,8 @@ export const semesterCourseQuerySchema = z.object({
   type: z.enum(["ALL", ...COURSE_OFFERING_TYPES]).default("ALL"),
   status: z.enum(["ALL", ...COURSE_OFFERING_STATUSES]).default("ALL"),
   q: z.string().trim().max(100).default(""),
-  programId: z.string().uuid().optional(),
-  periodId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
+  periodId: zUuid.optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 

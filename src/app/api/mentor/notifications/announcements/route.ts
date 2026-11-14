@@ -11,11 +11,12 @@ import {listOwnMentorSourceReceipts} from
 import {mentorAnnouncementReceiptKey} from
   "@/modules/projects/mentor-attention-read-model";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const cursorSchema=z.strictObject({
  beforePinned:z.enum(["0","1"]),
  beforeCreatedAt:z.iso.datetime({offset:true}),
- beforeId:z.string().uuid(),
+ beforeId:zUuid,
 });
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

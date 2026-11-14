@@ -3,6 +3,7 @@ import type { MembershipStatus } from "@/modules/identity/constants";
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_ROLE_DIRECTORY_PAGE_SIZE = 25;
 /** Legacy /api/v2/learners/search autocomplete uses 15, whereas program,
  * class and college lookups traditionally start at 50. The visible roster
@@ -29,7 +30,7 @@ export function collegeLegacyLearnerFilterId(raw:unknown,approved:ReadonlyMap<nu
   typeof raw==="string"&&/^[1-9][0-9]*$/.test(raw)?Number(raw):NaN;
  if(!Number.isSafeInteger(source)||source<=0)return null;
  const uuid=approved.get(source);
- return uuid&&z.string().uuid().safeParse(uuid).success?uuid:null;
+ return uuid&&zUuid.safeParse(uuid).success?uuid:null;
 }
 export const COLLEGE_LEGACY_LEARNER_ROUTE_FILTERS={
  "/search":{mode:"SEARCH",q:"q"},
@@ -52,13 +53,13 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
   rollPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   registrationPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
-  cohortId: z.string().uuid().optional(),
-  programId: z.string().uuid().optional(),
-  sectionId: z.string().uuid().optional(),
+  cohortId: zUuid.optional(),
+  programId: zUuid.optional(),
+  sectionId: zUuid.optional(),
   classPresence: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teachingRole: z.union([z.literal("ALL"), z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
-  facultyDepartmentId: z.string().uuid().optional(),
+  facultyDepartmentId: zUuid.optional(),
   titlePresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   departmentPresence: z.enum(["ALL", "ASSIGNED", "MISSING"]).default("ALL"),
   employmentType: z.string().trim().min(1).max(128).optional(),
@@ -218,7 +219,7 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
 
 /** A direct, masked-contact drilldown for an already-authorized roster row. */
 export function collegeRoleContactHref(membershipId:string):string {
-  return "/college/contacts/"+z.string().uuid().parse(membershipId);
+  return "/college/contacts/"+zUuid.parse(membershipId);
 }
 
 /** Public message categories; raw user values and internal exception details are never displayed. */

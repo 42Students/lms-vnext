@@ -1,18 +1,19 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const change = z.object({
   action: z.enum(["CREATE", "REPLACE"]),
   confirmed: z.literal(true),
   // TPO-settings-audit-55: same-looking stale tabs must never rotate a new
   // one-time token issued by somebody else. IDs are never bearer secrets.
-  expectedLinkId: z.string().uuid().optional(),
+  expectedLinkId: zUuid.optional(),
 });
 
 export const tpoPublicJoinLinkChangeSchema = z.discriminatedUnion("scope", [
   change.extend({ scope: z.literal("COLLEGE") }).strict(),
   change.extend({
     scope: z.literal("COMPANY"),
-    companyId: z.string().uuid(),
+    companyId: zUuid,
   }).strict(),
 ]).superRefine((input,ctx)=>{
   if(input.action==="REPLACE"&&!input.expectedLinkId)ctx.addIssue({
@@ -49,8 +50,8 @@ export const PUBLIC_JOIN_LINK_COPY = {
 } as const;
 
 export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
- z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
- z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
+ z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:zUuid,enabled:z.boolean()}),
+ z.strictObject({scope:z.literal("COMPANY"),companyId:zUuid,expectedLinkId:zUuid,enabled:z.boolean()}),
 ]);
 
 /** The historical Java validator accepts 1–28 suffix characters.
@@ -85,8 +86,8 @@ export function legacyExternalJobLinkState(input:{
  * field means "not changed"; acceptance alone must NEVER bypass review.
  * Wiring requires a separate authenticated, versioned policy mutation. */
 export const tpoPublicJoinPostingPolicySchema=z.discriminatedUnion("scope",[
- z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:z.string().uuid(),
+ z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:zUuid,
   postDirect:z.boolean().nullable()}),
- z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),
-  expectedLinkId:z.string().uuid(),postDirect:z.boolean().nullable()}),
+ z.strictObject({scope:z.literal("COMPANY"),companyId:zUuid,
+  expectedLinkId:zUuid,postDirect:z.boolean().nullable()}),
 ]);

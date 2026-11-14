@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const inboundMailDetailSchema=z.strictObject({
- id:z.uuid(),status:z.enum(["NEW","TRIAGED","RESOLVED"]),
+ id:zUuid,status:z.enum(["NEW","TRIAGED","RESOLVED"]),
  fromAddress:z.email(),toAddress:z.email(),subject:z.string().max(512),
  receivedAt:z.iso.datetime({offset:true}),plainText:z.string().max(100000),
 });

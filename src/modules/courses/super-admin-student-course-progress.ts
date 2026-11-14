@@ -8,11 +8,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminStudentProgressQuery=z.strictObject({
- offeringId:z.uuid(),
+ offeringId:zUuid,
  // A class/section report is delivery-scoped rather than an offering-wide
  // union of the students in several unrelated classes.
- deliveryId:z.uuid().optional(),
+ deliveryId:zUuid.optional(),
  page:z.number().int().min(1).max(1000000).optional(),
  pageSize:z.number().int().min(1).max(500).optional(),
  sort:z.enum(["percent-asc","percent-desc"]).optional(),
@@ -234,7 +235,7 @@ export async function resolveLegacyCourseProgressScope(
  const collegeId=context.adminScope.collegeId;
  requirePermission(context,"courses.read",{collegeId,
   organizationId:context.adminScope.organizationId});
- const id=z.union([z.uuid(),z.coerce.number().int().positive()]);
+ const id=z.union([zUuid,z.coerce.number().int().positive()]);
  const courseId=id.parse(raw.courseId);
  const classId=raw.classId==null?null:id.parse(raw.classId);
  // A legacy class-specific bookmark may refer to a completed term whose

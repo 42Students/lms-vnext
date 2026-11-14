@@ -8,11 +8,12 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {OPTIONAL_MODULE_KEYS} from "./service";
 import {collegeRuleReadSnapshot} from "./admin-college-rule-model";
 import {resolveOptionalModuleAccessForChain} from "./service";
+import { zUuid } from "@/lib/schema-primitives";
 /** An exact persisted tenant lookup precedes any returned rule state. */
 export async function getSuperAdminCollegeFeatureSnapshot(context:RequestContext,collegeInput:string){
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
- const collegeId=z.uuid().parse(collegeInput),db=getDb();
+ const collegeId=zUuid.parse(collegeInput),db=getDb();
  const [college]=await db.select({id:colleges.id,organizationId:colleges.organizationId,name:colleges.name,status:colleges.status})
   .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
  if(!college||college.status!=="ACTIVE")return null;

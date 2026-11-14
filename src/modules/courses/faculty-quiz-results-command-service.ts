@@ -13,8 +13,9 @@ import {facultyQuizResultsCommandSchema,facultyQuizResultsTransition} from "./fa
 import {assertPersistedFacultyTeachingMutation} from "./faculty-persisted-teaching-guard";
 import {z} from "zod";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function commandFacultyQuizResults(context:RequestContext,rawQuizId:unknown,raw:unknown){
- const quizId=z.string().uuid().parse(rawQuizId),input=facultyQuizResultsCommandSchema.parse(raw);
+ const quizId=zUuid.parse(rawQuizId),input=facultyQuizResultsCommandSchema.parse(raw);
  const member=context.membership;
  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))
    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

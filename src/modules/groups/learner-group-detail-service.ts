@@ -7,10 +7,11 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerGroupKindSchema=z.string().regex(/^[A-Z][A-Z0-9_]{0,39}$/);
 export async function getLearnerGroupDetail(context:RequestContext,rawGroupId:unknown,
  now=new Date()){
- const id=z.uuid().parse(rawGroupId);
+ const id=zUuid.parse(rawGroupId);
  if(!hasMembershipRole(context,ROLE.LEARNER)||!context.membership)
   throw new AuthorizationError("academics.read");
  const member=context.membership;

@@ -17,7 +17,8 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
-const identity = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const identity = zUuid;
 const pageInput = z.strictObject({
   deliveryId: identity,
   afterSequence: z.coerce.number().int().min(-1).default(-1),

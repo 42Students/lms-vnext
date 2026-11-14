@@ -10,6 +10,7 @@ import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {ProjectsServiceError} from "./errors";
 import {loadProjectCollegeScope} from "./scope";
 import {adminUnsubmittedQuerySchema,adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
+import { zUuid } from "@/lib/schema-primitives";
 /** SA-placements-projects-69: scoped, paged workspaces with no submission versions. */
 export async function listProjectAdminUnsubmitted(context:RequestContext,collegeId:string,raw:unknown){
  const q=adminUnsubmittedQuerySchema.parse(raw);
@@ -26,7 +27,7 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
   });
  const searchPattern=adminUnsubmittedLiteralSearchPattern(q.q??"");
  const focus=q.focusedProjectId;
- const focusUuid=focus&&z.string().uuid().safeParse(focus).success?focus:null;
+ const focusUuid=focus&&zUuid.safeParse(focus).success?focus:null;
  const focusLegacy=focus&&/^[0-9]+$/.test(focus)&&Number.isSafeInteger(Number(focus))&&Number(focus)>0?Number(focus):null;
  const focusCondition=focus?or(
     focusUuid?eq(projectInstances.id,focusUuid):undefined,

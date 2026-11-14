@@ -10,6 +10,7 @@ import { listOrganizations } from "@/modules/organizations/service";
 import { TENANT_DIRECTORY_CSV_CAP, buildTenantDirectoryCsv, tenantDirectoryExportQuerySchema } from "./admin-tenant-export-model";
 import { CollegeServiceError } from "./service";
 import { TENANT_LIFECYCLE_PAGE_SIZE, tenantLifecyclePaging, tenantLifecycleQuerySchema } from "./admin-tenant-lifecycle-model";
+import { zUuid } from "@/lib/schema-primitives";
 function scopedTenantSource(context: RequestContext, query?: z.output<typeof tenantLifecycleQuerySchema>) {
   if (!isSuperAdmin(context)) throw new AuthorizationError("college.read");
   const scope = context.adminScope;
@@ -72,7 +73,7 @@ export async function getSuperAdminTenantLifecycleDirectory(context: RequestCont
   });
 }
 export async function getSuperAdminTenantLifecycleDetail(context: RequestContext, rawId: unknown) {
-  const parsed = z.uuid().safeParse(rawId);
+  const parsed = zUuid.safeParse(rawId);
   if (!parsed.success) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
   const source = scopedTenantSource(context);
   return getDb().transaction(async tx=>{

@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 type RuleState={enabled:boolean;locked:boolean}|null;
 function parseState(value:unknown):RuleState|undefined{
  if(value===null)return null;
@@ -27,7 +28,7 @@ export function safeStudentRuleHistory(rows:readonly {
 
 export const studentRuleHistoryCursorSchema=z.strictObject({
  beforeOccurredAt:z.iso.datetime({offset:true}).optional(),
- beforeId:z.uuid().optional(),
+ beforeId:zUuid.optional(),
  module:z.enum(["all","projects","electives"]).default("all"),
  actorName:z.string().trim().max(100).default(""),
  from:z.union([z.literal(""),z.iso.date()]).default(""),

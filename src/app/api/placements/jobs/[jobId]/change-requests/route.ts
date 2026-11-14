@@ -22,6 +22,7 @@ import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-rep
 import {legacyDriveChangeStatus} from "@/modules/placements/tpo-drive-change-request-model";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Legacy /api/v1/tpo compatibility map (G2-5-023-001/034):
  * GET  /drives/{jobId}/change-requests -> GET this route
@@ -41,9 +42,9 @@ import { CACHE } from "@/security/responses";
  * No unauthenticated /api/v1/tpo alias route is exposed.
  */
 const internalNoteSchema=z.strictObject({
- kind:z.literal("INTERNAL_NOTE"),threadId:z.string().uuid(),
+ kind:z.literal("INTERNAL_NOTE"),threadId:zUuid,
  body:z.string().trim().min(1).max(4000),
- idempotencyKey:z.string().uuid().optional(),
+ idempotencyKey:zUuid.optional(),
 });
 /** VNext's DRIVE Team conversations replace old /internal-notes.
  * This compatibility view never treats recruiter change-request notes as
@@ -57,7 +58,7 @@ async function scopedDriveThreads(context:Awaited<ReturnType<typeof getCurrentRe
  await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"placements.manage",{
   organizationId:college.organizationId,collegeId:college.id,
  }));
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const [job]=await getDb().select({id:placementJobs.id})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
     eq(placementJobs.collegeId,college.id))).limit(1);

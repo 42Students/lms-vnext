@@ -1,5 +1,6 @@
 import {z} from "zod";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 /** The destination enforces active learner ownership independently of the offer card. */
 export function learnerOfferApplicationHref(raw:string):string|null{
  const parsed=id.safeParse(raw);

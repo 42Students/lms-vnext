@@ -9,7 +9,8 @@ import { listMyProjectInstances } from "./member-service";
 import { summarizeLearnerProjectTeams } from "./learner-project-team-model";
 
 import { ROLE } from "@/modules/identity/roles";
-const projectIdsSchema = z.array(z.string().uuid()).max(2000);
+import { zUuid } from "@/lib/schema-primitives";
+const projectIdsSchema = z.array(zUuid).max(2000);
 
 /** Bulk read, scoped to this live learner assignment; arbitrary IDs cannot broaden it. */
 export async function listMyLearnerProjectTeams(

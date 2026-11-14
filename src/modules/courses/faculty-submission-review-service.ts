@@ -13,6 +13,7 @@ import { CoursesServiceError } from "./errors";
 import { facultySubmissionListPage, facultySubmissionListQuerySchema, selectFacultyAssignmentSubmissions, facultySubmissionSqlPageWindow } from "./faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponse } from "./faculty-submission-review-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export async function getFacultySubmissionReviewPage(context: RequestContext, raw: unknown) {
   const query = facultySubmissionListQuerySchema.parse(raw);
   requirePermission(context,"courses.read",{...(context.membership?.collegeId !== undefined ? {collegeId:context.membership.collegeId} : {}),
@@ -59,10 +60,10 @@ export async function getFacultySubmissionReviewPage(context: RequestContext, ra
  * cannot disclose whether a learner submitted in another Section.
  */
 const facultyStatsRequest=z.strictObject({
- deliveryId:z.string().uuid(),
+ deliveryId:zUuid,
  // Legacy bulk stats accepts repeat IDs. Bound the incoming body first, then
  // deduplicate before the maximum 100 distinct IDs reach SQL.
- assignmentIds:z.array(z.string().uuid()).min(1).max(500),
+ assignmentIds:z.array(zUuid).min(1).max(500),
 }).transform(input=>({...input,assignmentIds:[...new Set(input.assignmentIds)]}))
  .refine(input=>input.assignmentIds.length<=100,
   {message:"Select no more than 100 distinct assignments",path:["assignmentIds"]});

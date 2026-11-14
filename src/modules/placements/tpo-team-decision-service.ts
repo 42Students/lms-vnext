@@ -11,8 +11,9 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoTeamDecisionSchema=z.strictObject({
- threadId:z.string().uuid(),messageId:z.string().uuid(),
+ threadId:zUuid,messageId:zUuid,
  mark:z.boolean(),expectedMarked:z.boolean(),
 });
 /** A decision is a scoped, latest-event state; no GET side effects. */

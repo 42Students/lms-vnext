@@ -14,6 +14,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { lectureHallScheduledConflict } from "./lecture-hall-conflict-model";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Lecture halls (rooms) of a college. Managed by College Admin and scoped
  * Super Admin (`academics.manage`). The college always comes from the stored
@@ -33,7 +34,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
 /** Tenant-scoped hall ID lookup, never a guessed client college override. */
 export async function getLectureHallDetail(ctx:RequestContext,rawId:unknown){
- const hallId=z.string().uuid().parse(rawId);
+ const hallId=zUuid.parse(rawId);
  const [hall]=await getDb().select().from(lectureHalls).where(eq(lectureHalls.id,hallId)).limit(1);
  if(!hall)throw new LectureHallError("HALL_NOT_FOUND");
  const college = await loadCollege(hall.collegeId);
@@ -95,11 +96,11 @@ const hallFields = {
     .max(1000, "Capacity must be 1000 or less").default(50),
   roomType: z.enum(ROOM_TYPES),
   description: descriptionSchema,
-  departmentId: z.union([z.string().uuid(), z.null()]).optional(),
+  departmentId: z.union([zUuid, z.null()]).optional(),
 };
 
 export const createLectureHallSchema = z
-  .object({ collegeId: z.string().uuid(), ...hallFields })
+  .object({ collegeId: zUuid, ...hallFields })
   .strict();
 
 export const updateLectureHallSchema = z
@@ -133,7 +134,7 @@ export async function listSuperAdminOrganizationLectureHalls(
  raw:{organizationId?:string;q?:string;limit?:number;offset?:number},
 ){
  const query=z.object({
-  organizationId:z.string().uuid().optional(),
+  organizationId:zUuid.optional(),
   q:z.string().trim().max(100).optional(),
   limit:z.number().int().min(1).max(100).default(20),
   offset:z.number().int().min(0).default(0),
@@ -176,11 +177,11 @@ export async function listSuperAdminOrganizationLectureHalls(
 // read-only endpoint and explicit role gate outside this mutation service.
 export const listLectureHallsSchema = z.object({
   collegeId: z.string().uuid("Select a college to continue"),
-  id:z.string().uuid().optional(),
+  id:zUuid.optional(),
   q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
-  departmentId: z.string().uuid().optional(),
+  departmentId: zUuid.optional(),
   minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   upcoming: z.enum(["YES","NO"]).optional(),
@@ -390,7 +391,7 @@ export async function updateLectureHall(
   hallIdInput: string,
   rawInput: unknown,
 ) {
-  const hallId = z.string().uuid().parse(hallIdInput);
+  const hallId = zUuid.parse(hallIdInput);
   const input = updateLectureHallSchema.parse(rawInput);
   try {
     return await getDb().transaction(async tx => {
@@ -492,9 +493,9 @@ export function normalizeLegacyLectureHallUpdate(raw: unknown) {
 }
 
 const legacyLookupSchema = z.object({
-  collegeId: z.string().uuid(),
+  collegeId: zUuid,
   query: z.string().trim().max(100).default(""),
-  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
+  deptId: z.union([zUuid, z.literal("0"), z.literal(0)]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(15),
 }).strict();
@@ -576,10 +577,10 @@ export async function searchLectureHallsForPicker(context: RequestContext, raw: 
 }
 
 const legacyPageSchema = z.object({
-  collegeId: z.string().uuid(),
+  collegeId: zUuid,
   page: z.coerce.number().int().default(0).transform(value => Math.max(0, value)),
   size: z.coerce.number().int().default(20).transform(value => Math.max(1, Math.min(100, value))),
-  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
+  deptId: z.union([zUuid, z.literal("0"), z.literal(0)]).optional(),
   query: z.string().trim().max(100).optional(),
 }).strict();
 
@@ -613,7 +614,7 @@ export async function listLectureHallsLegacyPage(context: RequestContext, raw: u
 /** Current-state statistics, not a stale in-memory cache. The unfiltered
  * total deliberately includes ACTIVE and ARCHIVED; users see each count. */
 export async function getLectureHallStatistics(context: RequestContext, collegeId: string) {
-  const verifiedId = z.string().uuid().parse(collegeId);
+  const verifiedId = zUuid.parse(collegeId);
   const [all, active, archived] = await Promise.all([
     listLectureHalls(context, { collegeId: verifiedId, limit: 1 }),
     listLectureHalls(context, { collegeId: verifiedId, status: "ACTIVE", limit: 1 }),

@@ -36,6 +36,7 @@ import {
   updateCohortInputSchema,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy batch names are unique per program, ignoring case. */
 async function assertCohortNameUnique(programId: string, name: string, excludeId?: string) {
   const conditions = [
@@ -208,7 +209,7 @@ export async function listCollegeCohortsPage(
   context:RequestContext,raw:{programId?:string;page?:number;pageSize?:number}={},
 ){
   const input=z.strictObject({
-    programId:z.uuid().optional(),
+    programId:zUuid.optional(),
     page:z.number().int().min(1).max(10000).default(1),
     pageSize:z.number().int().refine(v=>[10,25,50,100].includes(v)).default(25),
   }).parse(raw);

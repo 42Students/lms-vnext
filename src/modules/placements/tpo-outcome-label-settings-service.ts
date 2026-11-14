@@ -11,8 +11,9 @@ import {tpoOutcomeLabelsAlreadyApplied} from "./tpo-outcome-label-retry-model";
 import {AFTER_COLLEGE_LABELS,afterCollegeCustomLabelOutcomeSchema} from "./tpo-after-college-model";
 import {placementTpoAfterCollege} from "@/db/schema/tpo-configuration";
 
+import { zUuid } from "@/lib/schema-primitives";
 const entrySchema=z.object({
- id:z.string().uuid().nullable().optional(),
+ id:zUuid.nullable().optional(),
  label:z.string().transform(value=>value.trim().replace(/\s+/g," "))
   .pipe(z.string().min(2).max(60)),
  outcome:afterCollegeCustomLabelOutcomeSchema,

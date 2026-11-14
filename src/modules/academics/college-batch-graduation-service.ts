@@ -8,6 +8,7 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export class CollegeBatchGraduationError extends Error {
   constructor(public readonly code: string) { super(code); this.name = "CollegeBatchGraduationError"; }
 }
@@ -17,7 +18,7 @@ export class CollegeBatchGraduationError extends Error {
 export async function markCollegeBatchGraduated(
   context: RequestContext, cohortIdRaw: string, raw: unknown,
 ) {
-  const cohortId = z.string().uuid().parse(cohortIdRaw);
+  const cohortId = zUuid.parse(cohortIdRaw);
   const input = z.object({ confirm: z.literal(true) }).strict().parse(raw);
   void input;
   const member = await resolveActingCollege(context, "academics.manage");

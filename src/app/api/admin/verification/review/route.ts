@@ -14,6 +14,7 @@ import {requireSuperAdminVerificationCollege} from "@/modules/verification/super
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -23,7 +24,7 @@ export const POST = route(
 const _p=await readBoundedJsonRequest(request,8192);
 if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
 const body=_p.value;
-const candidate=z.object({collegeId:z.uuid()}).parse(body);
+const candidate=z.object({collegeId:zUuid}).parse(body);
 await requireSuperAdminVerificationCollege(context,candidate.collegeId);
 await requireVerificationTables();
 const reviewBody={...z.record(z.string(),z.unknown()).parse(body)};

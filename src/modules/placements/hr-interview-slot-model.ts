@@ -1,8 +1,9 @@
 import {z} from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrInterviewSlotCreateSchema=z.strictObject({
  action:z.literal("CREATE").optional(),
- roundId:z.string().uuid(),
+ roundId:zUuid,
  startAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  endAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  timezone:z.literal(DEFAULT_TIME_ZONE),
@@ -43,7 +44,7 @@ export function requireHrInterviewRoundDescription(value:string|null|undefined):
  return text;
 }
 export const hrInterviewSlotActionSchema=z.strictObject({
- slotId:z.string().uuid(),
+ slotId:zUuid,
  expectedVersion:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().positive()),
  action:z.enum(["OFFER","BOOK","CANCEL"]),

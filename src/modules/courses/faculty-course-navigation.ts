@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyCourseTabs = [
   { path: "home", label: "Overview" },
   { path: "blueprint", label: "Blueprint" },
@@ -24,7 +25,7 @@ export function facultyCourseTabFromPath(pathname: string): FacultyCourseTab {
 }
 
 export function validFacultyDefaultDeliveryId(raw:unknown):raw is string {
- return z.string().uuid().safeParse(raw).success;
+ return zUuid.safeParse(raw).success;
 }
 
 /** Legacy bookmarks can contain a numeric mapping/course ID or a slug.

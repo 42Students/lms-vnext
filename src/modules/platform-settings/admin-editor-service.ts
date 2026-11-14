@@ -12,13 +12,14 @@ import {LEGACY_TENANT_SETTING_MAP,LEGACY_TENANT_SETTING_SPECS} from "./legacy-se
 import {PLACEMENT_POLICY_FIELDS,placementPolicyValidate} from "@/modules/placements/platform-placement-policy-model";
 import {listOrganizationTenantSettings,removeOrganizationTenantSetting} from "./organization-settings-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Historical TEXT settings above the storage limit require explicit archival; never truncate. */
 export const TENANT_SETTING_STORAGE_MAX_CHARS=4096;
 export const TENANT_SETTING_MAX_CHANGES=31;
 const sensitiveSettingKey=(key:string)=>/secret|token|password|credential|api[._-]?key|private[._-]?key/i.test(key);
 const entry=z.strictObject({key:z.string().min(1).max(120),value:z.string().max(TENANT_SETTING_STORAGE_MAX_CHARS),
  expectedVersion:z.number().int().nonnegative()});
-const input=z.strictObject({scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:z.uuid().optional(),
+const input=z.strictObject({scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:zUuid.optional(),
  confirmedHighImpact:z.boolean().default(false),changes:z.array(entry).min(1).max(TENANT_SETTING_MAX_CHANGES)});
 export class TenantSettingEditorError extends Error{
  constructor(readonly code:"SETTINGS_STORAGE_PENDING"|"SETTING_SCOPE_DENIED"|"SETTING_STALE"|"INVALID_SETTING"|"EMPTY_BODY"|"CORE_COURSES_PROTECTED"){
@@ -114,7 +115,7 @@ async function scope(ctx:RequestContext,scopeType:"GLOBAL"|"COLLEGE",rawCollegeI
    throw new TenantSettingEditorError("SETTING_SCOPE_DENIED");
   return {scopeId:"GLOBAL",collegeId:null,organizationId:null};
  }
- const id=z.uuid().parse(rawCollegeId);
+ const id=zUuid.parse(rawCollegeId);
  if(ctx.adminScope?.collegeId!==id)throw new TenantSettingEditorError("SETTING_SCOPE_DENIED");
  const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId}).from(colleges)
   .where(and(eq(colleges.id,id),eq(colleges.status,"ACTIVE"))).limit(1);
@@ -252,7 +253,7 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
  * executable configuration; never store credentials here. */
 const unlistedKey=z.string().min(1).max(120).regex(/^[A-Za-z][A-Za-z0-9._-]*$/);
 const unlistedBase=z.strictObject({
- scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:z.uuid().optional(),key:unlistedKey,
+ scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:zUuid.optional(),key:unlistedKey,
 });
 const unlistedCreate=unlistedBase.extend({value:z.string().trim().min(1).max(TENANT_SETTING_STORAGE_MAX_CHARS)});
 const unlistedRemove=unlistedBase.extend({expectedVersion:z.number().int().positive()});

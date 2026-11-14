@@ -27,6 +27,7 @@ import {
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -45,9 +46,9 @@ const exportQuerySchema = z
       "accreditation",
       "accreditation-students",
     ]),
-    seasonId: z.string().uuid().optional(),
-    jobId: z.string().uuid().optional(),
-    batchId: z.string().uuid().optional(),
+    seasonId: zUuid.optional(),
+    jobId: zUuid.optional(),
+    batchId: zUuid.optional(),
   })
   .strict();
 

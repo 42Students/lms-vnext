@@ -2,6 +2,7 @@ import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { z } from "zod";
 import { phoneE164Schema, personDisplayNameSchema, personEmailSchema } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 const structuredStudentRowSchema = z.object({
   displayName: z.string().trim().optional(),
   firstName: z.string().trim().optional(),
@@ -10,9 +11,9 @@ const structuredStudentRowSchema = z.object({
   mobileNumber: z.string().trim().optional(),
   email: z.string().trim().optional(),
   rollNumber: z.string().trim().optional(),
-  programId: z.string().uuid().optional(),
-  cohortId: z.string().uuid().optional(),
-  sectionId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
+  cohortId: zUuid.optional(),
+  sectionId: zUuid.optional(),
 }).strict();
 
 /** Legacy bulk JSON can be submitted without a temporary CSV file. The
@@ -42,9 +43,9 @@ export const studentCsvRequestSchema = z.object({
   csv: z.string().min(1).max(1000000).optional(),
   students: z.array(structuredStudentRowSchema).min(1).max(500).optional(),
   confirm: z.boolean().optional(),
-  programId: z.string().uuid().optional(),
-  cohortId: z.string().uuid().optional(),
-  sectionId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
+  cohortId: zUuid.optional(),
+  sectionId: zUuid.optional(),
 }).strict().superRefine((v, ctx) => {
   if (Boolean(v.csv) === Boolean(v.students?.length)) {
     ctx.addIssue({ code: "custom", path: ["csv"], message: "Provide either CSV or structured student records" });
@@ -62,9 +63,9 @@ const csvRowSchema = z.object({
   displayName: personDisplayNameSchema,
   phoneE164: phoneE164Schema,
   email: z.union([personEmailSchema, z.literal("")]).transform(v => v || undefined),
-  programId: z.string().uuid(),
-  cohortId: z.string().uuid(),
-  sectionId: z.string().uuid().optional(),
+  programId: zUuid,
+  cohortId: zUuid,
+  sectionId: zUuid.optional(),
   rollNumber: z.string().trim().max(128).optional(),
 }).strict();
 

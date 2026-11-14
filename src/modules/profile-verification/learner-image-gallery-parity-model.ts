@@ -1,5 +1,6 @@
 import {z} from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export type LearnerImageReference={
  id:string;legacyImageId:number|null;displayOrder:number;
  receiptId:string;isActive:boolean;deactivatedAt:Date|null;
@@ -10,7 +11,7 @@ export type LearnerImageReference={
 export const MAX_LEARNER_PROFILE_IMAGES=10;
 export const learnerGalleryUploadSchema=z.strictObject({
  receiptId:uuid,displayOrder:z.number().int().min(0).max(10000).optional(),
- idempotencyKey:z.string().uuid(),
+ idempotencyKey:zUuid,
 });
 export function nextGalleryInsert(rows:readonly LearnerImageReference[],receiptId:string){
  const existing=rows.find(row=>row.receiptId===receiptId);

@@ -16,6 +16,7 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -94,7 +95,7 @@ async function handleGET(request: Request) {
     } else {
       const acting = await resolveActingCollege(context,"academics.manage");
       if (requestedCollege !== null) {
-        const requested = z.string().uuid().safeParse(requestedCollege);
+        const requested = zUuid.safeParse(requestedCollege);
         if (!requested.success || requested.data !== acting.collegeId) {
           return typedError("The requested college does not match the selected workspace.",403);
         }

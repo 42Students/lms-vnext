@@ -36,6 +36,7 @@ import {
   type CreateSectionInput,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 async function assertSectionUnique(
   cohortId: string,
   academicPeriodId: string,
@@ -229,7 +230,7 @@ export async function searchSections(
 ) {
   const input = z.object({
     q: z.string().trim().max(100).default(""),
-    programId: z.string().uuid().optional(),
+    programId: zUuid.optional(),
     limit: z.number().int().min(1).max(100).default(20),
   }).strict().parse(raw);
   const acting = await resolveActingCollege(context, "academics.read");
@@ -283,7 +284,7 @@ export async function listClassesByProgram(
   context:RequestContext,programIdInput:unknown,
   raw:{q?:string;limit?:number}={},
 ){
-  const programId=z.uuid().parse(programIdInput);
+  const programId=zUuid.parse(programIdInput);
   const rows=await searchSections(context,{
     programId,q:raw.q??"",limit:raw.limit??50,
   });
@@ -303,7 +304,7 @@ export async function collegeClassNameExists(
   context:RequestContext,nameInput:unknown,programIdInput?:unknown,
 ){
   const name=z.string().trim().min(1).max(255).parse(nameInput);
-  const programId=programIdInput===undefined?undefined:z.uuid().parse(programIdInput);
+  const programId=programIdInput===undefined?undefined:zUuid.parse(programIdInput);
   const acting=await resolveActingCollege(context,"academics.read");
   const [row]=await getDb().select({id:sections.id}).from(sections)
     .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
@@ -331,8 +332,8 @@ export async function listPopularClasses(
 export async function recordClassSearchSelection(
   context:RequestContext,classIdInput:unknown,idempotencyKeyInput:unknown,
 ){
-  const idempotencyKey=z.uuid().parse(idempotencyKeyInput);
-  const id=z.uuid().parse(classIdInput);
+  const idempotencyKey=zUuid.parse(idempotencyKeyInput);
+  const id=zUuid.parse(classIdInput);
   const acting=await resolveActingCollege(context,"academics.read");
   const [row]=await getDb().select({
     id:sections.id,name:sections.name,

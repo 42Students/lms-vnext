@@ -9,6 +9,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {getSuperAdminCollegeFeatureSnapshot} from "./admin-college-rule-read";
 import {collegePolicyHistoryQuery,safeFullModuleHistory} from "./admin-college-rule-history-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** SA-tenants-modules-32: one auditable, tenant-scoped history for college,
  * descendant and learner rules, with a stable 50-row composite cursor. */
 const ACCESS_EVENTS=[
@@ -19,7 +20,7 @@ const ACCESS_EVENTS=[
  "COLLEGE_FEATURE_TOGGLE",
 ] as const;
 export async function listCollegeFeatureHistory(context:RequestContext,collegeRaw:string,raw:unknown={},requestedPageSize:15|50=50){
- const collegeId=z.uuid().parse(collegeRaw);
+ const collegeId=zUuid.parse(collegeRaw);
  const cursor=collegePolicyHistoryQuery.parse(raw);
  const verified=await getSuperAdminCollegeFeatureSnapshot(context,collegeId);
  if(!verified)return null;

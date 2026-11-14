@@ -9,6 +9,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
+import { zUuid } from "@/lib/schema-primitives";
 export default async function HrRecordedOutsidePage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];saved?:string|string[]}>;
 }){
@@ -27,7 +28,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
    href:"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(g.collegeId),
   }))}/>:<EmptyState title="No active college access" description="Your placement-cell relationship must be active to record an external drive."/>}
  </div>;
- if(!z.string().uuid().safeParse(collegeId).success||!context.recruiter.grants.some(g=>g.collegeId===collegeId))notFound();
+ if(!zUuid.safeParse(collegeId).success||!context.recruiter.grants.some(g=>g.collegeId===collegeId))notFound();
  const result=await recordedOutsideChoices(context,collegeId);
  const savedId=q.saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;

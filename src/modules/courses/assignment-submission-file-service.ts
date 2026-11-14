@@ -44,6 +44,7 @@ import {
 import { courseSectionDeliveryIdSchema } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type FileRow = typeof assignmentSubmissionFiles.$inferSelect;
 
 type FileTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -89,7 +90,7 @@ async function requirePersistedLearnerFileActor(
 }
 
 
-const idSchema = z.string().uuid();
+const idSchema = zUuid;
 
 export const submissionFileUploadInputSchema = z
   .object({

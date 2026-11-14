@@ -42,6 +42,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function mapLifecycleConstraint(error: unknown) {
   if (
     postgresConstraintName(error) ===
@@ -250,11 +251,11 @@ export async function completeProjectSprint(
 ) {
   const note=z.string().trim().max(1000).optional().parse(signOffNote)??"";
   const decisions=z.array(z.strictObject({
-    taskId:z.string().uuid(),
+    taskId:zUuid,
     destination:z.enum(["NEXT","BACKLOG","DROP"]),
     expectedUpdatedAt:z.iso.datetime({offset:true}),
   })).max(250).optional().parse(rawDecisions);
-  const validatedNext=nextSprintId===undefined?null:z.string().uuid().parse(nextSprintId);
+  const validatedNext=nextSprintId===undefined?null:zUuid.parse(nextSprintId);
   if(startNextSprint&&!validatedNext)
     throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const scope =

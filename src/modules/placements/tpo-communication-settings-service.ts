@@ -14,6 +14,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export class TpoCommunicationSettingsError extends Error {
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
 }
@@ -189,7 +190,7 @@ export function tpoOutgoingDispatchDecision(input:{
  * snapshot cached in an app process. No email/SMS is sent by this function.
  */
 const tpoDispatchClaimSchema=z.strictObject({
- collegeId:z.uuid(),recipientUserId:z.uuid(),
+ collegeId:zUuid,recipientUserId:zUuid,
  event:z.enum([
   "DRIVE_PUBLISHED","DRIVE_UPDATED","APPLICATION_STATUS_CHANGED",
   "NOW_INELIGIBLE","NUDGE","PREP_ASSIGNED","ROUND_SCHEDULED",

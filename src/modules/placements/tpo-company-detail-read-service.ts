@@ -13,6 +13,7 @@ import { projectTpoCompanyRelationshipSummary } from "./tpo-company-relationship
 import { projectTpoCompanyHiringPulse } from "./tpo-company-hiring-pulse-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Strictly read-only canonical company view from persisted college relationship.
  * Job-only legacy company-name memory is a DIFFERENT resource: its route must
  * resolve authorized in-college jobs/leads by normalized name, never invent a
@@ -20,7 +21,7 @@ import { ROLE } from "@/modules/identity/roles";
  * to show historical drives. This UUID detail route remains fail-closed.
  */
 export async function getTpoCompanyDetailReadOnly(context: RequestContext, rawCompanyId: unknown) {
-  const companyId = z.string().uuid().parse(rawCompanyId);
+  const companyId = zUuid.parse(rawCompanyId);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, ROLE.TPO) ||
       membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {

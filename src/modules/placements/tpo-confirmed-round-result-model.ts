@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { stagePlacementRoundResultInputSchema } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const confirmedTpoRoundResultSchema = z.object({
   confirmed: z.literal(true),
-  expectedCurrentResultId: z.string().uuid().nullable(),
+  expectedCurrentResultId: zUuid.nullable(),
   result: stagePlacementRoundResultInputSchema,
 }).strict();
 

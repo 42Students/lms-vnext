@@ -2,10 +2,11 @@ import { z } from "zod";
 import type { LearnerAttendanceStatus } from "@/modules/attendance/model";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 const monthSchema = z.string().regex(/^(?:19|20|21)\d\d-(?:0[1-9]|1[0-2])$/);
 export const learnerAttendanceCalendarQuerySchema = z.object({
   month: monthSchema.optional(),
-  deliveryId: z.union([z.literal("ALL"), z.string().uuid()]).default("ALL"),
+  deliveryId: z.union([z.literal("ALL"), zUuid]).default("ALL"),
   status: z.enum(["ALL", "PRESENT", "ABSENT", "EXCUSED", "MEDICAL",
     "LATE", "NOT_MARKED", "SCHEDULED"]).default("ALL"),
 }).strict();

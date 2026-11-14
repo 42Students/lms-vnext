@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const knownErrorIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const knownErrorIdSchema = zUuid;
 export const knownErrorListSchema = z.object({
   environment: z.enum(["PRODUCTION", "UAT", "DEVELOPMENT"]).default("PRODUCTION"),
   limit: z.coerce.number().int().min(1).max(100).default(40),

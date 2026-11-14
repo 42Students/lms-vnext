@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { FacultyProfileDocument } from "./faculty-profile-document";
 
+import { zUuid } from "@/lib/schema-primitives";
 export function facultyMetadataEditableKey(key:string):boolean {
  return key.length>0 && key.length<=120 && key===key.trim() &&
   !["__proto__","constructor","prototype"].includes(key.toLowerCase()) &&
@@ -8,7 +9,7 @@ export function facultyMetadataEditableKey(key:string):boolean {
 }
 
 const entrySchema=z.object({
- id:z.string().uuid(),
+ id:zUuid,
  key:z.string().min(1).max(120)
    .refine(facultyMetadataEditableKey,
      "Identity and secret fields are not profile metadata"),

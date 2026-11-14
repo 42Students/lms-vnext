@@ -1,5 +1,6 @@
 import {z} from "zod";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 export type FileDeleteDialog={projectId:string;resourceId:string;fileId:string;fileName:string;revision:string};
 export function resourceFileDeletePrompt(input:FileDeleteDialog){
  id.parse(input.projectId);id.parse(input.resourceId);id.parse(input.fileId);

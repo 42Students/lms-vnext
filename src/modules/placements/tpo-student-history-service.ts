@@ -34,9 +34,10 @@ import {
 } from "./tpo-student-history-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy bulk status transitions: bounded, sorted, and college-scoped. */
 const transitionQuery=z.object({
- applicationIds:z.array(z.string().uuid()).min(1).max(200)
+ applicationIds:z.array(zUuid).min(1).max(200)
   .refine(ids=>new Set(ids).size===ids.length,"Duplicate application ID"),
  toStatus:z.enum(["SUBMITTED","WITHDRAWN","APPLIED","SHORTLISTED",
   "ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED","WAITLISTED"]).optional(),

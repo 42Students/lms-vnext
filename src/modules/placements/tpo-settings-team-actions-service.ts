@@ -13,7 +13,8 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasDriveOwnerColumn} from "@/modules/placements/tpo-team-unowned-service";
 
 import { ROLE } from "@/modules/identity/roles";
-const memberSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const memberSchema=zUuid;
 async function requireScope(context:RequestContext){
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");

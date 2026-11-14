@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** The old Interviews page was an alias for Schedule, not another independent
  * workspace. Keep only bounded deep-link selectors; never forward arbitrary
  * tenant/learner overrides through this redirect. */
@@ -22,7 +23,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   }
   for (const key of ["applicationId", "roundId"] as const) {
     const value = raw[key];
-    if (typeof value === "string" && z.uuid().safeParse(value).success) {
+    if (typeof value === "string" && zUuid.safeParse(value).success) {
       params.set(key, value);
     }
   }

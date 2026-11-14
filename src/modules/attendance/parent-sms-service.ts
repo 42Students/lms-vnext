@@ -8,6 +8,7 @@ import {requireAttendanceCollege} from "./admin-service";
 import {attendanceParentContactInputSchema,attendanceParentSmsBody,canNotifyVerifiedParent,type AttendanceParentSmsKind} from "./parent-sms-model";
 import {sendAttendanceParentSms} from "./parent-sms-provider";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** Stable legacy-compatible purpose codes, independent of queue status.
  * An outbox row is a command, never proof of a provider attempt or delivery.
  */
@@ -62,7 +63,7 @@ export async function recordVerifiedAttendanceParentContact(ctx:RequestContext,r
 /** Revocation requires no parent phone disclosure and cancels unsent
  * notices transactionally. Already attempted provider requests cannot be undone. */
 export async function revokeAttendanceParentContact(ctx:RequestContext,raw:unknown){
- const input=z.object({collegeId:z.string().uuid(),membershipId:z.string().uuid()}).strict().parse(raw);
+ const input=z.object({collegeId:zUuid,membershipId:zUuid}).strict().parse(raw);
  const college=await requireAttendanceCollege(ctx,input.collegeId);
  return getDb().transaction(async tx=>{
   if(!(await parentTablesReady(tx)))return {revoked:false,ready:false};
@@ -109,7 +110,7 @@ export async function enqueueAttendanceParentSms(tx:Tx,input:{
 /** Provider attempt occurs after the attendance transaction commits.
  * Retry only QUEUED rows; an uncertain attempt is never silently re-sent. */
 export async function dispatchQueuedAttendanceParentSms(rawId:string){
- const id=z.string().uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const db=getDb();
  const [entry]=await db.select().from(attendanceParentSmsOutbox)
   .where(and(eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED"))).limit(1);
@@ -171,7 +172,7 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
 /** Bounded recovery after a missing DLT template is configured. A College
  * Admin explicitly triggers it; the outbox keeps all attempts idempotent. */
 export async function retryQueuedAttendanceParentSmsForCollege(ctx:RequestContext,rawCollegeId:unknown){
- const collegeId=z.string().uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  await requireAttendanceCollege(ctx,collegeId);
  const ready=await getDb().transaction(async tx=>parentTablesReady(tx));
  if(!ready)return {ready:false,accepted:0,skipped:0,unavailable:0};
@@ -198,8 +199,8 @@ export async function retryQueuedAttendanceParentSmsForCollege(ctx:RequestContex
 export async function getAttendanceParentSmsSupportHistory(
  context:RequestContext, raw:unknown,
 ) {
- const input=z.strictObject({collegeId:z.string().uuid(),
-  membershipId:z.string().uuid()}).parse(raw);
+ const input=z.strictObject({collegeId:zUuid,
+  membershipId:zUuid}).parse(raw);
  const college=await requireAttendanceCollege(context,input.collegeId);
  if(!(await getDb().transaction(async tx=>parentTablesReady(tx))))
   return {ready:false,reason:"PARENT_SMS_SCHEMA_NOT_REGISTERED",attempts:[]};
@@ -239,7 +240,7 @@ export async function getAttendanceParentSmsSupportHistory(
 export async function getAttendanceParentSmsReadiness(
  context:RequestContext,raw:unknown,
 ) {
- const input=z.strictObject({collegeId:z.string().uuid(),membershipId:z.string().uuid()}).parse(raw);
+ const input=z.strictObject({collegeId:zUuid,membershipId:zUuid}).parse(raw);
  const college=await requireAttendanceCollege(context,input.collegeId);
  const ready=await getDb().transaction(async tx=>parentTablesReady(tx));
  if(!ready)return {ready:false,canNotify:false,reason:"PARENT_SMS_SCHEMA_NOT_REGISTERED"};

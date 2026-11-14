@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeBatchStudentsPage({
   params, searchParams,
 }: {
@@ -33,12 +34,12 @@ export default async function CollegeBatchStudentsPage({
     organizationId: context.membership.organizationId,
   });
   const { cohortId: rawId } = await params;
-  const checkedId = z.string().uuid().safeParse(rawId);
+  const checkedId = zUuid.safeParse(rawId);
   if (!checkedId.success) notFound();
   const cohortId = checkedId.data;
   const input = await searchParams;
   const q = typeof input.q === "string" ? input.q.trim().slice(0, 100) : "";
-  const sectionId = z.string().uuid().safeParse(input.sectionId).success ? input.sectionId : null;
+  const sectionId = zUuid.safeParse(input.sectionId).success ? input.sectionId : null;
   const db = getDb();
   const [batch] = await db.select({ id: cohorts.id, name: cohorts.name, program: programs.name })
     .from(cohorts).innerJoin(programs, eq(programs.id, cohorts.programId))

@@ -8,6 +8,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Legacy JobApplicationRepository.countByJobIds/countHiredByJobIds.
  *
@@ -24,9 +25,9 @@ export async function countCollegeJobApplications(
   collegeId: string,
   jobIds: readonly string[],
 ): Promise<Map<string, { applied: number; hired: number }>> {
-  const scopeId = z.string().uuid().parse(collegeId);
+  const scopeId = zUuid.parse(collegeId);
   requirePermission(context, "placements.manage", {collegeId: scopeId});
-  const ids = [...new Set(jobIds.map(value => z.string().uuid().parse(value)))];
+  const ids = [...new Set(jobIds.map(value => zUuid.parse(value)))];
   if (ids.length > 1000) throw new RangeError("Count at most 1,000 jobs at a time");
   const counts = new Map<string,{applied:number;hired:number}>();
   for (const id of ids) counts.set(id,{applied:0,hired:0});

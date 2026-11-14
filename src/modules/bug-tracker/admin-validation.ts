@@ -7,6 +7,7 @@ import {
   BUG_STATUSES,
 } from "./workflow";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const BUG_ACCOUNT_ROLES = [
   "LEARNER","FACULTY","MENTOR","COLLEGE_ADMIN","SUPER_ADMIN","NOT_SURE",
 ] as const;
@@ -41,7 +42,7 @@ export const trackerAdminListSchema = z.object({
   createdBefore: z.date().optional(),
   sort: z.enum(["newest", "oldest"]).default("newest"),
   beforeCreatedAt: z.iso.datetime({ offset: true }).transform((x) => new Date(x)).optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 }).strict().superRefine((value, ctx) => {
   if(value.createdFrom && value.createdBefore && value.createdFrom >= value.createdBefore){

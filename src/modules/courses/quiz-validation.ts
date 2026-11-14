@@ -7,10 +7,11 @@ import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const courseQuizIdSchema =
-  z.string().uuid();
+  zUuid;
 export const quizAttemptIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const titleSchema = z
   .string()
@@ -232,9 +233,9 @@ export const setQuizResultsInputSchema =
   });
 
 const quizAnswerInputSchema = z.object({
-  questionId: z.string().uuid(),
+  questionId: zUuid,
   selectedOptionIds: z
-    .array(z.string().uuid())
+    .array(zUuid)
     .min(1,"Submit exactly one answer for every quiz question")
     .max(20),
 });
@@ -250,7 +251,7 @@ export const submitQuizInputSchema = z
     // Legacy client sends the authored question set visible when the
     // attempt opened. Optional for old vNext clients: in that case the
     // complete answer IDs themselves are the revision fingerprint.
-    shownQuestionIds:z.array(z.string().uuid()).max(200).optional(),
+    shownQuestionIds:z.array(zUuid).max(200).optional(),
   })
   .superRefine((value, ctx) => {
     const questions = new Set<string>();

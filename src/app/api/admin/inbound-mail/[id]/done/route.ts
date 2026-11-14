@@ -7,6 +7,7 @@ import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/mo
 import { route } from "@/security/route";
 
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{id:string}>};
 
@@ -23,7 +24,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
    return NextResponse.json({error:"INVALID_REQUEST",message:"Choose done or reopen."},
     {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const {id}=await params;
-  if(!z.string().uuid().safeParse(id).success)
+  if(!zUuid.safeParse(id).success)
    return NextResponse.json({error:"MESSAGE_NOT_FOUND"},{status:404,
     headers:{"Cache-Control":CACHE.PRIVATE}});
   const context=await getCurrentRequestContext();

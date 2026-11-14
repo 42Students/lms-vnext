@@ -14,6 +14,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const TEMPLATE_MAX_BYTES = 8 * 1024 * 1024;
 const privateHeaders = { "Cache-Control": CACHE.PRIVATE };
@@ -32,7 +33,7 @@ async function handleGET(request:Request,{params}:RouteContext) {
   const query=new URL(request.url).searchParams;
   const values=query.getAll("collegeId");
   if(values.length>1||(values.length===1 &&
-     !z.string().uuid().safeParse(values[0]).success))
+     !zUuid.safeParse(values[0]).success))
    return NextResponse.json({error:"INVALID_REQUEST"},
     {status:400,headers:privateHeaders});
   if(values.length===1){

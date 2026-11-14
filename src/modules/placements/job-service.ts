@@ -48,6 +48,7 @@ import {
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 async function loadActiveRelationship(
   collegeId: string,
   relationshipId: string,
@@ -291,7 +292,7 @@ export async function listOrganizationPlacementJobsPage(
   organizationIdInput:string,
   options:PlacementJobListOptions={},
 ){
- const organizationId=z.string().uuid().parse(organizationIdInput);
+ const organizationId=zUuid.parse(organizationIdInput);
  if(!context.user.systemRoles.includes(ROLE.SUPER_ADMIN) ||
     context.user.platformStatus!=="ACTIVE" ||
     (context.adminScope?.organizationId!==null &&
@@ -1294,7 +1295,7 @@ export async function expirePublishedPlacementJobs(
  * name without a selected, active relationship must never become the drive's
  * canonical employer. A drive with applications cannot be relinked. */
 const draftCompanySchema=z.strictObject({
- companyRelationshipId:z.string().uuid(),
+ companyRelationshipId:zUuid,
  expectedVersion:z.number().int().positive(),
 });
 export async function relinkDraftPlacementCompany(

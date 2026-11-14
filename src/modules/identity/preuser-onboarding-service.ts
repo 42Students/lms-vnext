@@ -7,7 +7,8 @@ import {identityPreuserChallenges} from "@/db/schema/identity-auth-attempts";
 import {collegeMemberships,membershipRoles,colleges,organizations,users} from "@/db/schema";
 
 import { env } from "@/config/env";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const input=z.strictObject({
  collegeId:uuid,channel:z.enum(["EMAIL","PHONE"]),
  source:z.enum(["CONTACT","ROLL"]),

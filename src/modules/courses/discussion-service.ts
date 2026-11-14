@@ -40,6 +40,7 @@ import {facultyDiscussionModerationSchema,facultyDiscussionTokenMatches}
 import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Crosswalk for legacy classroom courseId+classId:
  * resolve the requesting learner/faculty's verified Section Delivery UUID
  * first; never accept a client-selected class ID as a grant to another tenant.
@@ -51,8 +52,8 @@ import { ROLE } from "@/modules/identity/roles";
  * Lesson-scoped messages now have an optional checked lessonContentId;
  * delivery-wide messages retain null. Query the specific lesson in its
  * same-class delivery instead of merging unrelated lesson discussions. */
-const deliveryIdSchema = z.string().uuid();
-const messageIdSchema = z.string().uuid();
+const deliveryIdSchema = zUuid;
+const messageIdSchema = zUuid;
 const createDiscussionMessageSchema = z.object({
   messageText: z.string().trim()
     .min(1, { message: "Message cannot be empty" })
@@ -90,7 +91,7 @@ const immutableDiscussionSenderName = sql<string>`coalesce(
 const historySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(60),
   beforeCreatedAt: z.string().datetime({ offset: true }).optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
 }).strict().superRefine((v, ctx) => {
   if (Boolean(v.beforeCreatedAt) !== Boolean(v.beforeId)) {
     ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Complete cursor required" });

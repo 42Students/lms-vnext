@@ -3,12 +3,13 @@ import {companyDomainSchema} from "./company-curation-domain-model";
 import {PUBLIC_WORK_EMAIL_LEGACY_COPY} from "./public-work-email-policy";
 import {canonicalCompanyAlias,LEGACY_COMPANY_ALIAS_MAX_LENGTH} from "./company-curation-alias-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const action=z.enum(["ADD","REMOVE"]);
 export const companyDomainCommandSchema=z.strictObject({
- companyId:z.uuid(),action,domain:z.string().trim().min(4).max(253),
+ companyId:zUuid,action,domain:z.string().trim().min(4).max(253),
 });
 export const companyAliasCommandSchema=z.strictObject({
- companyId:z.uuid(),action,alias:z.string().trim().min(2).max(LEGACY_COMPANY_ALIAS_MAX_LENGTH),
+ companyId:zUuid,action,alias:z.string().trim().min(2).max(LEGACY_COMPANY_ALIAS_MAX_LENGTH),
 });
 export const PERSONAL_EMAIL_HOSTS=new Set([
  "gmail.com","yahoo.com","outlook.com","hotmail.com","live.com","icloud.com",

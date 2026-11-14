@@ -8,11 +8,12 @@ import {filterDepartmentRows,type DepartmentDirectoryRow} from "@/modules/admin-
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({
  mode:z.enum(["search","popular","college","categories","category","stats","exists"]).default("search"),
  q:z.string().trim().max(120).default(""),
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
  category:z.string().trim().max(120).optional(),
  limit:z.coerce.number().int().min(1).max(100).optional(),
 });

@@ -13,6 +13,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Read side of Student Groups for College Admin and scoped Super Admin.
  * Authorization is per college (`academics.manage`: College Admin or a scoped
@@ -30,7 +31,7 @@ export class GroupReadError extends Error {
 export const GROUP_STATUSES = ["DRAFT", "ACTIVE", "CLOSED", "ARCHIVED"] as const;
 
 export const groupListQuerySchema = z.object({
-  collegeId: z.string().uuid(),
+  collegeId: zUuid,
   kind: z.string().trim().min(1).max(40).optional(),
   status: z.enum(GROUP_STATUSES).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
@@ -166,7 +167,7 @@ const groupDetailPageSchema=z.strictObject({
   memberState:z.enum(["ACTIVE","WAITLISTED","REQUESTED","REMOVED"]).optional(),
   memberOffset:z.coerce.number().int().min(0).max(1000000).default(0),
   eventBefore:z.iso.datetime({offset:true}).optional(),
-  eventBeforeId:z.string().uuid().optional(),
+  eventBeforeId:zUuid.optional(),
 }).refine(v=>Boolean(v.eventBefore)===Boolean(v.eventBeforeId),{
   message:"Event cursor must include both timestamp and ID",
 });
@@ -177,7 +178,7 @@ export async function getCollegeGroupDetail(
   rawPage:unknown={},
 ) {
   const page=groupDetailPageSchema.parse(rawPage);
-  const groupId = z.string().uuid().parse(groupIdInput);
+  const groupId = zUuid.parse(groupIdInput);
   const db = getDb();
 
   const [group] = await db

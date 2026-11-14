@@ -10,10 +10,11 @@ import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { zUuid } from "@/lib/schema-primitives";
 export const dynamic="force-dynamic";
 export default async function SuperAdminStudentRules({params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  const {collegeId,membershipId}=await params;
- if(!z.uuid().safeParse(collegeId).success||!z.uuid().safeParse(membershipId).success)notFound();
+ if(!zUuid.safeParse(collegeId).success||!zUuid.safeParse(membershipId).success)notFound();
  const result=await getSuperAdminLearnerAccessTrace(await getCurrentRequestContext(),collegeId,{membershipId});
  if(!result?.selected)notFound();
  const student=result.selected;

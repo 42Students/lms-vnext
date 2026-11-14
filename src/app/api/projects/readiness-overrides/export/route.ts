@@ -9,6 +9,7 @@ import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-ov
 import {z} from "zod";
 
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
@@ -17,7 +18,7 @@ export const GET = route(
     if (!collegeId) return Response.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const query=new URL(request.url).searchParams;
     const selected=query.get("projectIds");
-    const ids=selected===null?null:z.array(z.string().uuid()).min(1).max(25)
+    const ids=selected===null?null:z.array(zUuid).min(1).max(25)
       .parse(selected.length<=925?selected.split(","):[]);
     const rows = await listCollegeActiveReadinessOverrides(__ctx, collegeId);
     const visible=ids?rows.filter(row=>ids.includes(row.projectId)):rows;

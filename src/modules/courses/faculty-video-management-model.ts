@@ -1,13 +1,14 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * UI-only adapter shape. The storage team maps authoritative server records to
  * this projection later. This module NEVER supplies credentials or URLs.
  */
 export const facultyLessonVideoSchema=z.object({
-  contentId:z.string().uuid(),
-  lessonId:z.string().uuid(),
-  deliveryId:z.string().uuid().nullable(),
+  contentId:zUuid,
+  lessonId:zUuid,
+  deliveryId:zUuid.nullable(),
   title:z.string().trim().min(1).max(255),
   sequence:z.number().int().min(0).max(10000),
   durationSeconds:z.number().int().min(1).max(86400).nullable(),
@@ -87,11 +88,11 @@ export function facultyVideoReplacePrompt(video:FacultyLessonVideo):string {
 /** Future signed-upload adapter input; no storage key, URL or credentials accepted. */
 export const facultyVideoReplaceIntentSchema=z.object({
  action:z.literal("REPLACE"),
- contentId:z.string().uuid(),
- lessonId:z.string().uuid(),
- deliveryId:z.string().uuid().nullable(),
+ contentId:zUuid,
+ lessonId:zUuid,
+ deliveryId:zUuid.nullable(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
- replacementUploadId:z.string().uuid(),
+ replacementUploadId:zUuid,
  confirmed:z.literal(true),
 }).strict();
 export type FacultyVideoReplaceIntent=z.infer<typeof facultyVideoReplaceIntentSchema>;
@@ -102,9 +103,9 @@ export function facultyVideoArchivePrompt(video:FacultyLessonVideo):string {
 }
 export const facultyVideoArchiveIntentSchema=z.object({
  action:z.literal("ARCHIVE"),
- contentId:z.string().uuid(),
- lessonId:z.string().uuid(),
- deliveryId:z.string().uuid().nullable(),
+ contentId:zUuid,
+ lessonId:zUuid,
+ deliveryId:zUuid.nullable(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  confirmed:z.literal(true),
 }).strict();
@@ -126,9 +127,9 @@ export function facultyVideoVisibilityLabel(
 
 export const facultyVideoVisibilityIntentSchema=z.object({
  action:z.literal("SET_VISIBILITY"),
- contentId:z.string().uuid(),
- lessonId:z.string().uuid(),
- deliveryId:z.string().uuid().nullable(),
+ contentId:zUuid,
+ lessonId:zUuid,
+ deliveryId:zUuid.nullable(),
  visibleToStudents:z.boolean(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  confirmed:z.literal(true),

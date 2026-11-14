@@ -36,6 +36,7 @@ import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-se
 import { CoursesServiceError } from "@/modules/courses/errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 function requireLearnerMembership(
   context: RequestContext,
 ) {
@@ -81,7 +82,7 @@ export async function getLearnerClassSchedule(
       eq(membershipRoles.membershipId, collegeMemberships.id),
       eq(membershipRoles.role, "LEARNER"),
     ))
-    .where(eq(collegeMemberships.id, z.string().uuid().parse(membership.id)))
+    .where(eq(collegeMemberships.id, zUuid.parse(membership.id)))
     .limit(1);
   if (!actor || actor.userId !== context.user.id ||
       actor.collegeId !== membership.collegeId || actor.status !== "ACTIVE" ||

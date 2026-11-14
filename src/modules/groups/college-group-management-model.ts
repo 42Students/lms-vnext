@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const groupName = z.string().trim().min(1).max(150);
 const description = z.string().trim().max(1000);
 const capacity = z.number().int().min(1).max(10000).nullable();

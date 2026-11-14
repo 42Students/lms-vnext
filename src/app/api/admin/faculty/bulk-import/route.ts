@@ -13,10 +13,11 @@ import { z } from "zod";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 const previewSchema=z.object({
-  collegeId:z.string().uuid(),
+  collegeId:zUuid,
   csv:z.string().min(1).max(1_500_000),
-  departmentId:z.string().uuid(),
+  departmentId:zUuid,
   preview:z.literal(true),
 }).strict();
 export const runtime="nodejs";

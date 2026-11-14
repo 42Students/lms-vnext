@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_STRUCTURE_PAGE_SIZE = 25;
 /** Legacy Super Admin class list paginates 20 rows, other directories may still choose 10/25/50/100. */
 // Academic directory URL controls must accept decimal integers only.
@@ -12,7 +13,7 @@ export type CollegeStructureKind = "CLASSES" | "ELECTIVES";
 
 export const collegeStructureQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   page: urlDecimalInt(1,1000).default(1),
   pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),

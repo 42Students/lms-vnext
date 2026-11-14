@@ -8,6 +8,7 @@ import {readBoundedJsonRequest} from "@/lib/request-body";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {reviewSuperAdminVerificationBulk} from "@/modules/verification/super-admin-bulk-review-service";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -18,7 +19,7 @@ const _p=await readBoundedJsonRequest(request,16384);
 if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
 const payload=_p.value;
 const payloadObj=payload as Record<string,unknown>;
-const collegeId=z.uuid().parse(payloadObj.collegeId);
+const collegeId=zUuid.parse(payloadObj.collegeId);
 const {collegeId:_,...body}=payloadObj;
 const result=await reviewSuperAdminVerificationBulk(__ctx,collegeId,body);
 const receipts=result.outcomes.map(item=>({

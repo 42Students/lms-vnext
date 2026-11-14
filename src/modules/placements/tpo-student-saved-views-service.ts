@@ -9,19 +9,20 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {requirePlacementManageScope} from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+import { zUuid } from "@/lib/schema-primitives";
 const selection=z.strictObject({
  journeyState:z.string().max(60).optional(),
- branchId:z.uuid().optional(),batchId:z.uuid().optional(),
+ branchId:zUuid.optional(),batchId:zUuid.optional(),
  search:z.string().max(150).optional(),pageSize:z.number().int().min(10).max(100).default(25),
  columns:z.string().max(800).optional(),
 });
 export const studentSavedViewMutation=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("CREATE"),name:z.string().trim().min(1).max(100),
    filters:selection,pinned:z.boolean().default(false)}),
- z.strictObject({action:z.literal("UPDATE"),id:z.uuid(),name:z.string().trim().min(1).max(100),
+ z.strictObject({action:z.literal("UPDATE"),id:zUuid,name:z.string().trim().min(1).max(100),
    filters:selection,pinned:z.boolean().default(false)}),
- z.strictObject({action:z.literal("DELETE"),id:z.uuid()}),
- z.strictObject({action:z.literal("OPEN"),id:z.uuid()}),
+ z.strictObject({action:z.literal("DELETE"),id:zUuid}),
+ z.strictObject({action:z.literal("OPEN"),id:zUuid}),
 ]);
 type Stored={query:z.infer<typeof selection>;pinned:boolean;lastUsedAt?:string;updatedAt?:string};
 function viewData(raw:unknown):Stored{

@@ -7,6 +7,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Global archive reversal deliberately does not reactivate individual
  * college relationships. Those require independent college authorization. */
 export async function restoreGlobalCompany(context:RequestContext,raw:unknown){
@@ -14,7 +15,7 @@ export async function restoreGlobalCompany(context:RequestContext,raw:unknown){
     context.adminScope?.collegeId||context.adminScope?.organizationId)
   throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage");
- const input=z.strictObject({companyId:z.uuid(),confirmed:z.literal(true)}).parse(raw);
+ const input=z.strictObject({companyId:zUuid,confirmed:z.literal(true)}).parse(raw);
  return getDb().transaction(async tx=>{
   // A stale SA session cannot resurrect a global employer identity after
   // the account's persisted SUPER_ADMIN role is revoked.

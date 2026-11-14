@@ -14,13 +14,14 @@ import { placeImportedLearnerInSection } from "./college-student-import-placemen
 import { learnerProfileDocumentSchema } from "./profile-validation";
 import { onboardPersonWithRuntime, upsertLearnerProfileWithRuntime } from "./runtime";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeStudentRegistrationSchema = z.object({
   displayName: z.string().trim().min(2).max(255),
   phoneE164: z.string().regex(/^\+[1-9]\d{7,14}$/),
   email: z.union([z.email(), z.literal("")]).optional(),
-  programId: z.string().uuid(),
-  cohortId: z.string().uuid(),
-  sectionId: z.string().uuid().optional(),
+  programId: zUuid,
+  cohortId: zUuid,
+  sectionId: zUuid.optional(),
   rollNumber: z.string().trim().max(128).default(""),
   gender: z.enum(["","Male","Female","Other","Prefer not to say"]).default(""),
   dateOfBirth: z.union([z.iso.date(), z.literal("")]).default(""),

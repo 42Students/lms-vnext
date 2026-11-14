@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoJoiningTrackerQuerySchema = z.object({
-  jobId: z.string().uuid(),
+  jobId: zUuid,
 }).strict();
 
 export type TpoJoiningSourceRow = {

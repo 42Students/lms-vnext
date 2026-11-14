@@ -12,8 +12,9 @@ import {requirePlacementManageScope} from "./scope";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
- const id=z.uuid().parse(raw),membership=ctx.membership;
+ const id=zUuid.parse(raw),membership=ctx.membership;
  if(!membership||!hasMembershipRole(ctx,ROLE.TPO)||membership.status!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  // Revalidate the persisted TPO/college-admin membership on every private read.

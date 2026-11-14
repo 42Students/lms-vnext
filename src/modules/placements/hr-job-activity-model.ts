@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 const decimalPage=(maximum:number)=>
  z.union([
   z.number().int().min(1).max(maximum),
@@ -6,7 +7,7 @@ const decimalPage=(maximum:number)=>
    .pipe(z.number().int().min(1).max(maximum)),
  ]);
 export const hrActivityQuerySchema=z.strictObject({
-  collegeId:z.string().uuid().optional(),
+  collegeId:zUuid.optional(),
   limit:decimalPage(100).default(40),
   kind:z.enum(["ALL","PUBLISHED","CLOSED"]).default("ALL"),
   page:decimalPage(10000).default(1),

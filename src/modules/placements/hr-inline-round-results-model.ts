@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const HR_ROUND_OUTCOMES = ["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"] as const;
 export type HrRoundOutcome = typeof HR_ROUND_OUTCOMES[number];
 export type HrRoundCount = {
@@ -23,7 +24,7 @@ export function hrInlineRoundResultsHref(jobId:string,roundId:string,outcome:HrR
  * Require explicit, college-scoped application crosswalks before writing;
  * never treat an untrusted old integer as a vNext membership UUID. */
 export const hrInlineRoundResultRowSchema=z.strictObject({
- applicationId:z.uuid(),
+ applicationId:zUuid,
  outcome:z.enum(["PASS","FAIL","HOLD","ABSENT"]),
  note:z.string().trim().max(2000).nullable().optional(),
 });

@@ -19,6 +19,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
+import { zUuid } from "@/lib/schema-primitives";
 function NotificationsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
     <PageHeader title="Notifications"/>
@@ -55,7 +56,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   const cursorDate=typeof beforeCreatedAt==="string"
     ? z.iso.datetime({offset:true}).safeParse(beforeCreatedAt) : null;
   const cursorId=typeof beforeId==="string"
-    ? z.string().uuid().safeParse(beforeId) : null;
+    ? zUuid.safeParse(beforeId) : null;
   if((cursorDate&&!cursorDate.success)||(cursorId&&!cursorId.success))notFound();
   // Do not silently let a legacy tab overwrite a canonical category, and do
   // not accept duplicated tab selectors that could mean different categories.

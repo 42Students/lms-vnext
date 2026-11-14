@@ -13,6 +13,7 @@ import {
 import { z } from "zod";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ collegeId: string }> };
@@ -20,7 +21,7 @@ type RouteContext = { params: Promise<{ collegeId: string }> };
  * now resolves a college UUID. PUT requires expectedVersion and returns
  * {branding} rather than the former raw DTO. No numeric casting. */
 
-const collegeIdSchema = z.string().uuid();
+const collegeIdSchema = zUuid;
 
 function notFound() {
   return NextResponse.json({

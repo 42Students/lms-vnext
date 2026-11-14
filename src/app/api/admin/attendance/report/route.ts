@@ -5,9 +5,10 @@ import {getAdminAttendanceGrid} from "@/modules/attendance/admin-service";
 import {attendanceIndiaDay} from "@/modules/attendance/admin-grid-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 const query=z.strictObject({
- deliveryId:z.string().uuid(),
+ deliveryId:zUuid,
  startDate:z.iso.date(),endDate:z.iso.date(),
  view:z.enum(["flat","monthly"]).default("flat"),
  status:z.enum(["ALL","ABSENT","EXCUSED","MEDICAL","LATE","PRESENT","NOT_MARKED"]).default("ALL"),

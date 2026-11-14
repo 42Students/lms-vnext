@@ -2,6 +2,7 @@ import {z} from "zod";
 import {verificationTabStatuses} from "./queue-tabs";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Filter facts before the database result cap; never present local-only counts as global. */
 export const tpoVerificationQuerySchema=z.object({
  tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
@@ -9,8 +10,8 @@ export const tpoVerificationQuerySchema=z.object({
  waitingState:z.enum(["ALL","SUBMITTED","UPDATE_PENDING"]).default("ALL"),
  waitingSince:z.enum(["ALL","TODAY","WEEK","OVER_WEEK"]).default("ALL"),
  search:z.string().trim().max(100).default(""),
- batchId:z.string().uuid().optional(),
- branchId:z.string().uuid().optional(),
+ batchId:zUuid.optional(),
+ branchId:zUuid.optional(),
  page:z.coerce.number().int().min(1).max(100000).default(1),
  pageSize:z.coerce.number().int().refine(n=>[25,50,100,1000].includes(n)).default(1000),
 }).strict();

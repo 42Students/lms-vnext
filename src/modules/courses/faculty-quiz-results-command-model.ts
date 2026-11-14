@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyQuizResultsCommandSchema=z.object({
- deliveryId:z.string().uuid(),
+ deliveryId:zUuid,
  action:z.enum(["PUBLISH","HIDE"]),
  expectedUpdatedAt:z.string().datetime({offset:true}),
  confirmed:z.literal(true),

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { DRIVE_PAY_CATEGORIES, DRIVE_PAY_CATEGORY_REASON_MAX, drivePayCategoryOverrideIssue } from "./drive-pay-category-model";
 
-export const placementCompanyIdSchema = z.string().uuid();
-export const placementCompanyRelationshipIdSchema = z.string().uuid();
+export const placementCompanyIdSchema = zUuid;
+export const placementCompanyRelationshipIdSchema = zUuid;
 
 const httpUrlSchema = z
   .string()
@@ -48,7 +48,7 @@ const corporateWebsiteSchema=z.string().trim()
 /** Plain object form (no refinements) so derived schemas can .omit/.extend it (Zod 4 forbids that on refined schemas). */
 export const createPlacementCompanyInputObjectSchema = z
   .object({
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
     name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
     websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
@@ -81,7 +81,7 @@ export const createPlacementCompanyInputSchema = createPlacementCompanyInputObje
 export const updatePlacementCompanyRelationshipInputSchema = z
   .object({
     isTrusted: z.boolean().optional(),
-    ownerMembershipId: z.string().uuid().nullable().optional(),
+    ownerMembershipId: zUuid.nullable().optional(),
   })
   .strict()
   .refine(
@@ -100,7 +100,7 @@ export type UpdatePlacementCompanyRelationshipInput = z.infer<
 
 
 export const placementRecruiterGrantIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const placementRecruiterGrantInputSchema =
   z
@@ -236,7 +236,7 @@ export type CandidatePreferencesInput = z.input<
 
 
 export const placementSeasonIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const placementCalendarDateSchema = z
   .string()
@@ -259,7 +259,7 @@ const placementCalendarDateSchema = z
 export const createPlacementSeasonInputSchema =
   z
     .object({
-      collegeId: z.string().uuid(),
+      collegeId: zUuid,
       name: z
         .string()
         .trim()
@@ -301,7 +301,7 @@ export type CreatePlacementSeasonInput =
     typeof createPlacementSeasonInputSchema
   >;
 
-export const placementJobIdSchema = z.string().uuid();
+export const placementJobIdSchema = zUuid;
 
 export const placementJobStatuses = [
   "DRAFT",
@@ -326,14 +326,15 @@ const optionalHttpUrlSchema = httpUrlSchema.nullable().optional();
 
 import {placementLegacyPostingDetailsSchema} from "./placement-legacy-posting-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const placementJobFieldsSchema = z
   .object({
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
     seasonId: z
       .string()
       .uuid()
       .optional(),
-    companyRelationshipId: z.string().uuid(),
+    companyRelationshipId: zUuid,
     title: z.string().trim().min(3, "Job title must be between 3 and 100 characters").max(100,"Job title must be between 3 and 100 characters"),
     description: z.string().trim().max(5_000,"Job description must not exceed 5000 characters").default(""),
     legacyPostingDetails:placementLegacyPostingDetailsSchema.nullable().optional(),
@@ -458,7 +459,7 @@ export type UpdatePlacementJobInput = z.input<
 >;
 
 export const placementRoleOptionIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const placementRoleOptionFieldsSchema = z
   .object({
@@ -652,18 +653,18 @@ export const placementMissingEvidencePolicies = [
 export const placementEligibilityPolicyInputSchema = z
   .object({
     allowedProgramIds: z
-      .array(z.string().uuid())
+      .array(zUuid)
       .max(100)
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
     allowedCohortIds: z
-      .array(z.string().uuid())
+      .array(zUuid)
       .max(100)
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
-    allowedSectionIds: z.array(z.string().uuid()).max(100)
+    allowedSectionIds: z.array(zUuid).max(100)
       .transform(values => [...new Set(values)]).optional().default([]),
     minCgpa: cgpaSchema.nullable().optional().default(null),
     maxActiveBacklogs: z
@@ -823,7 +824,7 @@ export const placementEligibilityOverrideInputSchema = z
     reason: z.string().trim().min(3,"A reason is required.").max(1000),
     // Omitted for existing single-record callers; TPO bulk sends the
     // previewed active override ID (or null) to prevent stale overwrites.
-    expectedOverrideId: z.string().uuid().nullable().optional(),
+    expectedOverrideId: zUuid.nullable().optional(),
   })
   .strict();
 
@@ -839,7 +840,7 @@ export type PlacementEligibilityOverrideInput = z.input<
 
 
 export const placementApplicationIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const placementApplicationChannels = [
   "INTERNAL",
@@ -880,7 +881,7 @@ export const createPlacementApplicationInputSchema =
         .optional()
         .default(false),
       // An owner-verified private receipt, not a client-supplied resume URL.
-      resumeReceiptId: z.string().uuid().optional(),
+      resumeReceiptId: zUuid.optional(),
     })
     .strict();
 
@@ -953,7 +954,7 @@ export type PlacementScreeningDecisionInput =
 
 
 export const placementRoundIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const placementRoundKinds = [
   "TALK",
@@ -1192,7 +1193,7 @@ export const reorderPlacementRoundsInputSchema =
   z
     .object({
       roundIds: z
-        .array(z.string().uuid())
+        .array(zUuid)
         .min(1)
         .max(50)
         .refine(
@@ -1251,7 +1252,7 @@ export type PlacementEvaluationConfigInput =
 
 
 export const placementResultIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const placementRoundResultOutcomes = [
   "PASS",
@@ -1382,7 +1383,7 @@ export type StagePlacementRoundResultInput =
 
 
 export const placementOfferIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const placementDateSchema = z
   .string()
@@ -1533,7 +1534,7 @@ export type PlacementJoiningOutcomeInput =
 
 
 export const placementRequestIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const placementRequestReasonSchema = z
   .string()
@@ -1645,7 +1646,7 @@ export type PlacementRequestActionInput =
 export const placementDriveDayCoordinatorInputSchema =
   z
     .object({
-      learnerMembershipId: z.string().uuid(),
+      learnerMembershipId: zUuid,
       onDate: placementCalendarDateSchema,
     })
     .strict();

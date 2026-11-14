@@ -45,7 +45,8 @@ import {
 } from "./batch-eligibility-policy";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const scopeType = z.enum(["MEMBERSHIP", "SECTION", "COHORT"]);
 const status = z.enum(["ELIGIBLE", "INELIGIBLE", "NOT_DECIDED"]);
 const scope = z.object({

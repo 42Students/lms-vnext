@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** REC-calendar-messages-profile-24: data-only recruiter navigation contract.
  * Shared shell remains owned by chat-9 while UX playbook auditing is underway.
  */
@@ -12,7 +13,7 @@ export const RECRUITER_LEGACY_MOBILE_DESTINATIONS=[
 ] as const;
 
 export function recruiterLegacyMobileNavigation(activePath:string,rawCollegeId?:string|null){
- const id=rawCollegeId&&z.string().uuid().safeParse(rawCollegeId).success?rawCollegeId:null;
+ const id=rawCollegeId&&zUuid.safeParse(rawCollegeId).success?rawCollegeId:null;
  const path=activePath.split(/[?#]/,1)[0]??"";
  return RECRUITER_LEGACY_MOBILE_DESTINATIONS.map(item=>({
   ...item,
@@ -24,7 +25,7 @@ export function recruiterLegacyHeaderCollege(
  grants:readonly {collegeId:string;collegeName:string}[],
  selectedCollegeId:string|null|undefined,
 ):{collegeId:string;collegeName:string}|null{
- const available=grants.filter(g=>z.string().uuid().safeParse(g.collegeId).success&&
+ const available=grants.filter(g=>zUuid.safeParse(g.collegeId).success&&
   g.collegeName.trim().length>0);
  const selected=selectedCollegeId?available.find(g=>g.collegeId===selectedCollegeId):null;
  if(selected)return {collegeId:selected.collegeId,collegeName:selected.collegeName.trim()};

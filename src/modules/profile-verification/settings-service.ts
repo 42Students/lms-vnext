@@ -15,7 +15,8 @@ import {
 } from "./academic-marks";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const ruleInput=z.enum(["X9_5","MINUS_0_5_X10","MINUS_0_75_X10","X10"]);
 type Level="10TH"|"12TH"|"DIPLOMA"|"UG"|"PG";
 type PercentPatch={tenthPctBasisPoints?:number|null;twelfthPctBasisPoints?:number|null;

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 const nullable = (max: number) => z.string().trim().max(max).nullable();
 const dateOrNull = z.iso.date().nullable();
 export const collegeProjectSummaryFieldsSchema = z.strictObject({
@@ -9,7 +10,7 @@ export const collegeProjectSummaryFieldsSchema = z.strictObject({
   phase: nullable(80),
   dueLabel: nullable(80),
   courseLabel: nullable(160),
-  sectionId: z.string().uuid().nullable(),
+  sectionId: zUuid.nullable(),
   blocker: nullable(4000),
   nextAction: nullable(4000),
   startDate: dateOrNull,
@@ -61,7 +62,7 @@ export function collegeProjectSummaryMatchesCurrent(
  * required and does not assume omitted inputs should be cleared. */
 export const collegeProjectSummarySparsePatch = collegeProjectSummaryFieldsSchema
  .partial().extend({
-  sectionId:z.union([z.string().uuid(),z.literal(0),z.null()]).optional(),
+  sectionId:z.union([zUuid,z.literal(0),z.null()]).optional(),
   expectedTitle:z.string(),
   expectedSummary:z.string().nullable(),
   expectedStatus:z.enum(["PLANNED","ACTIVE","COMPLETED"]),

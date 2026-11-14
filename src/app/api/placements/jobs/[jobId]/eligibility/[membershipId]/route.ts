@@ -18,6 +18,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -93,7 +94,7 @@ async function updateOverride(request:Request,{params}:RouteContext){
     message:"Override must be true, false or null."},{status:400});
   if(hasLegacyOverride&&record["override"]===null){
    const clear=z.strictObject({
-     expectedOverrideId:z.string().uuid().optional(),
+     expectedOverrideId:zUuid.optional(),
      reason:z.string().trim().min(3).max(500).optional(),
    }).safeParse({
      ...(record["expectedOverrideId"]!==undefined?{expectedOverrideId:record["expectedOverrideId"]}:{}),
@@ -164,7 +165,7 @@ async function handleDELETE(
     const raw=request.headers.get("content-type")?.startsWith("application/json")
       ?await boundedRequestJson(request):{};
     const options=z.object({
-      expectedOverrideId:z.string().uuid().optional(),
+      expectedOverrideId:zUuid.optional(),
       reason:z.string().trim().min(3).max(500).optional(),
     }).strict().parse(raw);
     const override =

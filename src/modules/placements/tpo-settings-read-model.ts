@@ -1,8 +1,9 @@
 import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** TPO-settings-audit-55: validate the exact selected college before any service read. */
-export const tpoSettingsCollegeIdSchema=z.string().uuid();
+export const tpoSettingsCollegeIdSchema=zUuid;
 
 export type TpoTeamEvidenceRole =
   | "TPO"

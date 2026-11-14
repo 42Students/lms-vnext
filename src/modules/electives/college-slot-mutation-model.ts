@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const title = z.string().trim().min(1, "Name is required").max(150, "Name cannot exceed 150 characters");
 const description = z.string().trim().max(1000).nullable();
 const academicYear = z.string().trim().regex(/^\d{4}-\d{2}$/, {
@@ -17,8 +18,8 @@ const pickCounts = {
 };
 
 export const createCollegeElectiveSlotSchema = z.object({
-  programId: z.string().uuid(),
-  academicPeriodId: z.string().uuid().nullable(),
+  programId: zUuid,
+  academicPeriodId: zUuid.nullable(),
   semesterNumber: z.number().int().min(1, "Semester must be between 1 and 12").max(12, "Semester must be between 1 and 12"),
   academicYear,
   name: title,
@@ -31,8 +32,8 @@ export const createCollegeElectiveSlotSchema = z.object({
 
 export const editCollegeElectiveSlotSchema = z.object({
   expectedVersion: z.number().int().min(0),
-  programId: z.string().uuid().optional(),
-  academicPeriodId: z.string().uuid().nullable().optional(),
+  programId: zUuid.optional(),
+  academicPeriodId: zUuid.nullable().optional(),
   semesterNumber: z.number().int().min(1, "Semester must be between 1 and 12").max(12, "Semester must be between 1 and 12").optional(),
   academicYear: academicYear.optional(),
   name: title,

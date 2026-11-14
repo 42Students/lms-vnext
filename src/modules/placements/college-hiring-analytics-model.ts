@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Intentional vNext report-policy difference from legacy:
  * class-level filters were removed, because hiring application facts are
  * currently attached to learner program/cohort enrollment, not to a historic
@@ -12,11 +13,11 @@ export const COLLEGE_HIRING_CLASS_FILTER_POLICY = {
  reason:"Class-level hiring reports are not available. Filter by department, program or cohort instead.",
 } as const;
 export const collegeHiringAnalyticsSchema = z.strictObject({
-  seasonId: z.uuid().optional(),
-  jobId: z.uuid().optional(),
-  departmentId: z.uuid().optional(),
-  programId: z.uuid().optional(),
-  cohortId: z.uuid().optional(),
+  seasonId: zUuid.optional(),
+  jobId: zUuid.optional(),
+  departmentId: zUuid.optional(),
+  programId: zUuid.optional(),
+  cohortId: zUuid.optional(),
   from: z.iso.date().optional(),
   to: z.iso.date().optional(),
 }).superRefine((v,ctx)=>{

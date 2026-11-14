@@ -11,7 +11,8 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { loadCourseMembership, loadCourseSectionDeliveryScope } from "./scope";
 
 import { ROLE } from "@/modules/identity/roles";
-const id = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id = zUuid;
 
 /** Legacy live-content universe, narrowed by the selected college and delivery.
  * Attempts are compared per learner and per content, never globally.

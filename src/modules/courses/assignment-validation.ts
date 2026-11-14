@@ -11,10 +11,11 @@ import {
   assignmentFileSubmissionSchema,
 } from "./assignment-file-validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const courseAssignmentIdSchema =
   z.string().uuid({error:"Lesson content not found. Enter a valid assignment ID."});
 export const assignmentSubmissionIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const assignmentTitleSchema = z
   .string()
@@ -137,8 +138,8 @@ const linkSubmissionSchema = z.object({
  * File claims and asset persistence are guarded by the submission service. */
 const multipartFileSubmissionSchema = assignmentFileSubmissionSchema
   .extend({
-    uploadReceiptId: z.string().uuid().optional(),
-    uploadReceiptIds: z.array(z.string().uuid()).min(1).max(20).optional(),
+    uploadReceiptId: zUuid.optional(),
+    uploadReceiptIds: z.array(zUuid).min(1).max(20).optional(),
     textContent: z.string().trim().min(1).max(50000).optional(),
     links: z.array(z.object({
       kind: z.enum(["REPOSITORY_LINK", "EXTERNAL_LINK"]),
@@ -179,16 +180,16 @@ const singleSubmissionInputSchema=z.discriminatedUnion("submissionType",[
 // Legacy multi-asset requests arrive as an ordered part array. Every
 // attachment ID is a vNext verified upload receipt, never a raw object key.
 const submissionPartSchema=z.discriminatedUnion("kind",[
-  z.strictObject({kind:z.literal("FILE"),uploadReceiptId:z.uuid(),
-    id:z.uuid().optional()}),
+  z.strictObject({kind:z.literal("FILE"),uploadReceiptId:zUuid,
+    id:zUuid.optional()}),
   z.strictObject({kind:z.literal("TEXT"),textContent:z.string().trim().min(1).max(50000),
-    id:z.uuid().optional()}),
+    id:zUuid.optional()}),
   z.strictObject({kind:z.literal("LINK"),
     linkKind:z.enum(["REPOSITORY_LINK","EXTERNAL_LINK"]),
     url:z.string().trim().max(2048).url().refine(value=>
       new URL(value).protocol==="https:"&&!new URL(value).username&&!new URL(value).password,
       "Only credential-free https submission links are allowed"),
-    caption:z.string().trim().max(255).default(""),id:z.uuid().optional()}),
+    caption:z.string().trim().max(255).default(""),id:zUuid.optional()}),
 ]);
 const partsInputSchema=z.strictObject({
   deliveryId:courseSectionDeliveryIdSchema,
@@ -246,8 +247,8 @@ const partsInputSchema=z.strictObject({
  * been verified and converted to UUIDs by the import adapter.
  */
 const legacyUploadReceipt=z.strictObject({
- uploadReceiptId:z.uuid().optional(),
- upload_receipt_id:z.uuid().optional(),
+ uploadReceiptId:zUuid.optional(),
+ upload_receipt_id:zUuid.optional(),
 }).refine(item=>Boolean(item.uploadReceiptId??item.upload_receipt_id),{
  message:"Legacy files require verified upload receipts",
 }).transform(item=>(item.uploadReceiptId??item.upload_receipt_id)!);

@@ -8,6 +8,7 @@ import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placement
 import {getPublicJoinPostingPolicy,setPublicJoinPostingPolicy} from "@/modules/placements/tpo-public-join-posting-policy-service";
 import {TpoPublicJoinLinkError} from "@/modules/placements/tpo-public-join-link-service";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -19,7 +20,7 @@ if(keys.length!==new Set(keys).size||keys.some(key=>key!=="scope"&&key!=="compan
    return NextResponse.json({error:"INVALID_QUERY"},{status:400});
 const input=z.discriminatedUnion("scope",[
    z.strictObject({scope:z.literal("COLLEGE")}),
-   z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid()}),
+   z.strictObject({scope:z.literal("COMPANY"),companyId:zUuid}),
   ]).parse(search.get("scope")==="COMPANY"
    ?{scope:"COMPANY",companyId:search.get("companyId")}
    :{scope:search.get("scope"),...(search.has("companyId")?{companyId:search.get("companyId")}:{})});

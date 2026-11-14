@@ -1,10 +1,11 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerNoticeQuerySchema=z.strictObject({
  pinned:z.enum(["0","1"]).optional(),
  unread:z.enum(["0","1"]).optional(),
  q:z.string().trim().max(100).optional(),
  alertQ:z.string().trim().max(80).optional(),
- focus:z.string().uuid().optional(),
+ focus:zUuid.optional(),
  source:z.enum(["all","placement-cell"]).optional(),
  recent:z.enum(["0","1"]).optional(),
  page:z.string().regex(/^[1-9][0-9]{0,3}$/).transform(value=>Number(value)).optional(),
@@ -21,7 +22,7 @@ export function readLearnerNoticeFilters(raw:Record<string,unknown>){
   recent:z.enum(["0","1"]).safeParse(raw["recent"]??"0"),
   q:z.string().trim().max(100).safeParse(raw["q"]??""),
   alertQ:z.string().trim().max(80).safeParse(raw["alertQ"]??""),
-  focus:z.string().uuid().safeParse(raw["focus"]??""),
+  focus:zUuid.safeParse(raw["focus"]??""),
   source:z.enum(["all","placement-cell"]).safeParse(raw["source"]??"all"),
   page:z.string().regex(/^[1-9][0-9]{0,3}$/).transform(Number).safeParse(raw["page"]??"1"),
   sort:z.enum(["pinned","latest","oldest"]).safeParse(raw["sort"]??"pinned"),

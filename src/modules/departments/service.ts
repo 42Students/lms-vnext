@@ -38,6 +38,7 @@ import {
 } from "./validation";
 
 import { isUniqueViolation } from "@/lib/shared";
+import { zUuid } from "@/lib/schema-primitives";
 export type DepartmentServiceErrorCode =
   | "COLLEGE_NOT_FOUND"
   | "DEPARTMENT_NOT_FOUND"
@@ -497,7 +498,7 @@ export async function archiveDepartment(
  * College Admin never gains a global fallback. This is a paginated READ only.
  */
 export const departmentPageQuery=z.strictObject({
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
  page:z.coerce.number().int().min(0).max(100000).default(0),
  size:z.coerce.number().int().min(1).max(100).default(20),
 });

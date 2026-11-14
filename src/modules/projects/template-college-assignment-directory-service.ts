@@ -6,6 +6,7 @@ import {colleges,projectTemplates,projectTemplateCollegeAssignments} from "@/db/
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Legacy ProjectTemplateCollege findByTemplateId/findByCollegeId read parity.
  * Active = revokedAt IS NULL; a repeat assignment creates a new historic
@@ -28,7 +29,7 @@ export async function listTemplateAssignedColleges(
  context:RequestContext,rawTemplateId:string,includeHistory=false,
 ){
  requirePermission(context,"project-template.read");
- const templateId=z.string().uuid().parse(rawTemplateId);
+ const templateId=zUuid.parse(rawTemplateId);
  const rows=await getDb().select({
   id:projectTemplateCollegeAssignments.id,
   collegeId:colleges.id,collegeName:colleges.name,
@@ -51,7 +52,7 @@ export async function listCollegeAssignedTemplates(
  context:RequestContext,rawCollegeId:string,
 ){
  requirePermission(context,"project-template.read");
- const collegeId=z.string().uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  const rows=await getDb().select({
   id:projectTemplateCollegeAssignments.id,
   templateId:projectTemplates.id,templateTitle:projectTemplates.title,

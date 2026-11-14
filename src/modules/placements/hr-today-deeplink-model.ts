@@ -1,5 +1,6 @@
 import {z} from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const recruiterTaskLinkSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("FIX_DRIVE"),jobId:uuid}),
  z.object({kind:z.literal("HIRE_AGAIN"),jobId:uuid}),

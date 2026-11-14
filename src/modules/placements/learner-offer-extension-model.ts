@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerOfferExtensionSchema=z.object({
-  offerId:z.string().uuid(),
-  applicationId:z.string().uuid(),
+  offerId:zUuid,
+  applicationId:zUuid,
   status:z.literal("ISSUED"),
   expectedExpiresAt:z.string().datetime({offset:true}),
   requestedLocalAt:z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/),

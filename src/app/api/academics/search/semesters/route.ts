@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { searchCollegeSemesterAutocomplete } from "@/modules/academics/college-academic-directory-service";
 import { route } from "@/security/route";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const schema = z.object({
   q: z.string().trim().max(100).default(""),
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   limit: z.string().regex(/^\d{1,2}$/).transform(Number).pipe(z.number().int().min(1).max(50)).optional(),
 }).strict();
 

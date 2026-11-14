@@ -10,13 +10,14 @@ import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function TpoCompanyTeamPage({params}:{
  params:Promise<{companyId:string}>;
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasPlacementTeamMembership(context))redirect("/dashboard");
  const {companyId}=await params;
- if(!z.string().uuid().safeParse(companyId).success)notFound();
+ if(!zUuid.safeParse(companyId).success)notFound();
  // The shared company-team service now rejects unknown/foreign company IDs
  // with a typed error rather than a NOT_FOUND result variant.
  let result:Awaited<ReturnType<typeof readTpoCompanyTeam>>;

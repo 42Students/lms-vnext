@@ -11,13 +11,14 @@ import {getFacultyPublishedGradebookLearner} from
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function FacultyLearnerGradebookPage({
   params,
 }:{params:Promise<{deliveryId:string;learnerMembershipId:string}>}){
   const query=await params;
   const context=await getCurrentRequestContext();
-  if(!z.string().uuid().safeParse(query.deliveryId).success ||
-     !z.string().uuid().safeParse(query.learnerMembershipId).success) notFound();
+  if(!zUuid.safeParse(query.deliveryId).success ||
+     !zUuid.safeParse(query.learnerMembershipId).success) notFound();
   let data:Awaited<ReturnType<typeof getFacultyPublishedGradebookLearner>>;
   try {
     data=await getFacultyPublishedGradebookLearner(context,query);

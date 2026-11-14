@@ -8,10 +8,11 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** One persisted receipt per college, regardless of number of TPO viewers.
  * Authentication is not a substitute for checking persisted active membership. */
 export async function markPlacementCellNoticeRead(context:RequestContext,rawId:unknown){
- const id=z.uuid().parse(rawId),member=context.membership;
+ const id=zUuid.parse(rawId),member=context.membership;
  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO)||
    context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.read");
  requirePermission(context,"placements.read",{collegeId:member.collegeId,organizationId:member.organizationId});

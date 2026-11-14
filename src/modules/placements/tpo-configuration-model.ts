@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoConfigVersionSchema=z.iso.datetime({offset:true});
 export function hasCurrentTpoConfigVersion(current:Date|undefined,expected:string){
  return (current?.toISOString()??"none")===expected;
@@ -21,7 +22,7 @@ export const tpoJobTypeNameSchema=z.string()
 export const tpoBlockedDaySchema=z.iso.date();
 
 export const tpoPrepConfigSchema=z.object({
- courseIds:z.array(z.string().uuid()).max(40)
+ courseIds:z.array(zUuid).max(40)
   .refine(ids=>new Set(ids).size===ids.length,"Select each preparation course only once."),
  minimumCompleted:z.number().int().min(0).max(40),
 }).passthrough().refine(x=>x.minimumCompleted<=x.courseIds.length);

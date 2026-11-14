@@ -16,6 +16,7 @@ import {
 } from "./college-batch-promotion-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class CollegePromotionPreviewError extends Error {
   constructor(public readonly code: "BATCH_NOT_FOUND" | "PROGRAM_NOT_FOUND") {
     super(code); this.name = "CollegePromotionPreviewError";
@@ -144,8 +145,8 @@ export async function listSuperAdminBatchDirectory(
   raw: { organizationId?: string; collegeId?: string; page?: number; pageSize?: number },
 ) {
   if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
-  const organizationId = raw.organizationId ? z.uuid().parse(raw.organizationId) : undefined;
-  const collegeId = raw.collegeId ? z.uuid().parse(raw.collegeId) : undefined;
+  const organizationId = raw.organizationId ? zUuid.parse(raw.organizationId) : undefined;
+  const collegeId = raw.collegeId ? zUuid.parse(raw.collegeId) : undefined;
   requirePermission(context, "academics.read", {
     ...(organizationId !== undefined ? { organizationId } : {}),
     ...(collegeId !== undefined ? { collegeId } : {}),

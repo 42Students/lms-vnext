@@ -1,10 +1,11 @@
 import { projectCompletionPercent } from "./progress-percentage-policy";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorSprintProgressQuerySchema = z.object({
   order:z.enum(["PROJECT","ACTIVE_FIRST"]).default("PROJECT"),
   taskAttention:z.enum(["ALL","BLOCKED","IN_REVIEW","NO_TASKS","TODO","DONE"]).default("ALL"),
-  projectId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+  projectId:z.preprocess(value=>value===""?undefined:value,zUuid.optional()),
   state: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED"]).default("ALL"),
   release: z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),

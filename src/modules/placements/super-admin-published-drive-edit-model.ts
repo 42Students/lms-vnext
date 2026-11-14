@@ -1,11 +1,12 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminPublishedDriveEditSchema=z.strictObject({
  confirmed:z.literal(true),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  reason:z.string().trim().min(10).max(1000),
  title:z.string().trim().min(3).max(100),
  description:z.string().trim().min(1).max(15000).refine(value=>value.replace(/<[^>]*>/g,"").trim().length>0,"Please enter job description."),
- companyRelationshipId:z.uuid(),
+ companyRelationshipId:zUuid,
  assessmentUrl:z.union([z.url().refine(v=>/^https?:\/\//i.test(v),"Use a valid HTTP(S) URL"),z.literal("")]),
  assessmentDeadline:z.iso.datetime({offset:true}).nullable(),
  importantDates:z.array(z.strictObject({

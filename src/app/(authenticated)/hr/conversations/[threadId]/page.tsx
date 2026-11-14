@@ -24,8 +24,9 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { istDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
-const idSchema=z.string().uuid();
+const idSchema=zUuid;
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 // Always display IST (the product time zone), including across UTC-midnight
 // and year boundaries. Read receipts are explicit, never a GET side-effect.

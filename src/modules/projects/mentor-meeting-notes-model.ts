@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorMeetingNotesParamsSchema=z.object({
-  projectId:z.string().uuid(),meetingId:z.string().uuid(),
+  projectId:zUuid,meetingId:zUuid,
 }).strict();
 export const mentorMeetingNotesWriteSchema=z.object({
   outcome:z.string().trim().min(1).max(4000),

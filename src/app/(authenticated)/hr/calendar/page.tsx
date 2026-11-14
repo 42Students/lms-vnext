@@ -54,6 +54,7 @@ import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { first } from "@/lib/shared";
+import { zUuid } from "@/lib/schema-primitives";
 export const dynamic = "force-dynamic";
 
 type SearchParams = {
@@ -259,7 +260,7 @@ export default async function HrCalendarPage({
   })() : placementCalendarWindow(anchor, view);
   const grants = context.recruiter?.grants ?? [];
   const requestedCollegeId = first(query.collegeId);
-  if (requestedCollegeId && (!z.string().uuid().safeParse(requestedCollegeId).success ||
+  if (requestedCollegeId && (!zUuid.safeParse(requestedCollegeId).success ||
       !grants.some(grant => grant.collegeId === requestedCollegeId))) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Calendar"/>

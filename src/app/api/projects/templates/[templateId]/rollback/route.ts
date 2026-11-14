@@ -7,9 +7,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {rollbackProjectTemplate} from "@/modules/projects/template-rollback-service";
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const rollbackCommand=z.strictObject({
- versionId:z.string().uuid(),expectedTemplateVersion:z.number().int().min(1),
+ versionId:zUuid,expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
  expectedAssignedCollegeCount:z.number().int().min(0).optional(),
  expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),

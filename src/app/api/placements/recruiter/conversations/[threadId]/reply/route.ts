@@ -8,6 +8,7 @@ import {hrRecruiterReplySchema} from "@/modules/placements/hr-conversation-reply
 import {openRecruiterMessageThread,sendRecruiterThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -28,9 +29,9 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(openingNew){
-   const collegeId=z.string().uuid().parse(form?.get("collegeId"));
+   const collegeId=zUuid.parse(form?.get("collegeId"));
    const rawJobId=form?.get("jobId");
-   const jobId=rawJobId?z.string().uuid().parse(rawJobId):null;
+   const jobId=rawJobId?zUuid.parse(rawJobId):null;
    // The open and send services independently recheck persisted recruiter
    // grants and relationship-specific drive access (including expiry).
    const thread=await openRecruiterMessageThread(context,{collegeId,jobId});

@@ -20,6 +20,7 @@ import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignment
  facultyAssignmentVersionMatches,facultyAssignmentEditLockedBySubmissions,facultyAssignmentMethodsChanged} from "./faculty-assignment-authoring-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Own-Section, confirmed text-only commands. Uses row locks + millisecond tokens,
  * which match JS Date precision even when PostgreSQL stores microseconds. */
 export async function commandFacultyAssignment(
@@ -195,7 +196,7 @@ export async function getFacultyAssignmentMethods(
  context:RequestContext,rawParams:unknown,assignmentIdInput:unknown,
 ){
  const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
- const assignmentId=z.string().uuid().parse(assignmentIdInput);
+ const assignmentId=zUuid.parse(assignmentIdInput);
  const actor=await requireDeliveryContentMutation(context,deliveryId);
  if(actor!==ROLE.FACULTY)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const [row]=await getDb().select({

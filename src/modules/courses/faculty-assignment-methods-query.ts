@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const methodsQuery=z.object({
- assignmentId:z.string().uuid(),
+ assignmentId:zUuid,
 }).strict();
 
 /** Single authoritative assignment selector. Duplicate/extra GET query fields

@@ -8,6 +8,7 @@ import { PlacementDriveWorkspace } from "@/components/placements/placement-drive
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegePlacementDrivePage({
   params,
 }: {
@@ -24,7 +25,7 @@ export default async function CollegePlacementDrivePage({
     redirect("/dashboard");
   }
   const { jobId } = await params;
-  if (!z.uuid().safeParse(jobId).success) {
+  if (!zUuid.safeParse(jobId).success) {
     return <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader title="Placement Drives" />
       <ErrorState title="Could not load this drive."

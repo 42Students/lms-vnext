@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const istDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const parsed = new Date(value + "T00:00:00+05:30");
   return Number.isFinite(parsed.getTime()) &&
@@ -7,7 +8,7 @@ const istDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 }, "Use a valid YYYY-MM-DD date");
 
 export const collegeHallAvailabilitySchema = z.strictObject({
-  hallId: z.string().uuid(),
+  hallId: zUuid,
   from: istDate,
   to: istDate,
 }).superRefine((input, ctx) => {

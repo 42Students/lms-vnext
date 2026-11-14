@@ -11,13 +11,14 @@ import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {facultyProfileDocumentStorageReady} from "./faculty-profile-readiness";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const kind=z.enum(["AADHAAR","PAN"]);
 const mimes=["application/pdf","image/jpeg","image/png","image/webp"] as const;
 const issueSchema=z.strictObject({kind,contentType:z.enum(mimes),
  sizeBytes:z.number().int().min(1).max(10*1024*1024)});
 const completeSchema=z.strictObject({kind,objectKey:z.string().min(20).max(1024),
  expectedVersion:z.number().int().nonnegative()});
-const readSchema=z.strictObject({kind,receiptId:z.uuid()});
+const readSchema=z.strictObject({kind,receiptId:zUuid});
 const removeSchema=z.strictObject({kind,expectedVersion:z.number().int().nonnegative()});
 function memberFor(context:RequestContext){
  const member=context.membership;

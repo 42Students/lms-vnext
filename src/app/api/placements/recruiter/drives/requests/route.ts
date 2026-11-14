@@ -7,6 +7,7 @@ import {createOwnRecruiterDriveRequest,updateOwnRecruiterDriveRequest,
 import {ZodError,z} from "zod";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 import { route } from "@/security/route";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 function errorResponse(error:unknown){
  if(error instanceof RecruiterJsonBodyError)return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
@@ -23,7 +24,7 @@ async function handleGET(request:Request){
   if([...url.searchParams.keys()].some(key=>!allowed.includes(key))||
      allowed.some(key=>url.searchParams.getAll(key).length>1))
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const collegeId=z.string().uuid().parse(url.searchParams.get("collegeId"));
+  const collegeId=zUuid.parse(url.searchParams.get("collegeId"));
   const requests=await listOwnRecruiterDriveRequests(await getCurrentRequestContext(),collegeId);
   return NextResponse.json({requests});}catch(e){return errorResponse(e);}
 }

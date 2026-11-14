@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { isSafeSignedUrl, storageErrorMessage, type FileStatus } from "@/modules/storage/ui-models";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 export const submissionFileSchema = z.object({
   id: uuid, assignmentId: uuid, deliveryId: uuid,
   submissionId: uuid.nullable(), sequence: z.number().int().nullable(),

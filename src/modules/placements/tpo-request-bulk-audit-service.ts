@@ -12,7 +12,8 @@ import {sameTpoBulkRequestRun,persistedTpoBulkRequestCount} from "./tpo-request-
 import {requireTpoJobActor} from "./tpo-job-write-base";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const schema=z.strictObject({
  runId:uuid,action:z.enum(["APPROVE","REJECT"]),
  requestIds:z.array(uuid).min(1).max(10).refine(ids=>new Set(ids).size===ids.length),

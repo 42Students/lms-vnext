@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoPrepReadinessSaveSchema=z.strictObject({
- courseIds:z.array(z.string().uuid()).max(40)
+ courseIds:z.array(zUuid).max(40)
   .refine(ids=>new Set(ids).size===ids.length,"Duplicate course"),
  minimumCompleted:z.number().int().min(0).max(40),
  expectedVersion:z.union([z.iso.datetime({offset:true}),z.literal("none")]),

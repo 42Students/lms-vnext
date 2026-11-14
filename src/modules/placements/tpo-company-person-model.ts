@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const email = z.string().trim().toLowerCase().pipe(z.email().max(150));
 export const companyContactPersonSchema = z.discriminatedUnion("action", [
   z.object({
@@ -12,7 +13,7 @@ export const companyContactPersonSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("EDIT"),
     confirmed: z.literal(true),
-    leadId: z.string().uuid(),
+    leadId: zUuid,
     expectedUpdatedAt: z.iso.datetime({ offset: true }),
     name: z.string().trim().min(1).max(150),
     email,

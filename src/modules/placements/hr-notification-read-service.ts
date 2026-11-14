@@ -9,10 +9,11 @@ import {PlacementsServiceError} from "./errors";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {HR_NOTIFICATION_EVENTS} from "./hr-notifications-model";
 import {hrNotificationReadSchema,hrNotificationVersionMatches,ownsHrNotificationActor} from "./hr-notification-read-model";
+import { zUuid } from "@/lib/schema-primitives";
 export async function markHrNotificationRead(
  context:RequestContext,idInput:unknown,raw:unknown
 ){
- const id=z.string().uuid().parse(idInput);
+ const id=zUuid.parse(idInput);
  const input=hrNotificationReadSchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter||!ownsHrNotificationActor(context))
   throw new AuthorizationError("placements.recruiter.read");

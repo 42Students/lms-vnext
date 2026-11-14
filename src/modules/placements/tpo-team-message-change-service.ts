@@ -13,13 +13,14 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoTeamCanEdit} from "./tpo-team-message-change-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const base=z.strictObject({
- threadId:z.string().uuid(),
- messageId:z.string().uuid(),
+ threadId:zUuid,
+ messageId:zUuid,
  expectedBodyHash:z.string().regex(/^[a-f0-9]{64}$/),
 });
 export const tpoTeamMessageChangeSchema=z.discriminatedUnion("action",[
- base.extend({action:z.literal("EDIT"),body:z.string().trim().min(1).max(4000),addPeople:z.array(z.uuid()).max(20).optional()}),
+ base.extend({action:z.literal("EDIT"),body:z.string().trim().min(1).max(4000),addPeople:z.array(zUuid).max(20).optional()}),
  base.extend({action:z.literal("DELETE")}),
 ]);
 export function tpoTeamMessageBodyHash(body:string){

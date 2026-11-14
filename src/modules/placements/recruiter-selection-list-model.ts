@@ -1,13 +1,14 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** REC-home-drives-51: typed selection proposal. This is NOT a live send route
  * until a registered tenant-scoped proposal and review table exists. */
 export const recruiterSelectionListInputSchema=z.strictObject({
- jobId:z.string().uuid(),collegeId:z.string().uuid(),
- submissionId:z.string().uuid(),
+ jobId:zUuid,collegeId:zUuid,
+ submissionId:zUuid,
  kind:z.enum(["OFFER","LETTER_OF_INTENT"]),
  ctcLpa:z.string().regex(/^(?:|\d{1,3}(?:\.\d{1,2})?)$/),
  packageDescription:z.string().trim().max(500).default(""),
- applicationIds:z.array(z.string().uuid()).min(1).max(200),
+ applicationIds:z.array(zUuid).min(1).max(200),
  acknowledgedCtcWarning:z.boolean().default(false),
 }).superRefine((value,ctx)=>{
  if(new Set(value.applicationIds).size!==value.applicationIds.length)

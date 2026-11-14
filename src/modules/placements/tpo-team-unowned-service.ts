@@ -10,8 +10,9 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoAssignUnownedSchema=z.strictObject({
- targetMembershipId:z.string().uuid(),
+ targetMembershipId:zUuid,
 });
 async function scope(context:RequestContext){
  const member=context.membership;

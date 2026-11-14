@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrConversationQuerySchema=z.object({
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
  q:z.string().trim().max(120).default(""),
  page:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().min(1).max(10000)).default(1),

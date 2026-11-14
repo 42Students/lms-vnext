@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { safeRecruiterExternalLink } from "./recruiter-applicant-shared-links-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const hrDriveDraftQuerySchema = z.strictObject({
-  collegeId: z.string().uuid().optional(),
-  from: z.string().uuid().optional(),
-  fix: z.string().uuid().optional(),
-  edit: z.string().uuid().optional(),
-  copy: z.string().uuid().optional(),
+  collegeId: zUuid.optional(),
+  from: zUuid.optional(),
+  fix: zUuid.optional(),
+  edit: zUuid.optional(),
+  copy: zUuid.optional(),
 }).refine((input) => [input.from,input.fix,input.edit,input.copy].filter(Boolean).length<=1, {
   message: "Choose only one of Hire Again, Fix and Resend, Edit your request or Hire again with changes",
 });

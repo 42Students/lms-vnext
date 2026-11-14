@@ -11,6 +11,7 @@ import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible,contactsIstDayStart,contactsNextIstDayStart,collegeContactLiteralPattern} from "./college-contacts-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
  avatarInitial:string;avatarTint:number;
@@ -131,7 +132,7 @@ export async function getCollegeContactById(context:RequestContext,membershipId:
  */
 const staffContactsFilter=z.strictObject({
  q:z.string().trim().max(100).default(""),
- departmentId:z.uuid().optional(),
+ departmentId:zUuid.optional(),
  limit:z.coerce.number().int().min(1).max(50).default(20),
 });
 export type CollegeStaffContactRow={
@@ -267,9 +268,9 @@ export function toLegacyCollegeContactDto(row:CollegeContactRow){
 export async function listLegacyCollegeContacts(context:RequestContext,raw:unknown){
  const input=z.strictObject({
   userType:z.string().trim().max(20).default("ALL"),
-  collegeId:z.string().uuid().optional(),
-  programId:z.string().uuid().optional(),
-  departmentId:z.string().uuid().optional(),
+  collegeId:zUuid.optional(),
+  programId:zUuid.optional(),
+  departmentId:zUuid.optional(),
   pageNumber:z.coerce.number().int().min(0).max(9999).default(0),
   pageSize:z.union([z.literal(10),z.literal(20),z.literal(25),z.literal(50)]).default(10),
   query:z.string().trim().max(100).default(""),

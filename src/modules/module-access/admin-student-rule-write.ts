@@ -11,6 +11,7 @@ import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {studentRuleWriteInput,studentRuleMatches,isStudentRuleNoop,hasPersistedAncestorLock} from "./admin-student-rule-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export class StudentRuleConflict extends Error {
  constructor(public readonly code:string){super(code);this.name="StudentRuleConflict";}
 }
@@ -45,8 +46,8 @@ export async function clearSuperAdminStudentLock(
 }
 export async function writeSuperAdminStudentRule(context:RequestContext,collegeInput:string,memberInput:string,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
- const collegeId=z.uuid().parse(collegeInput);
- const membershipId=z.uuid().parse(memberInput);
+ const collegeId=zUuid.parse(collegeInput);
+ const membershipId=zUuid.parse(memberInput);
  const input=studentRuleWriteInput.parse(raw);
  const traced=await getSuperAdminLearnerAccessTrace(context,collegeId,{membershipId});
  if(!traced?.selected)return null;

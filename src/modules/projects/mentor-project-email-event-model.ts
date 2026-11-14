@@ -2,7 +2,8 @@ import {z} from "zod";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailKind} from "./mentor-project-email-provider";
 
-const uuid=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 /** Only persisted delivery submission and genuine learner meeting-request
  * events can produce a Mentor email. Decision/plan edits are not requests.
  */

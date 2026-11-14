@@ -43,7 +43,8 @@ import {planAttendanceRecordTransitions} from "./attendance-record-transitions";
 import {appendAttendanceHistoryEvent,attendanceHistoryHasChanged} from "./history-event";
 
 import { env } from "@/config/env";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const sessionInputSchema = z
   .object({
     deliveryId: uuid,

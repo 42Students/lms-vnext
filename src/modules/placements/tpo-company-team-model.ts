@@ -1,8 +1,9 @@
 import {z} from "zod";
-export const tpoCompanyTeamCompanyIdSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const tpoCompanyTeamCompanyIdSchema=zUuid;
 export const tpoCompanyTeamPostSchema=z.strictObject({
  body:z.string().trim().min(1).max(4000),
- idempotencyKey:z.string().uuid(),
+ idempotencyKey:zUuid,
 });
 /** Archived relationships keep history but never accept new messages. */
 export function canPostToTpoCompanyTeam(status:string):boolean{

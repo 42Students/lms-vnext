@@ -7,7 +7,8 @@ import {collegeMemberships,users,membershipRoles,learnerProgramEnrollments,
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const draftDriveReachSchema=z.strictObject({
  programIds:z.array(uuid).max(100).default([]),
  cohortIds:z.array(uuid).max(100).default([]),

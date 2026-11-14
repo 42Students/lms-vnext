@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrRoundFormSchema=z.strictObject({
  action:z.enum(["CREATE","UPDATE","REMOVE"]),
  kind:z.enum(["TALK","TEST","VENDOR_TEST","GD","INTERVIEW"]).optional(),
@@ -7,7 +8,7 @@ export const hrRoundFormSchema=z.strictObject({
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]).nullable().optional(),
  durationMinutes:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().min(1).max(1440)).optional(),
- roundId:z.string().uuid().optional(),
+ roundId:zUuid.optional(),
  expectedUpdatedAt:z.string().datetime({offset:true}).optional(),
 }).superRefine((row,ctx)=>{
  if(row.action==="CREATE" && (!row.kind||!row.name))
@@ -51,7 +52,7 @@ export function matchesRecruiterRoundVersion(stored:Date,expected:string|undefin
  * arbitrary HTTP 200 or a redirect that may lead to sign-in. */
 export const hrRoundMutationReceiptSchema=z.strictObject({
  saved:z.literal(true),
- id:z.string().uuid(),
+ id:zUuid,
  action:z.enum(["CREATED","UPDATED","REMOVED"]),
 });
 export function isVerifiedHrRoundMutation(

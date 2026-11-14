@@ -1,11 +1,12 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerApplicationUrlSchema=z.object({
 q:z.string().trim().max(100).optional().default(""),
 view:z.enum(["all","progress","completed"]).optional().default("progress"),
 stage:z.string().max(64).optional().default("all"),
 sort:z.enum(["activity","company","oldest","stage"]).optional().default("activity"),
 page:z.string().regex(/^(?:[1-9][0-9]{0,3}|10000)$/).transform(Number).optional().default(1),
-applicationId:z.string().uuid().optional(),
+applicationId:zUuid.optional(),
 }).strict();
 export function readLearnerApplicationUrl(raw:string){
 const params=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);

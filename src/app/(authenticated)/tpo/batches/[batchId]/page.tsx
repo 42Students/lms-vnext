@@ -25,10 +25,11 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { zUuid } from "@/lib/schema-primitives";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
- if(!z.uuid().safeParse(batchId).success)notFound();
+ if(!zUuid.safeParse(batchId).success)notFound();
  const query=await searchParams;
  const rawTab=query["tab"];
  const backHref=tpoBatchReturnHref(query["returnTo"]);

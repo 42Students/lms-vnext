@@ -7,13 +7,14 @@ import {projectSprints,projectTasks} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Old workspace task-list filters mapped to one authorized project.
  * The POST command route remains independent; this page read is query-only.
  */
 export const legacyProjectTaskListQuerySchema=z.object({
   lane:z.enum(["ALL","TODO","IN_PROGRESS","REVIEW","BLOCKED","DONE"]).default("ALL"),
   priority:z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
-  assigneeId:z.union([z.string().uuid(),z.literal("UNASSIGNED")]).optional(),
+  assigneeId:z.union([zUuid,z.literal("UNASSIGNED")]).optional(),
   sprintScope:z.string().trim().min(1).max(120).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
   size:z.coerce.number().int().min(1).max(100).default(50),
@@ -25,7 +26,7 @@ export async function listLegacyProjectTasks(
   const scope=await requireProjectReadAccess(context,projectId);
   const filter=legacyProjectTaskListQuerySchema.parse(raw);
   const sprint=filter.sprintScope;
-  const sprintById=z.string().uuid().safeParse(sprint);
+  const sprintById=zUuid.safeParse(sprint);
   const sprintFilter=sprint==="ALL"?undefined:
     sprint==="BACKLOG"?isNull(projectTasks.sprintId):
     or(sprintById.success?eq(projectSprints.id,sprintById.data):undefined,

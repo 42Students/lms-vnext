@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const MAX_BROADCAST_RECIPIENT_COLLEGES=500;
 /** Keep a multi-select within the same upper bound enforced by the server. */
 export function addBroadcastAudienceSelection(current:readonly string[],matching:readonly string[]):string[]{
@@ -6,8 +7,8 @@ export function addBroadcastAudienceSelection(current:readonly string[],matching
 }
 export const superAdminCollegeBroadcastSchema=z.strictObject({
  audienceMode:z.enum(["ALL_COLLEGES","SELECTED_COLLEGES"]),
- collegeIds:z.array(z.uuid()).max(MAX_BROADCAST_RECIPIENT_COLLEGES),
- reviewedCollegeIds:z.array(z.uuid()).max(MAX_BROADCAST_RECIPIENT_COLLEGES).optional(),
+ collegeIds:z.array(zUuid).max(MAX_BROADCAST_RECIPIENT_COLLEGES),
+ reviewedCollegeIds:z.array(zUuid).max(MAX_BROADCAST_RECIPIENT_COLLEGES).optional(),
  title:z.string().trim().min(1,{error:"Give it a title"}).max(200,{error:"Title must be 200 characters or fewer"}),
  message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000,{error:"Announcement must be 8000 characters or fewer"}),
  scheduledAt:z.iso.datetime({offset:true}).nullable(),

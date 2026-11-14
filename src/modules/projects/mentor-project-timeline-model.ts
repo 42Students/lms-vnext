@@ -1,7 +1,8 @@
 import {z} from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTimelineQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   releaseStatus:z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
   sprintStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),

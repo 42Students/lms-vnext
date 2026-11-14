@@ -11,7 +11,8 @@ import { ProjectsServiceError } from "./errors";
 import { previewVersion } from "./class-team-preview-token";
 import { z } from "zod";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 
 export function classRosterRevision(classId: string, members: readonly { membershipId: string; rollNumber: string }[]) {
   return previewVersion([{ name: classId, membershipIds: [...members].map(m => m.membershipId + ":" + m.rollNumber) }]);

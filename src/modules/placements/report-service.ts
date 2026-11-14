@@ -59,12 +59,13 @@ import {
   type PlacementReportSelection,
 } from "./report-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const placementReportQuerySchema = z
   .object({
-    collegeId: z.string().uuid(),
-    seasonId: z.string().uuid().optional(),
-    jobId: z.string().uuid().optional(),
-    batchId: z.string().uuid().optional(),
+    collegeId: zUuid,
+    seasonId: zUuid.optional(),
+    jobId: zUuid.optional(),
+    batchId: zUuid.optional(),
     branch: z.string().trim().max(120).optional(),
     company: z.string().trim().max(200).optional(),
     mode: z.enum(["ON_CAMPUS", "POOL", "OFF_CAMPUS"]).optional(),

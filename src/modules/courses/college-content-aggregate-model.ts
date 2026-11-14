@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { LEARNING_PATH_STATUSES } from "./constants";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_CONTENT_PAGE_SIZE = 25;
 export const collegeContentKindSchema = z.enum(["VIDEO", "RESOURCE", "LIVE_CLASS"]);
 export type CollegeContentKind = z.infer<typeof collegeContentKindSchema>;
@@ -8,7 +9,7 @@ export type CollegeContentKind = z.infer<typeof collegeContentKindSchema>;
 export const collegeContentQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().max(64).optional(),
-  lessonId:z.string().uuid().optional(),
+  lessonId:zUuid.optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
@@ -19,7 +20,7 @@ export const collegeContentQuerySchema = z.object({
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"]).default("ALL"),
   format: z.enum(["ALL", "VIDEO", "YOUTUBE"]).default("ALL"),
   scope: z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
-  deliveryId:z.string().uuid().optional(),
+  deliveryId:zUuid.optional(),
   visibility: z.enum(["ALL","VISIBLE","HIDDEN"]).default("ALL"),
   offeringStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   page:z.coerce.number().int().min(1).max(1000).default(1),

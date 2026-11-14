@@ -14,6 +14,7 @@ import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ async function scopedNotice(noticeId: string) {
     throw new AuthorizationError("placements.manage");
   }
   await requirePersistedTpoMembership(context, context.membership.collegeId);
-  const id = z.string().uuid().parse(noticeId);
+  const id = zUuid.parse(noticeId);
   const [notice] = await getDb().select({
     id: db10Announcements.id,
     collegeId: db10Announcements.collegeId,

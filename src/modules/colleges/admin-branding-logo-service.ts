@@ -13,6 +13,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const MAX_LOGO_BYTES=2*1024*1024;
 export class CollegeLogoError extends Error {
  constructor(readonly code:"LOGO_INVALID"|"LOGO_TOO_LARGE"|"COLLEGE_NOT_FOUND"|"LOGO_UPLOAD_FAILED"){
@@ -20,7 +21,7 @@ export class CollegeLogoError extends Error {
  }
 }
 async function scoped(ctx:RequestContext,rawId:unknown){
- const id=z.uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status,
   logoObjectPath:colleges.logoObjectPath}).from(colleges).where(eq(colleges.id,id)).limit(1);
  if(!college||college.status!=="ACTIVE")throw new CollegeLogoError("COLLEGE_NOT_FOUND");
@@ -93,7 +94,7 @@ export async function uploadCollegeLogo(ctx:RequestContext,rawId:unknown,file:Fi
  return {logoUrl:"/api/colleges/"+college.id+"/branding/logo",width};
 }
 export async function getPublicCollegeLogo(rawId:unknown){
- const id=z.uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const [college]=await getDb().select({logoObjectPath:colleges.logoObjectPath})
   .from(colleges).where(and(eq(colleges.id,id),eq(colleges.status,"ACTIVE"))).limit(1);
  const key=college?.logoObjectPath;

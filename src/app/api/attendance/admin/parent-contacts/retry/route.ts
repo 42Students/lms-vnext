@@ -7,12 +7,13 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {retryQueuedAttendanceParentSmsForCollege} from "@/modules/attendance/parent-sms-service";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const input=z.object({collegeId:z.string().uuid()}).strict().parse(await boundedRequestJson(request));
+    const input=z.object({collegeId:zUuid}).strict().parse(await boundedRequestJson(request));
     const result=await retryQueuedAttendanceParentSmsForCollege(__ctx,input.collegeId);
     return privateJson(result);
   },

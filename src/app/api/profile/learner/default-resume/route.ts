@@ -16,6 +16,7 @@ import {
 import { PrivateObjectStorageError } from "@/modules/storage/private-object-storage";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const headers = { "Cache-Control": CACHE.PRIVATE };
 const command = z.discriminatedUnion("action", [
@@ -25,8 +26,8 @@ const command = z.discriminatedUnion("action", [
     sizeBytes: z.number().int().min(1).max(10 * 1024 * 1024),
   }),
   z.strictObject({ action: z.literal("CONFIRM"), objectKey: z.string().min(20).max(700) }),
-  z.strictObject({ action: z.literal("SELECT"), receiptId: z.uuid() }),
-  z.strictObject({ action: z.literal("VIEW"), receiptId: z.uuid() }),
+  z.strictObject({ action: z.literal("SELECT"), receiptId: zUuid }),
+  z.strictObject({ action: z.literal("VIEW"), receiptId: zUuid }),
   z.strictObject({ action: z.literal("CLEAR_DEFAULT") }),
 ]);
 

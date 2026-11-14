@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {DRIVE_PAY_CATEGORIES,DRIVE_PAY_CATEGORY_REASON_MAX,drivePayCategoryOverrideIssue} from "./drive-pay-category-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoDriveEditSchema=z.object({
  confirmed:z.literal(true),
  wantedSkills:z.array(z.string().trim().min(1).max(50)).max(30).refine(
@@ -15,7 +16,7 @@ export const tpoDriveEditSchema=z.object({
  minUndergraduatePctBasisPoints:z.number().int().min(0).max(10000).nullable().optional(),
  minPostgraduatePctBasisPoints:z.number().int().min(0).max(10000).nullable().optional(),
  allowedPassingYears:z.array(z.number().int().min(2000).max(2100)).max(101).optional(),
- allowedProgramIds:z.array(z.string().uuid()).max(100).refine(
+ allowedProgramIds:z.array(zUuid).max(100).refine(
   ids=>new Set(ids).size===ids.length,"Choose each program once.").optional(),
  portal:z.strictObject({
   studentsRegisterSeparately:z.boolean(),
@@ -36,7 +37,7 @@ export const tpoDriveEditSchema=z.object({
  recruiterDriveMode:z.enum(["ON_CAMPUS","OFF_CAMPUS"]).optional(),
  workMode:z.enum(["ONSITE","HYBRID","REMOTE"]).optional(),
  employmentType:z.enum(["FULL_TIME","INTERNSHIP","CONTRACT"]).optional(),
- allowedCohortIds:z.array(z.string().uuid()).max(100)
+ allowedCohortIds:z.array(zUuid).max(100)
   .refine(ids=>new Set(ids).size===ids.length,"Select each eligible batch only once.").optional(),
  expectedUpdatedAt:z.iso.datetime({offset:true})
   .transform(value=>new Date(value).toISOString()),

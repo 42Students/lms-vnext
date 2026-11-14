@@ -1,6 +1,7 @@
 import {z} from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const tpoInterviewSlotActionSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("GENERATE_DAY"),confirmed:z.literal(true),startsAt:z.iso.datetime({offset:true}),
   durationMinutes:z.number().int().min(5).max(240),gapMinutes:z.number().int().min(0).max(120),

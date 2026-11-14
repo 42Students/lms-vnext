@@ -11,11 +11,12 @@ import {buildModuleAccessChain,resolveOptionalModuleAccessForChain,type ModuleAc
 import {studentRuleMatches} from "./admin-student-rule-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const moduleSchema=z.enum(["projects","electives"]);
-const idList=z.array(z.uuid()).min(1).max(25).refine(
+const idList=z.array(zUuid).min(1).max(25).refine(
   value=>new Set(value).size===value.length,"Duplicate learner selection");
 const expectations=z.array(z.strictObject({
-  membershipId:z.uuid(),enabled:z.boolean().nullable(),locked:z.boolean(),
+  membershipId:zUuid,enabled:z.boolean().nullable(),locked:z.boolean(),
 })).min(1).max(25);
 const previewSchema=z.strictObject({
   action:z.literal("PREVIEW"),module:moduleSchema,membershipIds:idList,

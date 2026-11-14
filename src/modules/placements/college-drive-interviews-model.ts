@@ -1,10 +1,11 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const driveInterviewsQuerySchema = z.object({
   kind: z.enum(["ALL","INTERVIEW","GD"]).default("ALL"),
   status: z.enum(["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
-  applicationId: z.string().uuid().optional(),
+  applicationId: zUuid.optional(),
   appointmentStatus: z.enum(["ALL","ACTIVE","UPCOMING","COMPLETED","CANCELLED"]).optional(),
   appointmentMode: z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).optional(),
   appointmentSearch: z.string().trim().max(120).optional(),
@@ -82,7 +83,7 @@ export function filterDriveCandidateAppointments<T extends {
 }
 export function driveInterviewFilterError(raw: Record<string, string | string[] | undefined>) {
   if (raw["applicationId"] && typeof raw["applicationId"] === "string" &&
-      !z.string().uuid().safeParse(raw["applicationId"]).success)
+      !zUuid.safeParse(raw["applicationId"]).success)
     return "name is required and must be a valid value";
   if (raw["page"] !== undefined && !z.coerce.number().int().min(1).max(1000).safeParse(raw["page"]).success)
     return "Page must be a valid number";

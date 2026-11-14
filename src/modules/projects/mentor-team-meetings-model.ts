@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTeamMeetingsQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
   outcome:z.enum(["ALL","RECORDED","NOT_RECORDED"]).default("ALL"),

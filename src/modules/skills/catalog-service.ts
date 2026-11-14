@@ -17,6 +17,7 @@ import {
   type SkillCatalogQuery,
 } from "./catalog-validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy SkillsCache shortcuts, always available even before synonym seeds.
  * Persisted tenant-approved synonyms still participate in ranking. */
 const LEGACY_SKILL_ALIASES: Readonly<Record<string,string>> = {
@@ -303,7 +304,7 @@ function requireCatalogReader(context: RequestContext) {
 
 export async function listSkillSynonymsForParent(context: RequestContext, skillId: unknown) {
   requireCatalogReader(context);
-  const id = z.string().uuid().parse(skillId);
+  const id = zUuid.parse(skillId);
   const [parent] = await getDb().select({ id: db10Skills.id })
     .from(db10Skills).where(and(eq(db10Skills.id,id),eq(db10Skills.isActive,true))).limit(1);
   if (!parent) return null;
@@ -349,7 +350,7 @@ export async function recordSkillSelection(
   const data=z.object({
     name:skillUsageNameSchema,
     source:z.enum(["v1","v2"]),
-    skillId:z.string().uuid().optional(),
+    skillId:zUuid.optional(),
   }).strict().parse(raw);
   const name=normalizeSkillUsageKey(data.name);
   if(data.source==="v1"){

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const name = z.string().trim().min(1, "Enter the class or section name").max(255, "Maximum 255 characters");
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");

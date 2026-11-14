@@ -10,6 +10,7 @@ import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {ProjectsServiceError} from "./errors";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Explain the event history without mistaking a CLEAR event for an override.
  * Present cleared rows only in historical/audit views, not the active list.
  */
@@ -24,7 +25,7 @@ export function readinessOverrideAuditProjection(input:{
 }
 /** COL-projects-12: latest override event per project, not the full audit history. */
 export async function listCollegeActiveReadinessOverrides(context: RequestContext, collegeId: string) {
-  const requestedCollegeId=z.string().uuid().parse(collegeId);
+  const requestedCollegeId=zUuid.parse(collegeId);
   if(getProjectAdminCollegeId(context)!==requestedCollegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college=await loadProjectCollegeScope(requestedCollegeId);
@@ -48,7 +49,7 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
       .orderBy(activityEvents.subjectId,desc(activityEvents.occurredAt),desc(activityEvents.id));
     const live=events.filter(row=>
       (row.metadata["state"]==="FORCE_UNLOCK"||row.metadata["state"]==="FORCE_BLOCK") &&
-      z.string().uuid().safeParse(row.projectId).success);
+      zUuid.safeParse(row.projectId).success);
     if(!live.length)return [];
     const projects=await tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),
@@ -76,9 +77,9 @@ export async function listCollegeReadinessOverrideHistory(
  context:RequestContext,collegeIdRaw:unknown,
  options:{projectId?:string;limit?:number}={},
 ){
- const collegeId=z.string().uuid().parse(collegeIdRaw);
+ const collegeId=zUuid.parse(collegeIdRaw);
  const parsed=z.strictObject({
-  projectId:z.string().uuid().optional(),
+  projectId:zUuid.optional(),
   limit:z.number().int().min(1).max(200).default(100),
  }).parse(options);
  if(getProjectAdminCollegeId(context)!==collegeId)

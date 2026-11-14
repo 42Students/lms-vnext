@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ANNOUNCEMENT_SENDER_TYPES } from "./validation";
+import { zUuid } from "@/lib/schema-primitives";
 const querySchema = z.strictObject({
  deleted: z.literal("1").optional(),
  q: z.string().trim().min(1).max(120).optional(),
@@ -8,7 +9,7 @@ const querySchema = z.strictObject({
  pinned: z.enum(["PINNED","UNPINNED"]).optional(),
  senderType: z.enum(ANNOUNCEMENT_SENDER_TYPES).optional(),
  beforeCreatedAt: z.iso.datetime({offset:true}).optional(),
- beforeId: z.uuid().optional(),
+ beforeId: zUuid.optional(),
 }).superRefine((value,ctx)=>{
  if(Boolean(value.beforeCreatedAt)!==Boolean(value.beforeId)){
   ctx.addIssue({code:"custom",path:["beforeId"],message:"Cursor timestamp and ID must be supplied together"});

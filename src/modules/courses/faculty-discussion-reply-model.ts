@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyDiscussionReplySchema=z.object({
  messageText:z.string().trim().min(1).max(3900),
- replyToMessageId:z.string().uuid(),
+ replyToMessageId:zUuid,
  expectedParentUpdatedAt:z.string().datetime({offset:true}),
  confirmed:z.literal(true),
 }).strict();

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const hrApplicantFilterSchema = z.strictObject({
   tab: z.preprocess(value=>{
     if(typeof value!=="string")return value;
@@ -10,11 +11,11 @@ export const hrApplicantFilterSchema = z.strictObject({
     return aliases[value.toLowerCase()]??value;
   },z.enum(["overview","applicants","offers","rounds"]).default("overview")),
   stage: z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ALL"),
-  applicant: z.string().uuid().optional(),
+  applicant: zUuid.optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   offerPage: z.coerce.number().int().min(1).max(10000).default(1),
   offerState: z.enum(["ALL", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN", "SELECTED", "PENDING_VERIFICATION", "REVOKED"]).default("ALL"),
-  roundId: z.string().uuid().optional(),
+  roundId: zUuid.optional(),
   outcome: z.enum(["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"]).default("ALL"),
 });
 export type SharedApplicant = {

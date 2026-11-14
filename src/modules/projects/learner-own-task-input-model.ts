@@ -1,10 +1,11 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** PROJ-BREAK-LEARNER-01: validation shared by the persisted learner task
  * creation command and its adversarial tests. No user-provided owner/tenant
  * or terminal status can be smuggled into this strict payload. */
 export const learnerOwnTaskCreateInputSchema=z.strictObject({
- sprintId:z.string().uuid().nullable(),title:z.string().trim().min(1).max(200),
+ sprintId:zUuid.nullable(),title:z.string().trim().min(1).max(200),
  description:z.string().trim().max(4000).nullable().default(null),
  approach:z.string().trim().max(4000).nullable().default(null),
  acceptanceCriteria:z.string().trim().max(4000).nullable().default(null),

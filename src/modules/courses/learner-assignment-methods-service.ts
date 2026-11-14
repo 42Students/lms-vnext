@@ -10,10 +10,11 @@ import {CoursesServiceError} from "./errors";
 import {normalizeAssignmentMethods} from "./assignment-submission-methods";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Read only the current learner's published assignment policy, never another college's. */
 export async function getLearnerAssignmentMethods(context:RequestContext,rawId:unknown,rawDeliveryId:unknown){
- const assignmentId=z.string().uuid().parse(rawId);
- const deliveryId=z.string().uuid().parse(rawDeliveryId);
+ const assignmentId=zUuid.parse(rawId);
+ const deliveryId=zUuid.parse(rawDeliveryId);
  const assignment=await loadCourseAssignmentScope(assignmentId);
  if(assignment.status!=="PUBLISHED"||!assignment.lessonVisibleToStudents||
   assignment.learningPathStatus!=="PUBLISHED"||assignment.deliveryId&&assignment.deliveryId!==deliveryId)

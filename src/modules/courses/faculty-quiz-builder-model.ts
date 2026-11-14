@@ -2,13 +2,14 @@ import {z} from "zod";
 import {createCourseQuizInputSchema} from "./quiz-validation";
 import {authoringDueInstant} from "./faculty-authoring-datetime-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const item=z.object({
  type:z.enum(["SINGLE_CHOICE","MULTIPLE_CHOICE"]),
  prompt:z.string(),
  points:z.number(),
  sequence:z.number(),
  options:z.array(z.object({
-  id:z.string().uuid().optional(),text:z.string(),correct:z.boolean().optional(),sequence:z.number(),
+  id:zUuid.optional(),text:z.string(),correct:z.boolean().optional(),sequence:z.number(),
  }).passthrough()),
 }).passthrough();
 const detailSchema=z.object({quiz:z.object({questions:z.array(item)}).passthrough()}).passthrough();
@@ -199,7 +200,7 @@ export function facultyQuizCanPublishSavedDraft(
 /** POST returns an authoritative persisted Quiz revision. No optimistic guess
  * of the next version is safe because Postgres timestamps have precision. */
 const savedQuizSchema=z.object({quiz:z.object({
- id:z.string().uuid(),lessonId:z.string().uuid(),
+ id:zUuid,lessonId:zUuid,
  title:z.string(),description:z.string().nullable(),dueAt:z.string().nullable(),
  maxAttempts:z.number().int(),sequence:z.number().int(),
  shuffleQuestions:z.boolean().optional(),shuffleOptions:z.boolean().optional(),

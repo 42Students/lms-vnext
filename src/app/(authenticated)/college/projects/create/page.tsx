@@ -12,6 +12,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { TextLink } from "@/components/ui/text-link";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeCreateProjectPage({
   searchParams,
 }:{searchParams:Promise<{mode?:string;templateId?:string}>}) {
@@ -40,7 +41,7 @@ export default async function CollegeCreateProjectPage({
     templates=await listAssignedProjectTemplates(context,collegeId);
   } catch(error) {
     if(error instanceof AuthorizationError)throw error;
-    const retryTemplateId = typeof query.templateId === "string" && z.uuid().safeParse(query.templateId).success
+    const retryTemplateId = typeof query.templateId === "string" && zUuid.safeParse(query.templateId).success
       ? "&templateId="+encodeURIComponent(query.templateId)
       : "";
     return <div className="min-w-0 space-y-5">

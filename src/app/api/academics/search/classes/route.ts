@@ -5,11 +5,12 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { searchSections } from "@/modules/academics/section-service";
 import { route } from "@/security/route";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 const querySchema = z.object({
   q: z.string().trim().max(100).default(""),
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   limit: z.string().regex(/^\d{1,3}$/).transform(Number).pipe(z.number().int().min(1).max(100)).optional(),
 }).strict();
 

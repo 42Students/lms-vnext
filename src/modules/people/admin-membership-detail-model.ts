@@ -1,5 +1,6 @@
 import {z} from "zod";
-export const adminMembershipDetailIdSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const adminMembershipDetailIdSchema=zUuid;
 export type AdminMembershipDetailFact={
  id:string;userId:string;name:string|null;collegeName:string;
  platformStatus:"ACTIVE"|"DISABLED";membershipStatus:string;roles:readonly string[];

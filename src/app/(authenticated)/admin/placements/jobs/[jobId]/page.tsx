@@ -14,6 +14,7 @@ import { SuperAdminDrivePipeline } from "@/components/placements/super-admin-dri
 import {getSuperAdminDriveAttention} from "@/modules/placements/super-admin-drive-attention-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function AdminPlacementDrivePage({
   params, searchParams,
 }: {
@@ -37,7 +38,7 @@ export default async function AdminPlacementDrivePage({
   const preserved=backHref==="/admin/placements/drives"?"":"?returnTo="+encodeURIComponent(backHref);
   const root="/admin/placements/jobs/"+encodeURIComponent(jobId);
   const withReturn=(path:string)=>path+preserved;
-  if(!z.uuid().safeParse(jobId).success)return <div className="min-w-0 space-y-4">
+  if(!zUuid.safeParse(jobId).success)return <div className="min-w-0 space-y-4">
     <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
     <ErrorState title="Could not load this drive."
       description="The drive ID is invalid. Return to the placement list and select a drive."

@@ -11,12 +11,13 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 const skill=z.strictObject({
  name:z.string().trim().min(1).max(120),
  proficiency:z.enum(["","Beginner","Intermediate","Advanced","Expert"]),
 });
 const profileEditSchema=z.strictObject({
- membershipId:z.string().uuid(),
+ membershipId:zUuid,
  expectedVersion:z.number().int().min(0),
  action:z.enum(["ADD_SKILL","EDIT_SKILL","DELETE_SKILL","SET_PREFERENCES"]),
  index:z.number().int().min(0).max(99).optional(),

@@ -1,8 +1,9 @@
 import {z} from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorRiskReadinessQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   focus:z.enum(["ALL","RISK","READINESS"]).default("ALL"),
   taskPriority:z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),

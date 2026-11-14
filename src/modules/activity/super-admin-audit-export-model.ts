@@ -4,13 +4,14 @@ import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import { escapeActivityCsvCell } from "./college-activity-export-model";
 import {collegeActivityAction,collegeActivityItem} from "./college-activity-presentation";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const SUPER_ADMIN_AUDIT_CSV_CAP = 1000;
 export const superAdminAuditExportSchema=z.object({
  ...adminAuditTextFilterSchema.shape,
  module:z.enum(ACTIVITY_MODULES).optional(),
  importance:z.enum(ACTIVITY_IMPORTANCE).optional(),
- actorUserId:z.string().uuid().optional(),
- collegeId:z.string().uuid().optional(),
+ actorUserId:zUuid.optional(),
+ collegeId:zUuid.optional(),
  subjectId:z.string().trim().min(1).max(500).optional(),
  eventType:z.string().trim().min(1).max(120).optional(),
  subjectType:z.string().trim().min(1).max(80).optional(),

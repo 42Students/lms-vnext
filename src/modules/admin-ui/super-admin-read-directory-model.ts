@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const SUPER_ADMIN_READ_PAGE_SIZE = 25;
 export const SUPER_ADMIN_READ_PAGE_SIZE_OPTIONS = [25,50,100,200] as const;
 export const SUPER_ADMIN_FACULTY_ASSIGNMENT_PAGE_SIZE_OPTIONS = [10,25,50,100] as const;
@@ -21,14 +22,14 @@ export const superAdminReadQuerySchema = z.strictObject({
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: strictDecimal(1,1000,1),
  pageSize: strictDecimal(10,200,25).refine(n=>[10,25,50,100,200].includes(n)),
- jobId: z.string().uuid().optional(),
+ jobId: zUuid.optional(),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  pipelineStage:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"]).default("ALL"),
- departmentId:z.uuid().optional(),
- programId:z.uuid().optional(),
- cohortId:z.uuid().optional(),
- sectionId:z.uuid().optional(),
+ departmentId:zUuid.optional(),
+ programId:zUuid.optional(),
+ cohortId:zUuid.optional(),
+ sectionId:zUuid.optional(),
  employmentType:z.string().trim().max(128).optional(),
 });
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;

@@ -1,7 +1,8 @@
 import { z } from "zod";
 import {TPO_RULE_LIMITS} from "./tpo-rule-limits";
 
-const collegeId = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const collegeId = zUuid;
 const expectedVersion = z.number()
   .int()
   .min(0)

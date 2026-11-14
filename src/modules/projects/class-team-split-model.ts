@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const teamSplitInputSchema = z.object({
   mode: z.enum(["TEAMS", "WHOLE_CLASS", "INDIVIDUAL"]),
   teamSize: z.number().int().min(1).max(100).default(5),
   order: z.enum(["ROLL", "SHUFFLE"]).default("ROLL"),
   seed: z.string().max(128).default(""),
   students: z.array(z.object({
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     rollNumber: z.string().trim().min(1).max(80),
   }).strict()).min(1).max(2000),
 }).strict().superRefine((input, ctx) => {

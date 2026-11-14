@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
 
+import { zUuid } from "@/lib/schema-primitives";
 const querySchema = z.object({
   view: z.enum(["all", "unread"]).optional(),
   beforeCreatedAt: z.string().optional(),
@@ -31,7 +32,7 @@ export function parseFacultyInboxQuery(raw: unknown) {
     ? z.iso.datetime({ offset: true }).safeParse(parsed.data.beforeNoticeCreatedAt)
     : null;
   const noticeId = completeNoticeCursor
-    ? z.string().uuid().safeParse(parsed.data.beforeNoticeId) : null;
+    ? zUuid.safeParse(parsed.data.beforeNoticeId) : null;
   const noticeDate = noticeTimestamp?.success
     ? new Date(noticeTimestamp.data) : null;
   const noticeInvalid = hasNoticeCursor && (

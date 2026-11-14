@@ -18,8 +18,9 @@ import {parseTpoNoticeSchedule,parseTpoIstMinute} from "./tpo-notice-schedule-mo
 import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const editTpoNoticeSchema=z.object({
- noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
+ noticeId:zUuid,expectedVersion:z.number().int().nonnegative(),
  title:z.string().trim().min(1,{error:"Give it a title"}).max(200,{error:"Title must be 200 characters or fewer"}),
  message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000,{error:"Announcement must be 8000 characters or fewer"}),
  pinned:z.boolean(),

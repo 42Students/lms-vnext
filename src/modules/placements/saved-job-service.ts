@@ -11,6 +11,7 @@ import { listLearnerPlacementJobs } from "./learner-job-service";
 import { PlacementsServiceError } from "./errors";
 import { placementTableExists } from "./staged-tables";
 
+import { zUuid } from "@/lib/schema-primitives";
 export class SavedJobsStorageUnavailableError extends Error {
   // Existing saved-jobs collection route recognizes missing-relation code
   // through its database unavailable adapter.
@@ -21,7 +22,7 @@ export class SavedJobsStorageUnavailableError extends Error {
   }
 }
 
-const savedJobId = z.string().uuid();
+const savedJobId = zUuid;
 
 const historicalSavedJobStatuses = new Set(["CLOSED","CANCELLED","ARCHIVED","EXPIRED"]);
 

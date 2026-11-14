@@ -1,9 +1,10 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Admin task authoring does not mutate assignee, status or submission state. */
 export const adminTaskPlanCreateSchema=z.strictObject({
  expectedTasksToken:z.string().regex(/^[a-f0-9]{64}$/),
- sprintId:z.string().uuid().nullable(),
+ sprintId:zUuid.nullable(),
  key:z.string().trim().max(120).optional(),
  title:z.string().trim().min(1).max(200),
  priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),

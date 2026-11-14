@@ -2,6 +2,7 @@ import { z } from "zod";
 import { companyWebsiteOrDomainRule, createPlacementCompanyInputObjectSchema } from "./validation";
 import { publicRecruiterWorkEmailSchema } from "./public-college-join-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** College ownership comes from the authenticated TPO membership, never JSON.
  * Kept unrefined so the distinct-review schema can extend it (Zod 4 rule). */
 const tpoCreateCompanyObjectSchema = createPlacementCompanyInputObjectSchema
@@ -23,7 +24,7 @@ export const tpoCreateCompanySchema = tpoCreateCompanyObjectSchema
  */
 export const tpoDistinctCompanyReviewSchema = tpoCreateCompanyObjectSchema.extend({
  notTheSame:z.literal(true),
- reviewedCompanyId:z.string().uuid(),
+ reviewedCompanyId:zUuid,
  reviewedCompanyDomain:z.string().trim().toLowerCase().min(3).max(253),
  distinctCompanyReason:z.string().trim().min(20).max(500),
 }).superRefine((value,ctx)=>{

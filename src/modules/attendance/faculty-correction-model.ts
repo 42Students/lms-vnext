@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {facultyAttendanceMarkingWindow} from "./faculty-marking-window";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyCorrectionQuerySchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
   window:z.enum(["ALL","OPEN","NOT_STARTED","WINDOW_EXPIRED"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();

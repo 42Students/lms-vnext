@@ -10,8 +10,9 @@ import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {ProjectsServiceError} from "./errors";
 import {loadProjectCollegeScope} from "./scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 export async function listCollegeReadinessWorkspaceChoices(context:RequestContext,collegeId:string,options:{page?:number;pageSize?:number;search?:string}={}){
- const id=z.string().uuid().parse(collegeId);
+ const id=zUuid.parse(collegeId);
  if(getProjectAdminCollegeId(context)!==id)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const college=await loadProjectCollegeScope(id);
@@ -38,7 +39,7 @@ export async function listCollegeReadinessWorkspaceChoicePage(
  context:RequestContext,collegeIdInput:string,
  input:{page:number;search:string},
 ){
- const id=z.string().uuid().parse(collegeIdInput);
+ const id=zUuid.parse(collegeIdInput);
  if(getProjectAdminCollegeId(context)!==id)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const college=await loadProjectCollegeScope(id);
@@ -76,7 +77,7 @@ export async function listCollegeReadinessWorkspaceChoicePage(
 export async function resolveCollegeReadinessWorkspaceId(
  context:RequestContext,collegeIdInput:string,rawId:string,
 ):Promise<string|null>{
- const collegeId=z.string().uuid().parse(collegeIdInput);
+ const collegeId=zUuid.parse(collegeIdInput);
  if(getProjectAdminCollegeId(context)!==collegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const college=await loadProjectCollegeScope(collegeId);
@@ -85,7 +86,7 @@ export async function resolveCollegeReadinessWorkspaceId(
  });
  const value=rawId.trim();
  if(value.length===0||value.length>160)return null;
- const uuid=z.string().uuid().safeParse(value);
+ const uuid=zUuid.safeParse(value);
  const legacy=/^[0-9]+$/.test(value)?Number(value):null;
  if(!uuid.success&&!/^[a-z0-9_-]+$/i.test(value))return null;
  return getDb().transaction(async tx=>{
@@ -106,8 +107,8 @@ export async function resolveCollegeReadinessWorkspaceId(
 
 /** COL-projects-12: release readiness is derived from registered sprint/task data. */
 export async function listCollegeReadinessReleases(context:RequestContext,collegeId:string,projectId:string){
- const requestedCollegeId=z.string().uuid().parse(collegeId);
- const id=z.string().uuid().parse(projectId);
+ const requestedCollegeId=zUuid.parse(collegeId);
+ const id=zUuid.parse(projectId);
  if(getProjectAdminCollegeId(context)!==requestedCollegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const college=await loadProjectCollegeScope(requestedCollegeId);

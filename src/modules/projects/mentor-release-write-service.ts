@@ -12,7 +12,8 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches,nextMentorReleaseUpdateAt} from "./mentor-release-version-model";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const body=z.strictObject({
  title:z.string().trim().min(1).max(220),
  description:z.string().trim().max(4000).nullable().optional(),

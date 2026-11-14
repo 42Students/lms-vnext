@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoCompanyTrustChangeSchema = z.object({
-  relationshipId: z.string().uuid(),
+  relationshipId: zUuid,
   expectedTrusted: z.boolean(),
   nextTrusted: z.boolean(),
   reason: z.string().trim().min(8).max(500),

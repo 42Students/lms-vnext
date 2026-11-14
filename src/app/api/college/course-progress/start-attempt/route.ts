@@ -13,11 +13,12 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const inputSchema=z.object({
-  learnerMembershipId:z.string().uuid(),
-  offeringId:z.string().uuid(),
-  deliveryId:z.string().uuid(),
+  learnerMembershipId:zUuid,
+  offeringId:zUuid,
+  deliveryId:zUuid,
 }).strict();
 const freshMessage="This learner has no recorded progress for that course — they are already starting fresh.";
 

@@ -9,7 +9,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { ROLE } from "@/modules/identity/roles";
-const ids=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const ids=zUuid;
 export const scheduleReassignInput=z.strictObject({
  replacementMembershipId:ids,confirmed:z.literal(true),
 });

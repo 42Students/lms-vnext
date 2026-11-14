@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { bulkActionCommandSchema, previewBulkAction } from "./tpo-bulk-action-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoBulkTargetSchema = z.enum(["STUDENTS", "APPLICATIONS"]);
 export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "INELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE", "SEND_MESSAGE", "MOVE_TEST", "MOVE_INTERVIEW"]);
-const ids = z.array(z.string().uuid()).min(1).max(200)
+const ids = z.array(zUuid).min(1).max(200)
   .refine(items => new Set(items).size === items.length, "Duplicate selected rows");
 
 export const tpoBulkPreviewRequestSchema = z.object({
   target:tpoBulkTargetSchema,
-  jobId:z.string().uuid().optional(),
+  jobId:zUuid.optional(),
   action:tpoBulkActionSchema,
   note:z.string().trim().max(1000).default(""),
   /** Private rejection reason; never shown to candidates (legacy internal/student split). */

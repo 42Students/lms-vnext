@@ -1,8 +1,9 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const companyEngagementFilterSchema=z.object({
- companyId:z.string().uuid().optional(),
- seasonId:z.string().uuid().optional(),
- jobId:z.string().uuid().optional(),
+ companyId:zUuid.optional(),
+ seasonId:zUuid.optional(),
+ jobId:zUuid.optional(),
 }).strict();
 export function filterCompanyEngagement<T extends {companyId:string|null}>(
  rows:readonly T[],selectedCompanyId:string|null,

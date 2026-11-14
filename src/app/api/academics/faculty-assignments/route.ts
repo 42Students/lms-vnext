@@ -16,6 +16,7 @@ import {
 
 import { createCourseTeachingAssignment, listCourseFacultyAcrossDeliveries } from "@/modules/courses/teaching-assignment-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 /** Legacy faculty-course association crosswalk:
  * getByFaculty/course => GET courseId or courseSlug scoped delivery roster;
@@ -34,9 +35,9 @@ export const GET = route(
     if (!url.searchParams.has("courseSlug") &&
       (url.searchParams.has("classId") || url.searchParams.has("facultyId"))) {
       const selectors=z.strictObject({
-        classId:z.string().uuid().optional(),
-        facultyMembershipId:z.string().uuid().optional(),
-        courseId:z.string().uuid().optional(),
+        classId:zUuid.optional(),
+        facultyMembershipId:zUuid.optional(),
+        courseId:zUuid.optional(),
       }).parse({
         classId:url.searchParams.get("classId") ?? undefined,
         facultyMembershipId:url.searchParams.get("facultyId") ?? undefined,
@@ -81,7 +82,7 @@ export const POST = route(
     if (body && typeof body==="object" && !Array.isArray(body) &&
       "facultyId" in body && "courseId" in body && "classId" in body) {
       const legacy=z.strictObject({
-        facultyId:z.string().uuid(),courseId:z.string().uuid(),classId:z.string().uuid(),
+        facultyId:zUuid,courseId:zUuid,classId:zUuid,
         role:z.enum(["PRIMARY","CO_TEACHER","TA"]).optional(),
       }).parse(body);
       const acting=await resolveActingCollege(context,"courses.manage");

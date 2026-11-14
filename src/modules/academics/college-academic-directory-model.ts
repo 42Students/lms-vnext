@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_ACADEMIC_PAGE_SIZE = 25;
 export const COLLEGE_ACADEMIC_AUTOCOMPLETE_LIMIT = 15;
 export const academicPageSizeOptions=[10,25,50,100] as const;
@@ -24,7 +25,7 @@ const directoryDecimal=(min:number,max:number)=>z.union([
 
 const common = {
   q: z.string().trim().max(100).default(""),
-  programId: z.string().uuid().optional(),
+  programId: zUuid.optional(),
   page: directoryDecimal(1,1000).default(1),
   pageSize: directoryDecimal(10,100).refine(n => [10,25,50,100].includes(n)).default(COLLEGE_ACADEMIC_PAGE_SIZE),
 };

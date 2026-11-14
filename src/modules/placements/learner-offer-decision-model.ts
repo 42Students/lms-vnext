@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { learnerOfferAcceptancePreview } from "./learner-offer-acceptance-preview";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerOfferDecisionDraftSchema = z.object({
-  offerId:z.string().uuid(),
+  offerId:zUuid,
   action:z.enum(["ACCEPT","DECLINE"]),
   confirmed:z.literal(true),
   reason:z.string().trim().max(2000).nullable().optional(),

@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeSignInMethodSchema=z.enum(["EMAIL_AND_PHONE","PHONE_AND_EMAIL","EMAIL_ONLY","PHONE_ONLY"]);
 /** Decode legacy persisted values, but keep one canonical vNext enum at rest. */
 export const legacyCollegeSignInMethodSchema=z.enum(["EMAIL_PHONE","PHONE_EMAIL"]);
@@ -9,7 +10,7 @@ export function normalizeCollegeSignInMethod(method:
   method==="PHONE_EMAIL"?"PHONE_AND_EMAIL":method;
 }
 export const updateCollegeSignInSchema=z.strictObject({
- collegeId:z.uuid(),
+ collegeId:zUuid,
  method:z.union([collegeSignInMethodSchema,legacyCollegeSignInMethodSchema])
   .transform(normalizeCollegeSignInMethod),
  expectedVersion:z.number().int().nonnegative(),

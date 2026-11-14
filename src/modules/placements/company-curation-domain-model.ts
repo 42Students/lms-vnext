@@ -3,6 +3,7 @@ import {publicWorkEmailIssue,publicWorkEmailIssueCopy} from "./public-work-email
 import {validTpoTrustedHost} from "./tpo-trusted-domain-validation";
 import {registrableCompanyHost} from "./public-suffix-policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Accept email, @domain, raw host and http(s) website spellings. */
 function domainFromInput(raw:string):string{
  const value=raw.trim().toLowerCase();
@@ -38,7 +39,7 @@ export const companyDomainSchema=z.string().trim().max(2048)
    ctx.addIssue({code:"custom",message:publicWorkEmailIssueCopy(issue)});
   }
  });
-export const curateCompanyDomainSchema=z.strictObject({companyId:z.uuid(),domain:companyDomainSchema,expectedVersion:z.number().int().nonnegative()});
+export const curateCompanyDomainSchema=z.strictObject({companyId:zUuid,domain:companyDomainSchema,expectedVersion:z.number().int().nonnegative()});
 export function companyDomainFromWebsite(website:string):string|null {
  try {
   const url=new URL(website);

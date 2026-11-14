@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyDiscussionParticipationSchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
 }).strict();
 export type FacultyDiscussionCountRow={total:number;faculty:number;learner:number;pinned:number};
 export function facultyDiscussionParticipationSummary(row:FacultyDiscussionCountRow){

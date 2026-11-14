@@ -10,6 +10,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { adminElectiveQuerySchema, summarizeAdminElectives } from "./admin-directory-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** A selected elective slot's entire read-only panel: offering capacity,
  * active enrolled roster and faculty (teaching assignment names) are resolved
  * through authoritative college-owned deliveries. Archived offerings remain
@@ -22,7 +23,7 @@ export async function getSuperAdminElectiveSlotDetail(context:RequestContext,raw
   requirePermission(context,"academics.read",{
     collegeId,organizationId:context.adminScope?.organizationId,
   });
-  const slotId=z.uuid().parse(rawSlotId);
+  const slotId=zUuid.parse(rawSlotId);
   const db=getDb();
   const [slot]=await db.select({
     id:electiveSlots.id,name:electiveSlots.name,description:electiveSlots.description,

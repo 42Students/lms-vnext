@@ -16,13 +16,14 @@ import {placementTableExists} from "./staged-tables";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
  tpoGeneralRequestPayload,tpoGeneralReviewQuerySchema,tpoOwnGeneralRequestQuerySchema} from "./tpo-general-request-model";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class TpoGeneralRequestError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"SCOPE"|"STALE"|"EFFECT_UNSUPPORTED"|"TARGET_CHANGED"){
   super(code);
  }
 }
 const UUID="placement_learner_general_requests";
-const sqlUuid=z.string().uuid();
+const sqlUuid=zUuid;
 async function requireRegistered(){
  if(!(await placementTableExists(UUID)))throw new TpoGeneralRequestError("UNAVAILABLE");
 }

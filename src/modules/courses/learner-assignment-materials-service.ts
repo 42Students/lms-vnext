@@ -15,8 +15,9 @@ import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {facultyAssignmentMaterialLinkSchema,safeLearnerAssignmentMaterialLink} from "./learner-assignment-materials-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
-const uuid=z.string().uuid();
+const uuid=zUuid;
 export async function assignmentMaterialTableReady():Promise<boolean>{
  const result=await getDb().execute(sql`select to_regclass('public.course_assignment_materials') is not null as ready`);
  const records=Array.isArray(result)?result:((result as {rows?:unknown[]}).rows??[]);

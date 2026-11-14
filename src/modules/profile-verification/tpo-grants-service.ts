@@ -8,7 +8,8 @@ import { profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 
 /** Legacy TPO access is granted to active TPO admins by the college switch
  * (default on). The grant row records an explicit restriction/reinstatement,

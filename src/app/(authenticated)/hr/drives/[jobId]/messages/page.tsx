@@ -14,11 +14,12 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { zUuid } from "@/lib/schema-primitives";
 export default async function DriveConversationsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId}=await params;
- if(!z.string().uuid().safeParse(jobId).success)notFound();
+ if(!zUuid.safeParse(jobId).success)notFound();
  let result:Awaited<ReturnType<typeof getRecruiterDriveConversations>>;
  try{
   result=await getRecruiterDriveConversations(context,jobId);

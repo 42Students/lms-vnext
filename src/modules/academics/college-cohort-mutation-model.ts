@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const name = z.string().trim().min(1, "Enter a batch name").max(255, "Maximum 255 characters");
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid batch code");
-const uuid = z.string().uuid();
+const uuid = zUuid;
 /** Legacy has a canonical seven-character YYYY-YY consecutive-year value.
  * Imported historical multi-year cohorts must not be silently rewritten. */
 const legacyYear = z.string().trim()

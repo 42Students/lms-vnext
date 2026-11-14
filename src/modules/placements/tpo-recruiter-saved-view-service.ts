@@ -9,11 +9,12 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS} from "./tpo-recruiter-table-view-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const SAVED_FILTER_KEYS=["q","stage","owner","status","invite","source","company","reach",
  "designation","nextFollowup","lastActivity","added","need","attention","drives"] as const;
 const viewBody=z.strictObject({
  action:z.enum(["CREATE","UPDATE","DELETE","PIN"]),
- id:z.string().uuid().optional(),
+ id:zUuid.optional(),
  name:z.string().trim().min(1).max(100).optional(),
  note:z.string().trim().max(500).nullable().optional(),
  query:z.partialRecord(z.enum(SAVED_FILTER_KEYS),z.string().max(250)).optional(),

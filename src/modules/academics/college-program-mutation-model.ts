@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const name = z.string().trim()
   .min(1, "Please enter program name")
   .max(255, "Maximum 255 characters");
@@ -18,7 +19,7 @@ export const createCollegeProgramSchema = z.object({
 export const updateCollegeProgramSchema = z.object({
   name,
   code,
-  departmentId: z.string().uuid().optional(),
+  departmentId: zUuid.optional(),
   durationTerms,
 }).strict();
 
@@ -26,7 +27,7 @@ export const archiveCollegeProgramSchema = z.object({
   confirm: z.literal(true),
 }).strict();
 
-export const collegeProgramIdSchema = z.string().uuid();
+export const collegeProgramIdSchema = zUuid;
 
 export const restoreCollegeProgramSchema = z.object({
   action: z.literal("RESTORE"), confirm: z.literal(true),

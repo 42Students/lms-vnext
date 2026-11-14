@@ -1,10 +1,11 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyResponseFollowUpQuerySchema = z.object({
   kind: z.enum(["ALL", "ASSIGNMENT", "QUIZ"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.union([z.number().int().min(1).max(10000), z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).pipe(z.number().max(10000))]).default(1),
-  deliveryId:z.string().uuid().optional(),
+  deliveryId:zUuid.optional(),
   sort:z.enum(["RECENT_DUE","OLDEST_DUE","TITLE"]).default("RECENT_DUE"),
   pageSize:z.union([z.literal(5),z.literal(10),z.enum(["5","10"]).transform(Number)]).default(5),
 }).strict();

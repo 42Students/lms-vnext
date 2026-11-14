@@ -1,5 +1,6 @@
 import {z} from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const collegeTeachingReassignSchema=z.strictObject({
   expectedMembershipId:uuid,
   replacementMembershipId:uuid,

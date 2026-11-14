@@ -20,6 +20,7 @@ import {
  adminContentDefaultPageSize,adminContentPages,adminContentQuerySchema,
  adminContentKindSchema,contentTypesForKind,
 } from "./super-admin-content-directory-model";
+import { zUuid } from "@/lib/schema-primitives";
 const cohortDepartment=alias(departments,"admin_content_cohort_department");
 function aliased<C extends Column>(column:C,name:string) {
  return sql<C["_"]["data"]>`${column}`.mapWith(column).as(name);
@@ -197,8 +198,8 @@ export async function listSuperAdminContentSectionOptions(context:RequestContext
 export async function listSuperAdminSectionSyllabus(
  context:RequestContext,rawOfferingId:string,rawDeliveryId:string|null,
 ) {
- const offeringId=z.string().uuid().parse(rawOfferingId);
- const deliveryId=rawDeliveryId===null?null:z.string().uuid().parse(rawDeliveryId);
+ const offeringId=zUuid.parse(rawOfferingId);
+ const deliveryId=rawDeliveryId===null?null:zUuid.parse(rawDeliveryId);
  const collegeId=context.adminScope?.collegeId;
  if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{

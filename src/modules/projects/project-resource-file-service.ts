@@ -25,9 +25,10 @@ import { projectResourceIdSchema } from "./validation";
 import {canAttachProjectFileToResource} from "./mentor-file-resource-visibility-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type FileRow = typeof projectResourceFiles.$inferSelect;
 
-const idSchema = z.string().uuid();
+const idSchema = zUuid;
 
 export const projectFileUploadInputSchema = z
   .object({

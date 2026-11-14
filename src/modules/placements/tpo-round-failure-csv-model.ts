@@ -1,7 +1,8 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoRoundFailureCsvQuerySchema=z.object({
- seasonId:z.string().uuid().optional(),jobId:z.string().uuid().optional(),
+ seasonId:zUuid.optional(),jobId:zUuid.optional(),
 }).strict();
 export type TpoRoundFailureCsvRow={
  roundName:string;branchName:string;failed:number;decisions:number;

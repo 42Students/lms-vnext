@@ -17,6 +17,7 @@ import {
   phoneE164Schema,
 } from "@/modules/people/validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const bootstrapSuperAdminInputSchema = z.object({
   phoneE164: phoneE164Schema,
   email: personEmailSchema.optional(),
@@ -24,7 +25,7 @@ export const bootstrapSuperAdminInputSchema = z.object({
 }).strict();
 
 export const assignSystemRoleInputSchema = z.object({
-  userId: z.string().uuid(),
+  userId: zUuid,
   role: z.enum(SYSTEM_ROLES),
 }).strict();
 

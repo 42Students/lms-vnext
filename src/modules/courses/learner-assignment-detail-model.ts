@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerAssignmentDetailQuery = z.object({
-  assignmentId: z.string().uuid(),
-  deliveryId: z.string().uuid(),
+  assignmentId: zUuid,
+  deliveryId: zUuid,
 }).strict();
 
 /** Select only an assignment from already-authorized Section delivery rows. */

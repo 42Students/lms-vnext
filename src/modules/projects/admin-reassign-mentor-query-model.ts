@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const decimal=(min:number,max:number,fallback:number)=>z.union([
   z.number().int().min(min).max(max),
   z.string().regex(/^[0-9]+$/).transform(Number)
@@ -7,8 +8,8 @@ const decimal=(min:number,max:number,fallback:number)=>z.union([
 ]).default(fallback);
 
 const schema=z.strictObject({
-  fromMentorId:z.union([z.string().uuid(),z.literal("UNASSIGNED")]).optional(),
-  projectId:z.string().uuid().optional(),
+  fromMentorId:z.union([zUuid,z.literal("UNASSIGNED")]).optional(),
+  projectId:zUuid.optional(),
   mentorSearch:z.string().trim().max(100).default(""),
   mentorPage:decimal(1,1000,1),
   q:z.string().trim().max(120).optional(),
@@ -66,7 +67,7 @@ export async function resolveLegacyReassignMentorBookmark(
  if(!/^[1-9][0-9]{0,14}$/.test(raw)||!Number.isSafeInteger(Number(raw)))
   return {ok:false,reason:"INVALID_LEGACY_ID"};
  const mapped=await lookupInSelectedCollege(Number(raw));
- if(!mapped || !z.string().uuid().safeParse(mapped).success)
+ if(!mapped || !zUuid.safeParse(mapped).success)
   return {ok:false,reason:"LEGACY_MENTOR_NOT_MAPPED"};
  return {ok:true,params:{...params,fromMentorId:mapped}};
 }

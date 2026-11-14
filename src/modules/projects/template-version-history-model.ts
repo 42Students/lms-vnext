@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const TEMPLATE_VERSION_HISTORY_PAGE_SIZE = 25;
 export const templateVersionHistoryQuerySchema = z.strictObject({
   page: z.union([
@@ -32,7 +33,7 @@ export function templateVersionHistoryPage(total: number, requestedPage: number)
   return { total, totalPages, page, offset: (page - 1) * TEMPLATE_VERSION_HISTORY_PAGE_SIZE };
 }
 export function templateVersionHistoryHref(templateId: string, page: number) {
-  const id = z.uuid().parse(templateId);
+  const id = zUuid.parse(templateId);
   const query = templateVersionHistoryQuerySchema.parse({ page });
   return `/admin/projects/templates/${id}/versions` + (query.page > 1 ? `?page=${query.page}` : "");
 }

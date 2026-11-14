@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTaskReviewQuerySchema = z.object({
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
-  projectId: z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
+  projectId: z.preprocess(v=>v===""?undefined:v,zUuid.optional()),
   priority: z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
   version: z.preprocess(v=>v===""?undefined:v,z.coerce.number().int().min(1).max(100000).optional()),
   age: z.enum(["ALL","LAST_7_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
@@ -17,8 +18,8 @@ export function mentorTaskReviewLiteralSearch(input:string){
  return input.replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_");
 }
 export function mentorTaskReviewTargetHref(projectId:string,taskId:string){
- const project=z.string().uuid().parse(projectId);
- const task=z.string().uuid().parse(taskId);
+ const project=zUuid.parse(projectId);
+ const task=zUuid.parse(taskId);
  return "/mentor/projects/"+encodeURIComponent(project)+
    "?tab=board#mentor-task-"+encodeURIComponent(task);
 }

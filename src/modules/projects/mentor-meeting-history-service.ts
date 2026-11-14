@@ -12,8 +12,9 @@ import { requireProjectReadAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const querySchema = z.strictObject({
-  projectId: z.string().uuid(),
+  projectId: zUuid,
   meetingKey: z.string().trim().min(1).max(120).optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 });

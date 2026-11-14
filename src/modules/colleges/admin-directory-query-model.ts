@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const ADMIN_DIRECTORY_PAGE_SIZES=[10,25,50,100] as const;
 const allowedPageSizes=ADMIN_DIRECTORY_PAGE_SIZES;
 // Explicit query strings use decimal digits only; Number coercion also accepts
@@ -37,7 +38,7 @@ export const legacyCollegeDirectorySearchSchema=z.strictObject({
  query:z.string().trim().max(100).default(""),
  state:z.string().trim().max(80).optional(),
  city:z.string().trim().max(100).optional(),
- orgId:z.union([z.string().uuid(),z.string().regex(/^[0-9]+$/)]).optional(),
+ orgId:z.union([zUuid,z.string().regex(/^[0-9]+$/)]).optional(),
  limit:z.union([
    z.number().int().min(1).max(15),
    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(15)),

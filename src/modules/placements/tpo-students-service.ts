@@ -81,13 +81,14 @@ import {
   type TpoStudentSource,
 } from "./tpo-students-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** A signed-in TPO snapshot is not proof of a still-active placement-team role. */
 async function requireLiveTpoStudentActor(context:RequestContext,collegeId:string){
  const liveCollegeId=await requireTpoBatchActor(context);
  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
 }
 
-const uuid = z.string().uuid();
+const uuid = zUuid;
 /** Route filter strings are re-parsed by the service after URL validation. */
 const yesNo=z.union([z.boolean(),z.enum(["YES","NO"])]).transform(
  value=>typeof value==="boolean"?value:value==="YES",
@@ -189,7 +190,7 @@ export const tpoStudentRequestsQuerySchema = z
     urgentOnly:z.boolean().default(false),
     jobId:uuid.optional(),
   proof:z.enum(["ALL","ATTACHED","MISSING"]).default("ALL"),
-  branchId:z.string().uuid().optional(),
+  branchId:zUuid.optional(),
   registration:z.enum(["ALL","PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","NOT_REGISTERED"]).default("ALL"),
   afterCollege:z.enum(["ALL","NOT_RECORDED",...AFTER_COLLEGE_OUTCOMES]).default("ALL"),
     search: z.string().trim().max(150).optional(),

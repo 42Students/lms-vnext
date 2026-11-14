@@ -9,7 +9,8 @@ import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-
 import {z} from "zod";
 import { CACHE, privateJson } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
-const params=z.object({batchId:z.uuid().optional(),branchId:z.uuid().optional()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+const params=z.object({batchId:zUuid.optional(),branchId:zUuid.optional()}).strict();
 const csv=(v:unknown)=>{
  const value=String(v??"");
  const safe=/^[\s]*[=+\-@\t\r]/.test(value)?"'"+value:value;

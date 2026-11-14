@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTeamHistoryQuerySchema = z.object({
-  projectId: z.string().uuid(),
+  projectId: zUuid,
   view: z.enum(["ALL", "OPEN", "ENDED"]).default("ALL"),
   role: z.enum(["ALL","MENTOR","LEARNER"]).default("ALL"),
   primary: z.enum(["ALL","PRIMARY"]).default("ALL"),

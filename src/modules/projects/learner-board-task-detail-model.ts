@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const taskIdSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const taskIdSchema=zUuid;
 type TaskIdentity={id:string};
 export type LearnerTaskBoardUrlFilters = {
   taskSearch:string;priority:string;status?:string;sprintId:string;releaseId:string;taskSort?:string;mine?:boolean;

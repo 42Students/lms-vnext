@@ -1,13 +1,14 @@
 import { z } from "zod";
 import type { MentorProjectAttention } from "./mentor-attention";
 
+import { zUuid } from "@/lib/schema-primitives";
 const paging = {
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
 };
 export const mentorReviewQuerySchema = z.object({
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
-  projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
+  projectId:z.preprocess(v=>v===""?undefined:v,zUuid.optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
@@ -16,7 +17,7 @@ export const mentorReviewQuerySchema = z.object({
 }).strict();
 export const mentorActivityQuerySchema = z.object({
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
-  projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
+  projectId:z.preprocess(v=>v===""?undefined:v,zUuid.optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   search:z.string().trim().max(120).default(""),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),

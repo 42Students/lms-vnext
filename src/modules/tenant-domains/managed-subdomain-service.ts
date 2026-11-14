@@ -10,6 +10,7 @@ import {TenantDomainServiceError} from "./service";
 import {z} from "zod";
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { zUuid } from "@/lib/schema-primitives";
 export class ManagedSubdomainError extends Error{
  constructor(readonly code:"MANAGED_WILDCARD_NOT_READY"|"SUBDOMAIN_STALE"|
   "SUBDOMAIN_ALREADY_ALLOTTED"|"SUBDOMAIN_MISSING"|"SUBDOMAIN_CONFLICT"){
@@ -23,7 +24,7 @@ function configuredDomain(){
 async function checkedCollege(ctx:RequestContext,input:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
- const id=z.uuid().parse(input);
+ const id=zUuid.parse(input);
  const [row]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
   .from(colleges).where(eq(colleges.id,id)).limit(1);
  if(!row||row.status!=="ACTIVE")throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");

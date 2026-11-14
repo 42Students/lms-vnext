@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** GET-only filters; the college is always resolved from the signed-in membership. */
 export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 10;
 export const COLLEGE_LECTURE_HALL_PAGE_SIZES = [10, 20, 50, 100] as const;
@@ -16,7 +17,7 @@ export const collegeLectureHallFiltersBaseSchema = z.object({
     "AUDITORIUM",
     "CONFERENCE_ROOM",
   ]).default("ALL"),
-  departmentId: z.string().uuid().optional(),
+  departmentId: zUuid.optional(),
   minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   upcoming: z.enum(["ALL","YES","NO"]).default("ALL"),

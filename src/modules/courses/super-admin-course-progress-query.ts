@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {adminLearningQuerySchema} from "./admin-learning-read-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy progress endpoint required separate courseId and classId.
  * A vNext offeringId identifies the scoped course delivery, so we do not
  * accept untrusted legacy numeric IDs as offering UUIDs. These are display
@@ -36,7 +37,7 @@ export function parseSuperAdminCourseProgressParams(raw:Record<string,string|str
  * scope keys, malformed UUIDs and duplicate offering IDs before DB access. */
 export function parseSuperAdminStudentProgressParams(raw:Record<string,string|string[]|undefined>){
  if(Object.keys(raw).length!==1||typeof raw["offeringId"]!=="string")return null;
- const parsed=z.string().uuid().safeParse(raw["offeringId"]);
+ const parsed=zUuid.safeParse(raw["offeringId"]);
  return parsed.success?parsed.data:null;
 }
 

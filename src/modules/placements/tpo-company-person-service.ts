@@ -16,6 +16,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class TpoCompanyPersonStale extends Error {
   constructor() { super("TPO_COMPANY_PERSON_STALE"); this.name = "TpoCompanyPersonStale"; }
 }
@@ -40,7 +41,7 @@ async function authorize(context: RequestContext) {
 
 export async function listTpoCompanyPeople(context: RequestContext, rawId: unknown) {
   const { collegeId } = await authorize(context);
-  const companyId = z.string().uuid().parse(rawId);
+  const companyId = zUuid.parse(rawId);
   const db = getDb();
   const [company] = await db.select({
     id: placementCompanyRelationships.id, name: placementCompanies.name,
@@ -79,7 +80,7 @@ export async function saveTpoCompanyPerson(
   context: RequestContext, rawCompanyId: unknown, rawInput: unknown,
 ) {
   const { collegeId, actorUserId, ownerMembershipId } = await authorize(context);
-  const companyId = z.string().uuid().parse(rawCompanyId);
+  const companyId = zUuid.parse(rawCompanyId);
   const input = companyContactPersonSchema.parse(rawInput);
   const db = getDb();
   try {

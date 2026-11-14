@@ -18,7 +18,8 @@ import {loadLessonContentScope} from "./scope";
 import {resourceMaterialsWriteReady} from "./lesson-resource-materials-model";
 import {CoursesServiceError} from "./errors";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const fileInput=z.strictObject({
  deliveryId:uuid.nullable().optional(),
  originalName:z.string().trim().min(3).max(255),

@@ -2,7 +2,8 @@ import {z} from "zod";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
-const collegeIdsSchema=z.array(z.uuid()).max(100)
+import { zUuid } from "@/lib/schema-primitives";
+const collegeIdsSchema=z.array(zUuid).max(100)
  .refine(ids=>new Set(ids).size===ids.length,"Duplicate college");
 
 export function parseModuleMetricsCollegeIds(raw:readonly string[]):string[]{

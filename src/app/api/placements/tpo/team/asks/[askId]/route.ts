@@ -8,6 +8,7 @@ import {changeTpoTeamAskById} from "@/modules/placements/tpo-team-asks-service";
 import { route } from "@/security/route";
 
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const actionSchema=z.strictObject({
  action:z.enum(["DONE","CANCEL"]),
@@ -19,7 +20,7 @@ async function handlePOST(request:Request,{params}:{
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {askId}=await params;
- if(!z.string().uuid().safeParse(askId).success)
+ if(!zUuid.safeParse(askId).success)
   return NextResponse.json({error:"NOT_FOUND"},{status:404});
  const body:unknown=await boundedRequestJson(request).catch(()=>null);
  const parsed=actionSchema.safeParse(body);

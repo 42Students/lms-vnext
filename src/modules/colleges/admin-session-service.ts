@@ -13,9 +13,10 @@ import {adminSessionHistoryPageSchema} from "./admin-session-query-model";
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
- const collegeId=z.uuid().parse(collegeIdInput),userId=z.uuid().parse(userIdInput);
+ const collegeId=zUuid.parse(collegeIdInput),userId=zUuid.parse(userIdInput);
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  const [member]=await getDb().select({id:collegeMemberships.id,name:users.displayName})
@@ -54,7 +55,7 @@ export function collegeAdminSessionDisplay(row:{
 }
 export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawCollegeId:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
- const collegeId=z.uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  return getDb().transaction(async tx=>{
@@ -98,7 +99,7 @@ export async function listCollegeAdminSessionTargetsPage(
 ){
  const page=adminSessionHistoryPageSchema.parse(rawPage),pageSize=25;
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
- const collegeId=z.uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  return getDb().transaction(async tx=>{

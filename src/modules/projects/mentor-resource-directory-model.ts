@@ -1,8 +1,9 @@
 import {z} from "zod";
 import {csvSafeCell} from "./mentor-board-review-model";
 import {singleValueMentorFilters} from "./mentor-filter-query";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorResourceDirectoryQuerySchema=z.object({
- projectId:z.string().uuid(),
+ projectId:zUuid,
  required:z.enum(["ALL","REQUIRED","OPTIONAL"]).default("ALL"),
  link:z.enum(["ALL","HTTPS","UNAVAILABLE"]).default("ALL"),
  description:z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),

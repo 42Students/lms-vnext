@@ -8,9 +8,10 @@ import { listPrograms } from "@/modules/academics/program-service";
 import { recordScopedProgramSelection } from "@/modules/academics/legacy-program-popularity";
 import { route } from "@/security/route";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type Context = { params: Promise<{ path: string[] }> };
-const uuid = z.string().uuid();
+const uuid = zUuid;
 
 /** Explicit migration aliases for the historical /api/v2/programs search
  * endpoints. The active college is always a verified UUID; legacy numeric

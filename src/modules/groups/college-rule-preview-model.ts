@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { matchesGroupRuleCandidate, type GroupRuleCandidate, type GroupRuleCriteria } from "./rule-evaluator";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const collegeRulePreviewInputSchema = z.object({
-  groupId: z.string().uuid(),
+  groupId: zUuid,
 }).strict();
 
 export const GROUP_RULE_PREVIEW_MAX_CANDIDATES = 1000;

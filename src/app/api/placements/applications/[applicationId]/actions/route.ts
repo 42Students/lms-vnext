@@ -9,6 +9,7 @@ import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -31,7 +32,7 @@ const inputBody = json && typeof json === "object" && !Array.isArray(json) ?
 const input = learnerApplicationWithdrawalSchema.parse(inputBody);
 let resolvedId = applicationId;
 if (legacyByJob || suppliedJobId !== undefined) {
-      const jobId = z.uuid().parse(suppliedJobId ?? applicationId);
+      const jobId = zUuid.parse(suppliedJobId ?? applicationId);
       const own = await listOwnPlacementApplications(context);
       const byApplication = own.find(row => row.application.id === applicationId);
       if (byApplication) {

@@ -1,5 +1,6 @@
 import {z} from "zod";
-const idSchema=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const idSchema=zUuid;
 /** Only previously authorized, membership-visible announcements can be focused. */
 export function learnerNoticeAnchor(value:string):string|null{
  const parsed=idSchema.safeParse(value);

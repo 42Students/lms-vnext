@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy resource labels are retained separately from the normalized vNext
  * type so PDF/DOC/PPT/Video/File do not silently collapse during editing.
  */
@@ -37,7 +38,7 @@ export function makeResourceKey(title:string){
 const safeUrl=z.string().trim().max(2048).url()
   .refine(url=>/^https?:\/\//i.test(url),{message:"Only HTTP(S) resource URLs are allowed"});
 export const projectResourceLibraryRowSchema=z.strictObject({
-  id:z.string().uuid().nullable(),
+  id:zUuid.nullable(),
   key:z.string().trim().min(1).max(120),
   title:z.string().trim().min(1,"Title is required").max(200),
   legacyKind:z.enum(legacyResourceKinds),

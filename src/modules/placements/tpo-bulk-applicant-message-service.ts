@@ -7,8 +7,9 @@ import {activityEvents,colleges,collegeMemberships,inAppNotifications,membership
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoApplicantBulkMessageSchema=z.strictObject({
- jobId:z.uuid(),applicationId:z.uuid(),
+ jobId:zUuid,applicationId:zUuid,
  expectedVersion:z.iso.datetime({offset:true}),
  body:z.string().trim().min(10).max(1000),
 });

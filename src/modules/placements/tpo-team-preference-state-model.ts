@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoTeamPreferenceActionSchema=z.strictObject({
- threadId:z.string().uuid(),
+ threadId:zUuid,
  action:z.enum(["FOLLOW","UNFOLLOW","MUTE","UNMUTE"]),
 });
 export type TpoThreadPreferenceAction=z.infer<typeof tpoTeamPreferenceActionSchema>["action"];

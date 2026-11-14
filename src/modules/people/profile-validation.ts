@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { learnerEducationValidationProblem } from "./learner-education-picker-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const optionalProfileText = (max: number) =>
   z
     .string()
@@ -16,7 +17,7 @@ export const learnerProfileInputSchema = z.object({
 });
 
 export const facultyProfileInputSchema = z.object({
-  primaryDepartmentId: z.string().uuid().nullable().optional(),
+  primaryDepartmentId: zUuid.nullable().optional(),
   employmentType: optionalProfileText(128),
   academicTitle: optionalProfileText(128),
 });
@@ -115,7 +116,7 @@ const calendarDateValue = z
   )
   .default("");
 
-const itemId = z.string().uuid();
+const itemId = zUuid;
 
 const contactsSchema = z
   .object({
@@ -366,7 +367,7 @@ const educationSchema = z
     field: textValue(200).optional(),
     score: textValue(120).optional(),
     description: textValue(5000).optional(),
-    certificateReceiptId: z.string().uuid().nullable().optional(),
+    certificateReceiptId: zUuid.nullable().optional(),
     examDetails: z
       .record(
         z.string().max(120),

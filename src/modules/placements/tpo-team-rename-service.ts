@@ -11,8 +11,9 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoTeamRenameSchema=z.strictObject({
- threadId:z.string().uuid(),
+ threadId:zUuid,
  topic:z.string().trim().min(1).max(200),
  expectedTopic:z.string().trim().min(1).max(200),
 });

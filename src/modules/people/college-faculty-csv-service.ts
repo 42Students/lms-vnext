@@ -11,6 +11,7 @@ import { tokenizeStudentCsv } from "./college-student-csv-model";
 import {LEGACY_FACULTY_TYPES} from "./college-faculty-type-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const FACULTY_CSV_COLUMNS =
   ["First Name","Last Name","Mobile Number","Email","Faculty Type","Department ID"] as const;
 const requestSchema = z.object({
@@ -31,7 +32,7 @@ const legacyBulkFacultyRow=z.strictObject({
  contactMail:z.string().optional(),contact_mail:z.string().optional(),
  facultyType:z.string().optional(),faculty_type:z.string().optional(),
  deptId:z.number().int().optional(),dept_id:z.number().int().optional(),
- departmentId:z.string().uuid().optional(),department_id:z.string().uuid().optional(),
+ departmentId:zUuid.optional(),department_id:zUuid.optional(),
 });
 const legacyBulkFacultyRequest=z.strictObject({
  action:z.enum(["PREVIEW","IMPORT"]).default("PREVIEW"),
@@ -98,7 +99,7 @@ export async function runCollegeFacultyCsv(context:RequestContext,raw:unknown) {
     const employmentType=LEGACY_FACULTY_TYPES.find(v=>v.toLowerCase()===rawFacultyType.toLowerCase())??rawFacultyType;
     if(row.length!==FACULTY_CSV_COLUMNS.length)errors.push("COLUMN_COUNT_MISMATCH");
     if(!firstName||!lastName||name.length>255)errors.push("FIRST_AND_LAST_NAME_REQUIRED");
-    if(!z.string().uuid().safeParse(primaryDepartmentId).success)
+    if(!zUuid.safeParse(primaryDepartmentId).success)
       errors.push("DEPARTMENT_UUID_REQUIRED");
     if(!/^\+[1-9]\d{7,14}$/.test(phone))errors.push("MOBILE_INVALID");
     if(email&&!z.email().safeParse(email).success)errors.push("EMAIL_INVALID");

@@ -14,12 +14,13 @@ import {canLearnerMoveOwnTask,learnerTaskStatusInputSchema} from "./learner-task
 import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** LEARNER-projects-25: only active learner member and exact assigned task.
  * All state/ownership checks are repeated under DB locks. No DONE/IN_REVIEW escape. */
 export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjectId:unknown,
  rawTaskId:unknown,rawInput:unknown){
- const projectId=z.string().uuid().parse(rawProjectId);
- const taskId=z.string().uuid().parse(rawTaskId);
+ const projectId=zUuid.parse(rawProjectId);
+ const taskId=zUuid.parse(rawTaskId);
  const input=learnerTaskStatusInputSchema.parse(rawInput);
  const membership=context.membership;
  if(!membership || !membership.roles.includes(ROLE.LEARNER))

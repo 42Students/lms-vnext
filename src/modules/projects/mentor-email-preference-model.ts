@@ -1,11 +1,12 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** One opt-in controls only final-submission and meeting-request emails.
  * All other Mentor notifications remain in-app regardless of this value.
  */
 export const mentorEmailPreferenceSaveSchema=z.strictObject({
  enabled:z.boolean(),
- expectedVersion:z.uuid().nullable(),
+ expectedVersion:zUuid.nullable(),
 });
 export type MentorEmailPreferenceState={enabled:boolean;version:string|null};
 export function mentorEmailPreferenceFromSavedEvent(

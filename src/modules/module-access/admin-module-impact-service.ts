@@ -7,7 +7,8 @@ import {getDb} from "@/db/client";
 import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers,placementRoundCandidateSlots} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-const id=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 /** Only return aggregate tenant counts while the persisted Super Admin role
  * and this exact active college's scope are still valid. */
 async function assertCurrentImpactScope(ctx:RequestContext,collegeId:string,organizationId:string){

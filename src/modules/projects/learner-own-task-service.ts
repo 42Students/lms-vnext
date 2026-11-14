@@ -15,7 +15,8 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 
 import { ROLE } from "@/modules/identity/roles";
-const params=z.strictObject({projectId:z.string().uuid()});
+import { zUuid } from "@/lib/schema-primitives";
+const params=z.strictObject({projectId:zUuid});
 function keyFor(membershipId:string){return "learner-"+membershipId.replaceAll("-","")+"-"+randomUUID().slice(0,8);}
 export async function createLearnerOwnTask(context:RequestContext,rawParams:unknown,raw:unknown){
  const {projectId}=params.parse(rawParams),input=learnerOwnTaskCreateInputSchema.parse(raw);
@@ -75,7 +76,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
  });
 }
 export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unknown,taskIdInput:unknown){
- const {projectId}=params.parse(rawParams),taskId=z.string().uuid().parse(taskIdInput);
+ const {projectId}=params.parse(rawParams),taskId=zUuid.parse(taskIdInput);
  const scope=await requireProjectReadAccess(context,projectId),membership=context.membership;
  if(scope.access!==ROLE.LEARNER||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{

@@ -13,8 +13,9 @@ import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-servi
 import { placementTableExists } from "@/modules/placements/staged-tables";
 import { undoPlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
-const inputSchema=z.object({actionId:z.string().uuid()}).strict();
+const inputSchema=z.object({actionId:zUuid}).strict();
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {

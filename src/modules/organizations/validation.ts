@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const organizationIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const organizationIdSchema = zUuid;
 
 export const organizationNameSchema = z
   .string()

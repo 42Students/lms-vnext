@@ -13,11 +13,12 @@ import {validatePrivateReadRequest} from "@/modules/storage/private-object-stora
 import {deleteObject} from "@/modules/storage/s3-client";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Only privileged operators may physically erase an already revoked
  * Faculty identity object AFTER retention expires. Never accept an object
  * key, college ID or file URL from the browser. Receipt metadata remains
  * immutable for historical audit, and replaying the same purge is safe. */
-const requestSchema=z.strictObject({receiptId:z.uuid(),confirmed:z.literal(true)});
+const requestSchema=z.strictObject({receiptId:zUuid,confirmed:z.literal(true)});
 export async function purgeExpiredFacultyIdentityEvidence(
  context:RequestContext,raw:unknown,now=new Date(),
 ){

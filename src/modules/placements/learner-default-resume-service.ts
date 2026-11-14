@@ -15,7 +15,8 @@ import {
 } from "@/modules/storage/private-object-storage";
 
 import { ROLE } from "@/modules/identity/roles";
-const receiptIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const receiptIdSchema = zUuid;
 const uploadInput = z.strictObject({
   contentType: z.literal("application/pdf"),
   sizeBytes: z.number().int().min(1).max(10 * 1024 * 1024),

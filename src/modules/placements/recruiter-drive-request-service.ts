@@ -18,6 +18,7 @@ import {z} from "zod";
 import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "./recruiter-drive-autoapproval-policy";
 import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Resolve a historic recruiter Job bookmark without guessing which new
  * request it represents. The legacy integer ID is only a search key; the
  * selected active college and recruiter relationship remain mandatory.
@@ -27,7 +28,7 @@ export async function resolveOwnRecruiterLegacyJobLink(
   context:RequestContext,raw:unknown,
 ) {
   const input=z.strictObject({
-    collegeId:z.string().uuid(),
+    collegeId:zUuid,
     legacyJobId:z.number().int().positive(),
   }).parse(raw);
   const grant=requireOwnGrant(context,input.collegeId);
@@ -215,7 +216,7 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
  });
 }
 export async function listOwnRecruiterDriveRequests(context:RequestContext,collegeId:string){
- const id=z.string().uuid().parse(collegeId);
+ const id=zUuid.parse(collegeId);
  return getDb().transaction(async tx=>{
   const scope=await lockedRelationship(tx,context,id);
   const requests=await tx.select().from(placementRecruiterDriveRequests).where(and(

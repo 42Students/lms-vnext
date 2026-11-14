@@ -22,6 +22,7 @@ import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 // Preserve complete 1,000-row Unicode-rich imports within a finite byte budget.
@@ -32,7 +33,7 @@ const privateHeaders = { "Cache-Control": CACHE.PRIVATE };
 // A successful import does not auto-enable GET or certify synonym/source parity.
 const selectionInput = z.discriminatedUnion("action",[
   z.strictObject({action:z.literal("SELECT_V1"),
-    name:z.string().trim().min(1).max(200),skillId:z.string().uuid()}),
+    name:z.string().trim().min(1).max(200),skillId:zUuid}),
   z.strictObject({action:z.literal("SELECT_V2"),
     name:skillUsageNameSchema}),
 ]);
@@ -300,8 +301,8 @@ export const GET = route(
 );
 
 const skillSelectionSchema=z.strictObject({
-  skillId:z.uuid().optional(),
-  skillIds:z.array(z.uuid()).max(25).optional(),
+  skillId:zUuid.optional(),
+  skillIds:z.array(zUuid).max(25).optional(),
   confirmed:z.literal(true),
 }).refine(value=>Boolean(value.skillId||value.skillIds?.length),
   {message:"Select at least one skill"});
@@ -325,7 +326,7 @@ async function recordSelectedSkillIds(
     if(!canReadSkillCatalog(context))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     const token=request.headers.get("idempotency-key");
-    if(!token||!z.uuid().safeParse(token).success)
+    if(!token||!zUuid.safeParse(token).success)
       return NextResponse.json({error:"IDEMPOTENCY_KEY_REQUIRED"},{status:400});
     const input=skillSelectionSchema.parse(payload);
     const ids=[...new Set([...(input.skillIds??[]),...(input.skillId?[input.skillId]:[])])].sort();

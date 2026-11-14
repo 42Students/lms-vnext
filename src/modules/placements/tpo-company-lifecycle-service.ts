@@ -14,6 +14,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import { decideTpoCompanyLifecycle, tpoCompanyLifecycleSchema } from "./tpo-company-lifecycle-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class TpoCompanyLifecycleError extends Error {
   constructor(public readonly code: "NOT_FOUND" | "STALE" | "ACTIVE_DRIVES") {
     super("TPO_COMPANY_" + code);
@@ -41,7 +42,7 @@ export async function getTpoCompanyLifecycle(
   context: RequestContext,
   companyIdInput: unknown,
 ) {
-  const companyId = z.string().uuid().parse(companyIdInput);
+  const companyId = zUuid.parse(companyIdInput);
   const { collegeId } = await companyScope(context);
   const [row] = await getDb().select({
     relationshipId: placementCompanyRelationships.id,

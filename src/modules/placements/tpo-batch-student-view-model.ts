@@ -1,5 +1,6 @@
 import {z} from "zod";
-export const batchStudentViewSchema=z.object({q:z.string().trim().max(100).default(""),classId:z.uuid().optional(),decision:z.enum(["ALL","ELIGIBLE","INELIGIBLE","NOT_DECIDED","NEEDS_REVIEW"]).default("ALL"),source:z.enum(["ALL","LEARNER","CLASS","BATCH","NONE"]).default("ALL"),registration:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),order:z.enum(["NAME_ASC","NAME_DESC","REVIEW_FIRST"]).default("NAME_ASC")}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const batchStudentViewSchema=z.object({q:z.string().trim().max(100).default(""),classId:zUuid.optional(),decision:z.enum(["ALL","ELIGIBLE","INELIGIBLE","NOT_DECIDED","NEEDS_REVIEW"]).default("ALL"),source:z.enum(["ALL","LEARNER","CLASS","BATCH","NONE"]).default("ALL"),registration:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),order:z.enum(["NAME_ASC","NAME_DESC","REVIEW_FIRST"]).default("NAME_ASC")}).strict();
 export function filterBatchStudentClass<T extends {classId?:string|null}>(rows:readonly T[],classId?:string):T[]{
  return classId?rows.filter(row=>row.classId===classId):[...rows];
 }

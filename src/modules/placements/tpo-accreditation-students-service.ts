@@ -12,12 +12,13 @@ import {tpoCrmTablesReady} from "./tpo-crm-storage-readiness";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {accreditationStudentCsv,buildAccreditationStudentRows,ACCREDITATION_STUDENT_WARNING} from "./tpo-accreditation-students-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Server-checked one-college/one-batch evidence. A blank employer contact is
  * intentional: no vetted employer contact is attached to the registered
  * placement company schema, and student phone/email is not a substitute. */
 export async function getTpoAccreditationStudentExport(context:RequestContext,raw:unknown){
- const query=z.strictObject({collegeId:z.string().uuid(),batchId:z.string().uuid(),
-  seasonId:z.string().uuid().optional(),jobId:z.string().uuid().optional()}).parse(raw);
+ const query=z.strictObject({collegeId:zUuid,batchId:zUuid,
+  seasonId:zUuid.optional(),jobId:zUuid.optional()}).parse(raw);
  const {collegeId,batch}=await getTpoBatch(context,query.batchId);
  if(collegeId!==query.collegeId)throw Error("BATCH_COLLEGE_MISMATCH");
  requirePermission(context,"placements.manage",{collegeId:query.collegeId,...(context.membership?.organizationId!==undefined?{organizationId:context.membership.organizationId}:{})});

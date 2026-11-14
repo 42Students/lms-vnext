@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoCompanyFeedbackQuerySchema = z.object({
-  companyId: z.string().uuid(),
+  companyId: zUuid,
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 
 export const tpoCompanyFeedbackWriteSchema = z.object({
-  leadId: z.string().uuid(),
+  leadId: zUuid,
   note: z.string().trim().min(3).max(2000),
 }).strict();
 

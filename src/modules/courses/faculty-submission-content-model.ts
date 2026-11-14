@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultySubmissionContentSchema = z.object({
-  id: z.string().uuid(),
+  id: zUuid,
   submissionType: z.enum(["TEXT","LINK","FILE"]),
   textContent: z.string().max(50000).nullable(),
   submissionUrl: z.string().max(2048).nullable(),

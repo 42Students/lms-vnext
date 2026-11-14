@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerNotificationHistoryQuerySchema = z.object({
   unread: z.literal("1").optional(),
   beforeAt: z.string().datetime({ offset: true }).optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
 }).strict().refine(
   (value) => Boolean(value.beforeAt) === Boolean(value.beforeId),
   "A notification cursor needs both its timestamp and ID",

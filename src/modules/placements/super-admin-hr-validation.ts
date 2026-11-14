@@ -5,14 +5,15 @@ import {
   phoneE164Schema,
 } from "@/modules/people/validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminHrUserIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const superAdminHrGrantIdSchema =
-  z.string().uuid();
+  zUuid;
 
 export const superAdminHrRelationshipIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const hrTitleSchema = z
   .string()
@@ -38,7 +39,7 @@ export const createSuperAdminHrInputSchema = z
   .object({
     companyRelationshipId: superAdminHrRelationshipIdSchema.optional(),
     newCompany:z.strictObject({
-      name:z.string().trim().min(2).max(150),collegeId:z.uuid(),
+      name:z.string().trim().min(2).max(150),collegeId:zUuid,
       primaryDomain:z.string().trim().min(4).max(253).optional(),
     }).optional(),
     companyRelationshipIds:z.array(superAdminHrRelationshipIdSchema).max(20).optional(),

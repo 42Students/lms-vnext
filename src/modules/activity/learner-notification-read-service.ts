@@ -9,6 +9,7 @@ import { ActivityServiceError } from "./errors";
 import { requirePersistedLearnerNotificationMembership } from "./learner-notification-membership-service";
 import { markAllOwnNotificationsRead, markOwnNotificationRead, requireStaffNotificationAudience } from "./notification-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Learner-only acknowledgement. Both recipient AND event college must
  * match the authenticated current membership; readAt is the audit timestamp.
  * Deliberately does not generate a noisy activity event for an inbox click. */
@@ -16,7 +17,7 @@ export async function markOwnLearnerNotificationRead(
   context: RequestContext,
   rawId: unknown,
 ) {
-  const id = z.string().uuid().parse(rawId);
+  const id = zUuid.parse(rawId);
   const membership = await requirePersistedLearnerNotificationMembership(context);
   const [owned] = await getDb().select({ id: inAppNotifications.id })
     .from(inAppNotifications)
@@ -50,7 +51,7 @@ export const LEARNER_NOTIFICATION_NOT_FOUND_COPY =
 export async function archiveOwnLearnerNotification(
   context:RequestContext,rawId:unknown,
 ){
-  const id=z.string().uuid().parse(rawId);
+  const id=zUuid.parse(rawId);
   const membership=await requirePersistedLearnerNotificationMembership(context);
   const [archived]=await getDb().update(inAppNotifications).set({
     deletedAt:new Date(),
@@ -75,8 +76,8 @@ export async function listStaffNotificationSubjects(
   context:RequestContext,raw:unknown,
 ){
   const input=z.strictObject({
-    classId:z.string().uuid().optional(),
-    courseId:z.string().uuid().optional(),
+    classId:zUuid.optional(),
+    courseId:zUuid.optional(),
   }).refine(value=>Boolean(value.classId||value.courseId)).parse(raw);
   const {audience}=await requireStaffNotificationAudience(context,{
     title:"Existing notifications",htmlContent:"Read-only notification lookup",

@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoDriveRequestDecisionSchema=z.strictObject({
-  requestId:z.string().uuid(),
+  requestId:zUuid,
   action:z.enum(["APPROVE_LATER","SEND_BACK","DECLINE"]),
   expectedStatus:z.enum(["REQUEST","SENT_BACK"]),
   reason:z.string().trim().min(3).max(1000),

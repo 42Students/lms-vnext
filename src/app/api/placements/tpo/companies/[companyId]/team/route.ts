@@ -7,6 +7,7 @@ import {mutateTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo
 import {tpoCompanyTeamPostSchema} from "@/modules/placements/tpo-company-team-model";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { route } from "@/security/route";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{companyId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -23,7 +24,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{companyId:st
   throw error;
  }
  const parsed=tpoCompanyTeamPostSchema.safeParse(body);
- if(!z.string().uuid().safeParse(companyId).success||!parsed.success)
+ if(!zUuid.safeParse(companyId).success||!parsed.success)
   return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   // The merged company-team service exposes an action-based mutation API.

@@ -15,13 +15,14 @@ import { getSuperAdminLearnerAccessTrace } from "./admin-trace-service";
 import { isStudentRuleNoop, studentRuleMatches } from "./admin-student-rule-model";
 import { StudentRuleConflict } from "./admin-student-rule-write";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** No placement overrides: placement decisions ignore membership rules.
  * Batch membership locks, stored CAS rows and ancestor locks in a single
  * transaction. The legacy maximum is 1000 distinct learner memberships. */
 const inputSchema = z.strictObject({
   membershipIds: z.preprocess(
     (value) => Array.isArray(value) ? [...new Set(value)] : value,
-    z.array(z.uuid()).min(1).max(1000),
+    z.array(zUuid).min(1).max(1000),
   ),
   module: z.enum(["projects", "electives"]),
   action: z.enum(["ENABLE", "DISABLE", "INHERIT"]),

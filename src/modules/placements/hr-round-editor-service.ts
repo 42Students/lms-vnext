@@ -13,6 +13,7 @@ import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy RecruiterDriveController (117–180) coverage.
  * The source route owns selected-college authorization; vNext identifies an
  * active recruiter grant and UUID job instead. Unmapped actions MUST NOT be
@@ -56,7 +57,7 @@ export function hrRoundEditorUnavailableMessage(code:string){
    :"This round cannot be edited after scheduling, results, or interview slots are recorded.";
 }
 export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw:unknown){
- const jobId=z.string().uuid().parse(rawJobId),input=hrRoundFormSchema.parse(raw);
+ const jobId=zUuid.parse(rawJobId),input=hrRoundFormSchema.parse(raw);
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return getDb().transaction(async tx=>{
@@ -160,7 +161,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
 
 /** The recruiter sees round metadata only, never internal candidate results. */
 export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:unknown){
- const jobId=z.string().uuid().parse(jobIdInput);
+ const jobId=zUuid.parse(jobIdInput);
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [job]=await getDb().select({id:placementJobs.id,collegeId:placementJobs.collegeId,

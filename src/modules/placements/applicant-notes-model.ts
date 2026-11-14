@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const APPLICANT_NOTE_MAX_LENGTH = 2000;
 export const APPLICANT_NOTE_VISIBLE_LIMIT = 50;
 
@@ -13,7 +14,7 @@ export type ApplicantNoteSide = "TPO" | "RECRUITER";
 export const applicantNoteInputSchema = z
   .object({
     body: z.string().trim().min(1).max(APPLICANT_NOTE_MAX_LENGTH),
-    expectedLatestNoteId: z.string().uuid().nullable(),
+    expectedLatestNoteId: zUuid.nullable(),
   })
   .strict();
 

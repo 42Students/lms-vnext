@@ -9,10 +9,11 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string;materialId:string}>};
 const noStore={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"};
-const scopeSchema=z.strictObject({deliveryId:z.string().uuid().nullable().optional()});
+const scopeSchema=z.strictObject({deliveryId:zUuid.nullable().optional()});
 async function act(request:Request,{params}:Route,action:"COMPLETE"|"REMOVE"|"EDIT"){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});

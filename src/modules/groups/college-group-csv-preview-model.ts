@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const GROUP_IMPORT_MAX_ROWS = 2000;
 export const GROUP_IMPORT_MAX_CHARACTERS = 524288;
 export const collegeGroupCsvPreviewSchema = z.object({
-  groupId: z.string().uuid(),
+  groupId: zUuid,
   csv: z.string().min(1).max(GROUP_IMPORT_MAX_CHARACTERS),
 }).strict();
 

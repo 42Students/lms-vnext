@@ -42,11 +42,12 @@ import {
   type TpoCompanyOffer,
 } from "./tpo-companies-view-model";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 
 /** Authorized global employer picker: never return another college’s CRM details. */
 export async function searchTpoCompanyCandidates(context:RequestContext,raw:unknown){
- const input=z.object({collegeId:z.string().uuid(),q:z.string().trim().min(2).max(120)}).strict().parse(raw);
+ const input=z.object({collegeId:zUuid,q:z.string().trim().min(2).max(120)}).strict().parse(raw);
  const liveCollege=await requireTpoBatchActor(context);
  if(liveCollege!==input.collegeId)throw new AuthorizationError("placements.manage");
  await requirePlacementManageScope(context,input.collegeId);

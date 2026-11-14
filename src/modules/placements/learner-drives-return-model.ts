@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerDriveUrlSchema} from "./learner-drive-url-model";
-const jobId=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const jobId=zUuid;
 const queryLimit=512;
 function safeFilterQuery(raw:unknown):string {
   if(typeof raw!=="string"||raw.length>queryLimit)return "";

@@ -14,8 +14,9 @@ import {placementTableExists} from "./staged-tables";
 import {prioritizedCompanyTeamRecipients} from "./tpo-company-team-recipient-priority";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-export const companyTeamCompanyIdSchema=z.string().uuid();
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const companyTeamCompanyIdSchema=zUuid;
+const uuid=zUuid;
 const messageText=z.string().trim().min(1).max(4000);
 const mutation=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("SEND"),body:messageText,decision:z.boolean().default(false),

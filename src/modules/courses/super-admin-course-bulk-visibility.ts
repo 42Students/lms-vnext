@@ -13,8 +13,9 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 
 import { env } from "@/config/env";
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminCourseBulkSchema=z.strictObject({
- courseIds:z.array(z.uuid()).min(1).max(100).refine(ids=>new Set(ids).size===ids.length),
+ courseIds:z.array(zUuid).min(1).max(100).refine(ids=>new Set(ids).size===ids.length),
  visibleToStudents:z.preprocess(value=>value===0?false:value===1?true:value,z.boolean()),
  confirmed:z.literal(true),
 });

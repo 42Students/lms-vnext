@@ -1,11 +1,12 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Sprint goals and dates are registered in migration 0123. */
 export const mentorSprintCreateParamsSchema = z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
 }).strict();
 export const mentorSprintCreateSchema = z.object({
-  releaseId:z.string().uuid(),
+  releaseId:zUuid,
   title:z.string().trim().min(1).max(200),
   key:z.string().trim().max(120).optional(),
   dueLabel:z.string().trim().max(160).nullable().optional(),
@@ -20,7 +21,7 @@ export const mentorSprintCreateSchema = z.object({
 });
 
 export const mentorSprintTransitionParamsSchema = z.object({
-  projectId:z.string().uuid(),sprintId:z.string().uuid(),
+  projectId:zUuid,sprintId:zUuid,
 }).strict();
 export const mentorSprintTransitionSchema = z.object({
   action:z.enum(["START","COMPLETE","REOPEN"]),

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyLiveMutationParamsSchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
 }).strict();
 const httpsMeeting=z.string().url().max(1200).refine(value=>{
   try {
@@ -22,15 +23,15 @@ const fields=z.object({
 }).strict();
 export const facultyLiveMutationSchema=z.discriminatedUnion("action",[
   fields.extend({
-    action:z.literal("CREATE"),lessonId:z.string().uuid(),
+    action:z.literal("CREATE"),lessonId:zUuid,
     confirm:z.literal(true),
   }),
   fields.extend({
-    action:z.literal("EDIT"),contentId:z.string().uuid(),
+    action:z.literal("EDIT"),contentId:zUuid,
     expectedUpdatedAt:time,confirm:z.literal(true),
   }),
   z.object({
-    action:z.literal("CANCEL"),contentId:z.string().uuid(),
+    action:z.literal("CANCEL"),contentId:zUuid,
     expectedUpdatedAt:time,confirm:z.literal(true),
   }).strict(),
 ]).superRefine((data,ctx)=>{

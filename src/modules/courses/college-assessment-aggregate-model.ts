@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Fixed legacy server-page bound for all College Admin and Super Admin assessment views.
  * An API zero-based page maps to UI page N as N-1 only at an API adapter boundary;
  * all vNext read and pagination models are consistently 1-based. */
@@ -10,7 +11,7 @@ export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
 export const collegeAssessmentListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().min(1).max(64).optional(),
-  deliveryId: z.string().uuid().optional(),
+  deliveryId: zUuid.optional(),
   periodCode:z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
   programCode:z.string().trim().min(1).max(64).optional(),

@@ -11,10 +11,11 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
 import { afterCollegeManualSchema } from "./tpo-after-college-model";
+import { zUuid } from "@/lib/schema-primitives";
 const version = z.union([z.literal("none"), z.string().datetime({ offset: true })]);
 const inputSchema = z.object({
   changes: z.array(z.object({
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     outcome: afterCollegeManualSchema,
     expectedVersion: version,
   }).strict()).min(1).max(200),

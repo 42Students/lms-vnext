@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorReviewHistoryQuerySchema = z.object({
   version: z.preprocess(value=>value===""?undefined:value,z.coerce.number().int().min(1).max(100000).optional()),
-  projectId: z.preprocess(value => value===""?undefined:value,z.string().uuid().optional()),
+  projectId: z.preprocess(value => value===""?undefined:value,zUuid.optional()),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),

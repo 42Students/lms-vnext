@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy global curation pages 50 canonical companies; college relationship pages 10. */
 export const GLOBAL_COMPANY_PAGE_SIZE = 50;
 export const COLLEGE_COMPANY_PAGE_SIZE = 10;
@@ -17,8 +18,8 @@ export const adminCompaniesQuerySchema = z.strictObject({
   trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
   verified: z.enum(["ALL", "VERIFIED", "NOT_VERIFIED"]).default("ALL"),
   page: strictCompanyPage.default(1),
-  collegeId: z.uuid().optional(),
-  companyId: z.uuid().optional(),
+  collegeId: zUuid.optional(),
+  companyId: zUuid.optional(),
   sort: z.enum(["NAME","NAME_DESC","RECENT","DRIVES","DRIVES_ASC","LAST_ACTIVE","LAST_ACTIVE_ASC"]).default("LAST_ACTIVE"),
   searchField: z.enum(["ALL","NAME","DOMAIN"]).default("ALL"),
   owner: z.enum(["ALL","ASSIGNED","UNASSIGNED"]).default("ALL"),

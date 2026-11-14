@@ -11,6 +11,7 @@ import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 import {recordedOutsideParticipantSchema} from "./recorded-outside-participation-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export async function listTpoOutsideDriveRecords(context:RequestContext){
  const collegeId=await requireTpoJobCollege(context);
  await getDb().transaction(tx=>requireTpoJobActor(tx,context));
@@ -30,7 +31,7 @@ export async function getTpoOutsideDriveParticipants(
  context:RequestContext,rawRecordId:unknown,search="",
 ){
  const collegeId=await requireTpoJobCollege(context);
- const recordId=z.string().uuid().parse(rawRecordId);
+ const recordId=zUuid.parse(rawRecordId);
  await getDb().transaction(tx=>requireTpoJobActor(tx,context));
  const [record]=await getDb().select({
   id:placementOutsideDriveRecords.id,title:placementOutsideDriveRecords.title,

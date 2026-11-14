@@ -14,6 +14,7 @@ import {
   DEFAULT_ATTENDANCE_POLICY,
 } from "./policy-validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy College Admin policy inputs are read-only; mutations are reserved
  * for authorized Super Admin acting in the college. Keep this at the service
  * boundary so direct PUT/PATCH/DELETE calls cannot bypass the read-only UI. */
@@ -176,7 +177,7 @@ export async function updateCollegeAttendancePolicy(
  * attendance_policies; writing a default number is an explicit college value,
  * NOT deletion of a higher-level override. */
 const attendancePolicyFieldPatchSchema=z.strictObject({
-  collegeId:z.string().uuid(),
+  collegeId:zUuid,
   field:z.enum(["eligibilityThresholdPercent","correctionWindowHours"]),
   expectedValue:z.number().int().min(1).max(8760),
   value:z.number().int().min(1).max(8760),
@@ -239,7 +240,7 @@ export async function updateCollegeAttendancePolicyField(context:RequestContext,
 export async function resetCollegeAttendancePolicyOverride(context:RequestContext,raw:unknown){
  requirePolicyWriteActor(context);
  const input=z.strictObject({
-  collegeId:z.string().uuid(),
+  collegeId:zUuid,
   expectedCorrectionWindowHours:z.number().int().min(1).max(8760),
   expectedEligibilityThresholdPercent:z.number().int().min(1).max(100),
   confirmed:z.literal(true),

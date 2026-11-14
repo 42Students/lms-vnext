@@ -14,12 +14,13 @@ import {readResourceMaterialCommandJson} from "@/modules/courses/resource-materi
 import {isSameOriginRequest} from "@/auth/origin";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
-const deliveryQuerySchema=z.strictObject({deliveryId:z.string().uuid().optional()});
+const deliveryQuerySchema=z.strictObject({deliveryId:zUuid.optional()});
 const fileGrantQuerySchema=z.strictObject({
- deliveryId:z.string().uuid().optional(),
- openMaterialId:z.string().uuid().optional(),
+ deliveryId:zUuid.optional(),
+ openMaterialId:zUuid.optional(),
  legacyMaterialIndex:z.coerce.number().int().min(0).max(2147483647).optional(),
 }).refine(query => !(query.openMaterialId && query.legacyMaterialIndex !== undefined),{
  message:"Choose one material reference",
@@ -33,7 +34,7 @@ function normalizeContentAliases(
  const {id,lessonContentId,lesson_content_id,...params}=raw;
  for(const alias of [id,lessonContentId,lesson_content_id]){
   if(alias===undefined)continue;
-  if(typeof alias!=="string"||!z.string().uuid().safeParse(alias).success||
+  if(typeof alias!=="string"||!zUuid.safeParse(alias).success||
      alias!==contentId)throw new StorageFileError("STORAGE_NOT_FOUND");
  }
  return params;
@@ -56,7 +57,7 @@ export const GET = route(
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     const {contentId:rawContentId}=params;
-    const contentId=z.string().uuid().parse(rawContentId);
+    const contentId=zUuid.parse(rawContentId);
     const query=fileGrantQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request)));
     const deliveryId=query.deliveryId??null;
     if(query.openMaterialId || query.legacyMaterialIndex !== undefined){
@@ -81,7 +82,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {contentId:rawContentId}=params;
-    const contentId=z.string().uuid().parse(rawContentId);
+    const contentId=zUuid.parse(rawContentId);
     const input=await readResourceMaterialCommandJson(request);
     const deliveryId=deliveryQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request))).deliveryId??null;
     const result=await commandLessonResourceMaterial(

@@ -30,9 +30,10 @@ import {
 } from "./coordinator-policy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type Reader = Pick<PermissionTransaction, "select">;
 
-const idSchema = z.string().uuid();
+const idSchema = zUuid;
 
 export type OfferingScope = {
   id: string;

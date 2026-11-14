@@ -9,7 +9,8 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-const pathSchema=z.strictObject({projectId:z.string().uuid(),sprintId:z.string().uuid()});
+import { zUuid } from "@/lib/schema-primitives";
+const pathSchema=z.strictObject({projectId:zUuid,sprintId:zUuid});
 const bodySchema=z.strictObject({expectedUpdatedAt:z.iso.datetime({offset:true}),confirmUnlink:z.literal(true)});
 /** MEN-projects-meetings-35: unlink task plan only while still planned, preserving task identities. */
 export async function deleteMentorProjectSprint(context:RequestContext,rawPath:unknown,rawBody:unknown){

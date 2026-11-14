@@ -1,16 +1,17 @@
 import {z} from "zod";
 import {batchStudentViewSchema} from "./tpo-batch-student-view-model";
+import { zUuid } from "@/lib/schema-primitives";
 /** TPO-batches-46: a batch view is bound to one persisted cohort, not a
  * reusable all-college student view. */
 export const tpoBatchSavedFilterSchema=batchStudentViewSchema.extend({
- batchId:z.string().uuid(),
+ batchId:zUuid,
 }).strict();
 export type TpoBatchSavedFilter=z.infer<typeof tpoBatchSavedFilterSchema>;
 export const tpoBatchSavedViewCommandSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("CREATE"),name:z.string().trim().min(1).max(100),pinned:z.boolean(),filters:tpoBatchSavedFilterSchema}).strict(),
- z.object({action:z.literal("UPDATE"),id:z.string().uuid(),name:z.string().trim().min(1).max(100),pinned:z.boolean(),filters:tpoBatchSavedFilterSchema}).strict(),
- z.object({action:z.literal("DELETE"),id:z.string().uuid()}).strict(),
- z.object({action:z.literal("OPEN"),id:z.string().uuid()}).strict(),
+ z.object({action:z.literal("UPDATE"),id:zUuid,name:z.string().trim().min(1).max(100),pinned:z.boolean(),filters:tpoBatchSavedFilterSchema}).strict(),
+ z.object({action:z.literal("DELETE"),id:zUuid}).strict(),
+ z.object({action:z.literal("OPEN"),id:zUuid}).strict(),
 ]);
 export function tpoBatchViewUrl(view:TpoBatchSavedFilter){
  const query=new URLSearchParams();

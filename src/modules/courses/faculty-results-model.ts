@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyResultsQuerySchema = z.object({
   kind: z.enum(["ALL", "ASSIGNMENT", "QUIZ"]).default("ALL"),
   status: z.enum(["ALL", "PUBLISHED"]).default("ALL"),
-  deliveryId: z.string().uuid().optional(),
+  deliveryId: zUuid.optional(),
   search: z.string().trim().max(120).default(""),
   page: z.union([z.number().int().min(1).max(10000), z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).pipe(z.number().max(10000))]).default(1),
   sort:z.enum(["DUE_DESC","DUE_ASC","TITLE"]).default("DUE_DESC"),

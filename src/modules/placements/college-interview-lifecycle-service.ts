@@ -7,12 +7,13 @@ import {placementRoundCandidateSlots as slots} from "@/db/schema/placement-round
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {mutateCollegeRoundSlotInterview} from "./college-round-slot-action-service";
+import { zUuid } from "@/lib/schema-primitives";
 export class CollegeInterviewLifecycleError extends Error{
  constructor(readonly code:"INTERVIEW_STORAGE_PENDING"|"INTERVIEW_STALE"){
   super(code);this.name="CollegeInterviewLifecycleError";
  }
 }
-const input=z.strictObject({id:z.uuid(),expectedVersion:z.number().int().positive(),
+const input=z.strictObject({id:zUuid,expectedVersion:z.number().int().positive(),
  status:z.enum(["COMPLETED","NO_SHOW"]),reason:z.string().trim().min(3).max(500)});
 /** Global interviews use the same 0116 writer as per-drive appointments. */
 export async function finishCollegeInterview(ctx:RequestContext,raw:unknown){

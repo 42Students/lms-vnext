@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function HrProfilePage({ searchParams }: {
   searchParams?: Promise<{ collegeId?: string | string[] }>;
 }) {
@@ -30,7 +31,7 @@ export default async function HrProfilePage({ searchParams }: {
   const grants = context.recruiter.grants;
   const requestedId = typeof search.collegeId === "string" ? search.collegeId : null;
   if (search.collegeId && (!requestedId ||
-    !z.string().uuid().safeParse(requestedId).success ||
+    !zUuid.safeParse(requestedId).success ||
     !grants.some(grant => grant.collegeId === requestedId))) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Your Profile"/>

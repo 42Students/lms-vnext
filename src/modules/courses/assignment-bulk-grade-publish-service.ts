@@ -14,11 +14,12 @@ import {publishAssignmentGrade} from "./assignment-submission-service";
 import {courseAssignmentIdSchema} from "./assignment-validation";
 import {CoursesServiceError} from "./errors";
 
+import { zUuid } from "@/lib/schema-primitives";
 const MAX_BATCH=200;
 const bulkPublishInput=z.strictObject({
-  requestId:z.string().uuid(),
-  deliveryId:z.string().uuid().nullable().optional(),
-  submissionIds:z.array(z.string().uuid()).min(1).max(MAX_BATCH).optional(),
+  requestId:zUuid,
+  deliveryId:zUuid.nullable().optional(),
+  submissionIds:z.array(zUuid).min(1).max(MAX_BATCH).optional(),
 });
 
 /**

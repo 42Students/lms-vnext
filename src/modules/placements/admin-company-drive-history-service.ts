@@ -13,10 +13,11 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { summarizeVisibleCompanyDriveHistory } from "./admin-company-drive-history-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Scopes every company-history row to the persisted selected college. */
 export async function listSuperAdminCompanyDriveHistory(context: RequestContext, rawCompanyId: string) {
   if (!isSuperAdmin(context)) throw new AuthorizationError("placements.read");
-  const companyId = z.string().uuid().parse(rawCompanyId);
+  const companyId = zUuid.parse(rawCompanyId);
   const acting = await resolveActingCollege(context, "placements.read");
   const db = getDb();
   const [company] = await db.select({

@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { stagePlacementRoundResultInputSchema } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const bulkTpoRoundResultSchema = z.object({
   confirmed: z.literal(true),
   entries: z.array(z.object({
-    expectedCurrentResultId: z.string().uuid().nullable(),
+    expectedCurrentResultId: zUuid.nullable(),
     result: stagePlacementRoundResultInputSchema,
   }).strict()).min(1).max(25).refine((entries) =>
     new Set(entries.map((item) => item.result.applicationId)).size === entries.length,

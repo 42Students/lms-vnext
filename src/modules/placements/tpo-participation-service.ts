@@ -43,7 +43,8 @@ import { placementTableExists } from "./staged-tables";
 import { placementEligibilityEvents } from "@/db/schema/placement-batches";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 

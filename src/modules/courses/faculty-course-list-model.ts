@@ -2,10 +2,11 @@ import { z } from "zod";
 import {CoursesServiceError} from "./errors";
 import { COURSE_TEACHING_ROLES } from "./constants";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyCourseListQuerySchema = z.object({
   q: z.string().trim().max(120).default(""),
-  period: z.union([z.string().uuid(), z.literal("")]).default(""),
-  section: z.union([z.string().uuid(), z.literal("")]).default(""),
+  period: z.union([zUuid, z.literal("")]).default(""),
+  section: z.union([zUuid, z.literal("")]).default(""),
   role: z.union([z.enum(COURSE_TEACHING_ROLES), z.literal("")]).default(""),
   // URL values are decimal strings; do not coerce arrays, booleans or 1e3.
   page: z.union([

@@ -32,6 +32,7 @@ import {cascadeTpoRecordedAcceptance} from "./tpo-offer-acceptance-cascade";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
  * and overlapping-batch deadlocks. No external or unregistered tables.
@@ -487,7 +488,7 @@ export async function getTpoOfferLetterAttachment(
   throw new AuthorizationError("placements.manage");
  const collegeId=context.membership.collegeId;
  requirePermission(context,"placements.manage",{collegeId});
- const jobId=placementJobIdSchema.parse(rawJobId),offerId=z.string().uuid().parse(rawOfferId);
+ const jobId=placementJobIdSchema.parse(rawJobId),offerId=zUuid.parse(rawOfferId);
  await requirePlacementManageScope(context,collegeId);
  const [row]=await getDb().select({
   id:placementOffers.id,status:placementOffers.status,
@@ -510,7 +511,7 @@ export async function attachTpoOfferLetter(
   throw new AuthorizationError("placements.manage");
  const collegeId=context.membership.collegeId;
  requirePermission(context,"placements.manage",{collegeId});
- const jobId=placementJobIdSchema.parse(rawJobId),offerId=z.string().uuid().parse(rawOfferId);
+ const jobId=placementJobIdSchema.parse(rawJobId),offerId=zUuid.parse(rawOfferId);
  const input=offerLetterAttachmentInputSchema.parse(raw);
  await requirePlacementManageScope(context,collegeId);
  return getDb().transaction(async tx=>{

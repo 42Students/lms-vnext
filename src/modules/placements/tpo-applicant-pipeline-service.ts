@@ -12,13 +12,14 @@ import { requireTpoJobActor } from "./tpo-job-write-base";
 import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Job/college scoped compatibility facets. Org-wide indexing uses another service. */
 const oldFacetsSchema=z.strictObject({
  submittedAfter:z.iso.date().optional(),submittedBefore:z.iso.date().optional(),
  minScore:z.coerce.number().int().min(0).max(100).optional(),
  maxScore:z.coerce.number().int().min(0).max(100).optional(),
- cohortId:z.uuid().optional(),sectionId:z.uuid().optional(),
- programId:z.uuid().optional(),departmentId:z.uuid().optional(),
+ cohortId:zUuid.optional(),sectionId:zUuid.optional(),
+ programId:zUuid.optional(),departmentId:zUuid.optional(),
  source:z.enum(["ALL","LEARNER","COLLEGE"]).default("ALL"),
 }).superRefine((x,ctx)=>{
  if(x.minScore!==undefined&&x.maxScore!==undefined&&x.maxScore<x.minScore)

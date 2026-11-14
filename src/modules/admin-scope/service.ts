@@ -13,14 +13,15 @@ import type {
 } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const scopeSelectionSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("organization"),
-    organizationId: z.string().uuid(),
+    organizationId: zUuid,
   }).strict(),
   z.object({
     kind: z.literal("college"),
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
   }).strict(),
 ]);
 
@@ -46,7 +47,7 @@ function legacyScopeIdentifier(value: HistoricalSelectionId): string | number | 
     if (!Number.isSafeInteger(parsed)) throw new AdminScopeServiceError("ADMIN_SCOPE_NOT_FOUND");
     return parsed>0?parsed:null;
   }
-  if (z.string().uuid().safeParse(trimmed).success) return trimmed;
+  if (zUuid.safeParse(trimmed).success) return trimmed;
   throw new AdminScopeServiceError("ADMIN_SCOPE_NOT_FOUND");
 }
 

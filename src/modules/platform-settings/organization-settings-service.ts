@@ -7,7 +7,8 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
-const organizationIdSchema=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const organizationIdSchema=zUuid;
 const keySchema=z.string().trim().min(1).max(120).regex(/^[A-Za-z][A-Za-z0-9._-]*$/);
 const change=z.strictObject({
  key:keySchema,value:z.string().max(4096),expectedVersion:z.number().int().nonnegative(),

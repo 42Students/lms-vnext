@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPublicJoinLinkStatus} from "@/modules/placements/tpo-public-join-link-service";
 import { noStoreJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 /** TPO-companies-R02: scoped readback; never returns the original secret token. */
 export const GET = route(
@@ -20,7 +21,7 @@ if(keys.length!==new Set(keys).size||
    return NextResponse.json({error:"INVALID_QUERY"},{status:400});
 const input=z.discriminatedUnion("scope",[
    z.strictObject({scope:z.literal("COLLEGE")}),
-   z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid()}),
+   z.strictObject({scope:z.literal("COMPANY"),companyId:zUuid}),
   ]).parse(search.get("scope")==="COMPANY"
    ?{scope:"COMPANY",companyId:search.get("companyId")}
    :{scope:search.get("scope")});

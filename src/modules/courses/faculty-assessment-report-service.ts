@@ -7,7 +7,8 @@ import { listQuizAttempts } from "./quiz-attempt-service";
 import { getCourseQuiz } from "./quiz-service";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 
 /** Current-roster filtering is for current eligibility/absence only. Historic
  * submissions by an authorized learner on this delivery remain reportable even

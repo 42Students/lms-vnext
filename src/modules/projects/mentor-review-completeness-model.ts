@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorReviewCompletenessQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   page:z.preprocess(v=>typeof v==="string"&&/^[1-9][0-9]{0,4}$/.test(v)
     ?Number(v):v,z.number().int().min(1).max(10000).default(1)),
 }).strict();

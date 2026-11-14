@@ -1,5 +1,6 @@
 import {z} from "zod";
-export const mentorCloseoutParamsSchema=z.object({projectId:z.string().uuid()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+export const mentorCloseoutParamsSchema=z.object({projectId:zUuid}).strict();
 export const mentorCloseoutSchema=z.object({
   expectedUpdatedAt:z.iso.datetime({offset:true}),
   confirmDeliveryReviewed:z.literal(true),

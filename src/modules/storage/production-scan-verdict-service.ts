@@ -14,6 +14,7 @@ import {getPrivateR2Config} from "./r2-config";
 import {headObject} from "./s3-client";
 
 import { rawEnv } from "@/config/env";
+import { zUuid } from "@/lib/schema-primitives";
 /** Merely configuring R2 cannot authorize public downloads. A separately
  * operated scanning worker must attest bytes and be deployed/verified.
  * APP_ENV is mandatory; a missing value fails closed like production. */
@@ -25,8 +26,8 @@ export function productionScannerCallbackReady(env:NodeJS.ProcessEnv=rawEnv()){
 
 export const productionScanVerdictSchema=z.strictObject({
  kind:z.enum(["ASSIGNMENT_SUBMISSION_FILE","PROJECT_RESOURCE_FILE","LESSON_VIDEO"]),
- fileId:z.string().uuid(),
- collegeId:z.string().uuid(),
+ fileId:zUuid,
+ collegeId:zUuid,
  generation:z.string().regex(/^[0-9]{1,20}$/),
  verdict:z.enum(["CLEAN","REJECTED"]),
  /** Worker-owned scan digest, never copied from the upload caller. */

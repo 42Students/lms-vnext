@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-const id = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id = zUuid;
 const email = z.string().trim().toLowerCase().pipe(z.email().max(150));
 /**
  * T-S2-02: normalize before applying the legacy 8–10 digit rule.

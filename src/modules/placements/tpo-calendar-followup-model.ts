@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const calendarFollowupCreateSchema = z.object({
-  leadId: z.string().uuid(),
+  leadId: zUuid,
   dueAt: z.iso.datetime({ offset: true }),
   note: z.string().trim().max(500).nullable().optional(),
 }).strict().refine(input=>new Date(input.dueAt).getTime()>Date.now(),{

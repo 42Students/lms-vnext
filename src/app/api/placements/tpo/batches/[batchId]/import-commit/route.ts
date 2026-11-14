@@ -10,11 +10,12 @@ import {decidePlacementParticipation,PlacementBatchError} from "@/modules/placem
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const inputSchema=z.object({
  rows:z.array(tpoSheetRowSchema).min(1).max(5000),
- expectedVersions:z.record(z.string().uuid(),z.string().min(1)),
- previewMemberIds:z.array(z.string().uuid().nullable()).min(1).max(5000).optional(),
+ expectedVersions:z.record(zUuid,z.string().min(1)),
+ previewMemberIds:z.array(zUuid.nullable()).min(1).max(5000).optional(),
  confirmed:z.literal(true),
 }).strict();
 async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
@@ -28,7 +29,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{batchId:stri
   if(!await placementTableExists("placement_eligibility_events"))
    return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
   // Lock the preview's roll->membership mapping against roster edits and collisions.
-  const rollIdentifiers=body.rows.some(row=>!z.string().uuid().safeParse(row.studentCode).success);
+  const rollIdentifiers=body.rows.some(row=>!zUuid.safeParse(row.studentCode).success);
   if(rollIdentifiers&&!body.previewMemberIds)return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
   if(body.previewMemberIds&&body.previewMemberIds.length!==body.rows.length)
    return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});

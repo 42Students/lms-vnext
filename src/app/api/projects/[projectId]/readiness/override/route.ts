@@ -6,9 +6,10 @@ import {overrideProjectReadiness} from "@/modules/projects/readiness-override-se
 import {legacyBooleanProjectReadinessState} from "@/modules/projects/readiness-override-model";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const legacyReadinessBody=z.object({
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
  override:z.boolean().nullable(),
  note:z.string().optional(),
 }).strict();

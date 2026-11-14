@@ -18,10 +18,11 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { zUuid } from "@/lib/schema-primitives";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
-  if(!z.string().uuid().safeParse(projectId).success)
+  if(!zUuid.safeParse(projectId).success)
     return <div className="min-w-0 space-y-4">
       <PageHeader title={copy.title} eyebrow="Projects"/>
       <ErrorState title="Workspace not found"

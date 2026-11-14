@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** Delivery outcome is independent of staff triage state. */
 export const inboundMailRoutingStatuses=[
  "POSTED","STORED","NO_THREAD","WRONG_SENDER","NOT_VERIFIED","EMPTY","ACCESS_ENDED","FAILED",
@@ -35,7 +36,7 @@ export const inboundMailListQuerySchema = z.strictObject({
  ]).default(1),
 });
 export const inboundMailMetadataSchema = z.strictObject({
- id: z.uuid(), receivedAt: z.iso.datetime({ offset: true }),
+ id: zUuid, receivedAt: z.iso.datetime({ offset: true }),
  fromAddress: z.string().trim().max(320), subject: z.string().max(512),
  status: z.enum(["NEW","TRIAGED","RESOLVED"]),
  kind:z.enum(["REPLY","OTHER"]).default("OTHER"),

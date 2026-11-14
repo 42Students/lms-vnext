@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyReportsHubQuerySchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
   kind:z.enum(["ALL","QUIZ","ASSIGNMENT"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();

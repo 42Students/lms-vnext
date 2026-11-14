@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorDeliveryVersionParamsSchema=z.object({
-  projectId:z.string().uuid(),submissionId:z.string().uuid(),
+  projectId:zUuid,submissionId:zUuid,
 }).strict();
 export type MentorDeliveryVersion={
   id:string;version:number;status:string;submittedAt:Date|null;

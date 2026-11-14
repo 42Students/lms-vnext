@@ -11,11 +11,12 @@ import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {projectTemplateBlueprintSchema} from "./validation";
+import { zUuid } from "@/lib/schema-primitives";
 /** Browser rollback POST contract, matching the selected snapshot, CAS token,
  * explicit confirmation and scoped preview counters. No collegeId is read
  * from a browser payload: project-template.manage checks the persisted actor. */
 export const projectTemplateRollbackRequestSchema=z.strictObject({
- versionId:z.string().uuid(),
+ versionId:zUuid,
  expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
  expectedAssignedCollegeCount:z.number().int().min(0),
@@ -31,7 +32,7 @@ export async function previewProjectTemplateRollbackImpact(
  context:RequestContext,templateIdInput:string,
 ){
  requirePermission(context,"project-template.manage");
- const templateId=z.string().uuid().parse(templateIdInput);
+ const templateId=zUuid.parse(templateIdInput);
  return getDb().transaction(async tx=>{
   const [template]=await tx.select({
    id:projectTemplates.id,status:projectTemplates.status,
@@ -66,7 +67,7 @@ export async function previewProjectTemplateRollbackImpact(
 /** Restore a prior snapshot as a NEW version. Existing workspaces and published version remain unchanged. */
 export async function rollbackProjectTemplate(context:RequestContext,templateIdInput:string,raw:unknown){
  requirePermission(context,"project-template.manage");
- const templateId=z.string().uuid().parse(templateIdInput);
+ const templateId=zUuid.parse(templateIdInput);
  const input=projectTemplateRollbackRequestSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const [template]=await tx.select().from(projectTemplates)

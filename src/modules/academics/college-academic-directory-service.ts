@@ -33,6 +33,7 @@ import {
   collegeSemesterDirectorySchema,
 } from "./college-academic-directory-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 async function requireAdminCollege(context: RequestContext) {
   const selected = await resolveActingCollege(context, "academics.read");
   return selected.collegeId;
@@ -196,7 +197,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
 export async function listCollegeProgramSemesterStructure(
   context: RequestContext, rawProgramId: unknown,
 ) {
-  const programId=z.uuid().parse(rawProgramId);
+  const programId=zUuid.parse(rawProgramId);
   const collegeId=await requireAdminCollege(context);
   const db=getDb();
   const [scope]=await db.select({id:programs.id,name:programs.name})
@@ -232,7 +233,7 @@ export async function collegeSemesterNameExists(
   context: RequestContext, rawName: unknown, rawProgramId?: unknown,
 ) {
   const name=z.string().trim().min(1).max(255).parse(rawName);
-  const programId=rawProgramId===undefined?undefined:z.uuid().parse(rawProgramId);
+  const programId=rawProgramId===undefined?undefined:zUuid.parse(rawProgramId);
   const collegeId=await requireAdminCollege(context);
   const rows=await getDb().select({id:programTerms.id})
     .from(programTerms).innerJoin(programs,eq(programs.id,programTerms.programId))
@@ -249,7 +250,7 @@ export async function collegeBatchNameExists(
   context:RequestContext,rawName:unknown,rawProgramId?:unknown,
 ) {
   const name=z.string().trim().min(1).max(255).parse(rawName);
-  const programId=rawProgramId===undefined?undefined:z.uuid().parse(rawProgramId);
+  const programId=rawProgramId===undefined?undefined:zUuid.parse(rawProgramId);
   const collegeId=await requireAdminCollege(context);
   const rows=await getDb().select({id:cohorts.id})
     .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -422,7 +423,7 @@ export async function searchCollegeBatchAutocomplete(
 export async function recordCollegeBatchSearchSelection(
   context:RequestContext,rawId:unknown,
 ){
- const cohortId=z.string().uuid().parse(rawId);
+ const cohortId=zUuid.parse(rawId);
  const actor=await resolveActingCollege(context,"academics.read");
  const [batch]=await getDb().select({
   id:cohorts.id,name:cohorts.name,
@@ -447,7 +448,7 @@ export async function searchCollegeSemesterAutocomplete(
 ) {
   const collegeId = await requireAdminCollege(context);
   const q = search.trim().slice(0, 100);
-  const program = programId ? z.uuid().parse(programId) : undefined;
+  const program = programId ? zUuid.parse(programId) : undefined;
   const bounded = Math.max(1, Math.min(Math.trunc(limit) || 20, 50));
   const db=getDb();
   const fields={
@@ -547,7 +548,7 @@ export async function listCollegeContentClassRecipients(
   context:RequestContext,rawKind:unknown,rawId:unknown,
 ):Promise<{kind:"SECTION"|"GROUP_BACKED";classId:string;membershipIds:string[]}>{
  const kind=z.enum(["SECTION","GROUP_BACKED"]).parse(rawKind);
- const classId=z.string().uuid().parse(rawId);
+ const classId=zUuid.parse(rawId);
  const collegeId=await requireAdminCollege(context);
  const db=getDb();
  if(kind==="GROUP_BACKED"){

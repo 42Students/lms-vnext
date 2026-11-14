@@ -10,8 +10,9 @@ import {issueOwnEmailOwnershipLink} from "@/modules/identity/own-email-ownership
 import { route } from "@/security/route";
 
 import { RATE_LIMITS } from "@/security/limits";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
-const schema=z.strictObject({applicationId:z.string().uuid().optional()});
+const schema=z.strictObject({applicationId:zUuid.optional()});
 
 /** A same-origin, real-device-only sender. Browser cannot select user,
  * membership, college, recipient, template or redirect URL. */

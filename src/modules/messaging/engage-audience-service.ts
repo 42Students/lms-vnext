@@ -11,8 +11,9 @@ import {engageAudienceQuerySchema} from "./engage-audience-model";
 import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 const selectedCampaignPreviewSchema=z.strictObject({
- selectedLeadIds:z.array(z.string().uuid()).min(1).max(100)
+ selectedLeadIds:z.array(zUuid).min(1).max(100)
   .refine(ids=>new Set(ids).size===ids.length,"Select different recruiter leads"),
 });
 /** Count-only preview; no emails leave this service. A send requires separate revalidation. */

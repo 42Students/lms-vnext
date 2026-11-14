@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const projectMeetingPlanRowSchema = z.strictObject({
-  id: z.uuid(),
+  id: zUuid,
   key:z.string().trim().min(1).max(120),
   meetingType:z.enum(["GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]),
   meetingUrl:z.url().regex(/^https?:\/\//).nullable(),
@@ -10,8 +11,8 @@ export const projectMeetingPlanRowSchema = z.strictObject({
   agenda: z.string().trim().max(4000).nullable(),
   startsAt: z.iso.datetime({ offset: true }),
   endsAt: z.iso.datetime({ offset: true }),
-  linkedSprintId: z.uuid().nullable(),
-  linkedTaskId: z.uuid().nullable(),
+  linkedSprintId: zUuid.nullable(),
+  linkedTaskId: zUuid.nullable(),
 });
 export type ProjectMeetingPlanRow = z.infer<typeof projectMeetingPlanRowSchema>;
 
@@ -60,7 +61,7 @@ export function projectMeetingPlanFieldsChanged(before: {
 export const legacyMeetingSectionSaveSchema=z.strictObject({
  expectedMeetingsToken:z.string().regex(/^[a-f0-9]{64}$/),
  meetings:z.array(projectMeetingPlanRowSchema.extend({
-  id:z.uuid().optional(),
+  id:zUuid.optional(),
  })).max(500),
 }).superRefine((input,ctx)=>{
  const keys=new Set<string>(),ids=new Set<string>();

@@ -4,6 +4,7 @@ import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import {collegeActivityItem} from "./college-activity-presentation";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_ACTIVITY_EXPORT_CAP = 1000;
 /** College-admin activity exports deliberately do not expose IP addresses. */
 export const COLLEGE_ACTIVITY_IP_POLICY="REDACTED" as const;
@@ -12,7 +13,7 @@ export const collegeActivityExportQuerySchema = z.object({
   category: z.enum(["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"]).optional(),
   module: z.enum(ACTIVITY_MODULES).optional(),
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
-  actorUserId: z.string().uuid().optional(),
+  actorUserId: zUuid.optional(),
   actorName: z.string().trim().min(1).max(100).optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
   q: z.string().trim().min(1).max(100).optional(),

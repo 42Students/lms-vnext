@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const recordedOutsideDriveSchema=z.strictObject({
- collegeId:z.string().uuid(),
- companyRelationshipId:z.string().uuid(),
+ collegeId:zUuid,
+ companyRelationshipId:zUuid,
  title:z.string().trim().min(3).max(200),
  occurredAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  externalReferenceUrl:z.url().max(2000).refine(value=>{

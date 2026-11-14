@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Preview is informational only: the POST service rechecks all authorization,
  * status, expiry and acceptance constraints transactionally. */
 export const learnerAcceptancePreviewSchema = z.object({
-  offerId: z.string().uuid(),
+  offerId: zUuid,
   companyName: z.string().min(1),
   roleTitle: z.string().min(1),
   jobTitle: z.string().min(1),

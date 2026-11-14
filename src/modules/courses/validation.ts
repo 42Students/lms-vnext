@@ -5,13 +5,14 @@ import {
   COURSE_TEACHING_ROLES,
 } from "./constants";
 
-export const courseIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const courseIdSchema = zUuid;
 export const courseOfferingIdSchema =
-  z.string().uuid();
+  zUuid;
 export const courseSectionDeliveryIdSchema =
-  z.string().uuid();
+  zUuid;
 export const courseTeachingAssignmentIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const courseNameSchema = z
   .string()
@@ -51,7 +52,7 @@ export const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value =
  * the service derives organization from the verified department/actor scope. */
 export const createCourseInputSchema = z.object({
   departmentId: z.string().uuid("Select a department"),
-  parentCourseId:z.string().uuid().nullable().optional(),
+  parentCourseId:zUuid.nullable().optional(),
   name: courseNameSchema,
   code: courseCodeSchema,
   shortTitle:courseShortTitleSchema.optional(),
@@ -73,7 +74,7 @@ export const createCourseInputSchema = z.object({
 
 /** Scoped in-college moves require a fresh row token. */
 export const moveCourseDepartmentInputSchema=z.strictObject({
-  departmentId:z.string().uuid(),
+  departmentId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 
@@ -83,7 +84,7 @@ export const updateCourseInputSchema = z
     expectedUpdatedAt: z.string().datetime({ offset: true }),
     name: courseNameSchema.optional(),
     code: courseCodeSchema.optional(),
-    parentCourseId:z.string().uuid().nullable().optional(),
+    parentCourseId:zUuid.nullable().optional(),
     shortTitle:courseShortTitleSchema.optional(),
     officialCode:courseOfficialCodeSchema.optional(),
     cardColor:courseCardColorSchema.optional(),
@@ -110,8 +111,8 @@ export const updateCourseInputSchema = z
 export const createCourseOfferingInputSchema =
   z.object({
     courseId: courseIdSchema,
-    cohortId: z.string().uuid(),
-    academicPeriodId: z.string().uuid(),
+    cohortId: zUuid,
+    academicPeriodId: zUuid,
     type: z.enum(COURSE_OFFERING_TYPES),
     credits: z
       .number()
@@ -160,21 +161,21 @@ export const updateCourseOfferingInputSchema =
 export const createCourseSectionDeliveryInputSchema =
   z.object({
     offeringId: courseOfferingIdSchema,
-    sectionId: z.string().uuid(),
+    sectionId: zUuid,
   });
 
 export const createCourseTeachingAssignmentInputSchema =
   z.object({
     deliveryId:
       courseSectionDeliveryIdSchema,
-    membershipId: z.string().uuid(),
+    membershipId: zUuid,
     role: z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
   }).strict();
 
 /** A stale browser must not silently overwrite another administrator's role edit. */
 export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
   role: z.enum(COURSE_TEACHING_ROLES),
-  membershipId: z.string().uuid().optional(),
+  membershipId: zUuid.optional(),
   deliveryId: courseSectionDeliveryIdSchema.optional(),
   expectedUpdatedAt: z.string().datetime({offset:true}),
 }).strict();
@@ -182,7 +183,7 @@ export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
 export const createCourseTeachingAssignmentsBatchInputSchema = z.object({
   deliveryIds: z.array(courseSectionDeliveryIdSchema).min(1).max(10)
     .refine(ids=>new Set(ids).size===ids.length,"Duplicate course: choose each course only once"),
-  membershipId: z.string().uuid(),
+  membershipId: zUuid,
   role: z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
 }).strict();
 
@@ -198,7 +199,7 @@ export const legacyCourseDraftSchema=z.object({
  official_course_code:z.string().trim().max(40,"Maximum 40 characters").optional(),
  in_this_course_description:z.string().trim().min(1,"In this Course Description is required").max(5000),
  takeaways:z.array(z.string().trim().min(1)).max(50).optional(),
- parentCourseId:z.string().uuid().nullable().optional(),
+ parentCourseId:zUuid.nullable().optional(),
  enabled:z.boolean().optional(),
  cardColor:courseCardColorSchema.optional(),
 }).strict();
@@ -267,11 +268,11 @@ export type CreateCourseTeachingAssignmentInput =
   >;
 
 export const learningPathIdSchema =
-  z.string().uuid();
+  zUuid;
 export const courseLessonIdSchema =
-  z.string().uuid();
+  zUuid;
 export const lessonContentIdSchema =
-  z.string().uuid();
+  zUuid;
 
 const learningTextSchema = z
   .string()

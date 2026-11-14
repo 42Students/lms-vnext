@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoApplicantPipelineParams = z.object({
-  jobId: z.string().uuid(),
+  jobId: zUuid,
   stage: z.enum(["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"]).default("ALL"),
   search: z.string().trim().max(100).default(""),
   channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),

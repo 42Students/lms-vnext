@@ -1,8 +1,9 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const companyEngagementCsvQuerySchema=z.object({
- seasonId:z.uuid().optional(),jobId:z.uuid().optional(),
- companyId:z.uuid().optional(),
+ seasonId:zUuid.optional(),jobId:zUuid.optional(),
+ companyId:zUuid.optional(),
 }).strict();
 export type CompanyEngagementCsvRow={
  companyName:string;contacts:number;invited:number;joined:number;drives:number;placed:number;

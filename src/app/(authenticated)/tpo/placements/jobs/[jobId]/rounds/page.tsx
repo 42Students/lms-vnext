@@ -22,6 +22,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export default async function TpoDriveRoundsPage({
   params,searchParams,
 }: {
@@ -32,7 +33,7 @@ export default async function TpoDriveRoundsPage({
   if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   const requested=searchParams?(await searchParams).roundId:undefined;
-  const valid=typeof requested!=="string"||z.string().uuid().safeParse(requested).success;
+  const valid=typeof requested!=="string"||zUuid.safeParse(requested).success;
   if(Array.isArray(requested)||!valid)return <div className="space-y-3">
    <PageHeader title="Rounds and schedule"/>
    <p role="alert" className="rounded-lg border border-border p-4 text-sm">Invalid round selection. No candidate schedule was loaded.</p>

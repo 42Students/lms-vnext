@@ -9,13 +9,14 @@ import { listMyProjectInstances } from "./member-service";
 import { ProjectsServiceError } from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** LEARNER-projects-01: derive due state from incomplete project tasks until
  * the orchestrator promotes workspace-level due metadata.
  */
 export async function listMyLearnerProjectDueStates(context: RequestContext, rawProjectIds: unknown) {
   if (!hasActiveMembership(context) || !hasMembershipRole(context, ROLE.LEARNER))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const ids = z.array(z.string().uuid()).max(2000).parse(rawProjectIds);
+  const ids = z.array(zUuid).max(2000).parse(rawProjectIds);
   const own = await listMyProjectInstances(context);
   const eligible = new Set(own.filter(row => row.memberRole === ROLE.LEARNER).map(row => row.project.id));
   const scoped = [...new Set(ids.filter(id => eligible.has(id)))];

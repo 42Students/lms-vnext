@@ -4,10 +4,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const inputSchema = z.object({
-  membershipId: z.string().uuid(),
-  deliveryIds: z.array(z.string().uuid()).min(1).max(50),
+  membershipId: zUuid,
+  deliveryIds: z.array(zUuid).min(1).max(50),
   role: z.enum(["PRIMARY", "CO_TEACHER", "TA"]),
 }).strict();
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * These boundaries match the registered
  * attendance_policies PostgreSQL CHECK constraints.
@@ -9,7 +10,7 @@ import { z } from "zod";
  */
 export const attendancePolicyUpdateSchema =
   z.strictObject({
-    collegeId: z.string().uuid(),
+    collegeId: zUuid,
     eligibilityThresholdPercent: z
       .number()
       .int()

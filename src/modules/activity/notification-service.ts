@@ -53,6 +53,7 @@ import { safeExternalAssessmentUrl, safeNotificationActionHref } from "./notific
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
@@ -211,8 +212,8 @@ export const staffNotificationDraftSchema = z.object({
     .max(200, "Title cannot exceed 200 characters"),
   htmlContent: z.string().trim().min(1, "HTML content is required")
     .max(50_000, "HTML content cannot exceed 50000 characters"),
-  classId: z.string().uuid().optional(),
-  courseId: z.string().uuid().optional(),
+  classId: zUuid.optional(),
+  courseId: zUuid.optional(),
   courseSlug: z.string().trim().min(1).max(64).optional(),
   assessmentUrl: z.string().trim()
     .max(2048, "Assessment URL must use http or https")
@@ -446,7 +447,7 @@ export async function requireStaffNotificationMutation(
   context: RequestContext,
   eventIdInput: unknown,
 ): Promise<StaffNotificationAudience> {
-  const eventId = z.string().uuid().parse(eventIdInput);
+  const eventId = zUuid.parse(eventIdInput);
   const [existing] = await getDb().select({
     actorUserId: activityEvents.actorUserId,
     organizationId: activityEvents.organizationId,
@@ -675,11 +676,11 @@ function appendNotificationContextFilters(
   options: { classId?: string; courseId?: string },
 ) {
   if (options.classId) {
-    const classId = z.string().uuid().parse(options.classId);
+    const classId = zUuid.parse(options.classId);
     conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'classId'`, classId));
   }
   if (options.courseId) {
-    const courseId = z.string().uuid().parse(options.courseId);
+    const courseId = zUuid.parse(options.courseId);
     conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'courseId'`, courseId));
   }
 }
@@ -741,7 +742,7 @@ async function writeInAppNotification(
   const userIds = [
     ...new Set(
       userIdsInput.map((id) =>
-        z.string().uuid().parse(id),
+        zUuid.parse(id),
       ),
     ),
   ];
@@ -897,10 +898,10 @@ export async function listScopedAdminNotificationPage(
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
   const options = z.object({
-    organizationId: z.string().uuid().optional(),
-    collegeId: z.string().uuid().optional(),
-    classId: z.string().uuid().optional(),
-    courseId: z.string().uuid().optional(),
+    organizationId: zUuid.optional(),
+    collegeId: zUuid.optional(),
+    classId: zUuid.optional(),
+    courseId: zUuid.optional(),
     deliveryStatus: z.enum(["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"]).optional(),
     pageNo: z.number().int().min(0).default(0),
     // Legacy clamps the requested size to [1, 200] instead of failing.
@@ -1023,7 +1024,7 @@ export async function listOwnNotifications(
     ownNotificationEventScope(context),
   ];
   if (options.collegeId) {
-    conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
+    conditions.push(eq(activityEvents.collegeId, zUuid.parse(options.collegeId)));
   }
   if (options.unreadOnly) {
     conditions.push(
@@ -1082,7 +1083,7 @@ export async function countOwnUnreadNotifications(
   options: { collegeId?: string } = {},
 ) {
   const collegeId = options.collegeId
-    ? z.string().uuid().parse(options.collegeId)
+    ? zUuid.parse(options.collegeId)
     : null;
   const db = getDb();
   const [row] = collegeId
@@ -1206,7 +1207,7 @@ export async function markAllOwnNotificationsRead(
   options: { collegeId?: string } = {},
 ) {
   const ownCollege = options.collegeId
-    ? z.string().uuid().parse(options.collegeId)
+    ? zUuid.parse(options.collegeId)
     : null;
   const rows = await getDb()
     .update(inAppNotifications)
@@ -1312,7 +1313,7 @@ export async function listOwnNotificationPage(
     releasedNotificationReceipt,
     ownNotificationEventScope(context),
   ];
-  if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
+  if (options.collegeId) conditions.push(eq(activityEvents.collegeId, zUuid.parse(options.collegeId)));
   if(options.eventVisibilityCondition)conditions.push(options.eventVisibilityCondition);
   if (options.unreadOnly) {
     conditions.push(isNull(inAppNotifications.readAt));
@@ -1334,7 +1335,7 @@ export async function listOwnNotificationPage(
   }
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
-    const id = z.string().uuid().parse(options.beforeId);
+    const id = zUuid.parse(options.beforeId);
     conditions.push(or(
       lt(inAppNotifications.createdAt, at),
       and(
@@ -1521,7 +1522,7 @@ export async function deleteStaffNotification(
   context: RequestContext,
   eventIdInput: unknown,
 ): Promise<StaffNoticeOperationResult> {
-  const id = z.string().uuid().parse(eventIdInput);
+  const id = zUuid.parse(eventIdInput);
   const original=await requireStaffNotificationMutation(context,id);
   return getDb().transaction(async (tx) => {
     const [event] = await tx.select({
@@ -1569,7 +1570,7 @@ export async function updateStaffNotification(
   eventIdInput: unknown,
   rawDraft: unknown,
 ): Promise<StaffNoticeOperationResult> {
-  const id = z.string().uuid().parse(eventIdInput);
+  const id = zUuid.parse(eventIdInput);
   const original = await requireStaffNotificationMutation(context, id);
   const { draft, audience } = await requireStaffNotificationAudience(context, rawDraft);
   const scheduledAt = parseStaffNotificationSchedule(draft.scheduledAt);
@@ -1682,7 +1683,7 @@ export async function releaseScheduledStaffNotification(
   eventIdInput: unknown,
   asOf: Date = new Date(),
 ): Promise<{ delivered: number; alreadyReleased: boolean }> {
-  const id = z.string().uuid().parse(eventIdInput);
+  const id = zUuid.parse(eventIdInput);
   const now = z.date().parse(asOf);
   return getDb().transaction(async (tx) => {
     const [event] = await tx.select({

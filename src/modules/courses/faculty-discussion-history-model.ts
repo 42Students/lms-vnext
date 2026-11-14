@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyDiscussionHistorySchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
   action:z.enum(["ALL","PIN","DELETE","REPLY"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();

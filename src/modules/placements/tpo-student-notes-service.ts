@@ -8,8 +8,9 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {requirePlacementManageScope} from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoStudentNotesInput=z.strictObject({
- membershipIds:z.array(z.uuid()).min(1).max(100)
+ membershipIds:z.array(zUuid).min(1).max(100)
   .refine(ids=>new Set(ids).size===ids.length,"Duplicate students are not allowed."),
  note:z.string().trim().min(1).max(2000),
 });
@@ -55,7 +56,7 @@ export async function addTpoStudentNotes(ctx:RequestContext,raw:unknown){
  });
 }
 export async function listTpoStudentNotes(ctx:RequestContext,rawId:unknown){
- const id=z.uuid().parse(rawId),collegeId=await requireTpoBatchActor(ctx);
+ const id=zUuid.parse(rawId),collegeId=await requireTpoBatchActor(ctx);
  await requirePlacementManageScope(ctx,collegeId);
  const db=getDb();
  const [learner]=await db.select({id:collegeMemberships.id})

@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerRequestCancelSchema=z.object({
-  requestId:z.string().uuid(),
+  requestId:zUuid,
   status:z.literal("PENDING"),
   expectedUpdatedAt:z.string().datetime({offset:true}),
   confirmed:z.literal(true),

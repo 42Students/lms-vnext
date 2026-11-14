@@ -10,7 +10,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const interviewFeedbackSchema=z.strictObject({
  expectedVersion:z.number().int().positive(),
  confirmed:z.literal(true),

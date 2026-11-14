@@ -1,18 +1,19 @@
 import {z} from "zod";
 import {parseCollegeIstLocal} from "./college-ist-datetime-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Explicit v1-to-vNext adapter; numeric historical IDs are import-only.
  * Opaque embedded resource JSON must be imported separately with verified
  * uploads, never dropped after an ostensibly successful save. */
 export const legacyAssignmentWriteSchema=z.strictObject({
  contentType:z.literal("ASSIGNMENT"),
- lessonId:z.string().uuid(),
- courseId:z.string().uuid().optional(),
+ lessonId:zUuid,
+ courseId:zUuid.optional(),
  contentTitle:z.string().trim().min(1).max(255),
  points:z.number().int().min(0).max(10000).default(0),
  sequence:z.number().int().min(0).max(10000).default(0),
  audience:z.enum(["ALL","SECTION"]).default("ALL"),
- deliveryId:z.string().uuid().nullable().optional(),
+ deliveryId:zUuid.nullable().optional(),
  deadline:z.string().nullable().optional(),
  instructions:z.string().max(10000).nullable().optional(),
  methods:z.array(z.enum(["WRITTEN_RESPONSE","PDF_UPLOAD","FILE_UPLOAD","REPOSITORY_LINK","EXTERNAL_LINK"]))

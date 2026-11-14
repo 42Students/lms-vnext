@@ -14,6 +14,7 @@ import {PlacementsServiceError} from "./errors";
 import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 async function outsideActor(context:RequestContext,collegeId:string,relationshipId:string){
  const [relationship]=await getDb().select({
   id:placementCompanyRelationships.id,collegeId:placementCompanyRelationships.collegeId,
@@ -100,7 +101,7 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
 }
 /** TPO-drives-31: a distinct historical register, never merged with publishable jobs. */
 export async function listTpoRecordedOutsideDrives(context:RequestContext,rawCollegeId:unknown){
- const collegeId=z.string().uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  if(!context.membership||context.membership.collegeId!==collegeId||
    !hasMembershipRole(context,ROLE.TPO)||context.membership.status!=="ACTIVE"||
    context.user.platformStatus!=="ACTIVE")
@@ -129,7 +130,7 @@ export async function listTpoRecordedOutsideDrives(context:RequestContext,rawCol
  return {rows:rows.slice(0,100),truncated:rows.length>100};
 }
 export async function recordedOutsideChoices(context:RequestContext,rawCollegeId:unknown){
- const collegeId=z.string().uuid().parse(rawCollegeId);
+ const collegeId=zUuid.parse(rawCollegeId);
  // Verify the caller has a persisted relationship BEFORE returning company names.
  const all=await getDb().select({
   id:placementCompanyRelationships.id,collegeId:placementCompanyRelationships.collegeId,
@@ -149,7 +150,7 @@ export async function recordedOutsideChoices(context:RequestContext,rawCollegeId
 
 /** A URL parameter is not evidence a record was saved. Verify against DB. */
 export async function verifyRecordedOutsideConfirmation(context:RequestContext,collegeId:string,rawId:unknown){
- const parsed=z.string().uuid().safeParse(rawId);
+ const parsed=zUuid.safeParse(rawId);
  if(!parsed.success)return false;
  const [record]=await getDb().select({
   id:placementOutsideDriveRecords.id,companyRelationshipId:placementOutsideDriveRecords.companyRelationshipId,

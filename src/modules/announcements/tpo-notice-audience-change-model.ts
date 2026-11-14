@@ -1,12 +1,13 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Changing a frozen recipient snapshot is allowed only on a not-yet-sent,
  * future scheduled TPO notice. This model never widens an omitted audience
  * to COLLEGE as an accidental default. */
 export const tpoNoticeAudienceChangeSchema=z.strictObject({
  audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]),
- targetId:z.string().uuid().optional(),
- targetIds:z.array(z.string().uuid()).max(50).optional(),
+ targetId:zUuid.optional(),
+ targetIds:z.array(zUuid).max(50).optional(),
 }).superRefine((data,ctx)=>{
  const grouped=data.audience==="BATCHES"||data.audience==="BRANCHES";
  const targets=data.targetIds??[];

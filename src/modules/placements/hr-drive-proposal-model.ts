@@ -1,13 +1,14 @@
 import {z} from "zod";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * A drive proposal is a persisted recruiter-to-TPO CONVERSATION MESSAGE.
  * It is not an approval request, published job, or student-visible drive.
  */
 export const hrDriveProposalSchema=z.strictObject({
- collegeId:z.string().uuid(),
- sourceJobId:z.string().uuid().optional(),
- submissionId:z.string().uuid(),
+ collegeId:zUuid,
+ sourceJobId:zUuid.optional(),
+ submissionId:zUuid,
  draft:hrDriveDraftSchema,
 });
 export type HrDriveProposal=z.infer<typeof hrDriveProposalSchema>;

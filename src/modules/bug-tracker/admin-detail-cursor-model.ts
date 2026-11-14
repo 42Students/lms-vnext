@@ -1,9 +1,10 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const trackerActivityCursorSchema=z.strictObject({
  activityBeforeCreatedAt:z.iso.datetime({offset:true}).transform(v=>new Date(v)).optional(),
- activityBeforeId:z.uuid().optional(),
+ activityBeforeId:zUuid.optional(),
  attachmentBeforeCreatedAt:z.iso.datetime({offset:true}).transform(v=>new Date(v)).optional(),
- attachmentBeforeId:z.uuid().optional(),
+ attachmentBeforeId:zUuid.optional(),
 }).superRefine((v,ctx)=>{
  if(Boolean(v.attachmentBeforeCreatedAt)!==Boolean(v.attachmentBeforeId)){
   ctx.addIssue({code:"custom",path:["attachmentBeforeId"],message:"Attachment cursor must include timestamp and ID"});

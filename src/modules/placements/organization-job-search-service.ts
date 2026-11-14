@@ -7,6 +7,7 @@ import {colleges,placementJobs,placementCompanyRelationships,placementCompanies,
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveOrganizationPlacementSearchScope} from "./organization-application-search-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy JobSearchDTO crosswalk for authorized platform/organization admins.
  * Integer legacyJobId is display/import metadata, NOT a resource locator.
  * Each normalized role option has a distinct UUID; old single-role CTC is
@@ -14,7 +15,7 @@ import {resolveOrganizationPlacementSearchScope} from "./organization-applicatio
  * persisted college, and the organization is verified before either query.
  */
 export const organizationJobSearchSchema=z.strictObject({
- organizationId:z.string().uuid().optional(),
+ organizationId:zUuid.optional(),
  q:z.string().trim().max(120).default(""),
  status:z.enum(["ALL","DRAFT","PUBLISHED","CLOSED","CANCELLED","ARCHIVED"]).default("ALL"),
  sort:z.enum(["NEWEST","OLDEST","TITLE"]).default("NEWEST"),

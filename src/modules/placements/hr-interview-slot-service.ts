@@ -14,6 +14,7 @@ import {PlacementsServiceError} from "./errors";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
 async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:string):Promise<JobScope>{
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
@@ -61,7 +62,7 @@ export const hrInterviewSlotPageSchema=z.strictObject({
  pageSize:z.coerce.number().int().min(1).max(100).default(100),
 });
 export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown,rawPage:unknown={}) {
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const paging=hrInterviewSlotPageSchema.parse(rawPage);
  // Always authorize before reading the registered slots table.
  return getDb().transaction(async tx=>{
@@ -100,7 +101,7 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
 export async function writeHrInterviewSlot(
  context:RequestContext,rawJobId:unknown,raw:unknown,
 ){
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const actionType=z.enum(["CREATE","OFFER","BOOK","CANCEL"]).parse((raw as {action?:unknown}|null)?.action);
  const data=actionType==="CREATE"?hrInterviewSlotCreateSchema.parse(raw):
   hrInterviewSlotActionSchema.parse(raw);
@@ -250,7 +251,7 @@ async function writeHrInterviewSlotInTx(
 export async function writeHrInterviewSlotsBatch(
  context:RequestContext,rawJobId:unknown,raw:unknown,
 ){
- const jobId=z.string().uuid().parse(rawJobId);
+ const jobId=zUuid.parse(rawJobId);
  const batch=z.strictObject({
   slots:z.array(hrInterviewSlotCreateSchema).min(1).max(20),
  }).parse(raw);

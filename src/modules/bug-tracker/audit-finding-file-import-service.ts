@@ -9,6 +9,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {independentAuditFindingsReady} from "./independent-audit-findings-service";
 import {classifyAuditFindingSourceEvent} from "./audit-finding-source-event-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 const sourceData=z.strictObject({
  externalId:z.string().min(1).max(120),
  title:z.string().min(1).max(2000),
@@ -19,7 +20,7 @@ const sourceData=z.strictObject({
  reportedSeverity:z.string().max(32).nullable().optional(),
  roles:z.array(z.string().max(64)).max(30).default([]),
  environment:z.string().max(80).nullable().optional(),
- duplicateOf:z.string().uuid().nullable().optional(),
+ duplicateOf:zUuid.nullable().optional(),
  fixCommits:z.array(z.strictObject({
   repo:z.string().max(180),sha:z.string().regex(/^[a-f0-9]{40}$/),
  })).max(20).default([]),

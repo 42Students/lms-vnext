@@ -12,9 +12,10 @@ import { ProjectsServiceError } from "./errors";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
+import { zUuid } from "@/lib/schema-primitives";
 const paramsSchema = z.strictObject({
-  taskId: z.string().uuid(),
-  targetSprintId: z.string().uuid().nullable(),
+  taskId: zUuid,
+  targetSprintId: zUuid.nullable(),
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
 });
 const backlogCreateSchema = z.strictObject({

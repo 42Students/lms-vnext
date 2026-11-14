@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy V218 alias schema and UI limit new aliases to 150 characters;
  * creator provenance lives on each placement_company_aliases row via
  * addedByUserId and every write has an audited active Super Admin actor.
@@ -11,7 +12,7 @@ export function displayCompanyAlias(input:string) {
 }
 
 export const companyAliasInputSchema = z.strictObject({
- companyId: z.uuid(),
+ companyId: zUuid,
  alias: z.string().transform(displayCompanyAlias)
   .pipe(z.string().min(2,"An alias needs 2 to 150 characters")
    .max(LEGACY_COMPANY_ALIAS_MAX_LENGTH,"An alias needs 2 to 150 characters")),

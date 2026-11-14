@@ -13,12 +13,13 @@ import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":CACHE.PRIVATE};
 const querySchema=z.strictObject({
   q:z.string().trim().max(100).default(""),
-  membershipId:z.string().uuid().optional(),
+  membershipId:zUuid.optional(),
   limit:z.coerce.number().int().min(1).max(50).default(20),
 });
 /** Optional legacy-compatible learner search envelope. Selection is read-only:

@@ -15,13 +15,14 @@ import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { zUuid } from "@/lib/schema-primitives";
 function safePublicText(value:string,maxLength:number):string {
  return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,maxLength);
 }
 
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
- if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
+ if(!parsed.success||!zUuid.safeParse(collegeId).success){
   if(!parsed.success&&parsed.error.issues.some(issue=>issue.path[0]==="name"))
    throw new PublicEnquiryError("NAME_REQUIRED");
   throw new PublicEnquiryError("INVALID");

@@ -5,9 +5,10 @@ import {getFacultyQuizReport} from "./faculty-assessment-report-service";
 import {facultyReportCsvFilename} from "./faculty-report-csv";
 import {facultyQuizQuestionAccuracyCsv} from "./faculty-quiz-question-csv";
 
+import { zUuid } from "@/lib/schema-primitives";
 const inputSchema=z.object({
- quizId:z.string().uuid(),
- deliveryId:z.string().uuid(),
+ quizId:zUuid,
+ deliveryId:zUuid,
 }).strict();
 
 /** Recalculate a question report under current, persisted Faculty Section scope. */

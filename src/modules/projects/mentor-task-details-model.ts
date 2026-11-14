@@ -1,8 +1,9 @@
 import { z } from "zod";
 import {projectTaskExpandedFieldsSchema} from "./pr-s2-04-task-fields-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTaskDetailsParamsSchema=z.object({
-  projectId:z.string().uuid(),taskId:z.string().uuid(),
+  projectId:zUuid,taskId:zUuid,
 }).strict();
 export const mentorTaskDetailsInputSchema=z.object({
   title:z.string().trim().min(1).max(200),

@@ -8,6 +8,7 @@ import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {getCollegeVerificationDetail} from "@/modules/verification/staff-review-detail-service";
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const GET = route(
     const context = __actor!;
     try {
 const raw=params;
-const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
+const input=z.strictObject({membershipId:zUuid,section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
 await requireTpoVerificationActor(context);
 const review=await getCollegeVerificationDetail(context,input.membershipId,input.section,undefined,true);
 return privateJson({review});

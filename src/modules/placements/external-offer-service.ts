@@ -17,7 +17,8 @@ import {
   type ExternalOfferStatus,
 } from "./external-offer-policy";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const submitInput = z.object({
   companyName: z.string().trim().min(1).max(200),
   ctcLpa: z.string().regex(/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/)

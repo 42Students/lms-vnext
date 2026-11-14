@@ -9,8 +9,9 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import { ROLE } from "@/modules/identity/roles";
-const inputSchema=z.strictObject({confirmed:z.literal(true),runAuditId:z.string().uuid()});
-const rowSchema=z.strictObject({membershipId:z.string().uuid(),actionId:z.string().uuid(),
+import { zUuid } from "@/lib/schema-primitives";
+const inputSchema=z.strictObject({confirmed:z.literal(true),runAuditId:zUuid});
+const rowSchema=z.strictObject({membershipId:zUuid,actionId:zUuid,
  afterUpdatedAt:z.iso.datetime({offset:true}).nullable()});
 /** The short Undo window never overwrites later per-student decisions.
  * After expiry, perform a fresh audited manual correction from Students. */

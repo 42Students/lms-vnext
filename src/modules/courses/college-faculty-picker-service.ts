@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadAcademicCollegeScope} from "@/modules/academics/scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 const MAX_FACULTY_CHOICES=500;
 /** Course creation needs active FACULTY only, not a paginated scan of every
  * Learner, Mentor, College Admin and HR membership at a large college. */
@@ -52,7 +53,7 @@ export async function listCollegeFacultyPicker(context:RequestContext,collegeId:
 const facultySuggestionSchema=z.strictObject({
  q:z.string().trim().max(80).default(""),
  limit:z.coerce.number().int().min(1).max(50).default(15),
- departmentId:z.uuid().optional(),
+ departmentId:zUuid.optional(),
  employmentType:z.string().trim().max(128).optional(),
 });
 export async function searchCollegeFacultySuggestions(

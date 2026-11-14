@@ -3,11 +3,12 @@ import { facultySubmissionFilterSchema } from "./faculty-assignment-submissions-
 
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyReportCsvRequestSchema = z.discriminatedUnion("kind",[
-  z.object({kind:z.literal("assignment"),assessmentId:z.string().uuid(),
-    deliveryId:z.string().uuid(),filter:facultySubmissionFilterSchema.optional()}).strict(),
-  z.object({kind:z.literal("quiz"),assessmentId:z.string().uuid(),
-    deliveryId:z.string().uuid(),filter:z.enum(["ALL","ATTEMPTED","NOT_ATTEMPTED"]).optional()}).strict(),
+  z.object({kind:z.literal("assignment"),assessmentId:zUuid,
+    deliveryId:zUuid,filter:facultySubmissionFilterSchema.optional()}).strict(),
+  z.object({kind:z.literal("quiz"),assessmentId:zUuid,
+    deliveryId:zUuid,filter:z.enum(["ALL","ATTEMPTED","NOT_ATTEMPTED"]).optional()}).strict(),
 ]);
 
 export function facultyReportCsvHref(raw: unknown) {

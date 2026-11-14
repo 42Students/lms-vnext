@@ -6,6 +6,7 @@ import { SuperAdminTemplateSubviewPage } from "@/components/projects/super-admin
 import {canonicalTemplateVersionHistoryPage} from "@/modules/projects/template-version-history-model";
 import { TextLink } from "@/components/ui/text-link";
 
+import { zUuid } from "@/lib/schema-primitives";
 export default async function SuperAdminTemplateVersionsPage({
   params,
   searchParams,
@@ -27,7 +28,7 @@ export default async function SuperAdminTemplateVersionsPage({
      Browse templates
    </TextLink>
   </section>;
-  if(!z.uuid().safeParse(templateId).success)notFound();
+  if(!zUuid.safeParse(templateId).success)notFound();
   const query=await searchParams;
 
   return (

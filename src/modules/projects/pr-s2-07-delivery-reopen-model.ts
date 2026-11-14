@@ -1,9 +1,10 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 /** PR-S2-07 registered 0091 final delivery models. */
 export const projectDeliveryAttachmentSchema=z.object({
   name:z.string().trim().min(1).max(255),
   kind:z.enum(["FILE","LINK"]),
-  fileId:z.string().uuid().nullable(),
+  fileId:zUuid.nullable(),
   url:z.url().max(2048).refine(v=>v.startsWith("https://")||v.startsWith("http://")).nullable(),
 }).strict().refine(value=>value.kind==="FILE" ? Boolean(value.fileId)&&value.url===null : Boolean(value.url)&&value.fileId===null,{
   message:"File or link is required",

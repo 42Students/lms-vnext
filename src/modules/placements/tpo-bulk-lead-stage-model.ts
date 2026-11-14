@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoBulkStageSelectionsSchema = z.array(
   z.object({
-    id: z.string().uuid(),
+    id: zUuid,
     expectedStage: z.enum(["NEW", "CONTACTED", "NOT_NOW"]),
   }).strict(),
 ).min(1).max(100).refine(

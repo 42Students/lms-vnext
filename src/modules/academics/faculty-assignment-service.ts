@@ -41,6 +41,7 @@ import {
   type CreateSectionFacultyAssignmentInput,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 function mapAssignmentConstraint(error: unknown) {
   if (
     postgresConstraintName(error) ===
@@ -129,9 +130,9 @@ export async function listFacultyCourseAssociations(
   }={},
 ) {
   const input=z.strictObject({
-    facultyMembershipId:z.uuid().optional(),
-    courseId:z.uuid().optional(),
-    classId:z.uuid().optional(),
+    facultyMembershipId:zUuid.optional(),
+    courseId:zUuid.optional(),
+    classId:zUuid.optional(),
     includeEnded:z.boolean().default(false),
     limit:z.number().int().min(1).max(200).default(50),
     offset:z.number().int().min(0).max(100000).default(0),
@@ -395,8 +396,8 @@ export async function transitionCohortFacultyAssignmentTerm(
   rawInput: unknown,
 ) {
   const input = z.object({
-    cohortId: z.string().uuid(),
-    academicPeriodId: z.string().uuid(),
+    cohortId: zUuid,
+    academicPeriodId: zUuid,
     action: z.enum(["DEACTIVATE", "REACTIVATE"]),
   }).strict().parse(rawInput);
   const [section] = await getDb().select({ id: sections.id })

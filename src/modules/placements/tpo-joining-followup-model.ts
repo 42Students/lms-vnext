@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 import { plusCalendarDays } from "./tpo-offer-expiry-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoJoiningFollowupQuerySchema=z.object({
- seasonId:z.string().uuid().optional(),
+ seasonId:zUuid.optional(),
  state:z.enum(["ALL","PENDING","DEFERRED","DATE_DUE","DATE_MISSING","UPCOMING_7_DAYS"]).default("ALL"),
 }).strict();
 export type JoiningFollowupFact={

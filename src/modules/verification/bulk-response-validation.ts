@@ -1,7 +1,8 @@
 import {z} from "zod";
 import type {BulkReviewOutcome} from "./bulk-outcome";
+import { zUuid } from "@/lib/schema-primitives";
 const outcomeSchema=z.strictObject({
- learnerMembershipId:z.string().uuid(),
+ learnerMembershipId:zUuid,
  section:z.enum(["EDUCATION","IDENTITY"]),
  result:z.enum(["VERIFIED","SENT_BACK","STALE_VERSION","NOT_AVAILABLE","INCOMPLETE_DOCUMENTS","INVALID_TRANSITION","REASON_REQUIRED"]),
 });

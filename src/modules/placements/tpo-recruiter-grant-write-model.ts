@@ -1,15 +1,16 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoRecruiterGrantChangeSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("GRANT"), confirmed: z.literal(true),
-    companyRelationshipId: z.string().uuid(),
+    companyRelationshipId: zUuid,
     email: z.string().trim().toLowerCase().max(320).pipe(z.email()),
     title: z.string().trim().max(160).nullable().optional(),
   }).strict(),
   z.object({
     action:z.literal("EXTEND"),confirmed:z.literal(true),
-    grantId:z.string().uuid(),expectedUpdatedAt:z.iso.datetime({offset:true}),
+    grantId:zUuid,expectedUpdatedAt:z.iso.datetime({offset:true}),
     // vNext deliberately requires a finite end; unlike legacy, 0 does not
     // grant perpetual recruiter access. Omitted duration keeps legacy 6 months.
     months:z.number().int()
@@ -19,7 +20,7 @@ export const tpoRecruiterGrantChangeSchema = z.discriminatedUnion("action", [
   }).strict(),
   z.object({
     action: z.literal("REVOKE"), confirmed: z.literal(true),
-    grantId: z.string().uuid(),
+    grantId: zUuid,
     expectedUpdatedAt: z.iso.datetime({ offset: true }),
     reason:z.string().trim().max(500,"Keep the reason under 500 characters")
       .nullable().optional(),

@@ -12,11 +12,12 @@ import { ActivityServiceError } from "./errors";
 import { requirePersistedMentorInboxMembership } from "./mentor-notifications-service";
 import {mentorVisibleNotificationEventCondition} from "./mentor-personal-project-scope";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Recipient + persisted current college are both required for Mentor acknowledgement. */
 export async function markOwnMentorNotificationRead(
   context:RequestContext,rawId:unknown,
 ) {
-  const id=z.string().uuid().parse(rawId);
+  const id=zUuid.parse(rawId);
   const membership=await requirePersistedMentorInboxMembership(context);
   return getDb().transaction(async tx=>{
     const eventIds=tx.select({id:activityEvents.id}).from(activityEvents)

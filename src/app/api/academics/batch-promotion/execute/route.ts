@@ -11,6 +11,7 @@ import { CollegePromotionExecuteError, executeCollegeBatchPromotion } from "@/mo
 import { markCollegeBatchGraduated, CollegeBatchGraduationError } from "@/modules/academics/college-batch-graduation-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 /** Legacy /api/v1/batch/{numericId}/promote cannot authorize mutations by
  * numeric ID. The vNext flow is GET preview (cohort UUID; acting-college
@@ -28,7 +29,7 @@ const body: unknown = await boundedRequestJson(request);
 if (body && typeof body === "object" && !Array.isArray(body) &&
       "action" in body && body.action === "GRADUATE") {
       const command = z.object({
-        action: z.literal("GRADUATE"), cohortId: z.string().uuid(),
+        action: z.literal("GRADUATE"), cohortId: zUuid,
         confirm: z.literal(true),
       }).strict().parse(body);
       // Graduation has its own guarded, transactional and idempotent service.

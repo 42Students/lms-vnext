@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerProjectActivityCategorySchema = z.enum([
   "ALL", "SPRINT", "TASK", "TEAM", "RESOURCE", "SUBMISSION", "PROJECT",
 ]);
@@ -39,12 +40,12 @@ export const learnerProjectActivityFilterSchema = z.object({
   from: z.iso.date().optional(),
   to: z.iso.date().optional(),
   beforeTime: z.iso.datetime().optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
   sourceTab:z.string().trim().max(80).optional(),
   search:z.string().trim().max(100).optional(),
-  subjectId:z.string().uuid().optional(),
-  sprintId:z.string().uuid().optional(),
-  actorUserId:z.string().uuid().optional(),
+  subjectId:zUuid.optional(),
+  sprintId:zUuid.optional(),
+  actorUserId:zUuid.optional(),
   // Persisted resource-action filtering must run before the SQL page limit.
   resourceAction:z.enum(["Added","Edited","Saved","Removed"]).optional(),
   // Old /activity/feed supported bounded page/size and exact event type.

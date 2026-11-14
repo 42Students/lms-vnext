@@ -12,7 +12,8 @@ import {requireSuperAdminVerificationCollege} from "@/modules/verification/super
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {setTpoProfileVerificationEnabled} from "@/modules/profile-verification/settings-service";
 import { privateJson } from "@/security/responses";
-const schema=z.strictObject({collegeId:z.uuid(),tpoCanVerify:z.boolean()});
+import { zUuid } from "@/lib/schema-primitives";
+const schema=z.strictObject({collegeId:zUuid,tpoCanVerify:z.boolean()});
 export const runtime="nodejs";
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },

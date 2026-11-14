@@ -11,6 +11,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {collegeHallCancelSchema} from "./college-hall-cancel-model";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class CollegeHallCancelError extends Error{
   constructor(public readonly code:"HALL_SESSION_NOT_FOUND"|"HALL_SESSION_STALE"|
     "HALL_SESSION_STARTED"|"HALL_SESSION_HAS_EVIDENCE"){
@@ -19,8 +20,8 @@ export class CollegeHallCancelError extends Error{
 }
 export async function cancelCollegeHallBooking(context:RequestContext,rawHallId:unknown,
   rawSessionId:unknown,raw:unknown){
-  const hallId=z.string().uuid().parse(rawHallId);
-  const eventId=z.string().uuid().parse(rawSessionId);
+  const hallId=zUuid.parse(rawHallId);
+  const eventId=zUuid.parse(rawSessionId);
   const input=collegeHallCancelSchema.parse(raw);
   const actor=context.membership;
   if(!actor||actor.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||

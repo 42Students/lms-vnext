@@ -10,9 +10,10 @@ import {redeemScopedAccountProof} from "@/modules/identity/scoped-account-verifi
 import { route } from "@/security/route";
 
 import { RATE_LIMITS } from "@/security/limits";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const schema=z.strictObject({
- challengeId:z.string().uuid(),
+ challengeId:zUuid,
  code:z.string().regex(/^\d{6}$/),
 });
 

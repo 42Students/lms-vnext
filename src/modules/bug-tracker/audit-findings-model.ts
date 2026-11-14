@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const FINDING_STATUSES=[
  "NEW","CONFIRMED","IN_PROGRESS","FIXED_DEV","RELEASED_PROD",
  "VERIFIED","DUPLICATE","WONT_FIX","NEEDS_INFO","CANT_REPRODUCE",
@@ -33,7 +34,7 @@ export const findingMutationSchema=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("ASSIGNEE"),expectedVersion:z.number().int().nonnegative(),
    assignee:z.string().trim().max(150).nullable()}),
  z.strictObject({action:z.literal("DUPLICATE"),expectedVersion:z.number().int().nonnegative(),
-   duplicateOf:z.string().uuid(),note:z.string().trim().max(2000).optional()}),
+   duplicateOf:zUuid,note:z.string().trim().max(2000).optional()}),
  z.strictObject({action:z.literal("FIX_COMMIT"),expectedVersion:z.number().int().nonnegative(),
    repo:z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/).max(180),
    sha:z.string().regex(/^[0-9a-f]{7,40}$/i)}),

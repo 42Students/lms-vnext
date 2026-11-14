@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const learnerDriveApplySelectionSchema = z.object({
-  roleOptionId:z.string().uuid(),
+  roleOptionId:zUuid,
   channel:z.enum(["INTERNAL","EXTERNAL"]),
   confirmed:z.literal(true),
 }).strict();

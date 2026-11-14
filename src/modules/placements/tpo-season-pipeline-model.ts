@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoSeasonPipelineQuerySchema = z.object({
-  seasonId: z.string().uuid().optional(),
-  jobId: z.string().uuid().optional(),
+  seasonId: zUuid.optional(),
+  jobId: zUuid.optional(),
 }).strict();
 
 export type TpoPipelineApplication = {

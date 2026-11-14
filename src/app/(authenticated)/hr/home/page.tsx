@@ -43,7 +43,8 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
+import { zUuid } from "@/lib/schema-primitives";
+const querySchema = z.object({collegeId: zUuid.optional()}).strict();
 
 export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
   const context = await getCurrentRequestContext();

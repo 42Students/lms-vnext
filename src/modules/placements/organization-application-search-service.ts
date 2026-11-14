@@ -10,12 +10,13 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** The legacy cache was partitioned by organization and excluded soft deletes.
  * VNext has no application.organizationId: join its college-scoped job to the
  * authoritative colleges.organizationId. Results are live; no refresh job.
  */
 export const organizationApplicantSearchSchema=z.strictObject({
- organizationId:z.string().uuid().optional(),
+ organizationId:zUuid.optional(),
  search:z.string().trim().max(120).default(""),
  status:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
   "WAITLISTED","OFFERED","REJECTED","HIRED","WITHDRAWN"]).default("ALL"),
@@ -88,7 +89,7 @@ const appliedScore=sql<number|null>`(select max(rr.score_percent)
 const activeApplication=sql<boolean>`${placementApplications.legacyWasDeleted} is distinct from true`;
 
 export async function getOrganizationApplicationStats(context:RequestContext,raw:unknown){
- const input=z.strictObject({organizationId:z.string().uuid().optional()}).parse(raw);
+ const input=z.strictObject({organizationId:zUuid.optional()}).parse(raw);
  const organizationId=await resolveOrganizationPlacementSearchScope(context,input.organizationId);
  const [row]=await getDb().select({totalApplications:sql<number>`count(*)::int`})
   .from(placementApplications)

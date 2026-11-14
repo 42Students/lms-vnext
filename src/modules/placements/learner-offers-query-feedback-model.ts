@@ -1,5 +1,6 @@
 import { z } from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const schema=z.strictObject({
  status:z.enum(["all","pending","accepted","closed","declined","withdrawn"]).optional(),
  q:z.string().trim().max(80).optional(),

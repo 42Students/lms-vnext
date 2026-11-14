@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoDriveDayCheckInSchema = z.object({
   confirmed: z.literal(true),
-  applicationId: z.string().uuid(),
+  applicationId: zUuid,
   expectedAttendance: z.enum(["WAITING", "PRESENT", "IN_INTERVIEW", "DONE", "ABSENT"]),
   status: z.enum(["PRESENT", "IN_INTERVIEW", "DONE", "ABSENT"]),
   room: z.string().trim().max(120).nullable().optional(),

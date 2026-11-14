@@ -1,8 +1,9 @@
 import {z} from "zod";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 export const verifiedParentPhoneSchema=z.string().regex(/^\+[1-9][0-9]{7,14}$/);
 export const attendanceParentContactInputSchema=z.object({
- collegeId:z.string().uuid(),membershipId:z.string().uuid(),
+ collegeId:zUuid,membershipId:zUuid,
  phoneE164:verifiedParentPhoneSchema,
  consentEvidenceReference:z.string().trim().min(8).max(200),
  guardianConsentConfirmed:z.literal(true),verifiedParentPhone:z.literal(true),

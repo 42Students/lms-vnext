@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoStudentNudgeTemplates={
  REGISTRATION:"Registration for placements is open. Please choose Placements, Higher studies or Not interested in your Placements page.",
  RESUME:"Please upload your resume to your profile. Companies see it when you apply.",
@@ -20,7 +21,7 @@ export const tpoStudentNudgeTemplateSchema=z.enum([
 ]);
 export type TpoStudentNudgeTemplate=z.infer<typeof tpoStudentNudgeTemplateSchema>;
 export const tpoStudentNudgeInputSchema=z.object({
- learnerMembershipIds:z.array(z.string().uuid()).min(1).max(25)
+ learnerMembershipIds:z.array(zUuid).min(1).max(25)
   .refine(ids=>new Set(ids).size===ids.length,"Select each learner only once"),
  template:tpoStudentNudgeTemplateSchema,
  message:z.string().trim().min(5).max(1000),

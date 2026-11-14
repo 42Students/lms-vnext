@@ -42,6 +42,7 @@ import {
 } from "./scope";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy remote-URL imports were a browser-to-backend fetch. They cannot be
  * reenabled by forwarding arbitrary URLs: the old flow lacks DNS/IP SSRF
  * pinning, a bounded download worker and object-scan attestations. The only
@@ -95,7 +96,7 @@ function requirePersistedVideoUploaderMembership(row:VideoRow):string{
  return owner;
 }
 
-const idSchema = z.string().uuid();
+const idSchema = zUuid;
 const durationSchema = z.number().int().min(1).max(MAX_VIDEO_DURATION_SECONDS);
 
 export const videoUploadInputSchema = z

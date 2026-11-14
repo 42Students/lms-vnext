@@ -11,7 +11,8 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { placementTableExists } from "./staged-tables";
 import { requirePlacementManageScope } from "./scope";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export async function requireTpoBatchActor(ctx:RequestContext) {
  if(isSuperAdmin(ctx)){

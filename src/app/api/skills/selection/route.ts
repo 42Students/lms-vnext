@@ -15,11 +15,12 @@ import { normalizeSkillUsageKey, skillUsageNameSchema } from "@/modules/skills/u
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 const selectionSchema = z.strictObject({
-  requestId: z.uuid(),
-  skillIds: z.array(z.uuid()).max(20).default([]),
+  requestId: zUuid,
+  skillIds: z.array(zUuid).max(20).default([]),
   freeTextSkills: z.array(skillUsageNameSchema).max(20).default([]),
 }).superRefine((value, context) => {
   if (value.skillIds.length + value.freeTextSkills.length === 0 ||

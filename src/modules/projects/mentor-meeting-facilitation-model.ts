@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** MEN-projects-meetings-27: structured notes are scoped to a single meeting. */
 /** Structured legacy meeting facts stay in the existing JSONB facilitation
  * map; no additional table and no lossy text serialization are required.
@@ -7,7 +8,7 @@ import {z} from "zod";
  */
 export const meetingAttendeeSchema=z.strictObject({
  name:z.string().trim().min(1).max(160),
- membershipId:z.string().uuid().nullable().default(null),
+ membershipId:zUuid.nullable().default(null),
  attended:z.boolean().default(true),
 });
 export const meetingActionRowSchema=z.strictObject({
@@ -21,7 +22,7 @@ export const meetingActionRowSchema=z.strictObject({
  * A later task promotion links by the new UUID without losing original text. */
 export const meetingRetroActionSchema=meetingActionRowSchema.extend({
  taskKey:z.string().trim().min(1).max(120).nullable().optional(),
- linkedTaskId:z.string().uuid().nullable().optional(),
+ linkedTaskId:zUuid.nullable().optional(),
 });
 export const mentorMeetingFacilitationSchema=z.object({
  attendees:z.array(meetingAttendeeSchema).max(100).default([]),

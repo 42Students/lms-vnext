@@ -13,7 +13,8 @@ import {facultyContactEditSchema,facultyProfileDocumentSchema} from "./faculty-p
 import {learnerProfileDocumentSchema} from "./profile-validation";
 
 import { ROLE } from "@/modules/identity/roles";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const role=z.enum(["FACULTY","LEARNER"]);
 const inputSchema=z.strictObject({
   kind:role,address:z.string().trim().max(1000),bio:z.string().trim().max(3000),

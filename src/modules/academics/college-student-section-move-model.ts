@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-export const studentSectionMemberIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const studentSectionMemberIdSchema = zUuid;
 export const studentSectionMoveSchema = z.object({
-  sectionId: z.string().uuid(),
-  expectedSectionEnrollmentId: z.string().uuid(),
+  sectionId: zUuid,
+  expectedSectionEnrollmentId: zUuid,
   confirm: z.literal(true),
 }).strict();
 

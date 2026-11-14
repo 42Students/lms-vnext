@@ -9,6 +9,7 @@ import { collegeGroupCsvPreviewSchema, neutralCsvCell } from "./college-group-cs
 import { previewCollegeGroupCsv } from "./college-group-csv-preview-service";
 import { GroupServiceError, joinGroup } from "./service";
 
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Deliberate confirmed write, distinct from the read-only preview.
  * Each row has its own serialized group transaction, so a bad member does not
@@ -77,7 +78,7 @@ export async function confirmCollegeGroupCsv(context: RequestContext, raw: unkno
  * college-local roll/staff-import identifiers. Never accept cross-college IDs.
  */
 const manualSchema = z.strictObject({
-  groupId: z.string().uuid(),
+  groupId: zUuid,
   identifierType: z.enum(["MEMBERSHIP_ID", "ROLL_NUMBER", "LEGACY_LEARNER_ID"]),
   identifiers: z.array(z.string().trim().min(1).max(128)).min(1).max(2000),
 });
@@ -90,7 +91,7 @@ export async function confirmCollegeGroupManual(context: RequestContext, raw: un
   if (!collegeId) throw new GroupServiceError("GROUP_SCOPE_INVALID");
   const identifiers = [...new Set(input.identifiers)];
   const validIdentifiers = input.identifierType === "MEMBERSHIP_ID"
-    ? identifiers.filter(value => z.string().uuid().safeParse(value).success)
+    ? identifiers.filter(value => zUuid.safeParse(value).success)
     : identifiers;
   const matcher = input.identifierType === "MEMBERSHIP_ID"
     ? inArray(collegeMemberships.id, validIdentifiers)

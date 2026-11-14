@@ -15,6 +15,7 @@ import {notifyActiveProjectMembers} from "./project-notification-service";
 import {ProjectsServiceError} from "./errors";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorMeetingRsvpSchema=z.strictObject({
  response:z.enum(["ACCEPTED","DECLINED","TENTATIVE"]),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
@@ -29,7 +30,7 @@ export async function respondToProjectMeeting(
  context:RequestContext,projectId:string,meetingId:string,raw:unknown,
 ):Promise<{response:MentorMeetingRsvpResponse;changed:boolean}>{
  const input=mentorMeetingRsvpSchema.parse(raw);
- if(!z.uuid().safeParse(meetingId).success)
+ if(!zUuid.safeParse(meetingId).success)
   throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -101,7 +102,7 @@ export async function listProjectMeetingRsvpFacts(
  if(!["MENTOR","LEARNER","ADMIN"].includes(scope.access))
   throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const unique=[...new Set(meetingIds)].slice(0,100);
- if(unique.some(id=>!z.uuid().safeParse(id).success))
+ if(unique.some(id=>!zUuid.safeParse(id).success))
   throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
  const db=getDb();
  const actual=await db.select({id:projectMeetings.id})

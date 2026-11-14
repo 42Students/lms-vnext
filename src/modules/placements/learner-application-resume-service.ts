@@ -9,7 +9,8 @@ import {createPrivateUploadGrant,readPrivateObjectAttestation,
  createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 
 import { ROLE } from "@/modules/identity/roles";
-const appId=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const appId=zUuid;
 const request=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("INITIATE"),contentType:z.literal("application/pdf"),
    sizeBytes:z.number().int().min(1).max(10*1024*1024)}),

@@ -2,11 +2,12 @@ import {z} from "zod";
 import {mentorMeetingDisplayStatus,safeMentorMeetingJoinUrl,type MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
   join:z.enum(["ALL","HAS_SAFE_LINK","NO_SAFE_LINK"]).default("ALL"),
   sprint:z.enum(["ALL","LINKED","UNLINKED"]).default("ALL"),
-  projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
+  projectId:z.preprocess(v=>v===""?undefined:v,zUuid.optional()),
   attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED","NOTES_MISSING"]).default("ALL"),
   status:z.enum(["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),

@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTaskFeedbackParamsSchema=z.object({
- projectId:z.string().uuid(),taskId:z.string().uuid(),
+ projectId:zUuid,taskId:zUuid,
 }).strict();
 export function taskFeedbackStatusLabel(status:string){
  return status==="APPROVED"?"Approved":status==="CHANGES_REQUESTED"?"Changes requested":"Reviewed";

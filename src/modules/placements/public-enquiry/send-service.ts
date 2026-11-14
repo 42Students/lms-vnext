@@ -11,6 +11,7 @@ import {publicPublicationFresh} from "../public-page/publication-freshness-model
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { zUuid } from "@/lib/schema-primitives";
 export class PublicEnquiryError extends Error {
  constructor(readonly code:"NOT_READY"|"INVALID"|"LIMIT"|"DELIVERY_FAILED"|"NAME_REQUIRED"|
    "CODE_EXPIRED"|"CODE_LOCKED"|"WRONG_CODE"){super("PUBLIC_ENQUIRY_"+code);}
@@ -23,7 +24,7 @@ export function publicEnquiryNetworkTag(ip:string|null,secret:string){
 export async function sendPublicEnquiryCode(collegeId:string,raw:unknown,verifiedIp:string|null,
  deliver:(email:string,code:string)=>Promise<boolean>=deliverPublicRecruiterJoinCode){
  const input=publicEnquirySendSchema.safeParse(raw);
- if(!input.success||!z.string().uuid().safeParse(collegeId).success)
+ if(!input.success||!zUuid.safeParse(collegeId).success)
   throw new PublicEnquiryError("INVALID");
  if(!featureReady("tpoApi")||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");

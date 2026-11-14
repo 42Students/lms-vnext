@@ -9,7 +9,8 @@ import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {ProjectsServiceError} from "./errors";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
-const mentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]);
+import { zUuid } from "@/lib/schema-primitives";
+const mentorId = z.union([zUuid, z.literal("UNASSIGNED")]);
 const MAX_REASSIGNMENT_SELECTION=1000;
 const decimalPage=(min:number,max:number,fallback:number)=>z.union([
   z.number().int().min(min).max(max),

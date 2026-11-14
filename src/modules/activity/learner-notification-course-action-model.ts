@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerNotificationTarget} from "./learner-notification-inbox-model";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 /** Navigation is only a hint; the destination enforces enrolled learner access. */
 export function learnerNotificationCourseAction(raw:string|null|undefined){
  const safe=learnerNotificationTarget(raw);

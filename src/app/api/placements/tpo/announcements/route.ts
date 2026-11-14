@@ -7,6 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {createTpoNotice} from "@/modules/announcements/tpo-placement-write-service";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -61,8 +62,8 @@ async function handlePOST(request:Request){
   buttonLabel:z.string().optional(),buttonUrl:z.string().optional(),
   sendAt:z.string().optional(),showUntil:z.string().optional(),
   audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
-  targetId:z.string().uuid().optional(),
-  targetIds:z.array(z.string().uuid()).max(50).optional(),
+  targetId:zUuid.optional(),
+  targetIds:z.array(zUuid).max(50).optional(),
  }).strict().safeParse({
   title:form.get("title"),message:form.get("message")??form.get("body"),
   pinned:form.get("pinned")==="on",

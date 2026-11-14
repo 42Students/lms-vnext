@@ -1,5 +1,6 @@
 import {z} from "zod";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 export const TPO_REPORT_LINK_LIMIT=100;
 export type TpoReportRecordLinkRow={id:string;label:string;companyName:string};
 export function projectTpoReportRecordLinks(

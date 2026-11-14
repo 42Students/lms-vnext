@@ -14,7 +14,8 @@ import {canAdminSettleDelivery,adminDeliveryToast} from "./admin-submission-revi
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
-const id=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const id=zUuid;
 const body=z.strictObject({reason:z.string().trim().min(1).max(4000)});
 export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw:string,submissionIdRaw:string,raw:unknown){
  const scope=await requireProjectManageAccess(ctx,id.parse(projectIdRaw));

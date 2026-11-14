@@ -1,6 +1,7 @@
 import { createHmac,randomInt,timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { publicRecruiterWorkEmailSchema } from "../public-college-join-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const publicEnquirySendSchema=z.strictObject({email:publicRecruiterWorkEmailSchema});
 export const PUBLIC_ENQUIRY_TTL_MS=600000;
 export function canSendPublicEnquiryCode(n:{email:number;college:number;ip:number}) {
@@ -9,7 +10,7 @@ export function canSendPublicEnquiryCode(n:{email:number;college:number;ip:numbe
 }
 export function newEnquiryCode(){return randomInt(0,1000000).toString().padStart(6,"0");}
 export function enquiryMac(id:string,email:string,code:string,secret:string){
- if(!z.string().uuid().safeParse(id).success||!publicRecruiterWorkEmailSchema.safeParse(email).success||
+ if(!zUuid.safeParse(id).success||!publicRecruiterWorkEmailSchema.safeParse(email).success||
    !/^[0-9]{6}$/.test(code)||Buffer.byteLength(secret,"utf8")<32)
     throw new Error("PUBLIC_ENQUIRY_CODE_NOT_READY");
  return createHmac("sha256",secret).update("public-enquiry-v1:")

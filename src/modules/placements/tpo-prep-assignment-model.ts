@@ -1,8 +1,9 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** The original 0134 requires a due date; registered 0136 permits a
  * null/omitted deadline while retaining college-scoped unique assignments. */
-const uuid=z.string().uuid();
+const uuid=zUuid;
 export const tpoPrepAssignmentInputSchema=z.strictObject({
  offeringId:uuid,
  dueAt:z.iso.datetime({offset:true}).nullable().optional(),

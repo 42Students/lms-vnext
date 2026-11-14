@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Registered migration 0123: goal, definition of done and sprint dates. */
 export const mentorSprintDetailsSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -15,8 +16,8 @@ export const mentorSprintDetailsSchema = z.object({
 });
 
 export const mentorSprintDetailsParamsSchema = z.object({
-  projectId: z.string().uuid(),
-  sprintId: z.string().uuid(),
+  projectId: zUuid,
+  sprintId: zUuid,
 }).strict();
 
 export type MentorSprintDetailsInput = z.infer<typeof mentorSprintDetailsSchema>;

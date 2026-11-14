@@ -10,6 +10,7 @@ import { COORDINATOR_BADGE_HINT } from "@/modules/courses/coordinator-copy";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const dynamic = "force-dynamic";
 
 /** A course coordinator's view of the lessons, assignments and quizzes shared by every class of their course. */
@@ -19,7 +20,7 @@ export default async function CoordinateCoursePage({
   params: Promise<{ offeringId: string }>;
 }) {
   const { offeringId } = await params;
-  if (!z.string().uuid().safeParse(offeringId).success) notFound();
+  if (!zUuid.safeParse(offeringId).success) notFound();
   const context = await getCurrentRequestContext();
   const workspace = await getCoordinatorOfferingWorkspace(context, offeringId).catch((error: unknown) => {
     if (error instanceof AuthorizationError) return "denied" as const;

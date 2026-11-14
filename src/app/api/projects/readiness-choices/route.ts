@@ -6,9 +6,10 @@ import {listCollegeReadinessWorkspaceChoicePage}
 import {z} from "zod";
 import { route } from "@/security/route";
 import { privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const schema=z.strictObject({
- collegeId:z.string().uuid(),q:z.string().trim().max(120).default(""),
+ collegeId:zUuid,q:z.string().trim().max(120).default(""),
  page:z.string().regex(/^[1-9][0-9]{0,5}$/).transform(Number)
   .pipe(z.number().int().min(1).max(100000)).default(1),
 });

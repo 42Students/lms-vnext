@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Registered migration 0128 defines nine NAAC/NIRF after-college destinations. */
 export const TPO_FIXED_CHOICES_CATALOG_VERSION="2026-10" as const;
 export const AFTER_COLLEGE_OUTCOMES=[
@@ -58,7 +59,7 @@ export function registrationChoiceOptions(){
  * scoped lookup. Stable built-in options can be reused until either changes;
  * callers supply a trustworthy server catalog revision, not a browser guess. */
 export function afterCollegeCatalogScopeKey(collegeId:string,catalogVersion:string|number){
- return JSON.stringify([z.string().uuid().parse(collegeId),String(catalogVersion)]);
+ return JSON.stringify([zUuid.parse(collegeId),String(catalogVersion)]);
 }
 
 /** SQL CAST(passing_year AS CHAR) ORDER BY 1 in the legacy choices API used
@@ -78,7 +79,7 @@ export function legacyPassingYearOptions(years:readonly (number|string|null)[]){
 export function createTenantChoicePromiseCache<T>(){
  const cache=new Map<string,{collegeId:string;promise:Promise<T>}>();
  function keyFor(collegeId:string,scope:string,revision:string|number){
-  const tenant=z.string().uuid().parse(collegeId);
+  const tenant=zUuid.parse(collegeId);
   const role=z.string().trim().min(1).max(128).parse(scope);
   return {tenant,key:JSON.stringify([tenant,role,String(revision),TPO_FIXED_CHOICES_CATALOG_VERSION])};
  }
@@ -95,7 +96,7 @@ export function createTenantChoicePromiseCache<T>(){
    return promise;
   },
   invalidate(collegeId?:string){
-   const tenant=collegeId?z.string().uuid().parse(collegeId):null;
+   const tenant=collegeId?zUuid.parse(collegeId):null;
    for(const [key,value] of cache)
     if(!tenant||value.collegeId===tenant)cache.delete(key);
   },

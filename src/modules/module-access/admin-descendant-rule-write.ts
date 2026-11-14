@@ -10,7 +10,8 @@ import {academicModuleRuleInput,descendantRuleMatches,academicScopeStudents} fro
 import {StudentRuleConflict} from "./admin-student-rule-write";
 import {resolveModuleAccessFromRules,type ModuleAccessRule,type ModuleAccessScope} from "./service";
 
-const uuid=z.uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 type ScopeType="DEPARTMENT"|"PROGRAM"|"COHORT"|"SECTION";
 /** The legacy Batch/Class labels are display aliases, not new DB scopes. */
 export function legacyModuleScopeType(value:string):ScopeType|null{

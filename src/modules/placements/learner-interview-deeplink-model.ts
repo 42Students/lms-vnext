@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
 
+import { zUuid } from "@/lib/schema-primitives";
 const interviewLinkParams = z.object({
-  applicationId: z.string().uuid().optional(),
-  roundId: z.string().uuid().optional(),
+  applicationId: zUuid.optional(),
+  roundId: zUuid.optional(),
 }).strict().refine(
   value => Boolean(value.applicationId) === Boolean(value.roundId),
   { message: "Both interview identifiers are required together" },

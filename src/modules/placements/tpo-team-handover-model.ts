@@ -1,8 +1,9 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** Public JSON boundary; a handover never implicitly grants or revokes roles. */
 export const tpoTeamHandoverSchema=z.strictObject({
- sourceMembershipId:z.string().uuid(),targetMembershipId:z.string().uuid(),
+ sourceMembershipId:zUuid,targetMembershipId:zUuid,
 }).refine(input=>input.sourceMembershipId!==input.targetMembershipId,{
  path:["targetMembershipId"],message:"Choose a different team member to take over",
 });

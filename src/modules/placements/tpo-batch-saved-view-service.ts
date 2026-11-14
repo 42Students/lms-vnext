@@ -10,7 +10,8 @@ import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {requirePlacementManageScope} from "./scope";
 import {tpoBatchSavedFilterSchema,tpoBatchSavedViewCommandSchema,type TpoBatchSavedFilter} from "./tpo-batch-saved-view-model";
 
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 type Saved={query:TpoBatchSavedFilter;pinned:boolean;lastUsedAt?:string;updatedAt?:string};
 function parseStored(value:unknown,batchId:string):Saved|null{
  if(!value||typeof value!=="object")return null;

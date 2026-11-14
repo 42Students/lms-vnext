@@ -9,13 +9,14 @@ import {buildHrTeamCsv} from "@/modules/placements/hr-team-csv-model";
 import {hrTeamSearchSchema,searchHrTeam} from "@/modules/placements/hr-team-search-model";
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const search=new URL(request.url).searchParams;
-    const selected=z.string().uuid().parse(search.get("collegeId"));
+    const selected=zUuid.parse(search.get("collegeId"));
     const q=hrTeamSearchSchema.parse(search.get("q")??undefined);
     const data=await getRecruiterCompanyTeam(context,selected);
     if(data.status!=="READY"||data.grant.collegeId!==selected)

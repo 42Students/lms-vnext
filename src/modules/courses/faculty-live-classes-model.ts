@@ -1,8 +1,9 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyLiveClassesQuerySchema=z.object({
  view:z.enum(["UPCOMING","PAST","ALL"]).default("UPCOMING"),
- deliveryId:z.string().uuid().optional(),
+ deliveryId:zUuid.optional(),
  page:z.union([
     z.number().int(),
     z.string().regex(/^[1-9]\d{0,4}$/).transform(Number),

@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const replaceCollegeProjectRosterSchema=z.object({
- learnerMembershipIds:z.array(z.string().uuid()).max(500)
+ learnerMembershipIds:z.array(zUuid).max(500)
   .refine(values=>new Set(values).size===values.length,"Each learner must be selected once."),
  roleLabel:z.string().trim().max(120).optional(),
  mode:z.enum(["ADD","REPLACE"]).default("ADD"),

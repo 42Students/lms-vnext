@@ -13,6 +13,7 @@ import { requireStaffNotificationMutation } from "@/modules/activity/notificatio
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -20,8 +21,8 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   const { id: rawId } = await params;
-  const id = z.string().uuid().safeParse(rawId);
-  const collegeId = z.string().uuid().safeParse(
+  const id = zUuid.safeParse(rawId);
+  const collegeId = zUuid.safeParse(
     new URL(request.url).searchParams.get("collegeId"),
   );
   if (!id.success || !collegeId.success)

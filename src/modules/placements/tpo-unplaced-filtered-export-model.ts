@@ -1,8 +1,9 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const unplacedFilteredExportQuerySchema=z.object({
- seasonId:z.uuid().optional(),jobId:z.uuid().optional(),
- batchId:z.uuid().optional(),branchId:z.uuid().optional(),
+ seasonId:zUuid.optional(),jobId:zUuid.optional(),
+ batchId:zUuid.optional(),branchId:zUuid.optional(),
 }).strict();
 export type UnplacedFilteredCsvRow={
  displayName:string;rollNumber:string|null;batch:string;branch:string;

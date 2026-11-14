@@ -8,7 +8,8 @@ import { listMyProjectInstances } from "./member-service";
 import { summarizeLearnerProjectProgress } from "./learner-project-progress-model";
 
 import { ROLE } from "@/modules/identity/roles";
-const projectIdsSchema = z.array(z.string().uuid()).max(2000);
+import { zUuid } from "@/lib/schema-primitives";
+const projectIdsSchema = z.array(zUuid).max(2000);
 export async function listMyLearnerProjectProgress(
   context: RequestContext, rawIds: unknown,
 ) {

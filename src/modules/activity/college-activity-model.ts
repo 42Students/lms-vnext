@@ -3,6 +3,7 @@ import { parseActivityDateBoundary } from "./date-boundary";
 import { ACTIVITY_MODULES, ACTIVITY_IMPORTANCE } from "./taxonomy";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   try { parseActivityDateBoundary(value, "from"); return true; }
   catch { return false; }
@@ -16,7 +17,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
   q: z.string().trim().min(1).max(100).optional(),
-  actorUserId: z.string().uuid().optional(),
+  actorUserId: zUuid.optional(),
   actorName: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().trim().min(1).max(500).optional(),
@@ -25,7 +26,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),
-  beforeId: z.string().uuid().optional(),
+  beforeId: zUuid.optional(),
 }).superRefine((query, ctx) => {
   if (Boolean(query.beforeOccurredAt) !== Boolean(query.beforeId)) {
     ctx.addIssue({

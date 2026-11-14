@@ -20,6 +20,7 @@ import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
 import {COURSE_TEACHING_ROLES} from "./constants";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy ADMIN and administrative Faculty grants map to the explicit
  * courses.manage permission in their active college membership. A global
  * Super Admin must still choose a college before mutating its assignments. */
@@ -39,8 +40,8 @@ function requireTeachingAssignmentManager(context:RequestContext){
  * Every page still passes through persisted member/course authorization.
  */
 const teachingImportPageSchema=z.strictObject({
- deliveryIds:z.array(z.uuid()).min(1).max(500),
- membershipId:z.uuid(),
+ deliveryIds:z.array(zUuid).min(1).max(500),
+ membershipId:zUuid,
  role:z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
  offset:z.number().int().min(0).max(500).default(0),
 });
@@ -219,8 +220,8 @@ export async function createPartitionedCourseTeachingAssignments(
  context:RequestContext,rawInput:unknown,
 ){
  const batches=z.array(z.strictObject({
-  deliveryIds:z.array(z.string().uuid()).min(1).max(100),
-  membershipId:z.string().uuid(),role:z.enum(COURSE_TEACHING_ROLES),
+  deliveryIds:z.array(zUuid).min(1).max(100),
+  membershipId:zUuid,role:z.enum(COURSE_TEACHING_ROLES),
  })).min(1).max(50).parse(rawInput);
  const selected=requireTeachingAssignmentManager(context);
  const succeeded:Array<{membershipId:string;deliveryIds:string[];createdIds:string[]}>=[];
@@ -280,9 +281,9 @@ export async function restorePromotionEndedTeachingAssignments(
 ){
  const selected=requireTeachingAssignmentManager(context);
  const input=z.strictObject({
-  cohortId:z.uuid(),
+  cohortId:zUuid,
   restoredTermNumber:z.number().int().min(1).max(30),
-  assignmentIds:z.array(z.uuid()).min(1).max(100),
+  assignmentIds:z.array(zUuid).min(1).max(100),
   reason:z.string().trim().min(10).max(900),
   confirm:z.literal(true),
  }).parse(raw);

@@ -3,7 +3,8 @@ import {learnerNotificationTarget} from "./learner-notification-inbox-model";
 import {learnerNotificationAssessmentAction} from "./learner-notification-assessment-action-model";
 import {learnerNotificationCourseAction} from "./learner-notification-course-action-model";
 import {learnerNotificationProjectAction} from "./learner-notification-project-action-model";
-const uuid=z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid=zUuid;
 const offerView=z.enum(["pending","accepted","closed"]);
 /** Destination pages re-check own-member permissions; URLs never select a tenant. */
 export function learnerNotificationPlacementAction(raw:string|null|undefined){

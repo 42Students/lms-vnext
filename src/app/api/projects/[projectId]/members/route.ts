@@ -10,6 +10,7 @@ import {
 import { addProjectMemberInputSchema } from "@/modules/projects/validation";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -34,7 +35,7 @@ export const POST = route(
     if (body && typeof body === "object" && !Array.isArray(body) &&
         "primaryMentorMembershipId" in body) {
       const choice = z.strictObject({
-        primaryMentorMembershipId: z.uuid(),
+        primaryMentorMembershipId: zUuid,
         roleLabel: z.string().trim().min(1).max(120).optional(),
       }).parse(body);
       const primaryMentor = await reassignProjectPrimaryMentor(

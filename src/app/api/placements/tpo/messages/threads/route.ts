@@ -8,9 +8,10 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 const input=z.strictObject({
- recruiterUserId:z.string().uuid(),
- jobId:z.string().uuid().nullable().optional(),
+ recruiterUserId:zUuid,
+ jobId:zUuid.nullable().optional(),
  body:z.string().trim().min(1).max(4000).optional(),
 });
 export const runtime="nodejs";

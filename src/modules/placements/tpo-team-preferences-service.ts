@@ -12,6 +12,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** A pair conversation has no separate participant membership to delete.
  * Legacy Leave is represented as UNFOLLOW plus MUTE without deleting the
  * durable conversation or another participant's access. Muted/unfollowed
@@ -29,7 +30,7 @@ async function scope(context:RequestContext,threadId:string){
  return {member,college,threadId};
 }
 export async function getTpoTeamThreadPreferences(context:RequestContext,threadId:string){
- const input=z.string().uuid().parse(threadId);
+ const input=zUuid.parse(threadId);
  const {member,college}=await scope(context,input);
  const ready=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{

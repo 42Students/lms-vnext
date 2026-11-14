@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /** TPO-drives-03: "Closed" is a view of both normal closures and cancellations.
  * Do not include rejected recruiter requests: those are not placement jobs. */
 export const TPO_CLOSED_JOB_STATUSES = ["CLOSED", "CANCELLED"] as const;
@@ -13,10 +14,10 @@ export function defaultTpoDriveView(pending:number,explicit?:"ALL"|"REQUESTS"|"D
 }
 
 export const tpoDriveLifecycleQuerySchema = z.object({
-  seasonId: z.string().uuid().optional(),
-  companyId:z.string().uuid().optional(),
-  cohortId:z.string().uuid().optional(),
-  ownerUserId:z.string().uuid().optional(),
+  seasonId: zUuid.optional(),
+  companyId:zUuid.optional(),
+  cohortId:zUuid.optional(),
+  ownerUserId:zUuid.optional(),
   view: z.enum(["ALL", "REQUESTS", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","TODAY","DUE_SOON","LATER","OVERDUE","UNSET"]).default("ALL"),

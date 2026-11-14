@@ -1,10 +1,11 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const bulkOfferWithdrawalSchema = z.object({
   confirmed: z.literal(true),
   reason: z.string().trim().min(8).max(1000),
   offers: z.array(z.object({
-    id: z.string().uuid(),
+    id: zUuid,
     expectedStatus: z.enum(["ISSUED", "ACCEPTED"]),
   }).strict()).min(1).max(50).refine(
     (items) => new Set(items.map((item) => item.id)).size === items.length,

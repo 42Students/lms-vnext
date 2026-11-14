@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {projectTaskExpandedFieldsSchema} from "./pr-s2-04-task-fields-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorTaskCreateParamsSchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
 }).strict();
 /** Legacy TASK_FIELDS (projectSectionFieldConfigs.js:90-140) -> vNext field map.
  * key (auto from title)      -> none: vNext tasks are keyed by UUID, never a typed key.
@@ -16,14 +17,14 @@ export const mentorTaskCreateParamsSchema=z.object({
  * description / acceptanceCriteria / approach -> same names, each max 4000 chars.
  * vNext-only: status (TODO default), assigneeMembershipId, blockerReason (required when BLOCKED). */
 export const mentorTaskCreateSchema=z.object({
-  sprintId:z.string().uuid().nullable(),
+  sprintId:zUuid.nullable(),
   title:z.string().trim().min(1).max(200),
   description:z.string().trim().max(4000).nullable(),
   approach:z.string().trim().max(4000).nullable().default(null),
   acceptanceCriteria:z.string().trim().max(4000).nullable(),
   priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]),
   status:z.enum(["TODO","IN_PROGRESS","BLOCKED"]).default("TODO"),
-  assigneeMembershipId:z.string().uuid().nullable().default(null),
+  assigneeMembershipId:zUuid.nullable().default(null),
   expectedSprintUpdatedAt:z.iso.datetime({offset:true}).nullable(),
   ...projectTaskExpandedFieldsSchema.shape,
 }).strict().superRefine((input,context)=>{

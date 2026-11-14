@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorProjectActivityQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   importance:z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM","DELIVERIES"]).default("ALL"),
   window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","LAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),

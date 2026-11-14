@@ -12,6 +12,7 @@ import {createPrivateUploadGrant,readPrivateObjectAttestation} from "@/modules/s
 import type {FacultyAssignmentResourceInput} from "./faculty-assignment-authoring-model";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type Row=typeof courseAssignmentResources.$inferSelect;
 type Resource={
@@ -20,7 +21,7 @@ type Resource={
  privateObjectKey:string|null;contentType:string|null;
  contentBytes:number|null;sha256Hex:string|null;objectGeneration:string|null;
 };
-const id=z.string().uuid();
+const id=zUuid;
 const MIME=new Set([
  "application/pdf","text/plain","text/csv","image/jpeg","image/png",
  "image/webp","application/msword",

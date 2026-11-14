@@ -8,11 +8,12 @@ import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
 import { attachmentHeader } from "@/security/downloads";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
-  const collegeId=z.uuid().parse(params.get("collegeId"));
+  const collegeId=zUuid.parse(params.get("collegeId"));
   const pairs=[...params.entries()];
   if(pairs.length!==new Set(pairs.map(([k])=>k)).size)
    return NextResponse.json({error:"DUPLICATE_FILTER"},{status:400});

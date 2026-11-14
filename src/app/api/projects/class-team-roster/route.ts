@@ -5,8 +5,9 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { loadClassTeamRoster } from "@/modules/projects/class-team-roster-service";
 
 import { noStoreJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
-const querySchema = z.object({ collegeId: z.string().uuid(), classId: z.string().uuid() }).strict();
+const querySchema = z.object({ collegeId: zUuid, classId: zUuid }).strict();
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {

@@ -2,6 +2,7 @@ import { createHash, createHmac, randomBytes, randomInt, scryptSync, timingSafeE
 import { z } from "zod";
 
 import { env } from "@/config/env";
+import { zUuid } from "@/lib/schema-primitives";
 /** Raw secrets are issued only once. The database stores the SHA-256 digest. */
 export const companyShareTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 /** Old job URL slugs are NOT share capabilities. This validator must never
@@ -10,7 +11,7 @@ export const legacyJobSlugSchema=z.string().regex(/^smr-[A-Za-z0-9_-]{1,28}$/);
 export function isLegacyJobSlug(value:unknown):value is string{
  return legacyJobSlugSchema.safeParse(value).success;
 }
-export const companyShareJobSchema = z.string().uuid();
+export const companyShareJobSchema = zUuid;
 export const companyShareIssueSchema = z.object({
   jobId: companyShareJobSchema,
   expiresInDays: z.coerce.number().int().min(1).max(90).default(7),
@@ -18,7 +19,7 @@ export const companyShareIssueSchema = z.object({
    .min(1).max(11).refine(v=>new Set(v).size===v.length,"Columns must be unique")
    .default(["APPLICATION_ID","NAME","EMAIL"]),
   shortlistBy:z.iso.datetime({offset:true}).nullable().default(null),
-  selectedApplicationIds:z.array(z.string().uuid()).min(1).max(200)
+  selectedApplicationIds:z.array(zUuid).min(1).max(200)
    .refine(ids=>new Set(ids).size===ids.length,"Duplicate applicant selection").optional(),
 }).strict();
 /** Read-only adapter for the old share-column vocabulary. Historical
@@ -41,7 +42,7 @@ export function mapLegacyShareColumnSelection(values:readonly string[]){
  return companyShareIssueSchema.shape.selectedColumns.parse([...result]);
 }
 export const companyShareRevokeSchema = z.object({
-  shareId: z.string().uuid(),
+  shareId: zUuid,
   jobId: companyShareJobSchema,
 }).strict();
 

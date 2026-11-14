@@ -12,6 +12,7 @@ import { AdminOfferingLearningPage } from "@/components/courses/admin-offering-l
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export default async function CollegeOfferingLearningPage({
   params,
   searchParams,
@@ -29,7 +30,7 @@ export default async function CollegeOfferingLearningPage({
   }
 
   const { offeringId } = await params;
-  if (!z.uuid().safeParse(offeringId).success) {
+  if (!zUuid.safeParse(offeringId).success) {
     const legacyLink=/^(?:[0-9]+|crs-[a-z0-9-]+)$/i.test(offeringId);
     // Numeric catalog IDs are NOT offering IDs. A redirect is safe only when
     // one and only one ACTIVE offering can be resolved inside the authorized
@@ -65,7 +66,7 @@ export default async function CollegeOfferingLearningPage({
   }
   const query=await searchParams;
   const selected=Array.isArray(query.deliveryId)?null:query.deliveryId;
-  if (query.deliveryId!==undefined && (!selected || !z.uuid().safeParse(selected).success)) {
+  if (query.deliveryId!==undefined && (!selected || !zUuid.safeParse(selected).success)) {
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Course section unavailable" />
       <ErrorState title="Invalid section selection"

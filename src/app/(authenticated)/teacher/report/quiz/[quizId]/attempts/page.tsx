@@ -19,6 +19,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { zUuid } from "@/lib/schema-primitives";
 type Query={deliveryId?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];view?:string|string[]};
 export default async function FacultyQuizAttemptPage({
   params,searchParams,
@@ -26,7 +27,7 @@ export default async function FacultyQuizAttemptPage({
   params:Promise<{quizId:string}>;searchParams:Promise<Query>;
 }) {
   const [{quizId},raw]=await Promise.all([params,searchParams]);
-  if (!z.string().uuid().safeParse(quizId).success) notFound();
+  if (!zUuid.safeParse(quizId).success) notFound();
   const search=facultyQuizAttemptSearchSchema.safeParse(raw);
   const parsed=facultyQuizAttemptsQuerySchema.safeParse({
     quizId,...(search.success?search.data:{deliveryId:undefined}),

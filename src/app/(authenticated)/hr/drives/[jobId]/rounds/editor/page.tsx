@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { zUuid } from "@/lib/schema-primitives";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
 export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
@@ -23,7 +24,7 @@ export default async function HrRoundsEditorPage({params}:{
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId}=await params;
- if(!z.string().uuid().safeParse(jobId).success)notFound();
+ if(!zUuid.safeParse(jobId).success)notFound();
  let rounds:Awaited<ReturnType<typeof listHrRoundEditorRows>>;
  try{rounds=await listHrRoundEditorRows(context,jobId);}
  catch(error){

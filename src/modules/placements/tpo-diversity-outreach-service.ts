@@ -12,7 +12,8 @@ import { PlacementsServiceError } from "./errors";
 
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const draft = z.strictObject({
   action: z.literal("SAVE"),
   targetGender: z.enum(["FEMALE", "MALE", "NON_BINARY", "SELF_DESCRIBED"]),

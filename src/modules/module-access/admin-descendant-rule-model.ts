@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const descendantTypes=["DEPARTMENT","PROGRAM","COHORT","SECTION"] as const;
 export const academicModuleRuleInput=z.strictObject({
- scopeType:z.enum(descendantTypes),scopeId:z.uuid(),
+ scopeType:z.enum(descendantTypes),scopeId:zUuid,
  module:z.enum(["projects","placements","electives"]),
  action:z.enum(["SET","INHERIT"]),
  enabled:z.boolean().optional(),locked:z.boolean().optional(),

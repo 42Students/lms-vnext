@@ -15,6 +15,7 @@ import {
 } from "@/modules/courses/lesson-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": CACHE.PRIVATE };
 
@@ -39,7 +40,7 @@ export const GET = route(
       const valid=z.strictObject({
         query:z.string().trim().max(100),
         limit:z.coerce.number().int().min(1).max(200),
-        courseId:z.string().uuid().optional(),
+        courseId:zUuid.optional(),
       }).safeParse({query:rawQuery,limit:rawLimit,...(courseId?{courseId}:{})});
       if(!valid.success)return NextResponse.json({
         error:"INVALID_LESSON_SEARCH_FILTERS",

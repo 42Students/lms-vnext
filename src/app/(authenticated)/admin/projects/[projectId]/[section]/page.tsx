@@ -8,6 +8,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {AdminProjectSectionPage} from "@/components/projects/admin-project-section-page";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** A legacy workspace ID/slug must be resolved within the selected college,
  * then checked for project-manage authorization before redirecting to an
  * audited canonical section. Never use a global legacy-id lookup.
@@ -20,7 +21,7 @@ export default async function SuperAdminProjectSectionRoute({
 }){
   const {projectId,section}=await params;
   let canonicalId=projectId;
-  if(!z.uuid().safeParse(projectId).success){
+  if(!zUuid.safeParse(projectId).success){
     const context=await getCurrentRequestContext();
     const collegeId=context.adminScope?.collegeId;
     if(!isSuperAdmin(context)||!collegeId)notFound();

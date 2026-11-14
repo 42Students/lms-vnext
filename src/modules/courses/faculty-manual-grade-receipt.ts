@@ -1,7 +1,8 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 const gradeRow=z.object({
- id:z.string().uuid(),assignmentId:z.string().uuid(),
- deliveryId:z.string().uuid(),membershipId:z.string().uuid(),
+ id:zUuid,assignmentId:zUuid,
+ deliveryId:zUuid,membershipId:zUuid,
  version:z.number().int().min(0),pointsAwarded:z.number().int().min(0).nullable(),
  feedback:z.string().max(10000).nullable(),gradingStatus:z.enum(["NOT_GRADED","GRADED"]),
  gradePublished:z.boolean(),

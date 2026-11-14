@@ -4,6 +4,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
+import { zUuid } from "@/lib/schema-primitives";
 export const SUPER_ADMIN_VERIFICATION_DENIED_COPY="You cannot verify profiles here";
 /** Distinct retryable access-read failure; never leak exception or tenant data. */
 export class VerificationAccessCheckError extends Error {
@@ -14,7 +15,7 @@ export class VerificationAccessCheckError extends Error {
  }
 }
 export async function requireSuperAdminVerificationCollege(context:RequestContext,rawId:unknown){
- const collegeId=z.uuid().parse(rawId);
+ const collegeId=zUuid.parse(rawId);
  if(context.user.platformStatus!=="ACTIVE"||context.adminScope?.collegeId!==collegeId)
   throw new AuthorizationError("profile-verification.review");
  let college:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;

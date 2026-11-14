@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const departmentIdSchema = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+export const departmentIdSchema = zUuid;
 export const collegeIdSchema = z.string().uuid("Select a valid college");
 
 /** DepartmentDTO name/college validation remains field-addressable for forms. */

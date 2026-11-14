@@ -26,10 +26,11 @@ import { recordSecurityEvent } from "@/security/audit-store";
 import { env } from "@/config/env";
 import { RATE_LIMITS } from "@/security/limits";
 import { clearAuthCookie, setAuthCookie } from "@/auth/cookies";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 const switchMembershipSchema = z.strictObject({
-  membershipId: z.string().uuid(),
+  membershipId: zUuid,
   role: z.enum(MEMBERSHIP_ROLES).optional(),
 });
 

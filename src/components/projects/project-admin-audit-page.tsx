@@ -34,6 +34,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { currentTimeMs } from "@/lib/clock";
+import { zUuid } from "@/lib/schema-primitives";
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
 const destructiveProjectEventTypes=new Set<string>([
@@ -66,7 +67,7 @@ function linkedWorkspaceId(event:{
 }):string|null{
  const candidate=event.subjectType==="project_instance"||event.subjectType==="project"
    ?event.subjectId:event.metadata["projectId"];
- return typeof candidate==="string"&&z.string().uuid().safeParse(candidate).success
+ return typeof candidate==="string"&&zUuid.safeParse(candidate).success
    ?candidate:null;
 }
 
@@ -205,7 +206,7 @@ export async function ProjectAdminAuditPage({
   // Resource history has a separate project-scoped audit stream. Never
   // conflate a filtered project-activity page with its resource event trail.
   const resourceWorkspaceId=(subjectType==="project"||subjectType==="project_instance")&&
-    subjectId&&z.string().uuid().safeParse(subjectId).success?subjectId:null;
+    subjectId&&zUuid.safeParse(subjectId).success?subjectId:null;
   const rawResourcePage=searchParams["resourcePage"];
   const resourcePage=typeof rawResourcePage==="string" &&
     /^[1-9]\d{0,3}$/.test(rawResourcePage)?Number(rawResourcePage):1;

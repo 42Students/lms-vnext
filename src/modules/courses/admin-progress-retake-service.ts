@@ -13,7 +13,8 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 import { ROLE } from "@/modules/identity/roles";
-const base=z.strictObject({offeringId:z.uuid(),membershipId:z.uuid()});
+import { zUuid } from "@/lib/schema-primitives";
+const base=z.strictObject({offeringId:zUuid,membershipId:zUuid});
 const command=base.extend({
  confirmed:z.literal(true),
  expectedAttempt:z.number().int().min(0).max(1_000_000),

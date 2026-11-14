@@ -6,6 +6,7 @@ import {listAdminFacultyAssignments} from "@/modules/admin-ui/super-admin-facult
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Zero-based legacy admin read adapter. All college scope comes from the
@@ -13,10 +14,10 @@ export const dynamic="force-dynamic";
 const legacyQuery=z.strictObject({
  page:z.coerce.number().int().min(0).max(999),
  size:z.coerce.number().int().min(1).max(200),
- classId:z.string().uuid().optional(),
+ classId:zUuid.optional(),
  status:z.enum(["ALL","ACTIVE","ENDED"]),
  q:z.string().trim().max(100),
- collegeId:z.string().uuid().optional(),
+ collegeId:zUuid.optional(),
 });
 async function handleGET(request:Request){
  try{

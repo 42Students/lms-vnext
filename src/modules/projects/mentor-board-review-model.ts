@@ -1,11 +1,12 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorBoardReviewQuerySchema=z.object({
-  projectId:z.string().uuid(),
+  projectId:zUuid,
   status:z.enum(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"]).default("ALL"),
   priority:z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).optional(),
-  sprintId:z.union([z.literal("ALL"),z.string().uuid()]).optional(),
+  sprintId:z.union([z.literal("ALL"),zUuid]).optional(),
   search:z.string().trim().max(100).default(""),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();

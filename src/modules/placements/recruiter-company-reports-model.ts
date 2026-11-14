@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const recruiterCompanyReportsQuerySchema = z
   .object({
-    collegeId: z.string().uuid().optional(),
+    collegeId: zUuid.optional(),
     status: z
       .enum(["ALL", "PUBLISHED", "CLOSED"])
       .default("ALL"),

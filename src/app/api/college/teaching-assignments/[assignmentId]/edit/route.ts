@@ -16,12 +16,13 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 const editSchema=z.object({
-  expectedMembershipId:z.string().uuid(),
+  expectedMembershipId:zUuid,
   expectedUpdatedAt:z.iso.datetime({offset:true}),
-  membershipId:z.string().uuid(),
-  deliveryId:z.string().uuid(),
+  membershipId:zUuid,
+  deliveryId:zUuid,
   role:z.enum(["PRIMARY","CO_TEACHER","TA"]),
   isActive:z.boolean(),
   academicYear:z.string().regex(/^[0-9]{4}(?:-[0-9]{2,4})?$/).nullable(),
@@ -40,7 +41,7 @@ export const PATCH = route(
     requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
     const {assignmentId}=params;
     const parsed=editSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
-    if(!z.string().uuid().safeParse(assignmentId).success||!parsed.success)
+    if(!zUuid.safeParse(assignmentId).success||!parsed.success)
       return NextResponse.json({error:"INVALID_REQUEST",message:"Review the selected faculty, course, semester and year."},{status:400});
     const input=parsed.data,txResult=await getDb().transaction(async tx=>{
       const [actor]=await tx.select({accountStatus:users.platformStatus,membershipStatus:collegeMemberships.status})

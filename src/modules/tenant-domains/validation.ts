@@ -1,6 +1,7 @@
 import { isIP } from "node:net";
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export function normalizeTenantHost(rawValue: string) {
   const trimmed = rawValue.trim();
   if (!trimmed) {
@@ -94,8 +95,8 @@ function normalizedHostSchema() {
 }
 
 export const tenantDomainHostSchema = normalizedHostSchema();
-export const tenantDomainIdSchema = z.string().uuid();
-export const tenantDomainCollegeIdSchema = z.string().uuid();
+export const tenantDomainIdSchema = zUuid;
+export const tenantDomainCollegeIdSchema = zUuid;
 
 export const createTenantDomainInputSchema = z.object({
   collegeId: tenantDomainCollegeIdSchema,

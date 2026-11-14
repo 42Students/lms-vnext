@@ -1,7 +1,8 @@
 import {z} from "zod";
 import {confirmedTpoRoundResultSchema} from "./tpo-confirmed-round-result-model";
+import { zUuid } from "@/lib/schema-primitives";
 export const tpoRoundResultEntryFormSchema=z.object({
- applicationId:z.uuid(),expectedCurrentResultId:z.uuid().nullable(),
+ applicationId:zUuid,expectedCurrentResultId:zUuid.nullable(),
  outcome:z.enum(["PASS","FAIL","HOLD","ABSENT"]),
  note:z.string().trim().min(1).max(1000),waitlistRank:z.string().trim(),
 }).strict().superRefine((value,ctx)=>{

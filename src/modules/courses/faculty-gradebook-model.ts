@@ -1,8 +1,9 @@
 import {z} from "zod";
 import {CoursesServiceError} from "./errors";
 import {neutralizeFacultyCsvCell,capFacultyReportCsvRows} from "./faculty-report-csv";
+import { zUuid } from "@/lib/schema-primitives";
 export const facultyGradebookParamsSchema=z.object({
-  deliveryId:z.string().uuid(),
+  deliveryId:zUuid,
 }).strict();
 export type GradebookScore={
   membershipId:string; earned:number; possible:number;

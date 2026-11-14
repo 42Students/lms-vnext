@@ -23,7 +23,8 @@ import {requireTpoJobActor} from "./tpo-job-write-base";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine(value => {
     const parsed = new Date(value + "T00:00:00.000Z");

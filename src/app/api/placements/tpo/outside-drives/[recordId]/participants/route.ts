@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {setTpoOutsideDriveParticipant} from "@/modules/placements/recorded-outside-participation-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -16,7 +17,7 @@ export const POST = route(
     if(!body||typeof body!=="object"||Array.isArray(body))
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
     const validated=z.strictObject({
-   membershipId:z.string().uuid(),result:z.enum(["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"]),
+   membershipId:zUuid,result:z.enum(["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"]),
    notes:z.string().trim().max(500).optional(),
   }).parse(body);
     return NextResponse.json(await setTpoOutsideDriveParticipant(

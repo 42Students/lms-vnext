@@ -10,15 +10,16 @@ import {ProjectsServiceError} from "./errors";
 import {z} from "zod";
 import {notifyProjectMemberships} from "./project-notification-service";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const assignProjectTaskInputSchema=z.object({
-  assigneeMembershipId:z.string().uuid().nullable(),
+  assigneeMembershipId:zUuid.nullable(),
   expectedUpdatedAt:z.iso.datetime({offset:true}),
 }).strict();
 
 /** PR-S2-03: explicitly assign tasks only to a currently active learner on the same project. */
 export async function assignProjectTask(context:RequestContext,projectIdInput:string,taskIdInput:string,rawInput:unknown){
   const input=assignProjectTaskInputSchema.parse(rawInput);
-  const taskId=z.string().uuid().parse(taskIdInput);
+  const taskId=zUuid.parse(taskIdInput);
   const scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)

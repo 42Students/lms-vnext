@@ -1,10 +1,11 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const superAdminHiringReportQuery=z.strictObject({
  q:z.string().trim().max(100).default(""),
- jobId:z.uuid().optional(),
- departmentId:z.uuid().optional(),
- programId:z.uuid().optional(),
- cohortId:z.uuid().optional(),
+ jobId:zUuid.optional(),
+ departmentId:zUuid.optional(),
+ programId:zUuid.optional(),
+ cohortId:zUuid.optional(),
  appliedFrom:z.iso.date().optional(),
  appliedTo:z.iso.date().optional(),
 }).refine(query=>!query.appliedFrom||!query.appliedTo||query.appliedFrom<=query.appliedTo,{

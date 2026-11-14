@@ -1,9 +1,10 @@
 import {z} from "zod";
 import type {MentorProjectAttention} from "./mentor-attention";
+import { zUuid } from "@/lib/schema-primitives";
 export const mentorAttentionKindSchema=z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON",
   "TASK_REVIEW","TASK_BLOCKED","SPRINT_SIGN_OFF","UNASSIGNED_NEXT"]);
 export const mentorAttentionOrderSchema=z.enum(["RECENT","REVIEW_FIRST"]); 
-export const mentorAttentionProjectSchema=z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional());
+export const mentorAttentionProjectSchema=z.preprocess(v=>v===""?undefined:v,zUuid.optional());
 export function selectMentorAttention(rows:readonly MentorProjectAttention[],
  kind:z.infer<typeof mentorAttentionKindSchema>,projectId?:string,
  order:z.infer<typeof mentorAttentionOrderSchema>="RECENT"){

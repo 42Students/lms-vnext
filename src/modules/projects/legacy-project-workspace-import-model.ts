@@ -5,6 +5,7 @@ import {
   projectTemplateBlueprintSchema,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 /** A boundary for explicitly imported old-LMS projects. A numeric ID by
  * itself is never an authorization grant: the caller supplies a trusted,
  * selected-college crosswalk before calling the normal scoped create service.
@@ -77,7 +78,7 @@ export function planLegacyProjectWorkspaceImport(
     errors.push("College ID does not match the selected college");
   }
   const selected=maps.selectedCollegeId;
-  if(!z.string().uuid().safeParse(selected).success){
+  if(!zUuid.safeParse(selected).success){
     errors.push("Selected college must be a UUID");
   }
   const templateId=data.templateId===undefined||data.templateId===null?

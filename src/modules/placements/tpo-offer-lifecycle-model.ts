@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { zUuid } from "@/lib/schema-primitives";
 /**
  * Explicit administrative recording, not learner-impersonation.
  * EXTEND changes expiry only; JOINED is a joining-outcome transition.
@@ -35,7 +36,7 @@ export function tpoOfferDistinctSelection(ids:readonly string[]){
 export const tpoOfferLifecycleInputSchema = z.object({
   confirmed: z.literal(true),
   action: z.enum(TPO_OFFER_ACTIONS),
-  offerIds: z.array(z.string().uuid()).min(1).max(200,"Verify at most 200 selections at a time").refine(
+  offerIds: z.array(zUuid).min(1).max(200,"Verify at most 200 selections at a time").refine(
     (ids) => new Set(ids).size === ids.length,
     "Duplicate offers are not allowed",
   ),
@@ -140,7 +141,7 @@ export function legacyTpoOfferDisplayStatus(input:{
  */
 export const tpoBulkVerifySelectionsSchema=z.strictObject({
  confirmed:z.literal(true),
- selectionIds:z.array(z.uuid())
+ selectionIds:z.array(zUuid)
   .min(1,"Choose at least one selection")
   .max(200,"Verify at most 200 selections at a time")
   .refine(ids=>new Set(ids).size===ids.length,"Select distinct selections"),

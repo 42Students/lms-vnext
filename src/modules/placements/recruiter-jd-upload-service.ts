@@ -11,7 +11,8 @@ import {
   createPrivateUploadGrant, createPrivateReadGrant, readPrivateObjectAttestation,
 } from "@/modules/storage/private-object-storage";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const keySchema = z.string().regex(
   /^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/placement-document\/[0-9a-f-]{36}$/i,
 );

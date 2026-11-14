@@ -7,6 +7,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {openCollegeVerificationDocument} from "@/modules/verification/staff-private-document-service";
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,9 +15,9 @@ export const GET = route(
     const __ctx = __actor!;
     try {
 const {membershipId,section,receiptId}=z.strictObject({
-   membershipId:z.uuid(),section:z.enum(["EDUCATION","IDENTITY"]),receiptId:z.uuid(),
+   membershipId:zUuid,section:z.enum(["EDUCATION","IDENTITY"]),receiptId:zUuid,
   }).parse(params);
-const collegeId=z.uuid().parse(new URL(request.url).searchParams.get("collegeId"));
+const collegeId=zUuid.parse(new URL(request.url).searchParams.get("collegeId"));
 const grant=await openCollegeVerificationDocument(
    __ctx,membershipId,section,receiptId,collegeId);
 return NextResponse.redirect(grant.readUrl,{status:302,headers:{

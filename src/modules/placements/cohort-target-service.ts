@@ -8,7 +8,8 @@ import { requirePlacementManageScope } from "./scope";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 
-const uuid = z.string().uuid();
+import { zUuid } from "@/lib/schema-primitives";
+const uuid = zUuid;
 const replaceInput = z.object({
   collegeId: uuid,
   jobId: uuid,

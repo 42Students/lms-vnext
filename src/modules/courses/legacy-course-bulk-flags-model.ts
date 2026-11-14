@@ -1,7 +1,8 @@
 import {z} from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const legacyCourseBulkFlagsSchema=z.strictObject({
- courseIds:z.array(z.uuid()).min(1).max(100).refine(ids=>new Set(ids).size===ids.length,
+ courseIds:z.array(zUuid).min(1).max(100).refine(ids=>new Set(ids).size===ids.length,
   "Choose distinct courses"),
  active:z.boolean().nullable().optional(),
  enabled:z.boolean().nullable().optional(),

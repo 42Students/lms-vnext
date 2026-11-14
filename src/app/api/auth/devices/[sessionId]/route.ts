@@ -12,6 +12,7 @@ import { route } from "@/security/route";
 import { privateJson } from "@/security/responses";
 import { RATE_LIMITS } from "@/security/limits";
 import { clearAuthCookie } from "@/auth/cookies";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ sessionId: string }> };
@@ -36,7 +37,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
 
   try {
     const session = await getCurrentDeviceSession();
-    const sessionId = z.string().uuid().parse((await params).sessionId);
+    const sessionId = zUuid.parse((await params).sessionId);
 
     if (!(await revokeOwnSession(sessionId, session.userId))) {
       return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND", message: "Session not found" }, { status: 404 }));

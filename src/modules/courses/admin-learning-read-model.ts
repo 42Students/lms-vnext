@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { CollegeLessonRecord } from "./college-learning-directory-model";
+import { zUuid } from "@/lib/schema-primitives";
 /** The legacy Lessons selector used 10/25/50/100 rows. Preferences from
  * localStorage are never trusted as a query without this whitelist. */
 export const ADMIN_LESSON_PAGE_SIZES = [10, 25, 50, 100] as const;
@@ -14,7 +15,7 @@ export const adminLearningQuerySchema = z.strictObject({
   page: z.coerce.number().int().min(1).max(1000).default(1),
   courseCode:z.string().trim().max(64).optional(),
   cohortCode:z.string().trim().max(64).optional(),
-  offeringId:z.uuid().optional(),
+  offeringId:zUuid.optional(),
 });
 export function adminLearningHref(kind: "LESSONS" | "PROGRESS", query: z.infer<typeof adminLearningQuerySchema>) {
   const pathname = kind === "LESSONS" ? "/admin/lessons" : "/admin/course-progress";

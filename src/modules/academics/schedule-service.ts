@@ -54,6 +54,7 @@ import {
   type UpdateSectionScheduleEventInput,
 } from "./validation";
 
+import { zUuid } from "@/lib/schema-primitives";
 function eventWindowInsidePeriod(
   startsAt: Date,
   endsAt: Date,
@@ -96,7 +97,7 @@ export async function listFutureElectiveLearnerOverlaps(
   context: RequestContext, sectionId: string, from: Date, to: Date,
 ): Promise<Array<{ startsAt: Date; endsAt: Date }>> {
   const acting=await resolveActingCollege(context,"academics.manage");
-  const section=z.string().uuid().parse(sectionId);
+  const section=zUuid.parse(sectionId);
   if (!Number.isFinite(from.getTime()) || !Number.isFinite(to.getTime()) ||
     from.getTime() >= to.getTime()) return [];
   const db=getDb();
@@ -341,7 +342,7 @@ const scheduleRangeSchema=z.strictObject({
   courseId:z.string().trim().max(160).optional(),
   // Omitted means the admin's any-faculty view; the supplied UUID scopes
   // faculty-specific timetable reads without promoting section access.
-  facultyMembershipId:z.uuid().optional(),
+  facultyMembershipId:zUuid.optional(),
   status:z.enum(["SCHEDULED","CANCELLED","ALL"]).default("ALL"),
 }).refine(value=>!value.fromDate||!value.toDate||value.fromDate<=value.toDate,
   {path:["toDate"],message:"startDate must be before or equal to endDate"});
@@ -358,7 +359,7 @@ function scheduleFilters(raw:unknown){
   const courseSlug=input.courseSlug?.trim()||
     (input.courseId?.startsWith("crs-")?input.courseId.slice(4):undefined);
   const courseId=courseSlug?undefined:input.courseId;
-  if(courseId&&!z.uuid().safeParse(courseId).success)
+  if(courseId&&!zUuid.safeParse(courseId).success)
     throw new AcademicsServiceError("SCHEDULE_COURSE_NOT_FOUND");
   return {start,end,courseSlug,courseId,
     facultyMembershipId:input.facultyMembershipId,status:input.status};
@@ -495,8 +496,8 @@ export async function moveSectionScheduleEvent(
   context:RequestContext,raw:unknown,
 ){
   const input=z.strictObject({
-    eventId:z.uuid(),targetSectionId:z.uuid(),
-    targetDeliveryId:z.uuid().nullable().optional(),
+    eventId:zUuid,targetSectionId:zUuid,
+    targetDeliveryId:zUuid.nullable().optional(),
   }).parse(raw);
   const [scope,target]=await Promise.all([
     loadScheduleEventScope(input.eventId),loadSectionScope(input.targetSectionId),

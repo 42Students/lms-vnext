@@ -8,6 +8,7 @@ import {z} from "zod";
 import {bulkProjectMentorReassignmentInputSchema} from "@/modules/projects/validation";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -23,7 +24,7 @@ export const POST = route(
       // that gives them a more permissive mentor candidate.
       if("mentorMembershipId" in raw)
         return NextResponse.json({error:"AMBIGUOUS_MENTOR_ID"},{status:400});
-      const college=z.string().uuid().safeParse(raw["collegeId"]);
+      const college=zUuid.safeParse(raw["collegeId"]);
       const legacy=raw["mentorId"];
       const value=typeof legacy==="number"&&Number.isSafeInteger(legacy)?
         String(legacy):typeof legacy==="string"?legacy:"";

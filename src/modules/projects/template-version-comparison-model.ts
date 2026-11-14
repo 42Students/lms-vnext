@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const templateVersionComparisonParamsSchema = z.strictObject({
-  templateId: z.uuid(),
-  versionId: z.uuid(),
+  templateId: zUuid,
+  versionId: zUuid,
 });
 
 type VersionSnapshot = {

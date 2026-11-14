@@ -8,8 +8,9 @@ import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-sea
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
-const uuid=z.string().uuid();
+const uuid=zUuid;
 const term=z.string().trim().min(2).max(100);
 
 /** Recruiter Everywhere: search ONLY drives belonging to this exact

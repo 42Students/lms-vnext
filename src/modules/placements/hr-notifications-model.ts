@@ -1,6 +1,7 @@
 import {z} from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const hrNotificationsQuerySchema=z.strictObject({
-  collegeId:z.string().uuid().optional(),unreadOnly:z.enum(["true","false"]).default("false"),
+  collegeId:zUuid.optional(),unreadOnly:z.enum(["true","false"]).default("false"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
   q:z.string().trim().max(120).default(""),
 });

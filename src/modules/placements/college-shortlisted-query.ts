@@ -1,14 +1,15 @@
 import { z } from "zod";
 
+import { zUuid } from "@/lib/schema-primitives";
 const Search = z.strictObject({
   q: z.string().trim().max(100).default(""),
   page: z.coerce.number().int().min(1).max(1000).default(1),
   stage: z.enum(["ASSESSMENT","INTERVIEW","OFFERED","HIRED","SHORTLISTED","WAITLISTED","REJECTED","APPLIED","ALL"]).default("ASSESSMENT"),
   status: z.enum(["SUBMITTED","ALL","WITHDRAWN"]).default("SUBMITTED"),
   source: z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
-  departmentId: z.uuid().optional(),
-  programId: z.uuid().optional(),
-  batchId: z.uuid().optional(),
+  departmentId: zUuid.optional(),
+  programId: zUuid.optional(),
+  batchId: zUuid.optional(),
 });
 export function collegeShortlistedQuery(raw: Record<string,string|string[]|undefined>) {
   return Search.safeParse(raw);

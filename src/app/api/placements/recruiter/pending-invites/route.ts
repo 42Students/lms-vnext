@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnRecruiterPendingInvites,respondToOwnRecruiterPendingInvite} from "@/modules/placements/recruiter-pending-invites-service";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 async function handleGET(){
  try{
@@ -20,7 +21,7 @@ export const GET = route(
 );
 
 const pendingInviteResponseSchema=z.strictObject({
- grantId:z.string().uuid(),
+ grantId:zUuid,
  action:z.enum(["ACCEPT","DECLINE","accept","decline"]),
  expectedVersion:z.number().int().min(1),
 });

@@ -5,6 +5,7 @@ import {getFacultyQuizQuestionCsvForDownload} from "@/modules/courses/faculty-qu
 import {facultyCsvAttachmentHeaders} from "@/modules/courses/faculty-report-csv-request";
 import { route } from "@/security/route";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type RouteContext={params:Promise<{quizId:string}>};
@@ -14,9 +15,9 @@ async function handleGET(request:Request,{params}:RouteContext){
   const {quizId}=await params;
   const url=new URL(request.url);
   const raw=Object.fromEntries(url.searchParams.entries());
-  const query=z.object({deliveryId:z.string().uuid()}).strict().parse(raw);
+  const query=z.object({deliveryId:zUuid}).strict().parse(raw);
   if(url.searchParams.getAll("deliveryId").length!==1){
-   z.string().uuid().parse(null);
+   zUuid.parse(null);
   }
   const result=await getFacultyQuizQuestionCsvForDownload(
    await getCurrentRequestContext(),

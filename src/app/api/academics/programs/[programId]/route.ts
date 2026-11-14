@@ -18,6 +18,7 @@ import {
 } from "@/modules/academics/college-program-mutation-service";
 
 import { CACHE } from "@/security/responses";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ programId: string }> };
 
@@ -37,7 +38,7 @@ export const GET = route(
     const context = __actor!;
     try {
 const { programId: rawId } = params;
-const programId=z.string().uuid().safeParse(rawId);
+const programId=zUuid.safeParse(rawId);
 if(!programId.success)return NextResponse.json({
       error:"PROGRAM_NOT_FOUND",message:"Program not found.",
     },{status:404});

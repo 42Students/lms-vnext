@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {LEARNING_PATH_STATUSES} from "@/modules/courses/constants";
 
+import { zUuid } from "@/lib/schema-primitives";
 export const COLLEGE_LEARNING_PAGE_SIZE = 25;
 export const MAX_LEARNING_DIRECTORY_PAGE = 1000;
 export const LESSON_AUTOCOMPLETE_DEFAULT_LIMIT = 15;
@@ -9,7 +10,7 @@ export const LESSON_AUTOCOMPLETE_MAX_LIMIT = 200;
  * Old numeric course IDs cannot be accepted as UUIDs without an import map. */
 export const collegeLessonAutocompleteQuerySchema = z.strictObject({
   query: z.string().trim().max(100).default(""),
-  courseId: z.string().uuid().optional(),
+  courseId: zUuid.optional(),
   limit: z.coerce.number().int().min(1).max(LESSON_AUTOCOMPLETE_MAX_LIMIT)
     .default(LESSON_AUTOCOMPLETE_DEFAULT_LIMIT),
 });
@@ -35,9 +36,9 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   contentLifecycle: z.enum(["ALL","DRAFT","PUBLISHED","ARCHIVED"]).default("ALL"),
   maxContentCount:z.coerce.number().int().min(0).max(1000).optional(),
   minContentCount:z.coerce.number().int().min(1).max(1000).optional(),
-  pathId:z.string().uuid().optional(),
-  offeringId:z.string().uuid().optional(),
-  lessonId:z.string().uuid().optional(),
+  pathId:zUuid.optional(),
+  offeringId:zUuid.optional(),
+  lessonId:zUuid.optional(),
   contentType: z.enum(["ALL","RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"]).default("ALL"),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -72,7 +73,7 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   lessonPresence:z.enum(["ALL","HAS_LESSONS","NO_LESSONS"]).default("ALL"),
   archivedContentState:z.enum(["ALL","HAS_ARCHIVED","NO_ARCHIVED"]).default("ALL"),
   draftContentState:z.enum(["ALL","HAS_DRAFT","NO_DRAFT"]).default("ALL"),
-  offeringId:z.string().uuid().optional(),
+  offeringId:zUuid.optional(),
   departmentCode:z.string().trim().min(1).max(64).optional(),
   courseStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   periodStatus:z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
@@ -157,13 +158,13 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
 /** Scoped offering lookups include archived offering records, never inferred learner completion. */
 export function collegeOfferingProgressHref(offeringId:string) {
   return collegeLearningHref("PROGRESS", collegeProgressQuerySchema.parse({
-    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+    offeringId:zUuid.parse(offeringId), status:"ALL",
   }));
 }
 /** Reuses the authenticated lesson aggregate rather than a new unscoped detail read. */
 export function collegeOfferingLessonsHref(offeringId:string) {
   return collegeLearningHref("LESSONS", collegeLessonQuerySchema.parse({
-    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+    offeringId:zUuid.parse(offeringId), status:"ALL",
   }));
 }
 /** Pagination cannot address beyond page 1000: the UI must disclose this

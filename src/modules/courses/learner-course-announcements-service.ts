@@ -6,13 +6,14 @@ import {db10Announcements,learnerProgramEnrollments,sectionEnrollments,sections,
 import type {RequestContext} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {requireOwnCourseLearnerRead} from "./learner-access-guard";
+import { zUuid } from "@/lib/schema-primitives";
 /** LEARNER-home-courses-14: official class-targeted announcements only.
  * Discussion posts are never reclassified as notices; no course-only
  * audience may be inferred from a class-wide announcement. */
 export async function listLearnerCourseClassAnnouncements(
  context:RequestContext,sectionIdInput:string,now:Date=new Date(),limit=2,
 ){
- const sectionId=z.string().uuid().parse(sectionIdInput);
+ const sectionId=zUuid.parse(sectionIdInput);
  const member=await requireOwnCourseLearnerRead(context);
   const [section]=await getDb().select({id:sectionEnrollments.id})
    .from(sectionEnrollments)

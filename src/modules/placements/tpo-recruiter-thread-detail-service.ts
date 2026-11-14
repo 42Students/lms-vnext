@@ -9,6 +9,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { listMessageThreads } from "./tpo-messaging-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 /** Legacy author, channel and request-event fields are persisted in vNext.
  * Read them from the scoped thread instead of inventing empty values. */
 export type TpoRecruiterMessageItem={
@@ -18,7 +19,7 @@ export type TpoRecruiterMessageItem={
  changeRequestHref:string|null;requestSummary:string|null;
 };
 export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:unknown){
- const id=z.string().uuid().parse(rawId),member=context.membership;
+ const id=zUuid.parse(rawId),member=context.membership;
  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO))
    throw new AuthorizationError("placements.manage");
  // The existing service verifies the caller's college and permission before

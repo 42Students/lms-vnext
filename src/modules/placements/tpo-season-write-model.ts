@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {TPO_RULE_LIMITS} from "./tpo-rule-limits";
+import { zUuid } from "@/lib/schema-primitives";
 /** Additional vNext fields must be visible beside the legacy season name and dates. */
 export const TPO_SEASON_FORM_COPY = {
  name: "Season name",
@@ -18,7 +19,7 @@ const fields = {
 };
 export const tpoSeasonChangeSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("CREATE"), confirmed: z.literal(true), ...fields }).strict(),
-  z.object({ action: z.literal("EDIT"), confirmed: z.literal(true), seasonId: z.string().uuid(),
+  z.object({ action: z.literal("EDIT"), confirmed: z.literal(true), seasonId: zUuid,
     expectedUpdatedAt: z.iso.datetime({ offset: true }), ...fields }).strict(),
 ]).refine((value) => value.endDate >= value.startDate, {
   path: ["endDate"], message: "End date must be on or after start date",
@@ -36,14 +37,14 @@ export const TPO_SEASON_CREATE_REVIEW_COPY={
 export const tpoSeasonRegistrationActionSchema = z.discriminatedUnion("action", [
   z.strictObject({
     action: z.literal("OPEN_REGISTRATION"),
-    seasonId: z.uuid(),
+    seasonId: zUuid,
     expectedUpdatedAt: z.iso.datetime({offset: true}),
     registrationDeadline: z.iso.datetime({offset: true}).nullable(),
     confirmed: z.literal(true),
   }),
   z.strictObject({
     action: z.literal("CLOSE_REGISTRATION"),
-    seasonId: z.uuid(),
+    seasonId: zUuid,
     expectedUpdatedAt: z.iso.datetime({offset: true}),
     confirmed: z.literal(true),
   }),

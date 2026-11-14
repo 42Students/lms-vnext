@@ -24,6 +24,7 @@ import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/o
 import { env, rawEnv } from "@/config/env";
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export class TpoCampaignDispatchError extends Error{
  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
 }
@@ -80,7 +81,7 @@ export async function tpoCampaignDispatchReady(){
  * it cannot resend automatically and double-email the recruiter.
  */
 export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
- const id=z.string().uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const member=context.membership;
  if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE"||
   context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
@@ -318,7 +319,7 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  * separately authorized reconciliation workflow may resolve provider facts;
  * this accessor never reads recipient addresses, message bodies or tokens. */
 export async function inspectTpoCampaignDeliveryState(context:RequestContext,rawId:unknown){
- const id=z.string().uuid().parse(rawId);
+ const id=zUuid.parse(rawId);
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO)||
     context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");

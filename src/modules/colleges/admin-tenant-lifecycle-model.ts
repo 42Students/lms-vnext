@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { zUuid } from "@/lib/schema-primitives";
 export const tenantLifecycleQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
-  organizationId: z.union([z.uuid(), z.literal("")]).default(""),
+  organizationId: z.union([zUuid, z.literal("")]).default(""),
   status: z.enum(["ACTIVE", "ARCHIVED", "ALL"]).default("ACTIVE"),
   // Do not interpret scientific notation, hex or whitespace as a URL page.
   // Internal callers may pass an already validated numeric page.

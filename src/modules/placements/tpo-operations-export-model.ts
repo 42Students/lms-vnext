@@ -2,6 +2,7 @@ import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 import type { TpoRoundRosterRow } from "./tpo-round-drive-day-model";
 
+import { zUuid } from "@/lib/schema-primitives";
 export type RoundAttendanceExport = {
   companyName: string;
   job: { title: string };
@@ -55,7 +56,7 @@ export function projectTpoCompanyContactRows(
 }
 
 export const tpoCompanyContactLogQuerySchema = z.object({
-  companyId: z.string().uuid(),
+  companyId: zUuid,
   page: z.coerce.number().int().min(1).max(10000).default(1),
   type: z.enum([
     "ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM",

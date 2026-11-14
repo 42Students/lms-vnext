@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const adminUsersQuerySchema = z.object({
   tab: z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q: z.string().trim().max(100).default(""),
@@ -26,7 +27,7 @@ export function adminUsersLegacyViewTab(view:unknown,tab:unknown){
 }
 
 export const adminPopularDirectoryQuerySchema=z.strictObject({
-  collegeId:z.string().uuid(),
+  collegeId:zUuid,
   limit:z.union([z.number().int(),z.string().regex(/^[0-9]+$/).transform(Number)])
     .pipe(z.number().int().min(1).max(50)).default(10),
 });

@@ -18,12 +18,13 @@ import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-
 import {readBoundedJsonRequest} from "@/lib/request-body";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 
 /** Source broadcast IDs are distinct from individual recipient copies.
  * The existing group writer performs one CAS-checked transaction across all
  * copies; orphaned or unlinked notices cannot be edited using this route. */
-const broadcastGroupIdSchema=z.uuid();
+const broadcastGroupIdSchema=zUuid;
 async function scopedBroadcastCopies(context:RequestContext,groupId:string){
  if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))
   throw new AuthorizationError("college.manage");
