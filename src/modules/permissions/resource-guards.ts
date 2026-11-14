@@ -34,7 +34,7 @@ export function ownsResource(
 export function requireOwnsResource(
   context: RequestContext | null | undefined,
   row: { membershipId?: string | null; userId?: string | null },
-  permission = "identity.self.manage",
+  permission: PlatformPermission = "identity.self.manage",
 ): void {
   if (!ownsResource(context, row)) throw new AuthorizationError(permission);
 }
