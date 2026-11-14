@@ -45,10 +45,10 @@ describe("UX-G151 project interaction guards", () => {
     expect(component).toContain("form.current?.requestSubmit()");
   });
 
-  it("shows acceptance criteria once while keeping the blocked-task alert", () => {
+  it("shows the done-when criteria once while keeping the blocked-task alert", () => {
     const component = source("src/components/projects/learner-board-task-detail-dialog.tsx");
-    expect(component.match(/<Heading level=\{3\}>Acceptance criteria<\/Heading>/g)).toHaveLength(1);
-    expect(component).not.toContain(">Done when</Heading>");
+    expect(component.match(/<Heading level=\{3\}>Done when<\/Heading>/g)).toHaveLength(1);
+    expect(component).not.toContain(">Acceptance criteria</Heading>");
     expect(component).toContain('task.status === "BLOCKED"');
     expect(component).toContain('role="alert"');
   });
