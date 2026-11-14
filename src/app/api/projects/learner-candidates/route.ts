@@ -8,7 +8,7 @@ import { privateJson } from "@/security/responses";
 import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "projects.manage" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const input=z.strictObject({

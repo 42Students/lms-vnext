@@ -12,7 +12,7 @@ import { privateJson } from "@/security/responses";
 import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {projectId}=params;

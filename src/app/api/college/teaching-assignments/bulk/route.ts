@@ -15,7 +15,7 @@ const inputSchema = z.object({
 /** Batch API deliberately reports each delivery's outcome, including
  * conflicts, rather than claiming the entire action succeeded. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const input = inputSchema.parse(await boundedRequestJson(request, 8 * 1024 * 1024));

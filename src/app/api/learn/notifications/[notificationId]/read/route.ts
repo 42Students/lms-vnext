@@ -5,7 +5,7 @@ import { markOwnLearnerNotificationRead } from "@/modules/activity/learner-notif
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { notificationId } = params;

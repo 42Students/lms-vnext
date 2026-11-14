@@ -8,7 +8,7 @@ import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "projects.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url = new URL(request.url);

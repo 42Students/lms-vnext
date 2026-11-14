@@ -5,7 +5,7 @@ import { markAllOwnFacultyNotificationsRead } from "@/modules/activity/faculty-n
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ context: actor }) => {
     const context = actor!;
     const markedRead = await markAllOwnFacultyNotificationsRead(context);

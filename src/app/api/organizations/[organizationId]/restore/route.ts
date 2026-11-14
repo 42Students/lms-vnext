@@ -4,7 +4,7 @@ import {restoreOrganization} from "@/modules/organizations/service";
 export const runtime="nodejs";
 /** SA-tenants-modules-R02: same-origin, actor-scoped, audited restore. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "organization.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const {organizationId}=params;

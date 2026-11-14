@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { updateCollegeContentStudentVisibility } from "@/modules/courses/college-content-visibility-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json(await updateCollegeContentStudentVisibility(context,await boundedRequestJson(request)));

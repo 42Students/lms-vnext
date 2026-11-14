@@ -12,7 +12,7 @@ export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     if(Number(request.headers.get("content-length")??0)>1024)

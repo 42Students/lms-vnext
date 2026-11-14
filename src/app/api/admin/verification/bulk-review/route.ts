@@ -11,7 +11,7 @@ import { CACHE } from "@/security/responses";
 import { zUuid } from "@/lib/schema-primitives";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "profile-verification.review" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {

@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ membershipId: string }> };
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "membership.lifecycle.manage" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {

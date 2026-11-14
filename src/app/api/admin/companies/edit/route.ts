@@ -8,7 +8,7 @@ import {readBoundedJsonRequest} from "@/lib/request-body";
 import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const parsed=await readBoundedJsonRequest(request,8192);

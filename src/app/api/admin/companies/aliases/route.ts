@@ -7,7 +7,7 @@ import {changeSuperAdminCompanyAlias} from "@/modules/placements/super-admin-com
 import {readBoundedJsonRequest} from "@/lib/request-body";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const parsed=await readBoundedJsonRequest(request,8192);

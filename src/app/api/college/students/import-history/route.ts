@@ -6,7 +6,7 @@ import {listCollegeStudentImportHistory} from "@/modules/people/college-import-h
 import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "people.manage" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const page=new URL(request.url).searchParams.get("page")??1;

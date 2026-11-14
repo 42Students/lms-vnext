@@ -17,6 +17,6 @@ async function handlePOST(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "college.manage", stepUp: true },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

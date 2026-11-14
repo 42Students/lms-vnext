@@ -5,7 +5,7 @@ import { getAdminLearnerCurrentContentAttempts } from "@/modules/courses/admin-l
 import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.read" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {membershipId}=params;

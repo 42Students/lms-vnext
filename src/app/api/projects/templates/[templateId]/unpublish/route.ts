@@ -5,7 +5,7 @@ import { unpublishProjectTemplate } from "@/modules/projects/template-service";
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "project-template.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { templateId } = params;

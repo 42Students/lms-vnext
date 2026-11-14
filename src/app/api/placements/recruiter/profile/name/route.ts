@@ -4,7 +4,7 @@ import {NextResponse} from "next/server";
 import {updateOwnHrDisplayName} from "@/modules/placements/hr-display-name-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "identity.self.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const raw:unknown=await boundedRequestJson(request);

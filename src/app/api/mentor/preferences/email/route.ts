@@ -13,7 +13,7 @@ import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const headers={"Cache-Control":CACHE.PRIVATE};
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const decoded=await readBoundedUtf8Body(request,256);

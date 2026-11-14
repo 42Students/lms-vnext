@@ -7,7 +7,7 @@ import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {assignmentId}=params;

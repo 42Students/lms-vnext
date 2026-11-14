@@ -8,7 +8,7 @@ import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const {
