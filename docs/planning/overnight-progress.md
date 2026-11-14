@@ -51,7 +51,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [~] 4.3 NOT removed: 63 per-file requireX guard definitions remain, count enforced as a ratchet. per-file requireX guard copies removed
 - [x] 4.4 (helpers built, call sites not migrated) src/modules/permissions/resource-guards.ts: sameCollege, requireSameCollege, ownsResource, requireOwnsResource, tested; 227 inline collegeId comparisons remain, enforced as a ratchet. requireSameCollege / ownsResource
 - [x] 4.5 (helper built, call sites not migrated) src/lib/concurrency.ts: requireCurrentVersion, VersionConflictError (409 VERSION_CONFLICT through the central mapper), tested; the ~564 existing version checks keep their own codes. requireCurrentVersion
-- [x] 4.6 (part) 4 of 10 raw server fetches moved to outboundFetch (company-share and recruiter ZIP exports, GitHub client, Telegram); the other 6 are storage clients (S3 core, presigned PUT uploads) whose http/long-upload needs outboundFetch does not meet yet; ratchet enforced at 6. last server raw fetch onto outboundFetch
+- [x] 4.6 (part) 3 of 10 raw server fetches moved to outboundFetch (company-share and recruiter ZIP exports, GitHub client; Telegram was moved and put back: outboundFetch logs failures and a failure to reach the alert channel must not feed the alert pipeline); the other 6 are storage clients (S3 core, presigned PUT uploads) whose http/long-upload needs outboundFetch does not meet yet; ratchet enforced at 7. last server raw fetch onto outboundFetch
 
 ## Phase 5: data, events, files, exports, jobs
 - [ ] 5.1 recordActivity + status-transition writer

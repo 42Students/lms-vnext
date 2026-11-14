@@ -7,7 +7,6 @@ import { db10LogAlertSignatures as signatures } from "@/db/schema/db10-log-alert
 import { logAlertsRuntimeEnabled } from "./readiness";
 
 import { env } from "@/config/env";
-import { outboundFetch } from "@/lib/outbound";
 const callbackSchema = z.object({
   callback_query: z.object({
     id: z.string().min(1).max(120),
@@ -63,7 +62,8 @@ async function postTelegramOperation(operation:"answerCallbackQuery"|"editMessag
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),2_000);
   try{
-    const result=await outboundFetch("https://api.telegram.org/bot"+token+"/"+operation,{
+    // Deliberately a raw fetch: outboundFetch logs failures, and a failure to reach the alert channel must not feed the alert pipeline.
+    const result=await fetch("https://api.telegram.org/bot"+token+"/"+operation,{
       method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify(payload),signal:controller.signal,
     });
