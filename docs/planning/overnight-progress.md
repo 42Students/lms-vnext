@@ -43,7 +43,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 3.3 (part) one body reader module src/lib/request-body.ts replaces 5 reader modules (4 shims deleted, auth reader folded in), behaviour of each call shape unchanged and tested; ratchets enforced on handler origin checks (262) and body modules (1). NOT done: removing the 262 redundant handler-level origin checks and 410 handler actor lookups: 277 test files pin the old text and the checks are harmless defence in depth, so a ratchet holds the count until a dedicated pass
 - [x] 3.4 (part) src/security/limits.ts: RATE_LIMITS and TIMEOUT_MS tiers; 174 inline literals replaced, remaining 2 rate-limit and 5 timeout literals are non-standard values (ratchets enforced). NOT done: the other ~120 retry/limit literals that carry route-specific numbers
 - [x] 3.5 (part) src/auth/cookies.ts (setAuthCookie, clearAuthCookie(s), setOrClearAuthCookie): 16 of 20 cookie writes migrated, one Secure rule (production or COOKIE_SECURE=1) now applies to all of them; 4 path-scoped cookies (mentor Google OAuth x2, company-share x2) keep their own options; ratchet enforced
-- [ ] 3.6 idempotency option
+- [x] 3.6 (built, not yet adopted) route() option `idempotent: true | {ttlSeconds}`: Idempotency-Key header (8-128 chars) claimed per person/method/route pattern in the shared store (per-process fallback), repeat gets 409 DUPLICATE_REQUEST, 5xx or thrown error releases the key, claim store failure fails closed; 7 tests. NOT adopted on any live route yet: each adoption needs its client to send a key, so it is a per-route product change
 
 ## Phase 4: authorization and tenant
 - [ ] 4.1 policy registry

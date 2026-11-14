@@ -40,6 +40,13 @@ export type RouteDeps<Context> = {
   defaultPublicLimit?: { limit: number; windowMs: number };
   /** Budget applied to every authenticated state-changing request that does not set its own `rateLimit`. */
   defaultMutationLimit?: { limit: number; windowMs: number };
+  /**
+   * Idempotency (routes that set `idempotent`). Resolves true the first time a key is seen within `ttlSeconds`. Must fail
+   * closed when the shared store is on and unreachable (the error propagates and the request answers with an error).
+   */
+  claimIdempotency?: (key: string, ttlSeconds: number) => Promise<boolean>;
+  /** Frees a claimed key so the caller can retry after the request failed on our side. */
+  releaseIdempotency?: (key: string) => Promise<void>;
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
   runInScope?: <T>(context: Context, fn: () => T) => T;
   /**
@@ -70,6 +77,14 @@ type Common = {
   query?: ZodType;
   /** Query keys that may legitimately repeat (read with getAll from request.url). All other duplicates are rejected. */
   repeatableQuery?: readonly string[];
+  /**
+   * For writes that must not run twice (payments-like actions, one-shot issuance, sends). The client sends a unique
+   * `Idempotency-Key` header (8-128 characters: letters, digits, "-" or "_"); the first request with a key runs, a repeat
+   * within `ttlSeconds` (default 24 hours) is refused with 409 DUPLICATE_REQUEST and does not run the handler. A request that
+   * fails on our side (5xx or a thrown error) releases its key so the same request can be retried. Missing or malformed
+   * keys are refused with 400 IDEMPOTENCY_KEY_REQUIRED.
+   */
+  idempotent?: true | { ttlSeconds?: number };
   /** Per-actor (authenticated) or per-address (public) request budget; `false` opts out of the central default. */
   rateLimit?: { limit: number; windowMs?: number } | false;
 };
@@ -240,21 +255,62 @@ export function createRoute<Context, Permission extends string = string>(deps: R
           }
         }
 
+        let idempotencyKey: string | null = null;
+        if (config.idempotent && mutating) {
+          if (!deps.claimIdempotency) throw new Error("idempotent requires deps.claimIdempotency.");
+          const supplied = request.headers.get("idempotency-key") ?? "";
+          if (!/^[A-Za-z0-9_-]{8,128}$/.test(supplied)) return jsonError(requestId, 400, "IDEMPOTENCY_KEY_REQUIRED");
+          const who = context !== null && deps.actorKey ? `user:${deps.actorKey(context)}` : `addr:${deps.clientAddress ? deps.clientAddress(request) : "unknown"}`;
+          const key = `idem:${who}:${request.method}:${pattern}:${supplied}`;
+          const ttl = config.idempotent === true ? 86_400 : config.idempotent.ttlSeconds ?? 86_400;
+          if (!(await deps.claimIdempotency(key, ttl))) return jsonError(requestId, 409, "DUPLICATE_REQUEST");
+          idempotencyKey = key;
+        }
+        const releaseKey = async () => {
+          if (idempotencyKey !== null && deps.releaseIdempotency) {
+            const key = idempotencyKey;
+            idempotencyKey = null;
+            try {
+              await deps.releaseIdempotency(key);
+            } catch {
+              /* a failed release only delays a retry until the key expires */
+            }
+          }
+        };
+
         let body = undefined as B;
         if (config.body) {
           const read = await deps.readJson(request, config.body.maxBytes);
-          if (read.kind === "TOO_LARGE") return jsonError(requestId, 413, "INVALID_REQUEST");
-          if (read.kind !== "OK") return jsonError(requestId, 400, "INVALID_REQUEST");
-          body = config.body.schema.parse(read.value);
+          if (read.kind === "TOO_LARGE") {
+            await releaseKey();
+            return jsonError(requestId, 413, "INVALID_REQUEST");
+          }
+          if (read.kind !== "OK") {
+            await releaseKey();
+            return jsonError(requestId, 400, "INVALID_REQUEST");
+          }
+          try {
+            body = config.body.schema.parse(read.value);
+          } catch (error) {
+            await releaseKey();
+            throw error;
+          }
         }
 
         const params = routeParams;
         const run = () => handler({ request, context, body, query, params, requestId });
-        const response = await (context !== null && deps.runInScope
-          ? deps.runInScope(context, run)
-          : context === null && config.auth === "public" && deps.runInPublicScope
-            ? deps.runInPublicScope("public:" + pattern, run)
-            : run());
+        let response: Response;
+        try {
+          response = await (context !== null && deps.runInScope
+            ? deps.runInScope(context, run)
+            : context === null && config.auth === "public" && deps.runInPublicScope
+              ? deps.runInPublicScope("public:" + pattern, run)
+              : run());
+        } catch (error) {
+          await releaseKey();
+          throw error;
+        }
+        if (response.status >= 500) await releaseKey();
         return withHeaders(response, requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);

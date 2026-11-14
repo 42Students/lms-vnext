@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { clientIp } from "@/auth/ip-rate-limit";
-import { allowRequestShared } from "@/security/shared-store";
+import { allowRequestShared, claimDeliveryShared, releaseDeliveryShared } from "@/security/shared-store";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/request-body";
 import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
@@ -13,6 +13,19 @@ import { observeSecurityEvent, recordSecurityEvent } from "@/security/audit-stor
 import { createRoute } from "@/security/route-core";
 
 type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
+
+// Per-process fallback for idempotency keys when the shared store is off (single replica / development).
+const localIdempotency = new Map<string, number>();
+async function claimLocalIdempotency(key: string, ttlSeconds: number): Promise<boolean> {
+  const now = Date.now();
+  for (const [k, expires] of localIdempotency) if (expires < now) localIdempotency.delete(k);
+  if (localIdempotency.has(key)) return false;
+  localIdempotency.set(key, now + ttlSeconds * 1000);
+  return true;
+}
+async function releaseLocalIdempotency(key: string): Promise<void> {
+  localIdempotency.delete(key);
+}
 
 /**
  * The one way to define an API route. See docs/security/central-security-architecture.md.
@@ -30,6 +43,8 @@ export const route = createRoute<Context, PlatformPermission>({
     await requireRecentDeviceAuthentication((context as { user: { id: string } }).user.id, maxAgeSeconds);
   },
   allowRequest: allowRequestShared,
+  claimIdempotency: (key, ttl) => claimDeliveryShared(key, ttl, claimLocalIdempotency),
+  releaseIdempotency: (key) => releaseDeliveryShared(key, releaseLocalIdempotency),
   actorKey: (context) => (context as { user: { id: string } }).user.id,
   clientAddress: clientIp,
   // Every authenticated state-changing request draws on one generous per-user budget by default (one bucket per user,
