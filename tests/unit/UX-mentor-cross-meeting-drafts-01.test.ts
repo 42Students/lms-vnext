@@ -9,14 +9,14 @@ describe("Mentor meeting editors preserve drafts and safe errors",()=>{
   expect(src).toContain("if(pending)return;");
   expect(src).toContain("onClick={guard.requestClose}");
   expect(src).toContain("onConfirm={guard.confirmDiscard}");
-  expect(src).toContain("if(!valid||pending)return");
+  expect(src).toContain("if(!valid||pending||inFlightRef.current)return");
  });
  it("UX-mentor-cross-F02 reschedule has the same discard and retry protection",()=>{
   const src=read("src/components/projects/mentor-meeting-reschedule.tsx");
   expect(src).toContain("useProjectEditorDiscardGuard(open||confirm,dirty,pending");
   expect(src).toContain("if(!next)setOpen(true)");
   expect(src).toContain("if(pending)return;");
-  expect(src).toContain("if(!parsed.success||!changed||pending)return");
+  expect(src).toContain("if(!parsed.success||!changed||pending||inFlightRef.current)return");
   expect(src).toContain("onClick={guard.requestClose}");
   expect(src).toContain("onConfirm={guard.confirmDiscard}");
   expect(src).not.toContain("min-h-10");

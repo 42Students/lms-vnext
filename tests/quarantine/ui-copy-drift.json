@@ -2,30 +2,5 @@
   "note": "Source-text tests of UI copy and markup that went stale because the UX lanes changed the pages. They assert wording or layout only, never access, tenant, session or permission behaviour (tests/unit/sec-quarantine-guard.test.ts enforces that). They are skipped by `npm test` so the gate means something, and run by `npm run test:quarantine`. The list may only shrink: repair a test against the current page, then delete its line.",
   "created": "2026-11-14",
   "maxEntries": 7,
-  "files": [
-    {
-      "file": "tests/unit/UX-college-programs-states-01.test.ts",
-      "why": "expects an inline Retry Button in college/programs/error.tsx; it now uses a link button"
-    },
-    {
-      "file": "tests/unit/UX-mentor-cross-meeting-drafts-01.test.ts",
-      "why": "expects old `if(!valid||pending)return` handler text in the mentor meeting editors"
-    },
-    {
-      "file": "tests/unit/chat13-ux-cross-audit-tpo-loading.test.ts",
-      "why": "expects the old 'Loading Jobs · Joining' loading title"
-    },
-    {
-      "file": "tests/unit/chat9-round6-settings-course-nav.test.ts",
-      "why": "expects aria-label=\"Settings sections\" on the TPO settings nav, which moved into a shared component"
-    },
-    {
-      "file": "tests/unit/learner-projects-gap-verification.test.ts",
-      "why": "expects 'Done when' wording in the learner task modal"
-    },
-    {
-      "file": "tests/unit/tpo-announcements-prototype-workspace-2026.test.ts",
-      "why": "expects the old scalarKeys list literal in the announcements page"
-    }
-  ]
+  "files": []
 }

@@ -16,6 +16,6 @@ describe("UX /college/programs loading, error and retry",()=>{
   expect(file("error.tsx")).toContain("ErrorState");
  });
  it("UX-college-programs-error-02 offers a shared retry control",()=>{
-  expect(file("error.tsx")).toContain('<Button type="button" variant="secondary" onClick={reset}>Retry</Button>');
+  expect(file("error.tsx")).toContain('type="button" variant="secondary" onClick={reset}>Retry</Button>');
  });
 });

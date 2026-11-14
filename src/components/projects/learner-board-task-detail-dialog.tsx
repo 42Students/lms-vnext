@@ -82,7 +82,7 @@ export function LearnerBoardTaskDetailDialog({
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.description??"No task description provided."}</p>
       </section>
       <section className="mt-5">
-        <Heading level={3}>Acceptance criteria</Heading>
+        <Heading level={3}>Done when</Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
       {task.status === "BLOCKED" ? (

@@ -21,7 +21,7 @@ describe("TPO Students / Announcements prototype",()=>{
   const page=source("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(page).toContain("result.items.find(row=>row.id===raw.notice)??null");
   expect(page).toContain("The selected announcement is not on this page. No other notice was opened.");
-  expect(page).toContain('scalarKeys=["tab","page","mine","audience","targetId","notice","compose"]');
+  expect(page).toContain('scalarKeys=["tab","page","mine","audience","targetId","notice","compose","noticeError","sentNotice","noticeSuccess"]');
  });
  it("keeps the prototype sidebar local to the loaded page and filters by actual notice metadata",()=>{
   const sidebar=source("src/components/tpo/tpo-notice-prototype-sidebar.tsx");

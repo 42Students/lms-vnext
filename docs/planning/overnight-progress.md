@@ -75,7 +75,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [~] 7.1 NOT built: copy catalogue (1,825 inline description literals tracked, exact-wording-parity rule makes this a page-by-page job)
 - [~] 7.2 NOT driven down: the UI-consistency ratchet already blocks new debt (npm run ux:consistency passes); the existing 309 bare links etc. are untouched
 - [~] 7.3 NOT done: state, form and table components do not read copy and pager from the new modules
-- [~] 7.4 1 of 7 repaired and un-quarantined (TPO G110-G119); 6 remain quarantined because the pages changed on purpose (retry control, loading title, settings nav label, Done-when copy, announcements keys, meeting editor handlers); one of them also had a stale role-literal pin from my rewrite, fixed. Each needs a decision whether the old copy or the new page is right
+- [x] 7.4 All 7 quarantined UI-copy tests resolved (2026-11-14, owner chose old wording): three pages restored to the old text (loading title "Loading Jobs · Joining", nav aria-label "Settings sections", task heading "Done when"); three tests repaired because the pages gained real behaviour (in-flight guard, extra notice keys, retry button classes). Quarantine list is empty.
 
 ## Phase 8: close-out
 - [x] 8.1 (catalogued, not rebuilt) tests/support/README.md maps every shared fixture by need; new fixture builders for course/drive/learner/college were not written because tests/support already holds 25 of them; sec-cross-user-applications still has its own college setup
