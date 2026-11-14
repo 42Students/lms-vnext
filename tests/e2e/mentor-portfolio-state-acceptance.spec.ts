@@ -45,17 +45,14 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
       .toHaveAttribute("href", "/mentor/reports");
   });
 
-  test("mentor report CSV stays a bounded scoped export, never an unfiltered person dump", async ({ page, context }) => {
+  test("mentor report CSV export needs step-up: a bare test identity gets 401 and no CSV", async ({ page, context }) => {
+    // The export route requires a fresh real device session (stepUp). The E2E identity cookie deliberately cannot satisfy it,
+    // so the CSV columns and bounds are covered by unit tests of mentorReportsCsv, not here.
     await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
     const response = await page.request.get("/api/mentor/reports/export?status=ALL");
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toContain("text/csv");
-    expect(response.headers()["cache-control"]).toContain("no-store");
-    expect(Number(response.headers()["x-export-omitted"])).toBeGreaterThanOrEqual(0);
-    const csv = await response.text();
-    expect(csv).toContain("Project ID,Project,Status,Primary Mentor,Recorded attention,Updated (IST)");
-    expect(csv).not.toContain("identity_uid");
-    expect(csv).not.toContain("phone_e164");
+    expect(response.status()).toBe(401);
+    expect(response.headers()["content-type"] ?? "").not.toContain("text/csv");
+    expect(await response.text()).not.toContain("Project ID,Project");
   });
 
   test("review decisions, search empty/invalid states and recovery remain navigable", async ({ page, context }) => {

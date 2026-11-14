@@ -563,7 +563,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  test("malformed calendar filters fail recoverably for an authenticated Mentor",async({page,context})=>{
   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
   await page.goto("/mentor/calendar?period=INVALID");
-  await expect(page.getByRole("heading",{name:"Invalid meeting filters"})).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("Invalid meeting filters");
   await expect(page.getByRole("link",{name:"Clear filters"}))
    .toHaveAttribute("href","/mentor/calendar");
   await expect(page.locator("body"))
