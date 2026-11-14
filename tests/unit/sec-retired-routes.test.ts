@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { LEGACY_ROUTES, expiredLegacyRoutes, legacyRedirects } from "@/lib/legacy-routes";
+import { LEGACY_ROUTES, expiredLegacyRoutes, legacyRedirects } from "@/lib/retired-routes";
 
 describe("legacy route table", () => {
   it("has no duplicate old paths and every entry names a reason and a removal date", () => {

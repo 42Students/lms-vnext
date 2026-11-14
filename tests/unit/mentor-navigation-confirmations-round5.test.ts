@@ -1,15 +1,17 @@
 import {readFileSync} from "node:fs";
+import {legacyRedirects} from "@/lib/retired-routes";
 import {join} from "node:path";
 import {describe,expect,it} from "vitest";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("mentor legacy bookmarks and confirmations",()=>{
  it("MEN-projects-meetings-74 safely redirects retired mentor bookmarks",()=>{
-  const cfg=source("next.config.ts");
+  const redirects=legacyRedirects();
+  const sources=redirects.map(r=>r.source);
   for(const s of ["/mentor/profile","/mentor/contacts/:path*","/mentor/allQuizzes",
-    "/mentor/fileExplorer","/mentor/courses/:path*"])expect(cfg).toContain(s);
-  expect(cfg).toContain('destination: "/mentor/projects"');
+    "/mentor/fileExplorer","/mentor/courses/:path*"])expect(sources).toContain(s);
   // Legacy Mentor links now land in the actual prototype Projects entrypoint.
-  expect(cfg).not.toContain('destination: "/mentor"');
+  for(const r of redirects.filter(r=>r.source.startsWith("/mentor/")))expect(r.destination).toBe("/mentor/projects");
+  expect(source("next.config.ts")).toContain("legacyRedirects()");
  });
  it("MEN-projects-meetings-76 uses styled mentor sprint and project completion confirmation",()=>{
   for(const path of ["src/components/projects/mentor-sprint-write.tsx",

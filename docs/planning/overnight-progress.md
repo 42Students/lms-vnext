@@ -67,7 +67,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 6.2 (part) src/lib/pagination.ts PAGE_SIZES (COMPACT 10, STANDARD 20, LONG 25, GRID 48, ADMIN 50, BULK 500): all 14 PAGE_SIZE constants point at it (ratchet 14 -> 0, enforced). NOT done: parameter names and caps per list class, one DB helper, one UI control
 - [~] 6.3 NOT built: status registry (1,810 status comparisons, 319 check lists) is a domain-by-domain job; the comparison count is an enforced ratchet
 - [x] 6.4 (foundation) src/lib/routes.ts ROUTES: 27 fixed and 6 parameterised routes for the most-linked pages, ids encoded, test proves every route is a real page; the 4,859 string literals remain (not migrated, ratchet tracking)
-- [x] 6.5 Legacy table built: src/lib/legacy-routes.ts (old path, new path, reason, removal date); next.config.ts redirects now come from it; a test fails when an entry passes its removal date. The envelope adapter is not built (the one compat API route, /api/v2/skills, keeps its own adapter and is listed in the table)
+- [x] 6.5 Legacy table built: src/lib/retired-routes.ts (old path, new path, reason, removal date); next.config.ts redirects now come from it; a test fails when an entry passes its removal date. The envelope adapter is not built (the one compat API route, /api/v2/skills, keeps its own adapter and is listed in the table)
 - [~] 6.6 NOT built: locale, currency and phone module (src/config/locale.ts holds the default locale and zone only)
 - [~] 6.7 NOT built: one date and money input and parser pair
 

@@ -1,4 +1,5 @@
 import {readFileSync} from "node:fs";
+import {legacyRedirects} from "@/lib/retired-routes";
 import {describe,expect,it} from "vitest";
 import {companyDomainSchema} from "@/modules/placements/company-curation-domain-model";
 import {authoredImportantDateRoundTrip} from "@/modules/placements/job-important-date-adapter";
@@ -7,9 +8,8 @@ import {evaluateLegacyDomainLoginReadiness} from "@/modules/colleges/legacy-doma
 const src=(path:string)=>readFileSync(path,"utf8");
 describe("chat-2 verify2 historical aliases, domain, dates and review proof",()=>{
  it("resolves old mentor course index and detail bookmarks without creating an unauthorized course page",()=>{
-  const config=src("next.config.ts");
-  expect(config).toContain('source: "/mentor/courses/:path*"');
-  expect(config).toContain('destination: "/mentor/projects"');
+  expect(legacyRedirects()).toContainEqual({source:"/mentor/courses/:path*",destination:"/mentor/projects",permanent:false});
+  expect(src("next.config.ts")).toContain("legacyRedirects()");
   expect(src("src/app/(authenticated)/mentor/courses/page.tsx")).toContain('redirect("/mentor/projects")');
  });
  it("uses the private-public suffix list to resolve a company's registrable host",()=>{

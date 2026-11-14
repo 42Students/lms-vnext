@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { legacyRedirects } from "./src/lib/legacy-routes";
+import { legacyRedirects } from "./src/lib/retired-routes";
 import { BASE_SECURITY_HEADERS, PRIVATE_API_HEADERS } from "./src/security/headers";
 
 const nextConfig: NextConfig = {
@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   // The image build's type check runs out of memory on GitHub runners; CI's typecheck job still gates this.
   typescript: { ignoreBuildErrors: process.env.SKIP_BUILD_TYPECHECK === "1" },
   async redirects() {
-    // Retired paths live in one table (src/lib/legacy-routes.ts) with a removal date each.
+    // Retired paths live in one table (src/lib/retired-routes.ts) with a removal date each.
     return legacyRedirects();
   },
   async headers() {
