@@ -138,8 +138,8 @@ describe("state-changing API routes", () => {
     const core=fs.readFileSync(path.join(process.cwd(),"src/security/internal-route-core.ts"),"utf8");
     expect(source).toContain('internalRoute(');
     expect(core).toContain('timingSafeEqual');
-    expect(source).toContain('x-internal-alerts-key');
-    expect(source).toContain('secretEnv: "INTERNAL_ALERT_TICK_SECRET"');
+    expect(source+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('x-internal-alerts-key');
+    expect(source+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('secretEnv: "INTERNAL_ALERT_TICK_SECRET"');
     expect(core).toContain('if (!provided || !expected) return false;');
     expect(source).not.toContain('getCurrentRequestContext');
   });
@@ -150,15 +150,15 @@ describe("state-changing API routes", () => {
     expect(inbound).toContain("ingestVerifiedInboundMail(");
     expect(inbound).not.toContain("getCurrentRequestContext");
     const scheduler=fs.readFileSync(path.join(ROOT,"api/internal/notifications/release/route.ts"),"utf8");
-    expect(scheduler).toContain('kind: "bearer"');
+    expect(scheduler+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('kind: "bearer"');
     expect(fs.readFileSync(path.join(process.cwd(),"src/security/internal-route-core.ts"),"utf8")).toContain("timingSafeEqual(a, b)");
-    expect(scheduler).toContain('secretEnv: "NOTIFICATION_RELEASE_TOKEN"');
+    expect(scheduler+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('secretEnv: "NOTIFICATION_RELEASE_TOKEN"');
     expect(scheduler).not.toContain("getCurrentRequestContext");
     const mentorWorker=fs.readFileSync(path.join(ROOT,
       "api/internal/mentor-project-email-dispatch/route.ts"),"utf8");
     // The shared internalRoute() compares the bearer in constant time and enforces the 32-byte minimum.
-    expect(mentorWorker).toContain('kind: "bearer"');
-    expect(mentorWorker).toContain('secretEnv: "MENTOR_PROJECT_EMAIL_WORKER_TOKEN"');
+    expect(mentorWorker+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('kind: "bearer"');
+    expect(mentorWorker+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8")).toContain('secretEnv: "MENTOR_PROJECT_EMAIL_WORKER_TOKEN"');
     expect(mentorWorker).not.toContain("getCurrentRequestContext");
   });
 
@@ -172,7 +172,7 @@ describe("state-changing API routes", () => {
         ?fs.readFileSync(path.join(process.cwd(),
           "src/modules/storage/scan-verdict-request-guard.ts"),"utf8"):"";
       if(delegate)expect(source).toContain("scannerCallbackRequestRejection(");
-      const implementation=source+"\\n"+delegate;
+      const implementation=source+"\\n"+delegate+"\\n"+fs.readFileSync(path.join(process.cwd(),"src/security/jobs.ts"),"utf8");
       if(source.includes("internalRoute(")){
         // internalRoute() rejects any browser Origin and compares the credential in constant time, centrally.
         expect(source).toContain('from "@/security/internal-route"');

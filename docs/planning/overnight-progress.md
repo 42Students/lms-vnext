@@ -58,7 +58,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [ ] 5.2 repositories (52 direct-DB routes first)
 - [ ] 5.3 file policy and download header builders
 - [x] 5.4 (part) 10 hand-written CSV cell functions deleted in favour of spreadsheetCsvCell (formula neutralisation now identical everywhere those exports run); csvCell redefinitions 16 -> 7 (the 7 left are wrappers or add their own flatten/truncate). NOT done: one pipeline for scope, columns, filename, audit and headers; per-export scope tests. one export pipeline
-- [ ] 5.5 job registry
+- [x] 5.5 src/security/jobs.ts: all 10 machine-called routes (name, path, method, credential header/bearer + secret variable, purpose); every route takes its credential from jobCredential(name); a drift test fails when a route is added, renamed or re-keyed without the table. NOT done: schedule, lease and tenant-mode columns. job registry
 - [ ] 5.6 notification service
 - [ ] 5.7 settings service
 
