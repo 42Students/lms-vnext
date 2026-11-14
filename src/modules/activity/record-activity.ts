@@ -1,4 +1,5 @@
 import { activityEvents } from "@/db/schema";
+import { AppError } from "@/lib/error-registry";
 import { sanitizeActivityMetadata } from "@/modules/activity/metadata-sanitizer";
 
 /**
@@ -41,7 +42,7 @@ export type ActivityWriter = {
 
 export function buildActivityRow(input: ActivityInput): Record<string, unknown> {
   if (!(ACTIVITY_MODULES as readonly string[]).includes(input.module) || !input.eventType.trim() || !input.subjectType.trim() || !input.subjectId.trim() || !input.summary.trim()) {
-    throw new Error("ACTIVITY_EVENT_INCOMPLETE");
+    throw new AppError("ACTIVITY_EVENT_INCOMPLETE", { status: 500 });
   }
   return {
     module: input.module,

@@ -55,12 +55,12 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 
 ## Phase 5: data, events, files, exports, jobs
 - [x] 5.1 (helper built, call sites not migrated) src/modules/activity/record-activity.ts: recordActivity(tx, event) with a typed module list (matches the DB check constraint), required-field check, credential-key stripping and dedupe replay, unit and real-PostgreSQL tests; the 215 inline activity inserts stay behind an enforced ratchet. NOT done: one status-transition writer and the 36 history inserts. recordActivity + status-transition writer
-- [ ] 5.2 repositories (52 direct-DB routes first)
+- [~] 5.2 NOT built: repositories, lock-order convention and unit-of-work wrapper are a design project (52 routes query the database directly; the count is an enforced ratchet). repositories (52 direct-DB routes first)
 - [ ] 5.3 file policy and download header builders
 - [x] 5.4 (part) 10 hand-written CSV cell functions deleted in favour of spreadsheetCsvCell (formula neutralisation now identical everywhere those exports run); csvCell redefinitions 16 -> 7 (the 7 left are wrappers or add their own flatten/truncate). NOT done: one pipeline for scope, columns, filename, audit and headers; per-export scope tests. one export pipeline
 - [x] 5.5 src/security/jobs.ts: all 10 machine-called routes (name, path, method, credential header/bearer + secret variable, purpose); every route takes its credential from jobCredential(name); a drift test fails when a route is added, renamed or re-keyed without the table. NOT done: schedule, lease and tenant-mode columns. job registry
-- [ ] 5.6 notification service
-- [ ] 5.7 settings service
+- [~] 5.6 NOT built: one notification service (templates, recipients, outbox, opt-out, email and SMS) is a product-level rewrite; nothing new was added. notification service
+- [~] 5.7 NOT built: one settings service for branding, domains and per-college settings. settings service
 
 ## Phase 6: behaviour consistency
 - [ ] 6.1 shared validation primitives
