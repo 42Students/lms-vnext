@@ -57,7 +57,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [ ] 5.1 recordActivity + status-transition writer
 - [ ] 5.2 repositories (52 direct-DB routes first)
 - [ ] 5.3 file policy and download header builders
-- [ ] 5.4 one export pipeline
+- [x] 5.4 (part) 10 hand-written CSV cell functions deleted in favour of spreadsheetCsvCell (formula neutralisation now identical everywhere those exports run); csvCell redefinitions 16 -> 7 (the 7 left are wrappers or add their own flatten/truncate). NOT done: one pipeline for scope, columns, filename, audit and headers; per-export scope tests. one export pipeline
 - [ ] 5.5 job registry
 - [ ] 5.6 notification service
 - [ ] 5.7 settings service

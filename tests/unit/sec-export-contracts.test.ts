@@ -64,12 +64,8 @@ describe("hand-written CSV quoting", () => {
   /** Files that still carry their own quoting. Migrating one means deleting its line; adding one is refused. */
   const KNOWN_COPIES = new Set<string>([
     "src/app/(authenticated)/activity/page.tsx",
-    "src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx",
-    "src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx",
-    "src/app/api/courses/admin-content-export/route.ts",
     "src/app/api/courses/college/learner-progress/export/route.ts",
     "src/app/api/placements/tpo/reports/after-college/route.ts",
-    "src/components/admin/admin-scoped-csv-control.tsx",
     "src/components/admin/lecture-hall-manager.tsx",
     "src/components/admin/super-admin-global-company-catalogue.tsx",
     "src/components/placements/college-interview-appointments.tsx",
@@ -77,9 +73,7 @@ describe("hand-written CSV quoting", () => {
     "src/components/placements/tpo-bulk-round-result-recorder.tsx",
     "src/components/placements/tpo-round-apply-control.tsx",
     "src/components/verification/VerificationWorkspace.tsx",
-    "src/modules/admin-ui/department-directory.ts",
     "src/modules/admin-ui/program-directory.ts",
-    "src/modules/admin-ui/super-admin-interview-operations-model.ts",
     "src/modules/admin-ui/super-admin-placement-interviews-service.ts",
     "src/modules/attendance/admin-grid-model.ts",
     "src/modules/courses/faculty-followup-export.ts",
