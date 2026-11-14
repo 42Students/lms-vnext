@@ -30,7 +30,7 @@ describe("learner/projects verified gap closure",()=>{
   const service=read("src/modules/projects/learner-own-task-service.ts");
   expect(service).toContain("assigneeMembershipId:membership.id");
   expect(service).toContain("sprintId:sprint?.id??null");
-  expect(service).toContain('scope.access!=="LEARNER"');
+  expect(service).toContain('scope.access!==ROLE.LEARNER');
   expect(service).toContain("deleteLearnerOwnTask");
   expect(read("src/components/projects/learner-own-task-controls.tsx")).toContain("Add my task");
  });

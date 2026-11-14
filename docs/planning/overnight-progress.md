@@ -72,10 +72,10 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [~] 6.7 NOT built: one date and money input and parser pair
 
 ## Phase 7: UI and wording
-- [ ] 7.1 copy catalogue
-- [ ] 7.2 design-token ratchet driven down
-- [ ] 7.3 state, form, table components on the new modules
-- [ ] 7.4 quarantined UI-copy tests repaired
+- [~] 7.1 NOT built: copy catalogue (1,825 inline description literals tracked, exact-wording-parity rule makes this a page-by-page job)
+- [~] 7.2 NOT driven down: the UI-consistency ratchet already blocks new debt (npm run ux:consistency passes); the existing 309 bare links etc. are untouched
+- [~] 7.3 NOT done: state, form and table components do not read copy and pager from the new modules
+- [~] 7.4 1 of 7 repaired and un-quarantined (TPO G110-G119); 6 remain quarantined because the pages changed on purpose (retry control, loading title, settings nav label, Done-when copy, announcements keys, meeting editor handlers); one of them also had a stale role-literal pin from my rewrite, fixed. Each needs a decision whether the old copy or the new page is right
 
 ## Phase 8: close-out
 - [ ] 8.1 shared domain fixtures
