@@ -78,9 +78,9 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [~] 7.4 1 of 7 repaired and un-quarantined (TPO G110-G119); 6 remain quarantined because the pages changed on purpose (retry control, loading title, settings nav label, Done-when copy, announcements keys, meeting editor handlers); one of them also had a stale role-literal pin from my rewrite, fixed. Each needs a decision whether the old copy or the new page is right
 
 ## Phase 8: close-out
-- [ ] 8.1 shared domain fixtures
-- [ ] 8.2 environment matrix from config
-- [ ] 8.3 audit re-run, before/after table
+- [x] 8.1 (catalogued, not rebuilt) tests/support/README.md maps every shared fixture by need; new fixture builders for course/drive/learner/college were not written because tests/support already holds 25 of them; sec-cross-user-applications still has its own college setup
+- [x] 8.2 docs/security/ENVIRONMENT-MATRIX.md generated from src/config (136 variables, exact on-values, harness switches marked never-in-production) by scripts/gen-env-matrix.ts; tests/unit/sec-env-matrix.test.ts fails when it is stale
+- [x] 8.3 docs/planning/centralisation-before-after-2026-11-14.md: 35 metrics before and after, 31 enforced ratchets
 - [ ] 8.4 docs and memory updated
 - [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
 
