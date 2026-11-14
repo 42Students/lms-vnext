@@ -7,40 +7,43 @@ import {
 } from "@/modules/identity/context";
 
 import { ROLE } from "@/modules/identity/roles";
-export type PlatformPermission =
-  | "identity.self.manage"
-  | "admin-scope.select"
-  | "organization.read"
-  | "organization.manage"
-  | "college.read"
-  | "college.manage"
-  | "department.read"
-  | "department.manage"
-  | "academics.read"
-  | "academics.manage"
-  | "courses.read"
-  | "courses.manage"
-  | "projects.read"
-  | "projects.manage"
-  | "placements.read"
-  | "placements.manage"
-  | "placements.tpo.team.manage"
-  | "placements.recruiter.read"
-  | "placements.recruiter.round.manage"
-  | "placements.recruiter.slot.manage"
-  | "placements.recruiter.outside.record"
-  | "placements.recruiter.result.stage"
-  | "placements.recruiter.note"
-  | "activity.read"
-  | "project-template.read"
-  | "project-template.manage"
-  | "project-template.assign"
-  | "people.manage"
-  | "profile.self.manage"
-  | "profile-verification.review"
-  | "system-role.manage"
-  | "membership.role.manage"
-  | "membership.lifecycle.manage";
+/** Every permission the policy knows, in one list. The type is derived from it, and tests sweep it to generate the role matrix. */
+export const PLATFORM_PERMISSIONS = [
+  "identity.self.manage",
+  "admin-scope.select",
+  "organization.read",
+  "organization.manage",
+  "college.read",
+  "college.manage",
+  "department.read",
+  "department.manage",
+  "academics.read",
+  "academics.manage",
+  "courses.read",
+  "courses.manage",
+  "projects.read",
+  "projects.manage",
+  "placements.read",
+  "placements.manage",
+  "placements.tpo.team.manage",
+  "placements.recruiter.read",
+  "placements.recruiter.round.manage",
+  "placements.recruiter.slot.manage",
+  "placements.recruiter.outside.record",
+  "placements.recruiter.result.stage",
+  "placements.recruiter.note",
+  "activity.read",
+  "project-template.read",
+  "project-template.manage",
+  "project-template.assign",
+  "people.manage",
+  "profile.self.manage",
+  "profile-verification.review",
+  "system-role.manage",
+  "membership.role.manage",
+  "membership.lifecycle.manage",
+] as const;
+export type PlatformPermission = (typeof PLATFORM_PERMISSIONS)[number];
 
 export type ResourceScope = {
   organizationId?: string | null;

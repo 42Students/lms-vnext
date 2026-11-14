@@ -1,0 +1,3071 @@
+{
+ "identity.self.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "suspendedAdmin": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  }
+ },
+ "admin-scope.select": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "organization.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "organization.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "college.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "college.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "department.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "department.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "academics.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "academics.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "courses.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "courses.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "projects.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "projects.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.tpo.team.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.round.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.slot.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.outside.record": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.result.stage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "placements.recruiter.note": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "activity.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "project-template.read": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "project-template.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "project-template.assign": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "people.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "profile.self.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "profile-verification.review": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "system-role.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "collegeAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "membership.role.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ },
+ "membership.lifecycle.manage": {
+  "anonymous": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "disabledUser": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "userWithoutMembership": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "suspendedAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "superAdminGlobal": {
+   "ownCollege": true,
+   "otherCollege": true,
+   "noScope": true,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "superAdminInCollege": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "collegeAdmin": {
+   "ownCollege": true,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": true,
+   "ownCollegeTpoTeamAdmin": true
+  },
+  "tpo": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "faculty": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "mentor": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "learner": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "multiRoleAdmin": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  },
+  "recruiterWithGrant": {
+   "ownCollege": false,
+   "otherCollege": false,
+   "noScope": false,
+   "ownCollegeOtherLearner": false,
+   "ownCollegeTpoTeamAdmin": false
+  }
+ }
+}

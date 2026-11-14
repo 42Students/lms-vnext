@@ -46,7 +46,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 3.6 (built, not yet adopted) route() option `idempotent: true | {ttlSeconds}`: Idempotency-Key header (8-128 chars) claimed per person/method/route pattern in the shared store (per-process fallback), repeat gets 409 DUPLICATE_REQUEST, 5xx or thrown error releases the key, claim store failure fails closed; 7 tests. NOT adopted on any live route yet: each adoption needs its client to send a key, so it is a per-route product change
 
 ## Phase 4: authorization and tenant
-- [ ] 4.1 policy registry
+- [x] 4.1 (derived-matrix form) PLATFORM_PERMISSIONS list in the policy (type derived from it) and a role matrix GENERATED from can(): 33 permissions x 13 actor kinds x 5 resource shapes, committed at docs/security/baselines/permission-matrix.json; any policy change is a reviewed diff; never-true invariants and recruiter-only rules asserted; a deliberate policy mutation is caught. The policy switch itself is NOT yet rewritten as a table, and routes still name permissions in route() config
 - [ ] 4.2 route families migrated (people, courses, placements learner, placements staff, projects, academics, attendance, admin, internal, legacy)
 - [ ] 4.3 per-file requireX guard copies removed
 - [ ] 4.4 requireSameCollege / ownsResource
