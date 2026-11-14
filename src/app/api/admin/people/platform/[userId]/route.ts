@@ -10,7 +10,7 @@ import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{userId:string}>};
 export const PATCH = route(
-  { auth: "user", permission: "system-role.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {userId}=params;
