@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {facultyGradebookCsv,facultyGradebookParamsSchema} from "@/modules/courses/faculty-gradebook-model";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -15,7 +16,7 @@ export const GET = route(
     return new Response("\uFEFF"+facultyGradebookCsv(data.rows),{
       headers:{
         "Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="faculty-section-gradebook.csv"',
+        "Content-Disposition":attachmentHeader("faculty-section-gradebook.csv"),
         "Cache-Control":CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options":"nosniff",
       },

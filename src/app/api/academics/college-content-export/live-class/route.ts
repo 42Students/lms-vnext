@@ -4,6 +4,7 @@ import {exportCollegeContentMetadata} from "@/modules/courses/college-content-ex
 import {exportParams} from "@/modules/courses/college-content-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   const result=await exportCollegeContentMetadata(await getCurrentRequestContext(),"LIVE_CLASS",q);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-live-classes.csv"',
+   "Content-Disposition":attachmentHeader("college-live-classes.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),

@@ -11,6 +11,7 @@ import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
 import { RATE_LIMITS } from "@/security/limits";
 import { outboundFetch } from "@/lib/outbound";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer",
@@ -126,7 +127,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{token:string}
  return new Response(archive.buffer as ArrayBuffer,{
   status:200,headers:{...privateHeaders,
    "Content-Type":"application/zip",
-   "Content-Disposition":'attachment; filename="company-shortlisted-resumes.zip"',
+   "Content-Disposition":attachmentHeader("company-shortlisted-resumes.zip"),
   },
  });
 }

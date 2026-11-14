@@ -7,6 +7,7 @@ import {mentorTaskHistoryQuerySchema} from "@/modules/projects/mentor-task-histo
 import {getMentorTaskReviewHistory} from "@/modules/projects/mentor-task-history-service";
 import {mentorReviewedTasksCsv} from "@/modules/projects/mentor-task-review-export-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 /** Own assigned Mentor project review history only; capped, no raw feedback. */
 export const GET = route(
@@ -30,7 +31,7 @@ export const GET = route(
     const omitted=Math.max(0,first.total-rows.length);
     return new Response(mentorReviewedTasksCsv(rows,omitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="mentor-reviewed-tasks.csv"',
+        "Content-Disposition":attachmentHeader("mentor-reviewed-tasks.csv"),
         "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
     });
   },

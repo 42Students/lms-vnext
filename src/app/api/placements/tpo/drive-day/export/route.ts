@@ -8,6 +8,7 @@ import {tpoLiveRoundSearchSchema,filterTpoLiveRoundSearch} from "@/modules/place
 import {serializeTpoLiveDriveDayCsv} from "@/modules/placements/tpo-live-drive-day-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
@@ -20,7 +21,7 @@ async function handleGET(request:Request){
   const rows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,q),issue),sort);
   return new Response("\uFEFF"+serializeTpoLiveDriveDayCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-drive-day-live-snapshot", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-drive-day-live-snapshot", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"authorized-capped-live-round-snapshot",

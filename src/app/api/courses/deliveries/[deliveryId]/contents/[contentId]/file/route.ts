@@ -12,6 +12,7 @@ import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 /** Reject ambiguous, negative and out-of-range historical material indices before
  * making any scoped file lookup. Keep errors field-safe for older clients. */
 class LearnerCourseFileReferenceInputError extends Error {
@@ -132,7 +133,7 @@ async function handleGET(request:Request,{params}:RouteContext){
  // Inline only for types that cannot run script (PDF, images, audio, video). HTML, SVG and anything unknown is
  // always a download, so an uploaded file can never execute from the file host or our own origin.
  const inlineSafe=isInlineSafeContentType(storedContentType);
- const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:inlineSafe?undefined:{"response-content-disposition":attachmentDisposition(fileName(displayName??key))};
+ const query=download?{"response-content-disposition":attachmentHeader(fileName(displayName??key))}:inlineSafe?undefined:{"response-content-disposition":attachmentDisposition(fileName(displayName??key))};
  let signed:string;
  try{
   signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,...(query === undefined ? {} : {query})});

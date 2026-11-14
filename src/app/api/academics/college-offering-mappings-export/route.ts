@@ -4,6 +4,7 @@ import {exportCollegeOfferingMappings} from "@/modules/academics/college-mapping
 import {exportParams} from "@/modules/academics/college-mapping-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   const result=await exportCollegeOfferingMappings(await getCurrentRequestContext(),q);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-offering-mappings.csv"',
+   "Content-Disposition":attachmentHeader("college-offering-mappings.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),

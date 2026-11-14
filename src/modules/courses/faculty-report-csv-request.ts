@@ -2,6 +2,7 @@ import { z } from "zod";
 import { facultySubmissionFilterSchema } from "./faculty-assignment-submissions-model";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const facultyReportCsvRequestSchema = z.discriminatedUnion("kind",[
   z.object({kind:z.literal("assignment"),assessmentId:z.string().uuid(),
     deliveryId:z.string().uuid(),filter:facultySubmissionFilterSchema.optional()}).strict(),
@@ -48,7 +49,7 @@ export function facultyCsvAttachmentHeaders(filename: string) {
   }
   return {
     "Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="' + filename + '"',
+    "Content-Disposition":attachmentHeader(filename),
     "Cache-Control":CACHE.PRIVATE_STRICT,
     "X-Content-Type-Options":"nosniff",
   };

@@ -12,6 +12,7 @@ import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
 import {placementReportCsv} from "@/modules/placements/report-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "admin-scope.select" },
@@ -61,7 +62,7 @@ export const GET = route(
   ],rows);
     return new Response("\uFEFF"+csv,{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="'+fileName+'"',
+    "Content-Disposition":attachmentHeader(fileName),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff","Vary":"Cookie"},
   });
   },

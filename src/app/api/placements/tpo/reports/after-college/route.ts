@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {z} from "zod";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 const params=z.object({batchId:z.uuid().optional(),branchId:z.uuid().optional()}).strict();
 const csv=(v:unknown)=>{
  const value=String(v??"");
@@ -37,7 +38,7 @@ export const GET = route(
     const rows=data.rows.slice(0,5000).map(row=>[row.displayName,row.rollNumber,row.cohortName,row.branchName,
    AFTER_COLLEGE_LABELS[row.outcome],row.applicationCount]);
     return new Response([header,...rows].map(row=>row.map(csv).join(",")).join("\r\n")+"\r\n",
-   {headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":"attachment; filename=after-college.csv",
+   {headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":attachmentHeader("after-college.csv"),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
     "X-Export-Truncated":data.rows.length>rows.length?"true":"false",Vary:"Cookie"}});
   },

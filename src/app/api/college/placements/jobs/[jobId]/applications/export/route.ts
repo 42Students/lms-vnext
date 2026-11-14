@@ -4,6 +4,7 @@ import { driveApplicationsExportParams } from "@/modules/placements/college-driv
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 async function handleGET(request: Request, {params}: {params:Promise<{jobId:string}>}) {
   const context = await getCurrentRequestContext();
   const {jobId}=await params;
@@ -18,7 +19,7 @@ async function handleGET(request: Request, {params}: {params:Promise<{jobId:stri
     const result=await exportCollegeDriveApplicationsCsv(context,jobId,query);
     return new Response(result.csv,{status:200,headers:{
       "Content-Type":"text/csv; charset=utf-8",
-      "Content-Disposition":`attachment; filename="applications-job-${safeJobId}.csv"`,
+      "Content-Disposition":attachmentHeader(`applications-job-${safeJobId}.csv`),
       "Cache-Control":CACHE.PRIVATE,
       "X-Export-Truncated":result.truncated?"true":"false",
       "X-Export-Rows":String(result.exported),

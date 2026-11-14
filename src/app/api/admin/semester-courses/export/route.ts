@@ -6,7 +6,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
  if(truncated)rows.push(["TRUNCATED: refine filters to export fewer records",...Array.from({length:Math.max(0,header.length-1)},()=>"" )]);
  return new Response("\uFEFF"+placementReportCsv(header,rows),{headers:{
   "Content-Type":"text/csv; charset=utf-8",
-  "Content-Disposition":'attachment; filename="'+file+'"',
+  "Content-Disposition":attachmentHeader(file),
   "Cache-Control":CACHE.PRIVATE,
   "X-Export-Truncated":String(truncated),
   "X-Content-Type-Options":"nosniff",
@@ -16,6 +16,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;

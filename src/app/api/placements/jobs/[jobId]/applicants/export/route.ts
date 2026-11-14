@@ -3,6 +3,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { exportPlacementJobApplicantsCsv } from "@/modules/placements/applicant-export-service";
 import { route } from "@/security/route";
 
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ async function handleGET(
         "Content-Type":
           "text/csv; charset=utf-8",
         "Content-Disposition":
-          `attachment; filename="placement-drive-${jobId}-applicants.csv"`,
+          attachmentHeader(`placement-drive-${jobId}-applicants.csv`),
         "Cache-Control":
           "private, no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",

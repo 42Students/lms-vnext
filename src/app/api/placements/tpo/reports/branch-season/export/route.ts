@@ -8,6 +8,7 @@ import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-sea
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ async function handleGET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-branch-season", "csv") + '"',
+        "Content-Disposition": attachmentHeader(gridExportFilename("tpo-branch-season", "csv")),
         "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

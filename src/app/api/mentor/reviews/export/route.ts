@@ -7,6 +7,7 @@ import {mentorReviewQuerySchema} from "@/modules/projects/mentor-portfolio-model
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorReviewExportCsv} from "@/modules/projects/mentor-review-export-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 
 /** Capped metadata export from the live persisted Mentor assignment scope only. */
@@ -39,7 +40,7 @@ export const GET = route(
   })),Math.max(0,first.total-rows.length));
     return new Response(csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="mentor-delivery-reviews.csv"',
+   "Content-Disposition":attachmentHeader("mentor-delivery-reviews.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Omitted":String(Math.max(0,first.total-rows.length)),
   }});

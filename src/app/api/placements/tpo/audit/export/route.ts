@@ -10,6 +10,7 @@ import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/pla
 import { route } from "@/security/route";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Page through the actual college-scoped union, never export unfiltered raw history. */
@@ -67,7 +68,7 @@ async function handleGET(request:Request){
   const body=format==="xlsx"?new Blob([Uint8Array.from(tpoAuditXlsx(filtered,chosen))]):"\uFEFF"+exported;
   return new Response(body,{headers:{
    "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("audit-log", format)),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":items.length<total?"true":"false",

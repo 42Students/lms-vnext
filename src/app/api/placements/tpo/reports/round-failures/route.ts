@@ -8,6 +8,7 @@ import {getPlacementFailureReasonsReport} from "@/modules/placements/report-extr
 import {tpoRoundFailureCsvQuerySchema,tpoRoundFailureCsv} from "@/modules/placements/tpo-round-failure-csv-model";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -28,7 +29,7 @@ const report=await getPlacementFailureReasonsReport(context,{
 const rows=report.roundBranchFailureShares.slice(0,5000);
 return new Response(tpoRoundFailureCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="round-failures-by-branch.csv"',
+   "Content-Disposition":attachmentHeader("round-failures-by-branch.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(report.roundBranchFailureShares.length>rows.length),

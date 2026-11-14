@@ -7,6 +7,7 @@ import { exportParams } from "@/modules/academics/college-lecture-halls-export-m
 import { exportCollegeLectureHalls } from "@/modules/academics/college-lecture-halls-export-service";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 /** SA-academics-people-27: tenant-selected, bounded CSV for Super Admin only. */
 export const GET = route(
@@ -19,7 +20,7 @@ export const GET = route(
     );
     return new Response(result.csv, {headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="lecture-halls.csv"',
+      "Content-Disposition": attachmentHeader("lecture-halls.csv"),
       "Cache-Control": CACHE.PRIVATE,
       "X-Export-Truncated": String(result.truncated),
       "X-Export-Row-Cap": String(result.cap),

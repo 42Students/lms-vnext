@@ -5,6 +5,7 @@ import {parseCollegeContactsExportParams} from "@/modules/people/college-contact
 import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -12,7 +13,7 @@ async function handleGET(request:Request){
   const report=await exportCollegeContactsCsv(await getCurrentRequestContext(),input);
   return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-contacts.csv"',
+   "Content-Disposition":attachmentHeader("college-contacts.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    Vary:"Cookie",

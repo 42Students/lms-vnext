@@ -7,6 +7,7 @@ import {mentorResourceDirectoryQuerySchema,mentorResourceDirectoryCsv}
  from "@/modules/projects/mentor-resource-directory-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const GET = route(
@@ -25,7 +26,7 @@ export const GET = route(
     if(!data.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     return new Response(mentorResourceDirectoryCsv(data.exportItems,data.exportOmitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="mentor-resource-directory.csv"',
+    "Content-Disposition":attachmentHeader("mentor-resource-directory.csv"),
     "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(data.exportOmitted)},
   });
   },

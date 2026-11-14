@@ -5,6 +5,7 @@ import {getFacultyResponseFollowUps} from "@/modules/courses/faculty-response-fo
 import {facultyFollowUpPageCsv} from "@/modules/courses/faculty-followup-export";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const raw:Record<string,string|string[]>={};
@@ -19,7 +20,7 @@ async function handleGET(request:Request){
   const data=await getFacultyResponseFollowUps(context,parsed.data);
   return new Response(facultyFollowUpPageCsv(data.items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="faculty-response-followups-page.csv"',
+   "Content-Disposition":attachmentHeader("faculty-response-followups-page.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});

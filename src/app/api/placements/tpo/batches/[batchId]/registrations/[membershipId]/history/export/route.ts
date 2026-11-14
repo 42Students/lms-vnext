@@ -6,6 +6,7 @@ import {tpoRegistrationHistoryQuery,filterTpoRegistrationEvents} from "@/modules
 import {serializeTpoRegistrationEventHistoryCsv} from "@/modules/placements/tpo-registration-event-history-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{batchId:string;membershipId:string}>}){
@@ -18,7 +19,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   const rows=filterTpoRegistrationEvents(evidence.events,filters);
   return new Response("\uFEFF"+serializeTpoRegistrationEventHistoryCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-registration-event-history", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-registration-event-history", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"current-learner-latest-100-events",

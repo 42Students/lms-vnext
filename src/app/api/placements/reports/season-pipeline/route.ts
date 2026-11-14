@@ -5,6 +5,7 @@ import { exportTpoSeasonPipelineCsv } from "@/modules/placements/tpo-season-pipe
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ return new Response("\uFEFF" + result.csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-season-pipeline.csv"',
+        "Content-Disposition": attachmentHeader("tpo-season-pipeline.csv"),
         "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

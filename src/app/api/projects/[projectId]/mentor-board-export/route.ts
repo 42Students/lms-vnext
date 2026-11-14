@@ -7,6 +7,7 @@ import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-servi
 import {mentorBoardExportCsv,mentorBoardReviewQuerySchema}
   from "@/modules/projects/mentor-board-review-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const GET = route(
@@ -24,7 +25,7 @@ export const GET = route(
     if(!data.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     return new Response(mentorBoardExportCsv(data.exportItems,data.exportOmitted),{
       status:200,headers:{"Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="mentor-board.csv"',
+        "Content-Disposition":attachmentHeader("mentor-board.csv"),
         "Cache-Control":CACHE.PRIVATE,
         "X-Export-Omitted":String(data.exportOmitted)},
     });

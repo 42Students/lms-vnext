@@ -8,6 +8,7 @@ import { route } from "@/security/route";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -51,7 +52,7 @@ async function handleGET(request:Request){
   })));
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-verification.csv"',
+   "Content-Disposition":attachmentHeader("tpo-verification.csv"),
    "Cache-Control":CACHE.PRIVATE,"Vary":"Cookie",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Range":"first-1000-matching-authorized",

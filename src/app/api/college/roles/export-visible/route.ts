@@ -6,6 +6,7 @@ import {exportVisibleCollegePeople} from "@/modules/people/college-visible-direc
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(req:Request){
  try{
@@ -20,7 +21,7 @@ async function handleGET(req:Request){
   const name=kind===ROLE.FACULTY?"faculty.csv":"students.csv";
   return new Response(data.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="'+name+'"',
+   "Content-Disposition":attachmentHeader(name),
    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Page":String(data.page),"X-Export-Count":String(data.shown),
   }});

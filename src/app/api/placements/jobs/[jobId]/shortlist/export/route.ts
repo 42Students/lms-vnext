@@ -5,6 +5,7 @@ import { tpoShortlistCsv } from "@/modules/placements/tpo-shortlist-model";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ jobId: string }> };
@@ -18,7 +19,7 @@ async function handleGET(_request: Request, { params }: RouteContext) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-drive-shortlist.csv"',
+        "Content-Disposition": attachmentHeader("tpo-drive-shortlist.csv"),
         "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

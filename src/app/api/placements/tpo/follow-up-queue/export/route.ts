@@ -6,6 +6,7 @@ import {getTpoFollowupQueueCsv} from "@/modules/placements/tpo-followup-queue-se
 import { route } from "@/security/route";
 import { featureReady } from "@/config/features";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
@@ -17,7 +18,7 @@ async function handleGET(request:Request){
   const result=await getTpoFollowupQueueCsv(await getCurrentRequestContext(),query);
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-recruiter-followups", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-recruiter-followups", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff","Vary":"Cookie",
    "X-Export-Truncated":String(result.truncated),

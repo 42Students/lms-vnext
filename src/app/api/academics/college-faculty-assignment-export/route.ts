@@ -4,6 +4,7 @@ import {exportCollegeFacultyAssignments} from "@/modules/academics/college-facul
 import {exportParams} from "@/modules/academics/college-faculty-assignment-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   const result=await exportCollegeFacultyAssignments(await getCurrentRequestContext(),q);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-faculty-assignments.csv"',
+   "Content-Disposition":attachmentHeader("college-faculty-assignments.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),

@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-overrides-export-model";
 import {z} from "zod";
 
+import { attachmentHeader } from "@/security/downloads";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
@@ -28,7 +29,7 @@ export const GET = route(
     return new Response("\uFEFF" + lines.join("\r\n") + "\r\n", {
       headers: {
         "content-type": "text/csv; charset=utf-8",
-        "content-disposition": 'attachment; filename="active-readiness-overrides.csv"',
+        "content-disposition": attachmentHeader("active-readiness-overrides.csv"),
         "cache-control": "private, no-store",
       },
     });

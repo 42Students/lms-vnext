@@ -6,6 +6,7 @@ import {messagingHistoryCsv} from "@/modules/messaging/receipt-history-export-mo
 import {z} from "zod";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const context=await getCurrentRequestContext();
@@ -32,7 +33,7 @@ async function handleGET(request:Request){
  })),rows.length);
  return new NextResponse(csv,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
-  "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-campaign-batches", "csv") + '"',
+  "Content-Disposition":attachmentHeader(gridExportFilename("tpo-campaign-batches", "csv")),
   "Cache-Control":CACHE.PRIVATE,
   "X-Content-Type-Options":"nosniff",
   "X-Export-Scope":"All filtered batches",

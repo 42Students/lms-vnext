@@ -7,6 +7,7 @@ import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-sea
 import {buildHrDrivesCsv,HR_DRIVE_CSV_CAP} from "@/modules/placements/hr-drives-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -35,7 +36,7 @@ async function handleGET(request:Request){
   const output=buildHrDrivesCsv(result.rows,result.total>HR_DRIVE_CSV_CAP);
   return new Response(output.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-drives.csv"',
+   "Content-Disposition":attachmentHeader("recruiter-drives.csv"),
    "Cache-Control":CACHE.PRIVATE,"X-Export-Capped":output.truncated?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}

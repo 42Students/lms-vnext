@@ -7,6 +7,7 @@ import {parseCollegeCompaniesQuery} from "@/modules/placements/college-company-d
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {collegeCompanyCsv} from "@/modules/placements/college-directory-csv";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 // Bound memory, database pagination and response size for tenant exports.
 export const COLLEGE_COMPANY_EXPORT_CAP=5000;
@@ -28,7 +29,7 @@ export const GET = route(
     const incomplete=all.length<first.total;
     return new Response(collegeCompanyCsv(all),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="companies.csv"',
+    "Content-Disposition":attachmentHeader("companies.csv"),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
     "X-Export-Scope":"COLLEGE_COMPANY_RELATIONSHIP",
     "X-Export-Contact-Fields":"UNAVAILABLE_IN_CURRENT_SCHEMA",

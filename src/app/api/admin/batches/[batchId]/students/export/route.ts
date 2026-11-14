@@ -4,6 +4,7 @@ import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-b
 import {superAdminBatchRosterCsv} from "@/modules/admin-ui/super-admin-batch-roster-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
@@ -15,7 +16,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{batchId:stri
   const labels=new Map(data.classes.map(c=>[c.id,c.name]));
   return new Response(superAdminBatchRosterCsv(data.roster,labels),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="batch-students.csv"',
+   "Content-Disposition":attachmentHeader("batch-students.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});

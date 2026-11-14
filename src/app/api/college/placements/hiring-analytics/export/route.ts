@@ -7,6 +7,7 @@ import {collegeHiringFunnelCsv} from "@/modules/placements/college-hiring-funnel
 import { route } from "@/security/route";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -22,7 +23,7 @@ async function handleGET(request:Request){
   const filename="hiring-report-"+datePart("year")+"-"+datePart("month")+"-"+datePart("day")+".csv";
   return new NextResponse(collegeHiringFunnelCsv(report),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="'+filename+'"',
+    "Content-Disposition":attachmentHeader(filename),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}

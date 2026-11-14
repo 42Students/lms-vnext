@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { exportCollegeDepartmentAttendance } from "@/modules/attendance/college-department-csv-service";
 import { route } from "@/security/route";
 
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -20,7 +21,7 @@ async function handleGET(request: Request) {
       status: 200,
       headers: {
         "content-type": "text/csv; charset=utf-8",
-        "content-disposition": 'attachment; filename="department-attendance.csv"',
+        "content-disposition": attachmentHeader("department-attendance.csv"),
         "cache-control": "private, no-store",
         "x-content-type-options": "nosniff",
       },

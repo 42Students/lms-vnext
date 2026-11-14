@@ -4,6 +4,7 @@ import {exportCollegeAcademicDirectory} from "@/modules/academics/college-academ
 import {exportParams} from "@/modules/academics/college-academic-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   const result=await exportCollegeAcademicDirectory(await getCurrentRequestContext(),"BATCHES",query);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-batches.csv"',
+   "Content-Disposition":attachmentHeader("college-batches.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),

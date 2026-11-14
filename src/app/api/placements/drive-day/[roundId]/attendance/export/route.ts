@@ -9,6 +9,7 @@ import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ async function handleGET(_request: Request, { params }: RouteContext) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-drive-day-attendance.csv"',
+        "Content-Disposition": attachmentHeader("tpo-drive-day-attendance.csv"),
         "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

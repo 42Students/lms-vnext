@@ -7,6 +7,7 @@ import {csvSafeCell} from "@/modules/projects/mentor-board-review-model";
 import {mentorSprintProgressQuerySchema} from "@/modules/projects/mentor-sprint-progress-model";
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -39,7 +40,7 @@ export const GET = route(
       .map(csvSafeCell).join(","));
     return new Response("\uFEFF"+csv.join("\r\n")+"\r\n",{
       headers:{"Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="mentor-sprint-progress.csv"',
+        "Content-Disposition":attachmentHeader("mentor-sprint-progress.csv"),
         "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
     });
   },

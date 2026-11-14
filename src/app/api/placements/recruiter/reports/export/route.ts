@@ -7,6 +7,7 @@ import {getRecruiterCompanyReports} from "@/modules/placements/recruiter-company
 import {buildHrCompanyReportCsv,HR_REPORT_EXPORT_CAP} from "@/modules/placements/hr-company-report-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -27,7 +28,7 @@ async function handleGET(request:Request){
   }
   const csv=buildHrCompanyReportCsv(rows,first.matchedTotal);
   return new Response(csv.csv,{headers:{"Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-report", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("recruiter-report", "csv")),
    "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(csv.omitted)}});
  }catch(error){return apiErrorResponse(error);}
 }

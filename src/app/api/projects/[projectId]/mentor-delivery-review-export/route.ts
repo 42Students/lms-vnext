@@ -8,6 +8,7 @@ import {mentorReviewOverviewSchema,mentorDeliveryReviewCsv}
 import {getMentorDeliveryReviewOverview}
  from "@/modules/projects/mentor-review-overview-service";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only exact-project Mentor audit summary. No raw feedback, identity or URLs. */
@@ -29,7 +30,7 @@ export const GET = route(
     const omitted=Math.max(0,first.total-rows.length);
     return new Response(mentorDeliveryReviewCsv(rows,omitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="mentor-delivery-reviews.csv"',
+    "Content-Disposition":attachmentHeader("mentor-delivery-reviews.csv"),
     "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
   });
   },

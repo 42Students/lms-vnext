@@ -6,6 +6,7 @@ import { getTpoBatchStudents } from "@/modules/placements/tpo-batch-workspace-re
 import { exportTpoBatchStudentsCsv } from "@/modules/placements/tpo-batch-students-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const pageSchema = z.coerce.number().int().min(1).max(100000).default(1);
@@ -19,7 +20,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   const csv=exportTpoBatchStudentsCsv(data.students);
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-batch-students-page", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-batch-students-page", "csv")),
    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-TPO-Export-Scope":"CURRENT_PAGE_ONLY",Vary:"Cookie",
   }});

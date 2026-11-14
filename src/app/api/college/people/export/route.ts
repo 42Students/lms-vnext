@@ -7,6 +7,7 @@ import { parsePeopleCsvParams } from "@/modules/people/college-people-export-mod
 import { exportCollegePeopleCsv } from "@/modules/people/college-people-export-service";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
@@ -18,7 +19,7 @@ await requireRecentDeviceAuthentication(context.user.id);
 const report = await exportCollegePeopleCsv(context, query);
 return new Response(report.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="college-people.csv"',
+      "Content-Disposition": attachmentHeader("college-people.csv"),
       "Cache-Control": CACHE.PRIVATE,
       "X-Export-Truncated": String(report.truncated),
       "X-Export-Total": String(report.total),

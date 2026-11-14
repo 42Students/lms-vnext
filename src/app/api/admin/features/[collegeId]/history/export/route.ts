@@ -4,6 +4,7 @@ import {collegePolicyHistoryQuery} from "@/modules/module-access/admin-college-r
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
 import {collegePolicyHistoryCsv} from "@/modules/module-access/admin-college-rule-history-export";
 import { route } from "@/security/route";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
@@ -18,7 +19,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   if(!result)return Response.json({error:"NOT_FOUND"},{status:404,headers:{"cache-control":"private, no-store"}});
   return new Response(collegePolicyHistoryCsv(result.items),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="college-feature-rule-history-page.csv"',
+   "content-disposition":attachmentHeader("college-feature-rule-history-page.csv"),
    "cache-control":"private, no-store",
    "x-export-row-count":String(result.items.length),
   }});

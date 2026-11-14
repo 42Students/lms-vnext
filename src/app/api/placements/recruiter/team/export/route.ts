@@ -8,6 +8,7 @@ import {getRecruiterCompanyTeam} from "@/modules/placements/recruiter-company-te
 import {buildHrTeamCsv} from "@/modules/placements/hr-team-csv-model";
 import {hrTeamSearchSchema,searchHrTeam} from "@/modules/placements/hr-team-search-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -22,7 +23,7 @@ export const GET = route(
     const result=buildHrTeamCsv(searchHrTeam(data.team,q));
     return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-company-team", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("recruiter-company-team", "csv")),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Capped":result.truncated?"true":"false",
   }});

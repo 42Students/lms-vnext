@@ -4,6 +4,7 @@ import {adminFeatureQuerySchema} from "@/modules/module-access/admin-feature-que
 import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-service";
 import {superAdminFeaturePageCsv} from "@/modules/module-access/admin-feature-export";
 import { route } from "@/security/route";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -16,7 +17,7 @@ async function handleGET(request:Request){
   const result=await listSuperAdminFeatureControls(await getCurrentRequestContext(),query);
   return new Response(superAdminFeaturePageCsv(result.items),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="super-admin-feature-matrix-page.csv"',
+   "content-disposition":attachmentHeader("super-admin-feature-matrix-page.csv"),
    "cache-control":"private, no-store",
    "x-export-row-count":String(result.items.length),
    "x-export-total-matches":String(result.total),

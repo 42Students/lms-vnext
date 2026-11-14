@@ -5,6 +5,7 @@ import {collegeAdminHistoryCsv} from "@/modules/colleges/admin-history-export-mo
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;userId:string}>}){
@@ -23,7 +24,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   const data=await listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page);
   return new Response(collegeAdminHistoryCsv(data.events),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-admin-history.csv"',
+   "Content-Disposition":attachmentHeader("college-admin-history.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(data.truncated),

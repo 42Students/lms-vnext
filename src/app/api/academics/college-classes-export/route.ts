@@ -5,6 +5,7 @@ import { readClassesExportParams } from "@/modules/academics/college-classes-exp
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -13,7 +14,7 @@ async function handleGET(request: Request) {
     const result = await exportCollegeClasses(await getCurrentRequestContext(), filters);
     return new Response(result.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="classes.csv"',
+      "Content-Disposition": attachmentHeader("classes.csv"),
       "Cache-Control": CACHE.PRIVATE,
       "X-Export-Truncated": String(result.truncated),
       "X-Export-Row-Cap": String(result.cap),

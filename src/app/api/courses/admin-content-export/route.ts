@@ -8,6 +8,7 @@ import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
 import { spreadsheetCsvCell as csvCell } from "@/security/csv-cell";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -51,7 +52,7 @@ async function handleGET(request:Request){
   return new Response("\uFEFF"+lines.join("\r\n")+"\r\n",{
    status:200,headers:{
     "Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="lesson-content.csv"',
+    "Content-Disposition":attachmentHeader("lesson-content.csv"),
     "Cache-Control":CACHE.PRIVATE,
     "X-Content-Type-Options":"nosniff",
    },

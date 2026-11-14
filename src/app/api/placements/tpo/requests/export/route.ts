@@ -10,6 +10,7 @@ import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
@@ -32,7 +33,7 @@ async function handleGET(request:Request){
   const csv=toTpoRequestsPageCsv(rows);
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-requests", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-requests", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Range":"filtered-authorized-view",

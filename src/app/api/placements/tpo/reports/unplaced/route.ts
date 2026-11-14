@@ -15,6 +15,7 @@ import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -62,7 +63,7 @@ const rows=visible.map(student=>{
   });
 return new Response("\uFEFF"+tpoUnplacedFilteredCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="unplaced-filtered.csv"',
+   "Content-Disposition":attachmentHeader("unplaced-filtered.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff","X-Export-Truncated":matching.length>rows.length?"true":"false",
    Vary:"Cookie",

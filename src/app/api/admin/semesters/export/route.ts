@@ -5,6 +5,7 @@ import {listCollegeSemesters} from "@/modules/academics/college-academic-directo
 import {placementReportCsv} from "@/modules/placements/report-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -33,7 +34,7 @@ async function handleGET(request:Request){
    "id","name","semesterNumber","programId","totalCredits","isActive",
   ],rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="semesters.csv"',
+   "Content-Disposition":attachmentHeader("semesters.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":records.length<total?"true":"false",
   }});

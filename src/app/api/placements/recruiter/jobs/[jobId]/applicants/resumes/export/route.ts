@@ -9,6 +9,7 @@ import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
 import { outboundFetch } from "@/lib/outbound";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const headers={"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
@@ -118,7 +119,7 @@ async function handleGET(request:Request,{params}:Params){
   const archive=new Uint8Array(makeStoredZip(entries));
   return new Response(archive.buffer as ArrayBuffer,{status:200,headers:{...headers,
    "Content-Type":"application/zip",
-   "Content-Disposition":'attachment; filename="recruiter-shared-resumes.zip"',
+   "Content-Disposition":attachmentHeader("recruiter-shared-resumes.zip"),
   }});
  }catch{
   // Never reveal private applicant, relationship or object storage scope.

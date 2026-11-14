@@ -8,6 +8,7 @@ import { route } from "@/security/route";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 async function handleGET(request: Request) {
   try {
@@ -25,7 +26,7 @@ async function handleGET(request: Request) {
     return new Response(result.csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="${filename}"`,
+        "Content-Disposition": attachmentHeader(`${filename}`),
         "Cache-Control": CACHE.PRIVATE,
         "X-Export-Truncated": String(result.truncated),
         "X-Export-Row-Cap": String(result.cap),

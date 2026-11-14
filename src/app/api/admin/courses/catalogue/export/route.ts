@@ -12,6 +12,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 
 /** SA-academics-people-54: selected-college CSV, not the College Admin endpoint. */
@@ -44,7 +45,7 @@ async function handleGET(request: Request): Promise<Response> {
     const csv=renderCollegeCourseCatalogueCsv(rows.slice(0,COLLEGE_COURSE_EXPORT_CAP),truncated);
     return new Response("\uFEFF"+csv,{headers:{
       "Content-Type":"text/csv; charset=utf-8",
-      "Content-Disposition":'attachment; filename="courses.csv"',
+      "Content-Disposition":attachmentHeader("courses.csv"),
       "Cache-Control":CACHE.PRIVATE,
       "X-Content-Type-Options":"nosniff",
       "X-Export-Truncated":String(truncated),

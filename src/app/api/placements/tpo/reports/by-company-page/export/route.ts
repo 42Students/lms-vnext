@@ -10,6 +10,7 @@ import {tpoVisibleCompanyReportCsv} from "@/modules/placements/tpo-company-page-
 import {NextResponse} from "next/server";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -40,7 +41,7 @@ export const GET = route(
    : view.rows;
     return new Response("\uFEFF"+tpoVisibleCompanyReportCsv(rows),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="' + gridExportFilename(all==="1"?"tpo-company-report-filtered":"tpo-company-report-visible-page", "csv") + '"',
+    "Content-Disposition":attachmentHeader(gridExportFilename(all==="1"?"tpo-company-report-filtered":"tpo-company-report-visible-page", "csv")),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"},
   });
   },

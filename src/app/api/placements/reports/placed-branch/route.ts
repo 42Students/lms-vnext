@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
 import { tpoPlacedBranchCsv } from "@/modules/placements/tpo-placed-branch-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const GET = route(
@@ -24,7 +25,7 @@ return new Response("\uFEFF" + exported.csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-placed-by-branch.csv"',
+        "Content-Disposition": attachmentHeader("tpo-placed-by-branch.csv"),
         "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

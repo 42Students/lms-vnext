@@ -1,3 +1,4 @@
+import { attachmentHeader } from "@/security/downloads";
 /**
  * Which stored content types may be shown inline by a signed file link. Everything else (HTML, SVG, XML, scripts,
  * unknown types) must always be sent as a download so it can never run on the file host or our own origin.
@@ -30,5 +31,5 @@ export function isInlineSafeContentType(value: string | null | undefined): boole
 /** RFC 6266 attachment header value with a conservative ASCII file name. */
 export function attachmentDisposition(fileName: string): string {
   const safe = fileName.replace(/[^A-Za-z0-9._-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 120) || "download";
-  return `attachment; filename="${safe}"`;
+  return attachmentHeader(`${safe}`);
 }

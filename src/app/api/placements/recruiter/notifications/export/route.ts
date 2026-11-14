@@ -6,6 +6,7 @@ import {listHrNotifications} from "@/modules/placements/hr-notifications-service
 import {buildHrInboxCsv,HR_INBOX_CSV_CAP} from "@/modules/placements/hr-inbox-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -34,7 +35,7 @@ async function handleGET(request:Request){
   const result=buildHrInboxCsv(rows,total);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-notifications.csv"',
+   "Content-Disposition":attachmentHeader("recruiter-notifications.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Export-Omitted":String(result.omitted),
   }});

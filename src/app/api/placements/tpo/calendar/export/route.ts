@@ -6,6 +6,7 @@ import { tpoCalendarRoundsCsv } from "@/modules/placements/tpo-calendar-export-m
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 async function handleGET(request: Request) {
@@ -18,7 +19,7 @@ async function handleGET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-upcoming-rounds", "csv") + '"',
+        "Content-Disposition": attachmentHeader(gridExportFilename("tpo-upcoming-rounds", "csv")),
         "Cache-Control": CACHE.PRIVATE,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",

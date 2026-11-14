@@ -6,6 +6,7 @@ import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-ser
 import {buildHrActivityCsv,HR_ACTIVITY_CSV_CAP} from "@/modules/placements/hr-activity-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -33,7 +34,7 @@ async function handleGET(request:Request){
   const result=buildHrActivityCsv(rows,additional);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-hiring-activity.csv"',
+   "Content-Disposition":attachmentHeader("recruiter-hiring-activity.csv"),
    "Cache-Control":CACHE.PRIVATE,"X-Export-Capped":result.capped?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}

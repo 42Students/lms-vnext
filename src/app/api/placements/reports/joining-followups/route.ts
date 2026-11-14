@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
 import {tpoJoiningFollowupCsv} from "@/modules/placements/tpo-joining-followup-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -18,7 +19,7 @@ if(!report.season)return Response.json({error:"PLACEMENT_SEASON_NOT_FOUND"},{sta
 const exportData=tpoJoiningFollowupCsv(report,report.season.name);
 return new Response("\uFEFF"+exportData.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-joining-followups.csv"',
+   "Content-Disposition":attachmentHeader("tpo-joining-followups.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    Vary:"Cookie",

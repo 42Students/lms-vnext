@@ -12,6 +12,7 @@ import {companyEngagementCsv,companyEngagementCsvQuerySchema} from "@/modules/pl
 import {NextResponse} from "next/server";
 import { ROLE } from "@/modules/identity/roles";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -42,7 +43,7 @@ const rows=all.slice(0,5000).map(row=>{
   });
 return new Response("\uFEFF"+companyEngagementCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-engagement.csv"',
+   "Content-Disposition":attachmentHeader("recruiter-engagement.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,"X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":all.length>rows.length?"true":"false",Vary:"Cookie",
   }});

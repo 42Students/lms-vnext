@@ -7,6 +7,7 @@ import type {SuperAdminReadQuery,SuperAdminReadResult} from "./super-admin-read-
 import {SUPER_ADMIN_READ_PAGE_SIZE} from "./super-admin-read-directory-model";
 import {SUPER_ADMIN_SCOPED_CSV_CAP,buildSuperAdminScopedCsv,parseSuperAdminScopedCsvParams,scopedCsvStatusAllowed} from "./super-admin-scoped-csv-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 type DirectoryLoader=(context:RequestContext,query:SuperAdminReadQuery)=>Promise<SuperAdminReadResult>;
 export async function exportSuperAdminScopedDirectory(request:Request,config:{
  filename:string;statuses:readonly string[];loader:DirectoryLoader;
@@ -33,7 +34,7 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
   const truncated=first.total>SUPER_ADMIN_SCOPED_CSV_CAP;
   return new Response(buildSuperAdminScopedCsv(rows,truncated),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":`attachment; filename="${config.filename}"`,
+   "Content-Disposition":attachmentHeader(`${config.filename}`),
    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Row-Cap":String(SUPER_ADMIN_SCOPED_CSV_CAP),
    "X-Export-Truncated":String(truncated),

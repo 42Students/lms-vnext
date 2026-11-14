@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {adminCompaniesQuerySchema} from "@/modules/placements/admin-company-directory-model";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
 import {superAdminCompanyCsv} from "@/modules/placements/admin-company-directory-export-model";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "placements.read" },
@@ -24,7 +25,7 @@ export const GET = route(
     const rows=[...page.rows,...extra.flatMap(part=>part.rows)].slice(0,cap);
     return new Response(superAdminCompanyCsv(rows),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="companies.csv"',
+   "content-disposition":attachmentHeader("companies.csv"),
    "cache-control":"no-store",
    "x-export-row-count":String(rows.length),
    "x-export-limit":String(cap),

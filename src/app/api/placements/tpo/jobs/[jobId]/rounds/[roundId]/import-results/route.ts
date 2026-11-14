@@ -7,12 +7,13 @@ import {ROUND_IMPORT_TEMPLATE} from "@/modules/placements/tpo-round-import-model
 import {previewTpoRoundImport,stageTpoRoundImport} from "@/modules/placements/tpo-round-import-service";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string;roundId:string}>};
 async function handleGET(_request:Request){
  return new Response("\uFEFF"+ROUND_IMPORT_TEMPLATE,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
-  "Content-Disposition":'attachment; filename="round-results-template.csv"',
+  "Content-Disposition":attachmentHeader("round-results-template.csv"),
   "Cache-Control":CACHE.PRIVATE,
  }});
 }

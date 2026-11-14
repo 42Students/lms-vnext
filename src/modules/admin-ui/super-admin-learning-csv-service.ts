@@ -9,6 +9,7 @@ import {adminLearningQuerySchema} from "@/modules/courses/admin-learning-read-mo
 import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-directory-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
 export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind,
  reader:typeof listCollegeAssessmentAggregate=listCollegeAssessmentAggregate):Promise<Response>{
@@ -87,7 +88,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
     kind.toLowerCase().replace("progress","course-progress")+".csv";
   return new Response("\uFEFF"+placementReportCsv(headers,items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="'+filename+'"',
+   "Content-Disposition":attachmentHeader(filename),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(!pageOnly&&total>max),

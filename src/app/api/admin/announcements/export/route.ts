@@ -6,6 +6,7 @@ import {parseSuperAdminAnnouncementParams} from "@/modules/announcements/super-a
 import {announcementHistoryCsv} from "@/modules/announcements/admin-csv-model";
 import {announcementApiError} from "@/lib/announcement-api-error";
 import { route } from "@/security/route";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 const noStore={"cache-control":"private, no-store"};
 async function handleGET(request:Request){
@@ -28,7 +29,7 @@ async function handleGET(request:Request){
   });
   return new Response(announcementHistoryCsv(page.items,Date.now()),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="super-admin-announcements-page.csv"',
+   "content-disposition":attachmentHeader("super-admin-announcements-page.csv"),
    "cache-control":"private, no-store",
    "x-export-row-count":String(page.items.length),
   }});

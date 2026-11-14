@@ -7,6 +7,7 @@ import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsCsv}
   from "@/modules/projects/mentor-reports-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 /** Only registered current Mentor project state, never learner data. */
 export const GET = route(
@@ -24,7 +25,7 @@ export const GET = route(
       return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     return new Response(mentorReportsCsv(report.exportItems,report.exportOmitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="mentor-project-reports.csv"',
+        "Content-Disposition":attachmentHeader("mentor-project-reports.csv"),
         "Cache-Control":CACHE.PRIVATE,
         "X-Export-Omitted":String(report.exportOmitted)},
     });

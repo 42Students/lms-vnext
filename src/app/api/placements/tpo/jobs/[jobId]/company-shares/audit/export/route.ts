@@ -5,6 +5,7 @@ import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manag
 import {tpoCompanyShareAuditCsv} from "@/modules/placements/company-share/audit-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
@@ -16,7 +17,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}
   });
   return new Response("\uFEFF"+tpoCompanyShareAuditCsv(result.entries,result.limited),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="' + gridExportFilename("company-share-access-audit", "csv") + '"',
+    "Content-Disposition":attachmentHeader(gridExportFilename("company-share-access-audit", "csv")),
     "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}

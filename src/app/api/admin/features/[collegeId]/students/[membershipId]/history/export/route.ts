@@ -4,6 +4,7 @@ import {studentRuleHistoryCursorSchema} from "@/modules/module-access/admin-stud
 import {listSuperAdminStudentRuleHistory} from "@/modules/module-access/admin-student-rule-history-service";
 import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export";
 import { route } from "@/security/route";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  try{
@@ -18,7 +19,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   if(!result)return Response.json({error:"NOT_FOUND"},{status:404,headers:{"cache-control":"private, no-store"}});
   return new Response(studentRuleHistoryCsv(result.items),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="learner-module-rule-history-page.csv"',
+   "content-disposition":attachmentHeader("learner-module-rule-history-page.csv"),
    "cache-control":"private, no-store","x-export-row-count":String(result.items.length)
   }});
  }catch(error){return apiErrorResponse(error);}

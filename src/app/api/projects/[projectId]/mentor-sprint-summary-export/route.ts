@@ -7,6 +7,7 @@ import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-servi
 import {mentorBoardReviewQuerySchema,mentorSprintSummaryCsv}
   from "@/modules/projects/mentor-board-review-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Exact current Mentor project, cap 100 registered Sprints, no contacts/files. */
@@ -26,7 +27,7 @@ export const GET = route(
     return new Response(mentorSprintSummaryCsv(
       data.sprintSummaryExportItems,data.sprintSummaryExportOmitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="mentor-sprint-summary.csv"',
+        "Content-Disposition":attachmentHeader("mentor-sprint-summary.csv"),
         "Cache-Control":CACHE.PRIVATE,
         "X-Export-Omitted":String(data.sprintSummaryExportOmitted)},
     });

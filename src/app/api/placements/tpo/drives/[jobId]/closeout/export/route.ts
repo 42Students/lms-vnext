@@ -5,6 +5,7 @@ import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-ser
 import { tpoDriveCloseoutCsv } from "@/modules/placements/tpo-drive-closeout-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 async function handleGET(_request: Request, { params }: {
@@ -17,7 +18,7 @@ async function handleGET(_request: Request, { params }: {
     return new Response("\uFEFF" + tpoDriveCloseoutCsv(data.job.title, data.counts), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-drive-closeout", "csv") + '"',
+        "Content-Disposition": attachmentHeader(gridExportFilename("tpo-drive-closeout", "csv")),
         "Cache-Control": CACHE.PRIVATE,
         "X-Content-Type-Options": "nosniff",
         "Vary": "Cookie",

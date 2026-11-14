@@ -5,6 +5,7 @@ import {getTpoBatchStudents} from "@/modules/placements/tpo-batch-workspace-read
 import {buildTpoEligibilityImportScaffold} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
@@ -17,7 +18,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   const csv=buildTpoEligibilityImportScaffold(result.students);
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-batch-eligibility-scaffold.csv"',
+   "Content-Disposition":attachmentHeader("tpo-batch-eligibility-scaffold.csv"),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"current-page-only",

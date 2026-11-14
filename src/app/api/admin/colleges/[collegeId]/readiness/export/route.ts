@@ -6,6 +6,7 @@ import {getSuperAdminCollegeReadiness} from "@/modules/colleges/readiness-servic
 import {buildSuperAdminReadinessCsv} from "@/modules/colleges/admin-readiness-export-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try {
@@ -17,7 +18,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:st
   });
   return new Response(buildSuperAdminReadinessCsv(data.college,data.evaluation),{
    headers:{"content-type":"text/csv; charset=utf-8",
-    "content-disposition":'attachment; filename="college-readiness-evidence.csv"',
+    "content-disposition":attachmentHeader("college-readiness-evidence.csv"),
     "cache-control":"private, no-store",
     "x-content-type-options":"nosniff",Vary:"Cookie"}
   });

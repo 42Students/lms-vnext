@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { exportSuperAdminUsers } from "@/modules/people/admin-users-export-service";
 import { readSuperAdminPeopleExportParams } from "@/modules/people/admin-users-export-model";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
@@ -15,7 +16,7 @@ export const GET = route(
     const data=await exportSuperAdminUsers(context,query);
     return new Response(data.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="super-admin-people-ist.csv"',
+   "Content-Disposition":attachmentHeader("super-admin-people-ist.csv"),
    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Row-Cap":String(data.cap),"X-Export-Truncated":String(data.truncated),
   }});

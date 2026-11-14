@@ -7,6 +7,7 @@ import {listTpoRecruiterAccess} from "@/modules/placements/tpo-recruiter-access-
 import {tpoRecruiterGrantCsv,tpoRecruiterGrantXlsx} from "@/modules/placements/tpo-recruiter-grant-export-model";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -29,11 +30,11 @@ async function handleGET(request:Request){
   if(format==="xlsx")
    return new Response(tpoRecruiterGrantXlsx(result.items,result.truncated),{
     headers:{...headers,"Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-     "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiters", "xlsx") + '"'},
+     "Content-Disposition":attachmentHeader(gridExportFilename("recruiters", "xlsx"))},
    });
   return new Response("\uFEFF"+tpoRecruiterGrantCsv(result.items,result.truncated),{
    headers:{...headers,"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiters", "csv") + '"'},
+    "Content-Disposition":attachmentHeader(gridExportFilename("recruiters", "csv"))},
   });
  }catch(error){return apiErrorResponse(error);}
 }

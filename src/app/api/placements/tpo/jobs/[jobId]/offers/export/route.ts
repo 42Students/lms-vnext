@@ -5,6 +5,7 @@ import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offe
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{
@@ -29,7 +30,7 @@ async function handleGET(request:Request,{params}:{
    {...Object.fromEntries(url.searchParams.entries()),jobId});
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-drive-offers", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-drive-offers", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "Vary":"Cookie",

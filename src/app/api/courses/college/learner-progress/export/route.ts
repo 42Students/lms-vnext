@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 const quote=(value:unknown)=>'"'+String(value??"").replace(/"/g,'""')+'"';
 
@@ -39,7 +40,7 @@ export const GET = route(
    "-class-"+safeNamePart(report.chosen.legacyClassId??report.chosen.sectionId)+".csv";
     return new Response(csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="'+filename+'"',
+   "Content-Disposition":attachmentHeader(filename),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});

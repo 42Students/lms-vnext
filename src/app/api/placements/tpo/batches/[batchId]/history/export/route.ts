@@ -6,6 +6,7 @@ import {batchHistoryViewSchema,filterTpoBatchHistoryKind,filterTpoBatchHistoryOu
 import {serializeTpoCohortHistoryCsv} from "@/modules/placements/tpo-batch-history-csv-model";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
@@ -20,7 +21,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   const rows=filterTpoBatchHistoryOutcome(filterTpoBatchHistoryKind(evidence.events,filters.kind),filters.after);
   return new Response("\uFEFF"+serializeTpoCohortHistoryCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-batch-decision-history", "csv") + '"',
+   "Content-Disposition":attachmentHeader(gridExportFilename("tpo-batch-decision-history", "csv")),
    "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"latest-100-batch-class-learner-events",

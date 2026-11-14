@@ -5,6 +5,7 @@ import {getFacultyAssessmentResults} from "@/modules/courses/faculty-results-ser
 import {facultyResultsPageCsv} from "@/modules/courses/faculty-results-export";
 import { route } from "@/security/route";
 import { CACHE } from "@/security/responses";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const url=new URL(request.url);
@@ -20,7 +21,7 @@ async function handleGET(request:Request){
   const result=await getFacultyAssessmentResults(context,parsed.data);
   return new Response(facultyResultsPageCsv(result.items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="faculty-assessment-results-page.csv"',
+   "Content-Disposition":attachmentHeader("faculty-assessment-results-page.csv"),
    "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});

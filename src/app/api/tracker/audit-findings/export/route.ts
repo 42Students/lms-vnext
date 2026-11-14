@@ -5,6 +5,7 @@ import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {parseAuditFindingsSearchParams,trackerAuditFindingsInput} from "@/modules/bug-tracker/audit-findings-board-model";
 import {auditFindingsCsv} from "@/modules/bug-tracker/audit-findings-csv-model";
 import { route } from "@/security/route";
+import { attachmentHeader } from "@/security/downloads";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  if(!trackerAdminRuntimeEnabled())return Response.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503,headers:{"cache-control":"private, no-store"}});
@@ -19,7 +20,7 @@ async function handleGET(request:Request){
   const data=await listBugTrackerIssuesForAdmin(await getCurrentRequestContext(),trackerAuditFindingsInput(parsed));
   return new Response(auditFindingsCsv(data.items),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="audit-findings-page.csv"',
+   "content-disposition":attachmentHeader("audit-findings-page.csv"),
    "cache-control":"private, no-store","x-export-row-count":String(data.items.length),
   }});
  }catch(error){return bugTrackerApiError(error);}
