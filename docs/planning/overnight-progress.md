@@ -81,7 +81,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 8.1 (catalogued, not rebuilt) tests/support/README.md maps every shared fixture by need; new fixture builders for course/drive/learner/college were not written because tests/support already holds 25 of them; sec-cross-user-applications still has its own college setup
 - [x] 8.2 docs/security/ENVIRONMENT-MATRIX.md generated from src/config (136 variables, exact on-values, harness switches marked never-in-production) by scripts/gen-env-matrix.ts; tests/unit/sec-env-matrix.test.ts fails when it is stale
 - [x] 8.3 docs/planning/centralisation-before-after-2026-11-14.md: 35 metrics before and after, 31 enforced ratchets
-- [ ] 8.4 docs and memory updated
+- [x] 8.4 docs/security/WHERE-TO-CHANGE.md (one edit location per concern, with its guard test), centralisation before/after report, memory note overnight-centralisation-program updated with state, gotchas and open items
 - [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
 
 ## Log (newest first)
