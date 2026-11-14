@@ -175,7 +175,7 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
 
  it("TPO-inbox-team-41 loads the latest five hundred messages and scrolls to the selected one",()=>{
-  expect(src("src/modules/placements/tpo-team-conversation-service.ts")).toContain("const PAGE_SIZE = 500");
+  expect(src("src/modules/placements/tpo-team-conversation-service.ts")).toContain("const PAGE_SIZE = PAGE_SIZES.BULK");
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
   expect(page).toContain("<TpoTeamMessageScroll");
   expect(page).toContain('id={"team-message-"+message.id}');

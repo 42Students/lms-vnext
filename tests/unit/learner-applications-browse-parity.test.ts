@@ -19,7 +19,7 @@ describe("Learner Applications list and detail route", () => {
   it("supports shareable filters and an application-id detail drawer", () => {
     const browse = read("src/components/placements/learner-applications-browse.tsx");
     expect(browse).toContain("popstate");
-    expect(browse).toContain("PAGE_SIZE = 20");
+    expect(browse).toContain("PAGE_SIZE = PAGE_SIZES.STANDARD");
     expect(browse).toContain("browseLearnerApplications(items, filters)");
     expect(browse).toContain("item.applicationId===url.applicationId");
     expect(browse).toContain("readLearnerApplicationUrl(params.toString())");

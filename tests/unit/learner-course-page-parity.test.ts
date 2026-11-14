@@ -131,7 +131,7 @@ describe("learner Course page parity contract", () => {
     expect(list).toContain("Past semester");
     expect(list).toContain("Instructor:");
     expect(list).toContain("Show more courses");
-    expect(list).toContain("PAGE_SIZE = 48");
+    expect(list).toContain("PAGE_SIZE = PAGE_SIZES.GRID");
     expect(page).toContain("listLearnerCourseInstructors");
     expect(page).toContain("includeHistorical");
   });

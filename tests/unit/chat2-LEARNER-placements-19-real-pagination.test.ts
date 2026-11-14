@@ -28,7 +28,7 @@ describe("LEARNER-placements-19 — reviewer correction: no 20-item pagination g
  });
  it("LEARNER-placements-19 binds the 20-item limit to the live filter and page controls",()=>{
   const ui=read(UI);
-  expect(ui).toContain("const PAGE_SIZE = 20;");
+  expect(ui).toContain("const PAGE_SIZE = PAGE_SIZES.STANDARD;");
   expect(ui).toContain("filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso))");
   // The currently rendered availability subset, not an inaccessible drive,
   // determines the page count.

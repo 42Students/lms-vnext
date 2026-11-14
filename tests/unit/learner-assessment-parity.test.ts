@@ -98,7 +98,7 @@ describe("learner assessment parity pages", () => {
     );
     expect(overview).toContain("assignmentOverviewState");
     expect(assignmentState).toContain("Submitted late");
-    expect(overview).toContain("PAGE_SIZE = 20");
+    expect(overview).toContain("PAGE_SIZE = PAGE_SIZES.STANDARD");
     expect(overview).toContain("Page {currentPage} of {totalPages}");
     expect(overview).toContain("filter=assessments");
     expect(overview).toContain("lesson=");
