@@ -23,8 +23,8 @@ const notIn = (...prefixes) => (p) => !prefixes.some((x) => p === x || p.startsW
 /** unit "matches" counts occurrences; unit "files" counts files containing at least one match. */
 export const METRICS = [
   // Tier 1: security and correctness
-  { id: "authz.serviceEnforcedRoutes", audit: 1, label: 'routes declaring permission "service-enforced"', scope: inApi, pattern: /permission:\s*["']service-enforced["']/g, unit: "matches" },
-  { id: "authz.ownActorGuardDefs", audit: 1, label: "per-file requireX actor guard definitions", scope: (p) => p.startsWith("src/"), pattern: /function require(?:Learner|Faculty|Tpo|College|Staff|Mentor|Recruiter|Admin|Super)[A-Za-z]*\(/g, unit: "matches" },
+  { id: "authz.serviceEnforcedRoutes", audit: 1, label: 'routes declaring permission "service-enforced"', scope: inApi, pattern: /permission:\s*["']service-enforced["']/g, unit: "matches", enforce: true },
+  { id: "authz.ownActorGuardDefs", audit: 1, label: "per-file requireX actor guard definitions", scope: (p) => p.startsWith("src/"), pattern: /function require(?:Learner|Faculty|Tpo|College|Staff|Mentor|Recruiter|Admin|Super)[A-Za-z]*\(/g, unit: "matches", enforce: true },
   { id: "plumbing.handlerOriginChecks", audit: 2, label: "origin checks inside API handlers", scope: inApi, pattern: /isSameOriginRequest\(/g, unit: "matches", enforce: true },
   { id: "plumbing.handlerActorLookups", audit: 2, label: "getCurrentRequestContext() inside API handlers", scope: inApi, pattern: /getCurrentRequestContext\(/g, unit: "matches" },
   { id: "plumbing.bodyReaderModules", audit: 2, label: "request-body reader modules in src/lib", scope: (p) => /^src\/lib\/bounded-[a-z-]+\.ts$/.test(p), pattern: /^/g, unit: "files", enforce: true },
@@ -35,7 +35,7 @@ export const METRICS = [
   { id: "responses.cacheControlLiterals", audit: 4, label: "Cache-Control literals in API routes", scope: inApi, pattern: /Cache-Control/g, unit: "matches", enforce: true },
   { id: "responses.numericStatusLiterals", audit: 4, label: "numeric status literals in API routes", scope: inApi, pattern: /status: ?(?:400|401|403|404|409|422|429|500|503)\b/g, unit: "matches" },
   { id: "events.inlineActivityInserts", audit: 5, label: "inline insert into activity_events", scope: (p) => p.startsWith("src/"), pattern: /insert\(activityEvents\)|INSERT INTO activity_events/g, unit: "matches" },
-  { id: "tenant.inlineCollegeIdCompare", audit: 6, label: "inline collegeId equality checks", scope: (p) => p.startsWith("src/"), pattern: /collegeId (?:===|!==) /g, unit: "matches" },
+  { id: "tenant.inlineCollegeIdCompare", audit: 6, label: "inline collegeId equality checks", scope: (p) => p.startsWith("src/"), pattern: /collegeId (?:===|!==) /g, unit: "matches", enforce: true },
   { id: "data.directDbRoutes", audit: 7, label: "API routes importing the database directly", scope: inApi, pattern: /\bgetDb\b[\s\S]*from\s+["']@\/db/, unit: "files" },
   { id: "config.processEnvReads", audit: 9, label: "process.env reads outside the config module", scope: (p) => p.startsWith("src/") && notIn("src/lib/env.ts", "src/config/")(p), pattern: /process\.env/g, unit: "matches", enforce: true },
   { id: "config.readyFlagReads", audit: 9, label: "bare READY/ENABLED flag reads", scope: (p) => p.startsWith("src/") && notIn("src/config/")(p), pattern: /process\.env\["[A-Z0-9_]*(?:READY|ENABLED)[A-Z0-9_]*"\]/g, unit: "matches", enforce: true },

@@ -47,10 +47,10 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 
 ## Phase 4: authorization and tenant
 - [x] 4.1 (derived-matrix form) PLATFORM_PERMISSIONS list in the policy (type derived from it) and a role matrix GENERATED from can(): 33 permissions x 13 actor kinds x 5 resource shapes, committed at docs/security/baselines/permission-matrix.json; any policy change is a reviewed diff; never-true invariants and recruiter-only rules asserted; a deliberate policy mutation is caught. The policy switch itself is NOT yet rewritten as a table, and routes still name permissions in route() config
-- [ ] 4.2 route families migrated (people, courses, placements learner, placements staff, projects, academics, attendance, admin, internal, legacy)
-- [ ] 4.3 per-file requireX guard copies removed
-- [ ] 4.4 requireSameCollege / ownsResource
-- [ ] 4.5 requireCurrentVersion
+- [~] 4.2 NOT migrated: 1,075 routes still say permission "service-enforced" (naming the real permission per route is a per-route decision); the count is now an enforced ratchet so it can only fall. route families migrated (people, courses, placements learner, placements staff, projects, academics, attendance, admin, internal, legacy)
+- [~] 4.3 NOT removed: 63 per-file requireX guard definitions remain, count enforced as a ratchet. per-file requireX guard copies removed
+- [x] 4.4 (helpers built, call sites not migrated) src/modules/permissions/resource-guards.ts: sameCollege, requireSameCollege, ownsResource, requireOwnsResource, tested; 227 inline collegeId comparisons remain, enforced as a ratchet. requireSameCollege / ownsResource
+- [x] 4.5 (helper built, call sites not migrated) src/lib/concurrency.ts: requireCurrentVersion, VersionConflictError (409 VERSION_CONFLICT through the central mapper), tested; the ~564 existing version checks keep their own codes. requireCurrentVersion
 - [ ] 4.6 last server raw fetch onto outboundFetch
 
 ## Phase 5: data, events, files, exports, jobs
