@@ -16,7 +16,7 @@ const rollbackCommand=z.strictObject({
  expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),
 });
 export const POST = route(
-  { auth: "user", permission: "project-template.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {templateId}=params;

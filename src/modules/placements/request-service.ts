@@ -1,3 +1,4 @@
+import { requireLearnerMembership } from "@/modules/permissions/resource-guards";
 import {recordApplicationStatusTransition} from "./application-status-history-writer";
 import {
   and,
@@ -34,7 +35,6 @@ import {
   users,
 } from "@/db/schema";
 import {
-  hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -53,7 +53,6 @@ import {
   type PlacementRequestActionInput,
 } from "./validation";
 
-import { ROLE } from "@/modules/identity/roles";
 type PlacementRequestTransaction = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
 type PlacementRequestWriter = Pick<
@@ -98,15 +97,6 @@ export function legacyRescheduleRequestDisplay(
   return {preferredTimes:text,reply,stateLabel,decisionMade:["APPROVED","REJECTED","CANCELLED"].includes(status)};
 }
 
-function requireLearner(context: RequestContext) {
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, ROLE.LEARNER)
-  ) {
-    throw new AuthorizationError("placements.read");
-  }
-  return context.membership;
-}
 
 async function loadApplicationContext(
   applicationId: string,
@@ -470,7 +460,7 @@ export async function createPlacementRequest(
   context: RequestContext,
   rawInput: CreatePlacementRequestInput,
 ) {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
   const input =
     createPlacementRequestInputSchema.parse(
@@ -983,7 +973,7 @@ export async function actOnPlacementRequest(
     await loadRequestContext(requestId);
 
   if (input.action === "CANCEL") {
-    const membership = requireLearner(context);
+    const membership = requireLearnerMembership(context);
     await requireLearnerPlacementAccess(context);
     if (
       membership.id !==
@@ -1270,7 +1260,7 @@ function requestListQuery() {
 export async function listOwnPlacementRequests(
   context: RequestContext,
 ) {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
   return requestListQuery()
     .where(and(
@@ -1329,7 +1319,7 @@ export async function listPlacementJobRequests(
 export async function getLearnerPlacementRequestWorkspace(
   context: RequestContext,
 ) {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
   const db = getDb();
   const [deadlineAvailable,confirmationReady]=await Promise.all([

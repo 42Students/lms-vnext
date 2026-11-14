@@ -9,7 +9,7 @@ import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 const querySchema = z.object({ collegeId: zUuid, classId: zUuid }).strict();
 export const GET = route(
-  { auth: "user", permission: "projects.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url = new URL(request.url);

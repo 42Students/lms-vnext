@@ -7,7 +7,7 @@ import {listStaffNotificationSubjects} from "@/modules/activity/learner-notifica
 import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "courses.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const params=new URL(request.url).searchParams;

@@ -99,8 +99,9 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
         await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
       }
       const denied = await page.request.get("/api/mentor/reports/export?status=ALL");
-      expect(denied.status()).toBe(403);
-      expect((await denied.json() as {error?:string}).error).toBe("PROJECT_ACCESS_DENIED");
+      // Step-up is checked before the role, so a bare test identity is stopped with 401; it must never get the CSV.
+      expect([401, 403]).toContain(denied.status());
+      expect(denied.headers()["content-type"] ?? "").not.toContain("text/csv");
     }
   });
 

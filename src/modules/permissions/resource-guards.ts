@@ -1,4 +1,5 @@
-import { hasActiveMembership, type RequestContext } from "@/modules/identity/context";
+import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { ROLE } from "@/modules/identity/roles";
 import { AuthorizationError, type PlatformPermission } from "@/modules/permissions/policy";
 
 /**
@@ -37,4 +38,13 @@ export function requireOwnsResource(
   permission: PlatformPermission = "identity.self.manage",
 ): void {
   if (!ownsResource(context, row)) throw new AuthorizationError(permission);
+}
+
+/**
+ * The signed-in actor must hold the LEARNER role in a college membership; returns that membership. Denials name
+ * `placements.read`, the capability the learner placement services protect.
+ */
+export function requireLearnerMembership(context: RequestContext): NonNullable<RequestContext["membership"]> {
+  if (!context.membership || !hasMembershipRole(context, ROLE.LEARNER)) throw new AuthorizationError("placements.read");
+  return context.membership;
 }

@@ -7,7 +7,7 @@ import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "courses.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { assignmentId } = params;

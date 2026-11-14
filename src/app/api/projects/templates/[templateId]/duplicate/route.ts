@@ -5,7 +5,7 @@ import { duplicateProjectTemplate } from "@/modules/projects/template-service";
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "project-template.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { templateId } = params;

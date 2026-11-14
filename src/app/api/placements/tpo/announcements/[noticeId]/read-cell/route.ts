@@ -6,7 +6,7 @@ import {markPlacementCellNoticeRead} from "@/modules/announcements/placement-cel
 import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "placements.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     const {noticeId}=params;

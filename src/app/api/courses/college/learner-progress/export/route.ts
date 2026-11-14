@@ -11,7 +11,7 @@ const quote=(value:unknown)=>'"'+String(value??"").replace(/"/g,'""')+'"';
 
 /** Export the same authorized active-enrollment audience as the live report. */
 export const GET = route(
-  { auth: "user", permission: "courses.read", stepUp: true },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url=new URL(request.url);

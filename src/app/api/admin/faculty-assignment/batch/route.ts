@@ -11,7 +11,7 @@ export const runtime="nodejs";
  * Same-origin CSRF failures remain 403 even if the old endpoint returned 401.
  */
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const _p=await readBoundedJsonRequest(request,16384);

@@ -11,7 +11,7 @@ import {z} from "zod";
 import { attachmentHeader } from "@/security/downloads";
 import { zUuid } from "@/lib/schema-primitives";
 export const GET = route(
-  { auth: "user", permission: "projects.manage", stepUp: true },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const collegeId = new URL(request.url).searchParams.get("collegeId");

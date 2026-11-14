@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { editSuperAdminTemplateMetadata } from "@/modules/projects/template-metadata-edit-service";
 export const runtime = "nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "project-template.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { templateId } = params;

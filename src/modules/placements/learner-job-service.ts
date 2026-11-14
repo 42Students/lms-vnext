@@ -1,3 +1,4 @@
+import { requireLearnerMembership } from "@/modules/permissions/resource-guards";
 import {
   and,
   asc,
@@ -38,10 +39,8 @@ import {
   users,
 } from "@/db/schema";
 import {
-  hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
@@ -60,16 +59,6 @@ import {
   type PlacementEligibilityResult,
 } from "./eligibility-service";
 
-import { ROLE } from "@/modules/identity/roles";
-function requireLearner(context: RequestContext) {
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, ROLE.LEARNER)
-  ) {
-    throw new AuthorizationError("placements.read");
-  }
-  return context.membership;
-}
 
 /** listLearnerPlacementJobs deliberately returns no drives for a learner without
  * exactly one ACTIVE program enrollment. The Drives page uses this state to
@@ -77,7 +66,7 @@ function requireLearner(context: RequestContext) {
 export async function getOwnLearnerJobEnrollmentState(
   context: RequestContext,
 ): Promise<"OK" | "NO_ACTIVE_ENROLLMENT" | "AMBIGUOUS_ENROLLMENT"> {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   const rows = await getDb().select({ id: learnerProgramEnrollments.id })
     .from(learnerProgramEnrollments).where(and(
       eq(learnerProgramEnrollments.membershipId, membership.id),
@@ -93,7 +82,7 @@ export async function listLearnerPlacementJobs(
   jobId?: string,
   requestedJobIds?:readonly string[],
 ) {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
   const scopedJobId=jobId?placementJobIdSchema.parse(jobId):undefined;
   // An explicitly empty selection must never turn into an unrestricted feed.
@@ -422,7 +411,7 @@ export async function listLearnerPlacementBulkDecisions(
  now:Date=new Date(),
 ){
  // Even empty/invalid requests require the same authenticated learner grant.
- requireLearner(context);
+ requireLearnerMembership(context);
  await requireLearnerPlacementAccess(context);
  // Bound expensive per-job eligibility evaluation and preserve request order.
  if(requestedJobIds.length>100)
@@ -462,7 +451,7 @@ export async function listLearnerPlacementBulkDecisions(
 export async function getOwnLearnerJobCompanySharePreview(
  context:RequestContext,rawJobId:unknown,
 ){
- const membership=requireLearner(context);
+ const membership=requireLearnerMembership(context);
  await requireLearnerPlacementAccess(context);
  const jobId=placementJobIdSchema.parse(rawJobId);
  const [application]=await getDb().select({

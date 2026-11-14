@@ -11,7 +11,7 @@ export const runtime="nodejs";
 /** Upload the bounded decoded RTF/CSV text through authenticated JSON only.
  * No remote URL fetch, file path, automatic seed or public ingestion route. */
 export const POST = route(
-  { auth: "user", permission: "admin-scope.select" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const decoded=await readBoundedUtf8Body(request,210_000);

@@ -12,7 +12,7 @@ import { zUuid } from "@/lib/schema-primitives";
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "projects.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const input: unknown = await boundedRequestJson(request);

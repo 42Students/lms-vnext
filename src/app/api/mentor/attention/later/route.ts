@@ -11,7 +11,7 @@ import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 export const POST = route(
-  { auth: "user", permission: "academics.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const decoded=await readBoundedUtf8Body(request,1024);

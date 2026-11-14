@@ -5,7 +5,7 @@ import { markOwnFacultyNotificationRead } from "@/modules/activity/faculty-notif
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "academics.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { notificationId } = params;

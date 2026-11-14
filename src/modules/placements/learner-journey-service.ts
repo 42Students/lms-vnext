@@ -1,3 +1,4 @@
+import { requireLearnerMembership } from "@/modules/permissions/resource-guards";
 import {
   and,
   asc,
@@ -21,16 +22,13 @@ import {
   placementOffers,
 } from "@/db/schema";
 import {
-  hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import { listOwnAppliedPlacementResults } from "./result-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
 import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 
-import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 /** Display labels are legacy learner phrasing; raw codes remain available for
  * staff workflows and exact API state transitions. */
@@ -47,20 +45,11 @@ function learnerScheduleRoom(value:string|null):string|null{
  const normalized=value?.trim()??"";
  return normalized && normalized.toLowerCase()!=="null" ? normalized : null;
 }
-function requireLearner(context: RequestContext) {
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, ROLE.LEARNER)
-  ) {
-    throw new AuthorizationError("placements.read");
-  }
-  return context.membership;
-}
 
 export async function getLearnerPlacementJourney(
   context: RequestContext,
 ) {
-  const membership = requireLearner(context);
+  const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
 
   const [applications, results, offers] =
