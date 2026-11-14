@@ -92,3 +92,15 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - 2026-11-14: 0.2 and 0.3 done: metrics script, baseline and lint wiring; metrics flip to ENFORCED in scripts/centralisation-metrics.mjs when their module lands.
 - 2026-11-14: owner confirmed GCP and Cloudflare are out of scope; rule added above and to memory.
 - 2026-11-14: tracker created.
+
+## Follow-up program (2026-11-14, owner: "do all of it without asking")
+
+Owner decisions taken: quarantined copy -> old wording (1A); no per-college time zone (2B); idempotency keys on apply and offer respond (3A). All done and pushed.
+
+- [x] F1 Idempotency: apply-to-drive and offer actions require a key; callers send a per-attempt key (7154bbfaee)
+- [x] F2 Quarantine emptied; "Placement settings sections" kept (two navs shared the old label, a landmark clash) (e1a8ca23, 3c8df7ff, then reverted label)
+- [x] F3 Mentor acceptance fixed in tests: export needs step-up (bare test identity gets 401), calendar invalid state is an alert (c568d4b1) - CI result pending
+- [-] F4 UI-01..UI-10 visual parity workflows: log in against the deployed dev host (login/start 404). Cloud-dependent, SKIPPED (cloud)
+- [~] F5 Route permissions: analysis `scripts/analyze-route-permissions.cjs` (follows service calls 3 deep); codemod `scripts/codemod/name-route-permissions.cjs`. 171 of 793 service-enforced files are unambiguous (one permission checked unconditionally by every called service). Batch 1 = 66 routes (all but placements.manage). Next: placements.manage (105) in batches, then the 380 with no top-level check and 230 mixed need hand review
+- [ ] F6 63 copies of the college/ownership guard -> requireSameCollege
+- [ ] F7 Not-built items (notification service, settings service, status registry, locale/money, repositories, copy catalogue, design tokens)
