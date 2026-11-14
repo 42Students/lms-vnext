@@ -8,6 +8,7 @@ import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zi
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { outboundFetch } from "@/lib/outbound";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const headers={"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
@@ -32,7 +33,7 @@ async function readBoundedResume(url:string,contentType:string):
  const extension=extensions[contentType.split(";")[0]!.trim().toLowerCase()];
  if(!extension)return null;
  try{
-  const response=await fetch(address,{redirect:"error",cache:"no-store",
+  const response=await outboundFetch(address.toString(),{redirect:"error",cache:"no-store",
    signal:AbortSignal.timeout(10000)});
   if(!response.ok||!response.body)return null;
   const declared=response.headers.get("content-length");

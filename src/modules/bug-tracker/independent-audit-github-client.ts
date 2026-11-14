@@ -2,6 +2,7 @@ import "server-only";
 import {createSign} from "node:crypto";
 
 import { env } from "@/config/env";
+import { outboundFetch } from "@/lib/outbound";
 const REPO="42Students/lms-findings";
 const API="https://api.github.com";
 const HEAD="main";
@@ -21,7 +22,7 @@ async function githubJson(path:string,token:string,method:"GET"|"POST"="GET") {
  const controller=new AbortController();
  const timeout=setTimeout(()=>controller.abort(),20000);
  try{
-  const response=await fetch(API+path,{
+  const response=await outboundFetch(API+path,{
    method,signal:controller.signal,cache:"no-store",
    ...(method==="POST"?{body:JSON.stringify({repositories:["lms-findings"],permissions:{contents:"read"}})}:{}),
    headers:{

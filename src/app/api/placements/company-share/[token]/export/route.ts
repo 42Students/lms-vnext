@@ -10,6 +10,7 @@ import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
 import { RATE_LIMITS } from "@/security/limits";
+import { outboundFetch } from "@/lib/outbound";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer",
@@ -34,7 +35,7 @@ async function boundedSignedResume(url:string,remainingBytes:number):Promise<{by
  const allowedBytes=Math.min(maxResumeBytes,remainingBytes);
  if(!Number.isSafeInteger(allowedBytes)||allowedBytes<=0)return null;
  try{
-  const res=await fetch(url,{redirect:"error",cache:"no-store",
+  const res=await outboundFetch(url,{redirect:"error",cache:"no-store",
    signal:AbortSignal.timeout(10000),headers:{Accept:"application/octet-stream"}});
   if(!res.ok||!res.body)return null;
   const declared=Number(res.headers.get("content-length"));
