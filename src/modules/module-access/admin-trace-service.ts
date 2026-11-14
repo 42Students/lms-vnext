@@ -44,6 +44,7 @@ import {
   type ModuleAccessScope,
 } from "./service";
 
+import { PAGE_SIZES } from "@/lib/pagination";
 export const adminModuleTraceQuerySchema =
   z.object({
     q: z.string().trim().max(100).default(""),
@@ -62,7 +63,7 @@ export const adminModuleTraceQuerySchema =
       .optional(),
   }).strict();
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = PAGE_SIZES.LONG;
 
 type LearnerDirectoryRow = {
   membershipId: string;

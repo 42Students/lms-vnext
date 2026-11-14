@@ -4,7 +4,7 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("Engage campaign history legacy routes and copy",()=>{
  it("TPO-campaigns-public-09 returns notFound for a non-UUID batch before database parsing",()=>{
   const detail=src("src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx");
-  expect(detail).toContain("if(!z.string().uuid().safeParse(batchId).success)notFound()");
+  expect(detail).toContain("if(!zUuid.safeParse(batchId).success)notFound()");
   expect(detail.indexOf("safeParse(batchId)")).toBeLessThan(detail.indexOf("getTpoMessagingBatch(context,batchId)"));
   const scoped=src("src/modules/messaging/receipt-detail-service.ts");
   expect(scoped).toContain("eq(messagingDeliveryBatches.collegeId,college.id)");

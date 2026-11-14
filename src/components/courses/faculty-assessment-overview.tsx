@@ -27,9 +27,10 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { PAGE_SIZES } from "@/lib/pagination";
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
-const PAGE_SIZE = 20;
+const PAGE_SIZE = PAGE_SIZES.STANDARD;
 
 export function FacultyAssessmentOverview({
   overview,

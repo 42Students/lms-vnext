@@ -41,7 +41,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
-const PAGE_SIZE = 20;
+import { PAGE_SIZES } from "@/lib/pagination";
+const PAGE_SIZE = PAGE_SIZES.STANDARD;
 const viewOptions=[
   {key:"progress",label:"In progress"},
   {key:"completed",label:"Finished"},

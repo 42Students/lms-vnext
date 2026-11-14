@@ -94,7 +94,7 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     expect(page).toContain("The directory");
     expect(page).toContain("neither email addresses nor phone");
     const student=read("src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx");
-    expect(student).toContain("!z.uuid().safeParse(membershipId).success)notFound()");
+    expect(student).toContain("!zUuid.safeParse(membershipId).success)notFound()");
     expect(student).toContain("if(!result?.selected)notFound()");
     expect(student).toContain('rule.module!=="placements"?');
     expect(student).toContain("No email or mobile details are exposed.");

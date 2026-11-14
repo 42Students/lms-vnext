@@ -39,7 +39,8 @@ import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model"
 import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 
 import { ROLE } from "@/modules/identity/roles";
-const PAGE_SIZE = 25;
+import { PAGE_SIZES } from "@/lib/pagination";
+const PAGE_SIZE = PAGE_SIZES.LONG;
 
 /**
  * College-scoped historical recruiter grants.

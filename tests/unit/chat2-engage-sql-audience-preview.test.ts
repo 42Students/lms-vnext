@@ -12,7 +12,7 @@ describe("TPO campaign preview bounded SQL",()=>{
   expect(source).toContain("eq(placementTpoLeads.collegeId,college.id)");
  });
  it("TPO-campaigns-public-07 selected preview reads at most 100 requested IDs via SQL IN, never scans all leads",()=>{
-  expect(source).toContain("selectedLeadIds:z.array(z.string().uuid()).min(1).max(100)");
+  expect(source).toContain("selectedLeadIds:z.array(zUuid).min(1).max(100)");
   expect(source).toContain("inArray(placementTpoLeads.id,query.selectedLeadIds)");
   expect(source).toContain("planTpoCampaignRecipients(contacts)");
  });

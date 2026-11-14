@@ -6,7 +6,7 @@ const route=readFileSync("src/app/api/admin/placements/drives/bulk/route.ts","ut
 
 describe("Super Admin bulk drive actions",()=>{
   it("SA-placements-projects-11 limits a selection to 100 unique drives and executes 25-row chunks in the chosen college",()=>{
-    expect(service).toContain("z.array(z.uuid()).min(1).max(100)");
+    expect(service).toContain("z.array(zUuid).min(1).max(100)");
     expect(service).toContain("chunkSize:25");
     expect(service).toContain("Math.ceil(input.jobIds.length/25)");
     expect(service).toContain("new Set(ids).size === ids.length");

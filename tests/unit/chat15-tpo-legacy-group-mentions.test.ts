@@ -11,7 +11,7 @@ describe("G2-3-022-026 legacy TPO group conversation mentions",()=>{
  });
  it("accepts the bounded group kind and member list when starting a new conversation",()=>{
   expect(send).toContain('kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT")');
-  expect(send).toContain("participantMembershipIds:z.array(z.string().uuid()).max(20).default([])");
+  expect(send).toContain("participantMembershipIds:z.array(zUuid).max(20).default([])");
   expect(send).toContain("participantMembershipIds:input.participantMembershipIds");
   expect(send).toContain("kind:input.kind,contextId:input.contextId");
   expect(send).toContain('input.kind!=="DIRECT"||input.contextId||input.participantMembershipIds.length');

@@ -15,6 +15,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
 
+import { PAGE_SIZES } from "@/lib/pagination";
 export type FacultyCourseRosterLearner = {
   membershipId: string;
   displayName: string | null;
@@ -25,7 +26,7 @@ export type FacultyCourseRosterLearner = {
   photoDownloadUrl?: string | null;
 };
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = PAGE_SIZES.LONG;
 const AVATAR_TINTS=[
  "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]","bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-info-text)]",
  "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]",

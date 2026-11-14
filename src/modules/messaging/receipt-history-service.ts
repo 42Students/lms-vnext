@@ -11,7 +11,8 @@ import { messagingHistoryQuerySchema, projectMessagingHistory, legacyMessagingHi
 import {messagingHistoryPageWindow} from "./receipt-history-window-model";
 
 import { ROLE } from "@/modules/identity/roles";
-const PAGE_SIZE = 25;
+import { PAGE_SIZES } from "@/lib/pagination";
+const PAGE_SIZE = PAGE_SIZES.LONG;
 /** A bounded export preserves filtering and tenant checks instead of exporting a page. */
 export async function exportTpoMessagingHistory(context:RequestContext,raw:unknown={}){
  const collegeId=context.membership?.collegeId;

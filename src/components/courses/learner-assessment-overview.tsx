@@ -53,6 +53,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { PAGE_SIZES } from "@/lib/pagination";
 type AssignmentResource = {
   id: string;
   kind: "INSTRUCTIONS" | "PDF" | "FILE" | "LINK";
@@ -138,7 +139,7 @@ function formatDate(value:string|null) {
   return learnerAssessmentDateLabel(value);
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = PAGE_SIZES.STANDARD;
 
 export function LearnerAssessmentOverview({
   courses,

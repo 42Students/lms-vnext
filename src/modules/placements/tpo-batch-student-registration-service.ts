@@ -8,6 +8,7 @@ import {selectTpoBatchStudentView,type TpoBatchStudentViewOptions} from "./tpo-b
 import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
 import { ROLE } from "@/modules/identity/roles";
+import { PAGE_SIZES } from "@/lib/pagination";
 /** Only learner IDs already proven to be actively enrolled are looked up. */
 export async function getTpoBatchStudentRegistrations(
  context:RequestContext,cohortId:string,page:number,search:string="",onlyDirect=false,wholeRoster=false,
@@ -35,7 +36,7 @@ export async function getTpoBatchStudentRegistrations(
  })};
 }
 
-const PAGE_SIZE=25;
+const PAGE_SIZE = PAGE_SIZES.LONG;
 /** Class, decision, source and registration filters (and sort) must see the
  * whole active cohort before paging, as the legacy roster did. When none is
  * active the cheap 25-row page read is used. A roster over the cap is flagged

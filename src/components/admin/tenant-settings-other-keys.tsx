@@ -12,9 +12,10 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { PAGE_SIZES } from "@/lib/pagination";
 type Entry = {key:string;value:string;version:number};
 const KEY_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
-const PAGE_SIZE = 50;
+const PAGE_SIZE = PAGE_SIZES.ADMIN;
 
 export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeading=true}:{
  scopeType:"GLOBAL"|"COLLEGE";collegeId?:string;ready:boolean;entries:readonly Entry[];showHeading?:boolean;

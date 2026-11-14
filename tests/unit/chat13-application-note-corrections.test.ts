@@ -4,7 +4,7 @@ const read=(p:string)=>readFileSync(p,"utf8");
 describe("SA-placements-projects-21 audited internal note correction",()=>{
  it("SA-placements-projects-21 only amends a note belonging to the same scoped application",()=>{
   const s=read("src/modules/placements/college-application-detail-service.ts");
-  expect(s).toContain("amendsNoteId:z.uuid().optional()");
+  expect(s).toContain("amendsNoteId:zUuid.optional()");
   expect(s).toContain("eq(placementApplicationNotes.applicationId,parent.id)");
   expect(s).toContain('eq(placementApplicationNotes.side,"TPO")');
   expect(s).toContain("await tx.insert(placementApplicationNotes)");

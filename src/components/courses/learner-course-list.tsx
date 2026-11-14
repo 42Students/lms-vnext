@@ -35,7 +35,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
 
-const PAGE_SIZE = 48;
+import { PAGE_SIZES } from "@/lib/pagination";
+const PAGE_SIZE = PAGE_SIZES.GRID;
 const MAX_COURSE_SEARCH_CHARS = 200;
 
 function LearnerCourseCardSurface({

@@ -7,8 +7,9 @@ import {Button} from "@/components/ui/button";
 import {OrganizationActions} from "@/components/admin/organization-actions";
 import {EmptyState} from "@/components/ui/empty-state";
 import { Label } from "@/components/ui/label";
+import { PAGE_SIZES } from "@/lib/pagination";
 type Row={id:string;name:string;canManage:boolean};
-const PAGE_SIZE=25;
+const PAGE_SIZE = PAGE_SIZES.LONG;
 /** The directory is scoped on the server before these rows reach the browser. */
 export function TenantSetupOrganizationList({rows}:{rows:readonly Row[]}){
  const router=useRouter();

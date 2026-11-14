@@ -8,7 +8,7 @@ describe("TPO drive override concurrency",()=>{
   expect(service).toContain("options.expectedOverrideId?eq(placementEligibilityOverrides.id,options.expectedOverrideId):undefined");
   expect(service).toContain('eventType:action==="SET"?"PLACEMENT_OVERRIDE_SET":"PLACEMENT_OVERRIDE_CLEARED"');
   expect(service).toContain("recordEligibilityOverrideAudit(tx,context");
-  expect(api).toContain("expectedOverrideId:z.string().uuid().optional()");
+  expect(api).toContain("expectedOverrideId:zUuid.optional()");
  });
  it("TPO-students-12 includes server-generated override IDs and guarded per-row undo with an explicit reason",()=>{
   const ui=src("src/components/tpo/tpo-students-drive-visibility.tsx");

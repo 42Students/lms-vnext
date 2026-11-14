@@ -143,7 +143,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(all).toContain("revokeOtherSessions(");
     expect(all).toContain("session.sessionId");
     expect(one).toContain("revokeOwnSession(sessionId, session.userId)");
-    expect(one).toContain("z.string().uuid().parse");
+    expect(one).toContain("zUuid.parse");
     expect(one).toContain("sessionId === session.sessionId");
     expect(one).toMatch(/clearAuthCookies?\(/);
     expect(one).toContain('response.headers.set("Clear-Site-Data"');

@@ -133,7 +133,7 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
 
  it("SA-BULK-DRIVE-01 bounds destructive multi-action input and maintains partial failure ledger",()=>{
   const service=read("src/modules/placements/super-admin-bulk-drive-service.ts");
-  expect(service).toContain("z.array(z.uuid()).min(1).max(100)");
+  expect(service).toContain("z.array(zUuid).min(1).max(100)");
   expect(service).toContain("chunkSize:25");
   expect(service).toContain("Math.ceil(input.jobIds.length/25)");
   expect(service).toContain("new Set(ids).size === ids.length");

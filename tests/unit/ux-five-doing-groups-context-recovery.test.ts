@@ -14,7 +14,7 @@ describe("five Doing UX groups preserve useful context during recovery",()=>{
 
   it("G040 preserves a valid selected template across a failed template-list retry",()=>{
     const source=read("src/app/(authenticated)/college/projects/create/page.tsx");
-    expect(source).toContain("z.uuid().safeParse(query.templateId).success");
+    expect(source).toContain("zUuid.safeParse(query.templateId).success");
     expect(source).toContain("&retry=1\"+retryTemplateId");
   });
 

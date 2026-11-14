@@ -21,7 +21,7 @@ describe("Super Admin paged course dependency counts",()=>{
   const service=source("src/modules/admin-ui/super-admin-course-dependencies-service.ts");
   const page=source("src/app/(authenticated)/admin/courses/page.tsx");
   expect(service).toContain('requireSuperAdminSelectedCollege(context,"courses.read")');
-  expect(service).toContain("z.array(z.uuid()).max(100).parse(visibleCourseIds)");
+  expect(service).toContain("z.array(zUuid).max(100).parse(visibleCourseIds)");
   expect(service).toContain("inArray(courses.id,courseIds)");
   expect(page).toMatch(/paginateCollegeCourses\(workspace\?\.courses\s*\?\?\s*\[\],\s*catalogueQuery\)\.items\.map\(course\s*=>\s*course\.id\)/);
   expect(page).toMatch(/getSuperAdminCourseDependencyCounts\(context,\s*paginateCollegeCourses\(/);

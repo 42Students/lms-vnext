@@ -158,7 +158,7 @@ describe("chat-19 college UX cross-audit", () => {
   });
   it("COL-XA-10 rejects invalid cohort identifiers before querying the roster", () => {
     const page = read("src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx");
-    expect(page).toContain("z.string().uuid().safeParse(rawId)");
+    expect(page).toContain("zUuid.safeParse(rawId)");
     expect(page).toContain("if (!checkedId.success) notFound()");
     expect(page).toContain("eq(departments.collegeId, context.membership.collegeId)");
     expect(page).toContain("requirePermission(context");

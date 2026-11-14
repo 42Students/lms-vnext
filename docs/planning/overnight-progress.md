@@ -63,8 +63,8 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [~] 5.7 NOT built: one settings service for branding, domains and per-college settings. settings service
 
 ## Phase 6: behaviour consistency
-- [ ] 6.1 shared validation primitives
-- [ ] 6.2 one pagination contract
+- [x] 6.1 (part) src/lib/schema-primitives.ts zUuid: 1,543 inline uuid schemas replaced (9 with custom messages remain, ratchet enforced). NOT done: email, phone, page, limit, date and money primitives. 6.1 shared validation primitives
+- [x] 6.2 (part) src/lib/pagination.ts PAGE_SIZES (COMPACT 10, STANDARD 20, LONG 25, GRID 48, ADMIN 50, BULK 500): all 14 PAGE_SIZE constants point at it (ratchet 14 -> 0, enforced). NOT done: parameter names and caps per list class, one DB helper, one UI control
 - [ ] 6.3 status registry
 - [ ] 6.4 typed route registry
 - [ ] 6.5 legacy table and envelope adapter

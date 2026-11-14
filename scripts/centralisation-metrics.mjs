@@ -51,7 +51,7 @@ export const METRICS = [
   { id: "time.asiaKolkataLiterals", audit: 19, label: "Asia/Kolkata literals outside format-date", scope: (p) => p.startsWith("src/") && p !== "src/config/locale.ts" && p !== "src/modules/placements/tpo-timed-debar-view-model.ts", pattern: /Asia\/Kolkata/g, unit: "matches", enforce: true },
   { id: "time.inlineIntlDateFormatters", audit: 19, label: "inline Intl.DateTimeFormat", scope: (p) => p.startsWith("src/") && p !== "src/lib/format-date.ts", pattern: /new Intl\.DateTimeFormat/g, unit: "matches", enforce: true },
   { id: "validation.inlineUuidSchemas", audit: 21, label: "inline uuid zod schemas", scope: (p) => p.startsWith("src/"), pattern: /z\.string\(\)\.uuid\(|z\.uuid\(/g, unit: "matches", enforce: true },
-  { id: "pagination.pageSizeConstants", audit: 22, label: "PAGE_SIZE constants", scope: (p) => p.startsWith("src/"), pattern: /const PAGE_SIZE\b/g, unit: "matches", enforce: true },
+  { id: "pagination.pageSizeConstants", audit: 22, label: "PAGE_SIZE constants", scope: (p) => p.startsWith("src/"), pattern: /const PAGE_SIZE ?= ?\d/g, unit: "matches", enforce: true },
   { id: "status.statusCompares", audit: 23, label: "status string comparisons", scope: (p) => p.startsWith("src/"), pattern: /=== ?"(?:ACTIVE|SUSPENDED|PENDING|PUBLISHED|DRAFT|ARCHIVED|SUBMITTED|WITHDRAWN|COMPLETED|CANCELLED)"/g, unit: "matches", enforce: true },
   { id: "routes.routeLiterals", audit: 24, label: "hard-coded internal route strings", scope: (p) => p.startsWith("src/"), pattern: /"\/(?:college|admin|tpo|learn|teacher|mentor|hr)\//g, unit: "matches" },
   { id: "legacy.legacyFiles", audit: 25, label: "files with legacy in the path", scope: (p) => p.startsWith("src/") && /legacy/i.test(p), pattern: /^/g, unit: "files", enforce: true },

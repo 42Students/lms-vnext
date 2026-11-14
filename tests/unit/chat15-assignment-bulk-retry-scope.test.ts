@@ -5,7 +5,7 @@ import {readFileSync} from "node:fs";
 describe("G2-2-008 bulk grade publication retry isolation",()=>{
  const source=readFileSync("src/modules/courses/assignment-bulk-grade-publish-service.ts","utf8");
  it("rejects an explicitly empty retry list",()=>{
-  expect(source).toContain("submissionIds:z.array(z.string().uuid()).min(1).max(MAX_BATCH).optional()");
+  expect(source).toContain("submissionIds:z.array(zUuid).min(1).max(MAX_BATCH).optional()");
  });
  it("uses the same scoped predicate before and after publishing",()=>{
   expect(source).toContain("const pendingScope=and(conditions,input.submissionIds?");

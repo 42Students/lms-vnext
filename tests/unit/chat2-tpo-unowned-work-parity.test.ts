@@ -16,7 +16,7 @@ describe("TPO unowned work assignment safety",()=>{
  it("TPO-inbox-team-33 assignment is atomic, honors existing owners and notifies the assignee",()=>{
   const service=src("src/modules/placements/tpo-team-unowned-service.ts");
   const route=src("src/app/api/placements/tpo/team/unowned/route.ts");
-  expect(service).toContain("targetMembershipId:z.string().uuid()");
+  expect(service).toContain("targetMembershipId:zUuid");
   expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
   expect(service).toContain("ownerMembershipId:target.id");

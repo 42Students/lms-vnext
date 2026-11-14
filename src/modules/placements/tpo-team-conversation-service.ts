@@ -17,9 +17,10 @@ import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 
 import { zUuid } from "@/lib/schema-primitives";
+import { PAGE_SIZES } from "@/lib/pagination";
 export const tpoThreadIdSchema = zUuid;
 export const tpoMessagePageSchema = z.coerce.number().int().min(1).max(10000).default(1);
-const PAGE_SIZE = 500;
+const PAGE_SIZE = PAGE_SIZES.BULK;
 
 /** Legacy start/send compatibility: use typed context, mentions and optional ask
  * rather than trusting any legacy author or college ID. The scoped vNext

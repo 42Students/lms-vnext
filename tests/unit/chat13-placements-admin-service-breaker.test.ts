@@ -150,7 +150,7 @@ describe("chat-13 Super Admin Placements service boundary tests", () => {
     // This service deliberately imports "server-only"; check its boundary
     // without loading it in a browser-like Vitest unit runtime.
     const source=read("src/modules/placements/report-service.ts");
-    expect(source).toContain("collegeId: z.string().uuid()");
+    expect(source).toContain("collegeId: zUuid");
     expect(source).toContain(".strict()");
     expect(source).toContain("context.adminScope?.collegeId !== query.collegeId");
     expect(source).toContain("requirePlacementManageScope(");

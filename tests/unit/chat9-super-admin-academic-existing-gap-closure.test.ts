@@ -42,7 +42,7 @@ describe("Super Admin Academic Setup gap reconciliation",()=>{
   expect(actions).toContain("setDepartmentId");
   expect(actions).toContain("<Select value={departmentId}");
   expect(actions).toContain("updateCollegeProgramSchema.parse");
-  expect(model).toContain("departmentId: z.string().uuid().optional()");
+  expect(model).toContain("departmentId: zUuid.optional()");
  });
  it("SA-academics-people-13 restores program creation copy and links to scoped Departments",()=>{
   const directory=src("src/components/admin/admin-program-directory.tsx");

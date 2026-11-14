@@ -23,8 +23,9 @@ import { createDateFormatter } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { PAGE_SIZES } from "@/lib/pagination";
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
-const PAGE_SIZE = 10;
+const PAGE_SIZE = PAGE_SIZES.COMPACT;
 
 function resourceLabel(value:string|null|undefined):string {
   if (!value) return "—";

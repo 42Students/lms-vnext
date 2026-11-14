@@ -30,7 +30,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateFormatter } from "@/lib/format-date";
 
-const PAGE_SIZE = 20;
+import { PAGE_SIZES } from "@/lib/pagination";
+const PAGE_SIZE = PAGE_SIZES.STANDARD;
 
 function humanize(value: string) {
   return value.toLowerCase().replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase());

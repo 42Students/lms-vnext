@@ -31,7 +31,7 @@ describe("UX-G022 — project template route recovery and privacy", () => {
       expect(file).toContain("aria-busy");
     }
     const version = source(base + "[templateId]/versions/page.tsx");
-    expect(version).toContain('z.uuid().safeParse(templateId)');
+    expect(version).toContain('zUuid.safeParse(templateId)');
     const create = source(base + "new/page.tsx");
     expect(create).toContain('can(ctx,"project-template.manage")');
     expect(create).toContain("<SuperAdminTemplateCreateForm");
