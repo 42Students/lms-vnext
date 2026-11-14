@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ROUTES, fixedRoutes } from "@/lib/routes";
@@ -31,7 +31,7 @@ describe("typed routes", () => {
       const dir = path.join(appDir, "(authenticated)", ...parent.split("/").filter(Boolean));
       const hasDynamicChild =
         existsSync(dir) &&
-        require("node:fs").readdirSync(dir).some((name: string) => /^\[[^\]]+\]$/.test(name));
+        readdirSync(dir).some((name: string) => /^\[[^\]]+\]$/.test(name));
       expect(hasDynamicChild, sample).toBe(true);
     }
   });
