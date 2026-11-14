@@ -19,7 +19,7 @@ describe("TPO settings responsive navigation and course policy",()=>{
   expect(s).toContain("md:mr-6 md:w-56 md:shrink-0");
   expect(s).toContain("flex-col items-stretch");
   expect(s).toContain('aria-current={active===item.id?"page":undefined}');
-  expect(s).toContain('aria-label="Settings sections"');
+  expect(s).toContain('aria-label="Placement settings sections"');
   expect(s).toContain("min-h-11");
  });
 });
