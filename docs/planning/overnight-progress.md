@@ -65,11 +65,11 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 ## Phase 6: behaviour consistency
 - [x] 6.1 (part) src/lib/schema-primitives.ts zUuid: 1,543 inline uuid schemas replaced (9 with custom messages remain, ratchet enforced). NOT done: email, phone, page, limit, date and money primitives. 6.1 shared validation primitives
 - [x] 6.2 (part) src/lib/pagination.ts PAGE_SIZES (COMPACT 10, STANDARD 20, LONG 25, GRID 48, ADMIN 50, BULK 500): all 14 PAGE_SIZE constants point at it (ratchet 14 -> 0, enforced). NOT done: parameter names and caps per list class, one DB helper, one UI control
-- [ ] 6.3 status registry
-- [ ] 6.4 typed route registry
-- [ ] 6.5 legacy table and envelope adapter
-- [ ] 6.6 locale, currency, phone module
-- [ ] 6.7 date and money inputs
+- [~] 6.3 NOT built: status registry (1,810 status comparisons, 319 check lists) is a domain-by-domain job; the comparison count is an enforced ratchet
+- [x] 6.4 (foundation) src/lib/routes.ts ROUTES: 27 fixed and 6 parameterised routes for the most-linked pages, ids encoded, test proves every route is a real page; the 4,859 string literals remain (not migrated, ratchet tracking)
+- [~] 6.5 NOT built: legacy table and envelope adapter
+- [~] 6.6 NOT built: locale, currency and phone module (src/config/locale.ts holds the default locale and zone only)
+- [~] 6.7 NOT built: one date and money input and parser pair
 
 ## Phase 7: UI and wording
 - [ ] 7.1 copy catalogue
