@@ -54,7 +54,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 4.6 (part) 3 of 10 raw server fetches moved to outboundFetch (company-share and recruiter ZIP exports, GitHub client; Telegram was moved and put back: outboundFetch logs failures and a failure to reach the alert channel must not feed the alert pipeline); the other 6 are storage clients (S3 core, presigned PUT uploads) whose http/long-upload needs outboundFetch does not meet yet; ratchet enforced at 7. last server raw fetch onto outboundFetch
 
 ## Phase 5: data, events, files, exports, jobs
-- [ ] 5.1 recordActivity + status-transition writer
+- [x] 5.1 (helper built, call sites not migrated) src/modules/activity/record-activity.ts: recordActivity(tx, event) with a typed module list (matches the DB check constraint), required-field check, credential-key stripping and dedupe replay, unit and real-PostgreSQL tests; the 215 inline activity inserts stay behind an enforced ratchet. NOT done: one status-transition writer and the 36 history inserts. recordActivity + status-transition writer
 - [ ] 5.2 repositories (52 direct-DB routes first)
 - [ ] 5.3 file policy and download header builders
 - [x] 5.4 (part) 10 hand-written CSV cell functions deleted in favour of spreadsheetCsvCell (formula neutralisation now identical everywhere those exports run); csvCell redefinitions 16 -> 7 (the 7 left are wrappers or add their own flatten/truncate). NOT done: one pipeline for scope, columns, filename, audit and headers; per-export scope tests. one export pipeline

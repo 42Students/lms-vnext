@@ -34,7 +34,7 @@ export const METRICS = [
   { id: "errors.messageReturnedFromApi", audit: 3, label: "error.message used in API routes", scope: inApi, pattern: /\b(?:error|err|e)\.message\b/g, unit: "matches" },
   { id: "responses.cacheControlLiterals", audit: 4, label: "Cache-Control literals in API routes", scope: inApi, pattern: /Cache-Control/g, unit: "matches", enforce: true },
   { id: "responses.numericStatusLiterals", audit: 4, label: "numeric status literals in API routes", scope: inApi, pattern: /status: ?(?:400|401|403|404|409|422|429|500|503)\b/g, unit: "matches" },
-  { id: "events.inlineActivityInserts", audit: 5, label: "inline insert into activity_events", scope: (p) => p.startsWith("src/"), pattern: /insert\(activityEvents\)|INSERT INTO activity_events/g, unit: "matches" },
+  { id: "events.inlineActivityInserts", audit: 5, label: "inline insert into activity_events", scope: (p) => p.startsWith("src/") && p !== "src/modules/activity/record-activity.ts", pattern: /insert\(activityEvents\)|INSERT INTO activity_events/g, unit: "matches", enforce: true },
   { id: "tenant.inlineCollegeIdCompare", audit: 6, label: "inline collegeId equality checks", scope: (p) => p.startsWith("src/") && p !== "src/modules/permissions/resource-guards.ts", pattern: /collegeId (?:===|!==) /g, unit: "matches", enforce: true },
   { id: "data.directDbRoutes", audit: 7, label: "API routes importing the database directly", scope: inApi, pattern: /\bgetDb\b[\s\S]*from\s+["']@\/db/, unit: "files" },
   { id: "config.processEnvReads", audit: 9, label: "process.env reads outside the config module", scope: (p) => p.startsWith("src/") && notIn("src/lib/env.ts", "src/config/")(p), pattern: /process\.env(?!\.NODE_ENV\b|\["NODE_ENV"\])/g, unit: "matches", enforce: true },
