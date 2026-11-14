@@ -1,118 +1,87 @@
-# Centralisation audit: what is scattered, and where it should live
+# Centralisation audit, whole vNext (2026-11-14)
 
-Date: 2026-11-14. Method: counts taken from the source by search (`src/`, 7,068 TS/TSX files, 1,003 API routes, 641 pages) plus a
-duplicate-name scan. Counts are approximate (text matches, not a parser) but the orders of magnitude are reliable. "Central tool
-exists" means a module already does the job; "no central tool" means nothing does. The goal of the list: **a change made in one
-place is picked up by the whole app.**
+North star: any change, large or small, is made in one central place, never in many. Every number below was measured on `main`
+at `77f5b393` by `scripts/centralisation-sweep.cjs`, `scripts/structural-clone-sweep.cjs` and
+`scripts/centralisation-metrics.mjs` (the 35 existing ratchets). Re-run them to reproduce.
 
-## 0. Verdict in five lines
+## What "100 percent" means here (so it can be checked, not claimed)
 
-1. The app is **well centralised at its edges** (route wrapper, security headers, RLS, logger, design-system components) and
-   **badly scattered in its middle** (authorization decisions, errors, data access, config, time, status vocabulary, URLs, copy).
-2. The single biggest gap: **1,075 routes say `permission: "service-enforced"`**, meaning authorization is decided separately in
-   each service, in about 59 files that define their own `requireX` guards. There is no single place to read "who can do what".
-3. Where a central tool exists it is often **bypassed or duplicated**: 7 different API error mappers, 6 request-body readers,
-   193 files building their own date formatter although one exists, 215 handlers re-checking the origin the wrapper already checks.
-4. **Configuration is not a system**: 141 environment variable names read in 217 files, only 2 files use the typed config, and 50
-   `*_READY` flags are each read with a bare `process.env[...]`.
-5. Everything below is reachable with a **strangler pattern**: build the central module, add a ratchet that counts the old pattern,
-   migrate by codemod, never allow the count to rise. This repo already runs ratchets (api surface, UI consistency, test integrity,
-   central security), so the mechanism exists.
+A concern is centralised when all three hold:
 
-## 1. Already centralised (keep, extend, do not rebuild)
+1. One owner file or module defines it (the registry, helper or service).
+2. A ratchet counts every use outside the owner and the count is **zero** (or a short, reviewed allowlist for genuinely one-off cases).
+3. A change-impact test exists: "to change X, edit exactly these files" is asserted by a test that greps for the literal.
 
-| Area | Central tool | Evidence |
-|---|---|---|
-| Route entry | `route()` in `src/security/route.ts` (origin, body size, auth, permission, audit) | 985 files import it; 673 of 673 data-changing routes guarded |
-| Browser security headers, CSP | `src/security/headers.ts` | one place |
-| Tenant isolation | `src/db/tenant-context.ts`, `tenant-pool.ts`, RLS policies, `pooling-guard.ts` | live-catalog CI test |
-| Logging and redaction | `src/observability/logger.ts`, `redact.ts` | 53 logger calls, only 14 raw `console.*` |
-| Shared rate-limit store | `src/security/shared-store*.ts` | on by default in production |
-| Permission primitives | `src/modules/permissions/policy.ts` (`can`, `requirePermission`) | 604 + 265 uses |
-| Portal access | `src/modules/identity/role-portal-policy.ts` | layouts use `canAccessRolePortal` |
-| Activity event names | `ACTIVITY_EVENT_TYPES` | 443 references |
-| File type safety | `src/modules/storage/inline-safe.ts`, `file-policy.ts` | download paths |
-| Design system | `src/components/ui/*` (about 100 components) | `ErrorState/EmptyState/LoadingState` used 1,660 times |
-| Client API calls | `src/lib/api-fetch.ts` | 355 uses |
-| Server outbound calls | `src/lib/outbound*.ts` | only about 8 server files bypass it |
-| Page boundaries | 519 `error.tsx`, 521 `loading.tsx` | consistent per route |
-| Gates | UI consistency, api-surface, test-integrity, security:central ratchets | CI |
+Today 31 of 35 existing ratchets are enforced, but most only stop things getting worse; the counts are far from zero. The sweep
+found 18 concerns that have no ratchet at all.
 
-## 2. Tier 1: security and correctness (do these first)
+## The shape of the problem
 
-Each row: what is scattered, how much, what the one place should be, and the ratchet that keeps it from coming back.
+- The **API security plane is mostly central** (the check finds 0 routes off the `route()` wrapper), but 1,044 routes still say
+  `service-enforced`, so the permission is decided in services, not named at the wrapper.
+- Whole-file copy-paste is **not** the problem (1 page pair, 6 route pairs, 3 service pairs clone each other). The scatter is
+  **the same concern re-implemented inline in thousands of places**.
+- Everything outside the API wrapper is **not central**: page access, the client API layer, copy, styling, CI, and tests.
 
-| # | Thing | Scatter (measured) | One place it should live | Ratchet |
+## Tier A: structural gaps with the biggest blast radius
+
+| # | Concern | Evidence | Target (the one place) | New or in plan |
 |---|---|---|---|---|
-| 1 | **Authorization rules** | 1,075 routes `service-enforced`, 126 named permissions, 18 `actor-owned`; 59 files define their own `requireTpo` / `requireLearner` / `ownCollege` / `loadJob` style guards (7, 6, 8 and 7 copies of the same names); 609 `hasMembershipRole` and 154 `roles.includes` calls | A **policy registry**: each route declares a named capability and (where needed) a resource resolver; the registry maps capability to roles, scope and step-up. The role matrix is generated from it | `service-enforced` count may only fall; no new `function require*Actor` outside the registry |
-| 2 | **Request plumbing repeated inside handlers** | 265 handler-level origin checks in 215 files (the wrapper already does it); 951 `getCurrentRequestContext()` calls in 846 files (the wrapper already hands over the actor); 457 body-reader calls across **6 variants** (`bounded-json-body`, `bounded-json-request`, `bounded-request-json`, `bounded-utf8-body`, `bounded-form-data`, the auth reader) | The wrapper owns origin, actor, body and query parsing; one body reader; handlers receive typed values | Count of `isSameOriginRequest(` and `getCurrentRequestContext(` inside `src/app/api` may only fall |
-| 3 | **Error model** | 7 separate API error mappers (`api-error`, announcement, bug-tracker, log-alert, tpo-crm, tpo-messaging, tpo-recruiter-invite); 164 custom error classes; 1,801 `throw new Error("...")`; about 4,300 upper-snake code literals; 687 places return `error.message`; only 3 code-to-message maps | One `AppError {code, status, safeMessage, retryable}` plus one registry of codes to status and user wording; one mapper | No new mapper file; `throw new Error("` count may only fall |
-| 4 | **Response building and headers** | 3,146 `NextResponse.json` / `Response.json`; 1,211 `Cache-Control` literals (1,098 are `private, no-store`); 1,747 numeric `status:` literals | Response helpers by route class (private data, public, download, redirect) that set cache and security headers once | Raw `Cache-Control` literals in routes may only fall |
-| 5 | **Audit and activity records** | 215 inline `insert(activityEvents)`; 36 hand-written status-history inserts; 43 other event writers; only 7 calls to a helper | One `recordActivity(tx, event)` and one status-transition writer: required actor, tenant, event type, redaction, same transaction | Inline `insert(activityEvents)` may only fall |
-| 6 | **Tenant and ownership checks** | 226 inline `collegeId ===/!==` comparisons, 48 for `organizationId` | `requireSameCollege(context, resource)` and `ownsResource(context, row)` in the policy module; RLS stays as backstop | Inline comparisons may only fall |
-| 7 | **Data access** | 2,548 `getDb()` calls in 949 files; 2,360 raw `sql` templates; 852 transactions; 757 row locks; 52 routes query the DB directly; no repository layer | Repositories per aggregate; one lock-order convention; one unit-of-work wrapper (`transaction-retry` exists) | `direct-db-in-route` (52) may only fall |
-| 8 | **Optimistic concurrency** | 564 `expectedVersion` uses; 184 `STALE_VERSION` codes; 4 helpers | One `requireCurrentVersion(row, expected)` returning the standard conflict error | helpers count |
-| 9 | **Configuration and feature flags** | 316 `process.env` reads in 217 files; 141 distinct names (families: DB10 33, TPO 32, APP 31, DB09 28, E2E 13, PUBLIC 11, AUTH 11, TELEGRAM 10); **only 2 files use the typed config**; 50 distinct `*_READY` flags, 327 checks (`DB09_TPO_API_READY` is read 24 times) | One typed, validated config module loaded at boot (fail closed in production) and one feature API (`features.tpoApi`), with a table of every flag, owner and default | `process.env` reads outside the config module may only fall |
-| 10 | **Two feature-gate systems** | 327 env-flag checks versus 86 module-access (`resolveOptionalModuleAccess`) uses | One entitlement answer per college/module; env flags only for deployment readiness | flag count |
-| 11 | **Rate limits, timeouts, retries** | 65 `rateLimit: {` literals; 116 `timeoutMs` literals; 124 abort controllers; 201 timers | One `limits.ts` table keyed by route class and by client call type | literals count |
-| 12 | **Cookies and session settings** | 20 `cookies.set` calls with 17 hand-built option objects across auth routes | One `setSessionCookies / clearSessionCookies` | `cookies.set(` outside it |
-| 13 | **Roles and portals as string literals** | 2,543 role literals in 888 files | Role constants and capability groups; pages ask "can" or "portal", never a role name | literal count |
-| 14 | **Outbound calls** | about 8 server files use raw `fetch` (storage, telegram, github, branding logo, two exports, one parity model) | All through `outboundFetch` (SSRF guard, timeout, redaction) | server raw `fetch` count |
-| 15 | **CSV and spreadsheet exports** | 211 `text/csv` mentions in 201 files; `csvCell` defined in 10 places although `security/csv-cell.ts` exists; 122 hand-built `Content-Disposition` headers | One export pipeline: scope, columns, neutralisation, filename, audit, download headers | duplicated `csvCell` and header builders |
-| 16 | **File type lists and download headers** | 62 literal MIME lists; 122 hand-built disposition headers | `file-policy` plus `download-core` as the only builders | literal count |
-| 17 | **Idempotency** | `action-idempotency` exists but is not the default for writes | Wrapper option `idempotent: true` on non-repeatable writes | writes without it |
-| 18 | **Background jobs and schedulers** | 8 internal job routes each with its own secret env and header names (`WORKER_ENV`, `WORKER_HEADER` are redefined 4 times) | One job registry (name, schedule, secret, lease, tenant mode) | duplicated constants |
+| A1 | **Page access** | 655 pages; 507 call `getCurrentRequestContext()` themselves; 213 redirect inline; 171 hold their own role check; `proxy.ts` gates no roles; only 19 layouts guard | Page access registry (path pattern to capability) enforced once in layouts and `proxy.ts`, generated from the same policy as the API matrix | NEW (4.1 covers API only) |
+| A2 | **Client API layer** | 321 component files use raw `fetch` (531 calls) vs 205 using `apiFetch`; 168 writes in 130 files, only 4 files send an Idempotency-Key; 311 files hand-build JSON bodies; 475 files call `router.refresh()` after writes; 95 handle 409 by hand | One typed client + mutation hook: auth/origin, JSON, timeout, idempotency key, 409 conflict handling, error-code to copy, refresh | NEW (partly 7.3) |
+| A3 | **CI** | 280 workflows; 260 repeat `setup-node`, 247 `npm ci`, 137 define their own Postgres service; 0 composite actions, 0 reusable workflows | Composite actions (setup, postgres, e2e) + reusable workflows; one Node and one PG version pin | NEW |
+| A4 | **Tests** | 2,242 unit files read source text (3,243 `readFileSync`), so a copy or class change breaks tests across the tree; 277 files hand-mock `@/db`; 144 inline `collegeId` uuids; fixtures folder holds only dev ids | Domain builders (8.1) + replace source-text pins with registry-derived contract tests | NEW aspect (8.1 covers builders only) |
+| A5 | **Data access** | 4,348 direct `db/tx` calls in 595 service files; 1,189 `sql` templates in 378 files; 85 app-layer files import drizzle; 52 routes query directly | Repositories + one unit-of-work and lock-order convention | 5.2 (not built) |
+| A6 | **Authorization naming** | 1,044 `service-enforced` routes; 61 per-file `requireX` guards; 1,199 role literals; 119 role-array literals; 41 `role ===` literals in components | Wrapper-named capabilities; role sets live in the policy registry only | 4.1 to 4.3 (31 of 1,075 named) |
 
-## 3. Tier 2: behaviour that must be identical everywhere
+## Tier B: behaviour that must be identical everywhere
 
-| # | Thing | Scatter (measured) | One place it should live |
+| # | Concern | Evidence | Target |
 |---|---|---|---|
-| 19 | **Clock and time zone** | 2,590 `new Date(`; 412 `Date.now()`; `Asia/Kolkata` hard-coded in 365 files (526 times); 256 inline `Intl` formatters in 193 files; duplicated formatters `formatWhen` 13, `dateLabel` 7, `formatDate` 7, `formatDateTime` 6, `dayLabel` 6, `formatIst` 4, `currentTimeMs` 8; 109 hand-written millisecond maths | A clock service (injectable for tests), one time-zone setting per college, one formatter set (`format-date.ts` already exists and 330 files use it) |
-| 20 | **Currency, numbers, phones** | INR, the rupee sign and "LPA" in 145 places; 52 `toFixed`; 71 phone regexes with `+91` assumptions | A locale/currency/phone module driven by college settings (needed before a non-Indian college) |
-| 21 | **Validation primitives** | `z.string().uuid()` 1,179 times, `z.uuid()` 293, a hand-written UUID regex 115; schemas redefined by name: `inputSchema` 27, `querySchema` 22, `idSchema` 9, `pageSchema` 8, `collegeIdSchema` 5; email 29 and phone 71 inline | A shared `schemas.ts` (id, email, phone, page, limit, date, money) and a rule that mutating bodies are strict |
-| 22 | **Pagination** | `PAGE_SIZE` defined in 14 files with 6 different values (10, 20, 25, 48, 50, 500); 269 limit constants; 2,760 numeric `.limit(n)`; 6 copies of `decimalPage` | One pager contract: parameter names, defaults and caps per list class, one DB helper, one UI control |
-| 23 | **Status vocabulary** | 1,627 status string comparisons; 27 `pgEnum` versus 319 check constraints written as `IN ('...')` lists; label/tone helpers duplicated: `humanize` 15, `statusTone` 9, `tone` 10, `statusLabel` 4 | A status registry per domain feeding the DB checks, TS types, labels and badge tones |
-| 24 | **URLs and navigation** | 4,536 route string literals in 1,538 files; 2,407 `href="/..."`; 352 `redirect("/...")`; 302 href-builder functions defined in 298 files | A typed route registry (`routes.college.projects(id)`), also feeding nav, breadcrumbs, redirects and the role matrix |
-| 25 | **Legacy compatibility** | 144 files named legacy; 8 alias re-export routes plus about 11 thin forwarding routes; several response envelopes (`{status, message, data}`, plain, `LessonContents`) | One legacy table (old path to new path to removal date) and one envelope adapter |
-| 26 | **Notifications, email, SMS** | 18 files send mail or SMS; two ways to insert notifications | One notification service: templates, recipients, quiet hours, outbox, opt-out |
-| 27 | **Initials, tones, small helpers** | `first` redefined in 64 files, `when` 23, `humanize` 15, `scope` 14, `isUniqueViolation` 9 | `src/lib/` utilities with tests |
-| 28 | **Date and money inputs in forms** | per-form parsing | one input component and parser pair |
+| B1 | Statuses | 1,810 comparisons; 315 SQL `check ... in (...)` lists in 132 migrations | Status registry feeding DB checks, types, labels, badge tones (6.3) |
+| B2 | Time | 518 service files use `Date.now()/new Date()` vs 165 using the clock; 69 `Asia/Kolkata`; 233 inline `Intl`; 824 `new Date(` in components; 62 component files use `Intl/toLocale` | Clock service + one formatter set (2.4); owner chose no per-college zone |
+| B3 | Money, phone, date inputs | 97 raw date inputs, 87 raw number, 14 raw tel; 30 `+91`; 122 `toFixed/Intl.NumberFormat/INR` | Locale/currency/phone module + one input pair (6.6, 6.7) |
+| B4 | Validation limits | 4,263 inline `.min/.max` in 880 files; 41 inline `z.object` in routes; 35 inline `.email()`; 10 inline uuid schemas | One field-limits registry shared by zod and the DB column lengths (6.1) |
+| B5 | Events and notifications | 215 inline `activity_events` inserts (1,951 references); 257 audit event literals; 34 email/SMS send sites in 15 files | `recordActivity` + transition writer (5.1); notification service (5.6) |
+| B6 | Errors and responses | 1,804 plain `throw new Error`; 165 error classes; 153 `error.message` returned; 915 `Cache-Control` and 1,680 status literals | Error registry + response helpers (3.1, 3.2) |
+| B7 | Routes and links | 4,900 route literals; 1,674 `href=` literals in 823 files; 353 `redirect("/...")`; 60 `router.push("/...")` | Typed route registry (6.4), shared with A1 |
+| B8 | Files and exports | 126 files say `text/csv`; 55 MIME lists; 8 hand-built Content-Disposition; 7 `csvCell` copies; 99 storage calls in 26 service files | File policy + export pipeline (5.3, 5.4) |
+| B9 | Settings and limits | 79 timer literals; 123 magic byte sizes in 86 files; 5 timeouts; 2 rate-limit literals | Settings service (5.7) + `limits.ts` (3.4) |
+| B10 | Header and cookie names | 399 `x-...` header literals in 190 files; 3 cookie-name literals | One names module |
+| B11 | Query-string state | 329 `searchParams.get` in 151 files; 414 files build `URLSearchParams` | One list-state parser/builder (pairs with pagination 6.2) |
 
-## 4. Tier 3: UI and copy
+## Tier C: UI
 
-| # | Thing | Scatter (measured) | One place |
+| # | Concern | Evidence | Target |
 |---|---|---|---|
-| 29 | **User-facing wording** | 3,430 literal `title="..."` and 1,824 `description="..."`; 455 `Record<..., string>` label maps; 490 toast calls | A copy catalogue by domain (the "exact wording parity" rule needs one source) with error copy keyed by error code |
-| 30 | **Design tokens and Tailwind** | 33,892 `className` lines; 2,453 arbitrary pixel values; 604 `!important`; 309 bare links; 46 bare buttons; 135 raw `<input>`; 80 inline styles; 32 hex colours | Tokens and components only; the UI-consistency ratchet already measures this |
-| 31 | **Page states** | each page chooses its own loading/empty/error wording | State components take copy from the catalogue |
-| 32 | **Forms and field errors** | `form-validation.ts` exists, usage uneven | one form kit |
-| 33 | **Tables and lists** | `data-table` and bespoke tables coexist | one table component with pager contract (#22) |
+| C1 | Copy | 3,481 `title=`, 1,825 `description=`, 2,139 long JSX sentences in 882 files, 633 `placeholder`, 2,417 `aria-label`, 923 message-setter literals, 143 page titles | Copy catalogue by domain; error copy by error code (7.1), exact-wording rule kept |
+| C2 | Design tokens | 8,592 Tailwind arbitrary values in 1,123 files; 80 inline `style`; 13 hex colours; 604 `!important`, 309 bare links, 46 bare buttons, 135 raw inputs | Tokens + components (7.2); raw palette classes already 0 |
+| C3 | Form, dialog, state kit | 302 `<form>` files; 3,340 hand-written pending/error setters in 490 files; 14 raw dialog markup; 24 `window.confirm/alert` | Form kit, state components, one confirm dialog (7.3, plus A2) |
+| C4 | Client storage | 192 `localStorage/sessionStorage` accesses in 55 files | One typed client-storage helper |
+| C5 | Layering | 490 component files import `@/modules`; 12 modules import components; 5 components import the db | Boundary lint rule + ratchet |
 
-## 5. Tier 4: tests, gates, operations
+## Tier D: repository and operations
 
-| # | Thing | Scatter | One place |
+| # | Concern | Evidence | Target |
 |---|---|---|---|
-| 34 | **Test actors** | 68 test files define their own `ctx/as/actor` builder; each of the new security suites defines `person()` and `as()` | `tests/support/actors.ts` with persons, roles, colleges |
-| 35 | **Fixtures** | course, drive and learner fixtures are partly shared; many tests build their own SQL | fixture builders per domain |
-| 36 | **Baseline files** | five ratchet baselines in different folders and formats | one `docs/security/baselines/` with one reader |
-| 37 | **Deployment settings** | only a dev manifest in the repo; settings live in cloud, not code | a generated environment matrix from the config module (#9) |
-| 38 | **Branding, domains, per-college settings** | read inline in many services | one settings service with a typed schema |
+| D1 | Migrations | 344 migrations; 245 triggers in 79 files; 261 `updated_at` column definitions in 103 files; 140 policies in 8 files | Generated helpers (updated_at trigger, tenant policy, version column) so a new table is one declaration |
+| D2 | File size | 181 source files over 500 lines, 37 over 1,000 | Size ratchet; split along the registries above |
+| D3 | Suppressions | 27 `eslint-disable/@ts-*`, 46 TODO/FIXME, 7 empty catch | Zero-new ratchet |
+| D4 | Scripts and docs | 132 scripts, 73 npm scripts, 12,429 tracked docs files (mostly `docs/legacy-source`) | One script index; archive legacy docs |
 
-## 6. Suggested order (smallest change that removes the most scatter)
+## Recommended order
 
-1. **#9 config and flags** and **#13 roles**: pure refactors, no behaviour change, and everything else reads from them.
-2. **#3 error model**, **#4 responses**, **#2 request plumbing**: shrinks every route file; one codemod per pattern.
-3. **#1 policy registry**: the largest and most valuable; do it route family by route family (placements, courses, people, ...), generating the role matrix as it goes.
-4. **#5 activity writer**, **#6 tenant helpers**, **#8 versions**: removes hundreds of inline inserts and comparisons.
-5. **#19 clock, #21 validation, #22 pagination, #23 status, #24 URLs**: the behaviour-consistency block.
-6. **#29 copy catalogue** and the remaining UI items, then tests and gates.
+1. A1 page access and A2 client API layer first: they are the two largest uncentralised planes and unblock B7, C1, C3.
+2. A3 CI composite actions: small, mechanical, and removes 260 copies.
+3. Finish the wrapper naming (A6) with role proof, then repositories (A5).
+4. B1, B2, B4 registries, then B3, B5 to B11.
+5. UI (C1 to C5) once A2 exists, so the copy and form kits have one client to sit on.
+6. A4 test migration runs alongside every step: when a registry lands, replace the source-text pins for that area.
+7. D1 to D4 last.
 
-Every step ships with: the central module, a ratchet counting the old pattern, a codemod or a guided migration list, and a test that
-fails if the old pattern reappears.
+## Ratchets to add (the 18 unmeasured concerns)
 
-## 7. Caveats
-
-- Counts are text matches. A few include comments or strings, and some patterns are intentionally local (a one-off constant is fine).
-- Not measured: database schema duplication, email template content, and per-college settings reads. They are listed because the
-  structure suggests scatter, but they need a closer look before a number is quoted.
-- None of this changes behaviour by itself; the risk is in the migrations, which is why each step has a ratchet and a test first.
+Pages with inline role check; pages calling the context directly; raw `fetch` in components; writes without Idempotency-Key;
+`router.refresh` count; workflows without composite actions; unit tests reading source text; hand-mocked `@/db`; inline `.min/.max`
+in api+modules; raw date/number/tel inputs; Tailwind arbitrary values; hex colours; client storage accesses; header-name
+literals; module-to-component and component-to-db imports; files over 500 lines; suppressions; query-param reads.
