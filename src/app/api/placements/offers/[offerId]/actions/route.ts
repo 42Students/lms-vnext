@@ -23,7 +23,7 @@ type RouteContext = {
 };
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", idempotent: true },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {

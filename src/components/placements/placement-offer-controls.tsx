@@ -22,6 +22,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { createNumberFormatter } from "@/lib/safe-format";
 
 import { humanize } from "@/lib/shared";
+import { createIdempotencyKey } from "@/lib/action-idempotency";
 type OfferStatus =
   | "ISSUED"
   | "ACCEPTED"
@@ -159,11 +160,12 @@ export function PlacementOfferControls({
     url: string,
     method: "POST" | "PUT",
     body: unknown,
+    idempotencyKey?: string,
   ) {
     return apiFetch<Record<string, unknown>>(url, {
       method,
       credentials: "same-origin",
-      headers: {"content-type":"application/json"},
+      headers: {"content-type":"application/json",...(idempotencyKey?{"Idempotency-Key":idempotencyKey}:{})},
       body: JSON.stringify(body),
     });
   }
@@ -249,6 +251,7 @@ export function PlacementOfferControls({
           action: "WITHDRAW",
           reason,
         },
+        createIdempotencyKey(),
       );
       showToast({
         tone: "success",

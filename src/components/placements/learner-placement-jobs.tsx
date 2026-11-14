@@ -22,6 +22,7 @@ import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
 import { humanize } from "@/lib/shared";
+import { createAttemptKeys } from "@/lib/action-idempotency";
 type EligibilityStatus =
   | "ELIGIBLE"
   | "ELIGIBLE_WITH_MISSING_EVIDENCE"
@@ -122,14 +123,18 @@ function eligibilityTone(
 async function placementMutation(
   url: string,
   body: unknown,
+  attempt?: { next(): string; settle(): void },
 ) {
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      ...(attempt ? { "Idempotency-Key": attempt.next() } : {}),
     },
     body: JSON.stringify(body),
   });
+  // The server has answered; a refused request keeps its key claimed, so the next try needs a new one.
+  attempt?.settle();
   const payload = (await response
     .json()
     .catch(() => null)) as
@@ -261,6 +266,7 @@ function JobActions({
     useState<string | null>(null);
   // One request per row at a time, even before a state rerender.
   const pendingRef = useRef(false);
+  const applyAttempt = useRef(createAttemptKeys());
   const [confirmation, setConfirmation] =
     useState<"WITHDRAW" | "EXTERNAL" | "INTERNAL" | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
@@ -305,6 +311,7 @@ function JobActions({
             : {
                 roleOptionId: roleOption.id,
               },
+        applyAttempt.current,
       );
       setConfirmation(null);
       const stored=submitted?.application;

@@ -22,6 +22,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { createAttemptKeys } from "@/lib/action-idempotency";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
@@ -131,6 +132,7 @@ export function LearnerPlacementOffers({
     useState<string | null>(null);
   // Ref lock covers the gap between a click and the pending-state rerender.
   const pendingRef = useRef(false);
+  const respondAttempt = useRef(createAttemptKeys());
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [acceptImpact,setAcceptImpact]=useState<OfferAcceptImpact|null>(null);
   const [acceptImpactBusy,setAcceptImpactBusy]=useState(false);
@@ -200,6 +202,7 @@ export function LearnerPlacementOffers({
           headers: {
             "content-type":
               "application/json",
+            "Idempotency-Key": respondAttempt.current.next(),
           },
           body: JSON.stringify({
             action,
@@ -209,6 +212,8 @@ export function LearnerPlacementOffers({
           }),
         },
       );
+      // The server has answered; a refused request keeps its key claimed, so the next try needs a new one.
+      respondAttempt.current.settle();
       const payload=await response.json().catch(()=>null) as {
         offer?:{id?:unknown;status?:unknown};error?:unknown;code?:unknown;
       }|null;
