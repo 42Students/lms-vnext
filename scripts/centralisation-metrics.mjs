@@ -43,7 +43,7 @@ export const METRICS = [
   { id: "limits.timeoutLiterals", audit: 11, label: "inline timeoutMs literals", scope: (p) => p.startsWith("src/"), pattern: /timeoutMs ?[:=] ?[0-9_]+/g, unit: "matches", enforce: true },
   { id: "session.cookieSets", audit: 12, label: "cookies.set( calls", scope: (p) => p.startsWith("src/") && p !== "src/auth/cookies.ts", pattern: /cookies\.set\(/g, unit: "matches", enforce: true },
   { id: "roles.roleLiterals", audit: 13, label: "role name string literals", scope: (p) => p.startsWith("src/") && notIn("src/modules/identity/constants.ts", "src/db/")(p), pattern: /"(?:COLLEGE_ADMIN|FACULTY|LEARNER|TPO|MENTOR|SUPER_ADMIN)"/g, unit: "matches", enforce: true },
-  { id: "outbound.serverRawFetch", audit: 14, label: "raw fetch( in server code", scope: inServer, pattern: /(?<![A-Za-z.])fetch\(/g, unit: "matches" },
+  { id: "outbound.serverRawFetch", audit: 14, label: "raw fetch( in server code", scope: inServer, pattern: /(?<![A-Za-z.])fetch\(/g, unit: "matches", enforce: true },
   { id: "exports.csvCellCopies", audit: 15, label: "csvCell redefinitions", scope: (p) => p.startsWith("src/"), pattern: /(?:function|const) csvCell\b/g, unit: "matches" },
   { id: "files.dispositionLiterals", audit: 16, label: "hand-built Content-Disposition headers", scope: (p) => p.startsWith("src/") && notIn("src/security/download-core.ts", "src/modules/storage/")(p), pattern: /Content-Disposition/gi, unit: "matches" },
   { id: "files.mimeLiterals", audit: 16, label: 'literal "application/pdf" lists', scope: (p) => p.startsWith("src/") && notIn("src/modules/storage/")(p), pattern: /"application\/pdf"/g, unit: "matches" },

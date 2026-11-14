@@ -167,10 +167,9 @@ describe("SEC-API7 public recruiter ZIP: no arbitrary external fetch", () => {
     expect(response.headers.get("Content-Type")).toBe("application/zip");
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(fetcher.mock.calls[0]?.[0]).toBe(url);
-    expect(fetcher.mock.calls[0]?.[1]).toMatchObject({
-      redirect: "error", cache: "no-store",
-      headers: { Accept: "application/octet-stream" },
-    });
+    expect(fetcher.mock.calls[0]?.[1]).toMatchObject({ redirect: "error", cache: "no-store" });
+    // outboundFetch carries the headers as a Headers object.
+    expect(new Headers(fetcher.mock.calls[0]?.[1]?.headers).get("accept")).toBe("application/octet-stream");
     const bytes = new Uint8Array(await response.arrayBuffer());
     expect(bytes.byteLength).toBeGreaterThan(5);
   });
