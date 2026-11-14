@@ -6,15 +6,18 @@ import {inspectClosureFirst,inspectTracker} from "../scripts/tracker.mjs";
 const fresh=()=>JSON.parse(readFileSync("docs/tracker.json","utf8"));
 const clone=value=>structuredClone(value);
 
-test("closure-first derives its advisory queue from all 101 canonical scoped tasks",()=>{
+test("closure-first includes newly discovered legacy dev-only roles without reopening accepted scopes",()=>{
   const doc=fresh(),report=inspectClosureFirst(doc);
   assert.equal(report.accepted,doc.tasks.filter(t=>t.done).length);
   assert.equal(report.total,doc.tasks.length);
   assert.equal(report.remaining,doc.tasks.filter(t=>!t.done).length);
   assert.equal(report.maximumUnacceptedPassesPerTask,2);
-  assert.equal(report.priority.length,0,
-    "All 101 scoped task records are accepted; focus hints cannot reopen them");
-  assert.equal(report.remaining,0);
+  assert.deepEqual(doc.tasks.filter(t=>!t.done).map(t=>t.id),
+    ["UI-11","UI-12","UI-13"]);
+  assert.equal(report.remaining,3);
+  assert.equal(report.accepted,101);
+  assert.deepEqual(new Set([...report.priority.map(t=>t.id),...report.otherOpen]),
+    new Set(["UI-11","UI-12","UI-13"]));
   const ids=new Set();
   for(const item of report.priority){
     assert.equal(doc.tasks.find(t=>t.id===item.id)?.done,false);

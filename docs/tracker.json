@@ -8854,6 +8854,47 @@
         ],
         "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
       }
+    },
+    {
+      "id": "UI-11",
+      "title": "Course Coordinator (legacy dev-only): course-assigned role, actions and cross-role workflows",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-04",
+        "UI-13"
+      ],
+      "acceptanceEvidence": [],
+      "scope": "Current legacy dev adds 24 Course Coordinator page files and 25+ dedicated UI components, with per-course faculty/coordinator grants. Inventory and implement every required course-assigned operation, keeping vNext UX. Do not permit admin privileges outside assigned courses.",
+      "sourceEvidence": "Legacy FE dev 42Students/lms2-fe@d2d8d4545322af3aaab81a8b523309c40ab04edf vs prod@9ca5206dc02fe5de89991d77655f2401934cc854, vNext@c4e3264c98765572925549a40bfe6f28237aba93, source tree census on 2026-11-03. Live FE/BE SHA must be refreshed for acceptance.",
+      "acceptance": "Exact current old FE/BE source audit; reachable authorized course workspace; course-bound backend read/write guards; assignments/quizzes/live-class/resources/lessons/team/learners/announcements/notifications/attendance/grades/file operations and modals; real producer/consumer, negative cross-course/college tenancy and seeded desktop/mobile E2E green; existing UI matrices and family proof updated."
+    },
+    {
+      "id": "UI-12",
+      "title": "Global TPO (legacy dev-only): placements-enabled multi-college role and authorized jobs",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-08",
+        "UI-13"
+      ],
+      "acceptanceEvidence": [],
+      "scope": "Current legacy dev adds 13 Global TPO page files and ~25 dedicated components. Recreate legitimate cross-college placement-enabled TPO jobs as discoverable vNext capabilities, never by treating untrusted selected-college IDs as authority.",
+      "sourceEvidence": "Legacy FE dev 42Students/lms2-fe@d2d8d4545322af3aaab81a8b523309c40ab04edf vs prod@9ca5206dc02fe5de89991d77655f2401934cc854, vNext@c4e3264c98765572925549a40bfe6f28237aba93, source tree census on 2026-11-03. Live FE/BE SHA must be refreshed for acceptance.",
+      "acceptance": "Exact current old FE/BE source audit; role/identity and placements-module enabled college grants; multi-college switch and per-request backend reauthorization; students/drives/companies/college/team/calendar/reports/settings/recruiter followups; activity/rounds/offers/eligibility; negative disabled-module/foreign-college/revoked-grant tests; seeded producer-consumer and desktop/mobile E2E green."
+    },
+    {
+      "id": "UI-13",
+      "title": "Refresh legacy dev FE/BE route, modal and operation census including new role domains",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-01"
+      ],
+      "acceptanceEvidence": [],
+      "scope": "Reconcile latest lms-dev-2026 FE+BE with prod-2026 and current vNext, including 37 dev-only role page files, 57 dev-only components and other changed existing source; map required routes, hidden actions, API handlers, role/module gates and target evidence in existing account matrix. Historic screenshots are supplemental.",
+      "sourceEvidence": "Legacy FE dev 42Students/lms2-fe@d2d8d4545322af3aaab81a8b523309c40ab04edf vs prod@9ca5206dc02fe5de89991d77655f2401934cc854, vNext@c4e3264c98765572925549a40bfe6f28237aba93, source tree census on 2026-11-03. Live FE/BE SHA must be refreshed for acceptance.",
+      "acceptance": "Current immutable FE+BE SHA tree inventory; route, layout, component and controller source-action extraction with human-reviewed required vs retired decisions; current vNext owner mapping for every necessary dev-only action; updated canonical matrix and existing family records; deterministic census test executable and acceptance evidence. No invented source-to-runtime parity or screenshot threshold."
     }
   ],
   "execution": {
@@ -9254,6 +9295,42 @@
         "requirements": [
           "Exact target SHA and executed acceptance proof",
           "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-11",
+        "stage": "UI",
+        "title": "Course Coordinator (legacy dev-only): course-assigned role, actions and cross-role workflows",
+        "requirements": [
+          "Exact current old FE/BE source audit; reachable authorized course workspace; course-bound backend read/write guards; assignments/quizzes/live-class/resources/lessons/team/learners/announcements/notifications/attendance/grades/file operations and modals; real producer/consumer, negative cross-course/college tenancy and seeded desktop/mobile E2E green; existing UI matrices and family proof updated.",
+          "Exact legacy dev+prod FE/BE and latest tested vNext SHA recorded",
+          "Positive/negative permission and tenant scope, browser and cross-role integration evidence executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-12",
+        "stage": "UI",
+        "title": "Global TPO (legacy dev-only): placements-enabled multi-college role and authorized jobs",
+        "requirements": [
+          "Exact current old FE/BE source audit; role/identity and placements-module enabled college grants; multi-college switch and per-request backend reauthorization; students/drives/companies/college/team/calendar/reports/settings/recruiter followups; activity/rounds/offers/eligibility; negative disabled-module/foreign-college/revoked-grant tests; seeded producer-consumer and desktop/mobile E2E green.",
+          "Exact legacy dev+prod FE/BE and latest tested vNext SHA recorded",
+          "Positive/negative permission and tenant scope, browser and cross-role integration evidence executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-13",
+        "stage": "UI",
+        "title": "Refresh legacy dev FE/BE route, modal and operation census including new role domains",
+        "requirements": [
+          "Current immutable FE+BE SHA tree inventory; route, layout, component and controller source-action extraction with human-reviewed required vs retired decisions; current vNext owner mapping for every necessary dev-only action; updated canonical matrix and existing family records; deterministic census test executable and acceptance evidence. No invented source-to-runtime parity or screenshot threshold.",
+          "Exact legacy dev+prod FE/BE and latest tested vNext SHA recorded",
+          "Positive/negative permission and tenant scope, browser and cross-role integration evidence executed"
         ],
         "done": false,
         "acceptanceEvidence": []
